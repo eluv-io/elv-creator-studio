@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "Assets": ["./src/static"],
+      "Components": ["./src/components"],
+      "Stores": ["./src/stores"]
+    }
+  }
+}
