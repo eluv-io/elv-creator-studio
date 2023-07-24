@@ -1,16 +1,19 @@
-import { defineConfig } from "vite"
+import { defineConfig, splitVendorChunkPlugin } from "vite"
 import { fileURLToPath, URL } from "url";
 import react from "@vitejs/plugin-react-swc"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    splitVendorChunkPlugin()
+  ],
   server: {
     port: 9000,
     host: true
   },
   define: {
-    global: {},
+    global: "({})",
     process: {}
   },
   resolve: {
@@ -20,5 +23,8 @@ export default defineConfig({
       { find: "Components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
       { find: "Stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
     ]
+  },
+  build: {
+    manifest: true
   }
 })

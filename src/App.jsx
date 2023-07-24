@@ -4,6 +4,7 @@ import Header from "Components/header/Header.jsx";
 
 import {Text, Button, Paper, Loader} from "@mantine/core";
 import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
+import MarketplaceList from "./pages/marketplace/MarketplaceList.jsx";
 
 const Components = observer(() => {
   return (
@@ -46,6 +47,7 @@ const App = observer(() => {
             <Route path="/" element={<Components />} />
             <Route path="/page1" element={<Page1 />} />
             <Route path="/page2" element={<Page2 />} />
+            <Route path="/marketplaces" element={<MarketplaceList />} />
           </Route>
         </Routes>
       </BrowserRouter>
