@@ -6,6 +6,7 @@ import {
   collection,
   doc,
   writeBatch,
+  getDoc,
   getDocs,
   setDoc
 } from "firebase/firestore/lite";
@@ -19,8 +20,20 @@ class DatabaseStore {
     return this.rootStore.client;
   }
 
-  Log() {
-    this.rootStore.Log(...arguments);
+  get utils() {
+    return this.rootStore.utils;
+  }
+
+  get l10n() {
+    return this.rootStore.l10n;
+  }
+
+  get logLevels() {
+    return this.rootStore.logLevels;
+  }
+
+  DebugLog() {
+    this.rootStore.DebugLog(...arguments);
   }
 
   constructor(rootStore) {
@@ -29,6 +42,8 @@ class DatabaseStore {
   }
 
   Initialize = flow(function * () {
+    this.rootStore.DebugTimeStart({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
+
     // eslint-disable-next-line no-undef
     this.firebase = initializeApp(EluvioConfiguration["firebase-config"]);
     this.firestore = getFirestore(this.firebase);
@@ -38,11 +53,21 @@ class DatabaseStore {
       connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
     }
 
-    yield this.InitialSetup();
+    if(!this.rootStore.tenantInfo) {
+      yield this.InitialSetup();
+    } else {
+      this.rootStore.DebugLog({message: "Tenant info retrieved from local storage - skipping initialization", level: this.logLevels.DEBUG_LEVEL_LOW});
+    }
+
+    this.rootStore.DebugTimeEnd({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
   });
 
   InitialSetup = flow(function * () {
-    console.time("initial setup")
+    this.rootStore.DebugLog({message: "Initializing database setup", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+
+
+    this.rootStore.DebugLog({message: "Finding properties library", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+
     const libraryIds = yield this.client.ContentLibraries();
 
     // Find properties library
@@ -61,14 +86,25 @@ class DatabaseStore {
     }
 
     if(!propertiesLibraryId) {
-      this.Log({message: "No properties library found"});
+      this.DebugLog({message: "No properties library found", level: this.logLevels.DEBUG_LEVEL_ERROR});
       return;
     }
 
     // Problem: The only reliable way to determine the 'right' tenant ID is by finding the properties library
     const tenantId = yield this.client.ContentObjectTenantId({objectId: propertiesLibraryId});
-    this.rootStore.SetTenantId(tenantId);
+    const tenantInfo = yield this.GetDocument({collection: "tenant", document: "info"});
 
+    if(tenantInfo) {
+      this.rootStore.SetTenantInfo({
+        ...tenantInfo,
+        tenantId
+      })
+
+      return;
+    }
+
+    this.rootStore.DebugLog({message: "Loading content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.properties);
 
     // Retrieve content objects in library and their metadata
     const { contents } = yield this.client.ContentObjects({
@@ -87,7 +123,7 @@ class DatabaseStore {
           const objectId = object.id;
           const metadata = object.versions[0].meta;
           const objectInfo = await this.client.ContentObject({libraryId: propertiesLibraryId, objectId});
-          const typeId = objectInfo.type ? this.client.utils.DecodeVersionHash(objectInfo.type).objectId : "";
+          const typeId = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : "";
           const name = metadata.public?.name || ""
 
           if(!typeIds.includes(typeId)) {
@@ -102,7 +138,7 @@ class DatabaseStore {
             metadata,
           };
         } catch(error) {
-          this.Log({message: error});
+          this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_LOW});
         }
       })
     ))
@@ -123,7 +159,9 @@ class DatabaseStore {
       }
     };
 
-    // Classify objects by type
+    this.rootStore.DebugLog({message: "Classifying content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+
+    // Classify property objects by type
     yield Promise.all(
       typeIds.map(async typeId => {
         try {
@@ -162,15 +200,17 @@ class DatabaseStore {
             content.tenant = objects.find(object => object.typeId === typeId);
           }
         } catch(error) {
-          this.Log({message: error});
+          this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
         }
       })
     );
 
     if(!content.tenant) {
-      this.Log({message: "Unable to find tenant object"});
+      this.DebugLog({message: "Unable to find tenant object", level: this.logLevels.DEBUG_LEVEL_ERROR});
       return;
     }
+
+    this.rootStore.DebugLog({message: "Determining slugs for properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 
     // Determine slugs
     const tenantSlug = content.tenant.metadata.public.asset_metadata.slug;
@@ -202,11 +242,14 @@ class DatabaseStore {
       ).filter(marketplaceId => marketplaceId);
     });
 
+    this.rootStore.DebugLog({message: "Loading templates", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.templates);
+
     // Determine NFT templates
     for(const marketplace of Object.values(content.marketplaces)) {
       let templateIds = [];
-      yield this.client.utils.LimitedMap(
-        5,
+      yield this.utils.LimitedMap(
+        10,
         marketplace.metadata.public?.asset_metadata?.info?.items || [],
         async item => {
           try {
@@ -214,12 +257,12 @@ class DatabaseStore {
 
             if(!templateHash) { return;}
 
-            const templateId = this.client.utils.DecodeVersionHash(templateHash).objectId;
+            const templateId = this.utils.DecodeVersionHash(templateHash).objectId;
             const templateLibraryId = await this.client.ContentObjectLibraryId({objectId: templateId});
 
             if(!content.types.template) {
               const objectInfo = await this.client.ContentObject({libraryId: templateLibraryId, objectId: templateId});
-              content.types.template = objectInfo.type ? this.client.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
+              content.types.template = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
             }
 
             // Template referenced in another marketplace, add to referenced marketplace list and stop
@@ -252,13 +295,16 @@ class DatabaseStore {
               metadata
             }
           } catch(error) {
-            this.Log({message: error});
+            this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           }
         }
       );
 
       marketplace.templateIds = templateIds;
     }
+
+    this.rootStore.DebugLog({message: "Loading media", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.media);
 
     // Determine media
     for(const template of Object.values(content.templates)) {
@@ -287,8 +333,8 @@ class DatabaseStore {
       }
 
       // Parse media
-      yield this.client.utils.LimitedMap(
-        5,
+      yield this.utils.LimitedMap(
+        10,
         mediaList,
         async media => {
           try {
@@ -300,12 +346,12 @@ class DatabaseStore {
 
             if(!mediaHash) { return; }
 
-            const mediaId = this.client.utils.DecodeVersionHash(mediaHash).objectId;
+            const mediaId = this.utils.DecodeVersionHash(mediaHash).objectId;
             const mediaLibraryId = await this.client.ContentObjectLibraryId({objectId: mediaId});
 
             if(!content.types.mezzanine) {
               const objectInfo = await this.client.ContentObject({libraryId: mediaLibraryId, objectId: mediaId});
-              content.types.mezzanine = objectInfo.type ? this.client.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
+              content.types.mezzanine = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
             }
 
             // Media referenced in another marketplace, add to referenced marketplace list and stop
@@ -344,19 +390,27 @@ class DatabaseStore {
               metadata
             }
           } catch(error) {
-            this.Log({message: error});
+            this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           }
         }
       )
     }
 
+    this.rootStore.DebugLog({message: "Saving to database", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.saving);
+
     // Write data
     let tenant = { ...content.tenant };
     delete tenant.metadata;
 
-    console.log(content);
+    this.DebugLog({message: content, level: this.logLevels.DEBUG_LEVEL_INFO});
 
-    const batch = writeBatch(this.firestore);
+    this.rootStore.SetTenantInfo({
+      ...tenantInfo,
+      tenantId
+    })
+
+    let batch = writeBatch(this.firestore);
 
     yield this.WriteDocument({batch, collection: "tenant", document: "info",  content: tenant});
     yield this.WriteDocument({batch, collection: "tenant", document: "types",  content: content.types});
@@ -379,6 +433,9 @@ class DatabaseStore {
       })
     );
 
+    yield batch.commit();
+
+    batch = writeBatch(this.firestore);
     yield Promise.all(
       Object.values(content.templates).map(async template => {
         template = { ...template };
@@ -387,7 +444,9 @@ class DatabaseStore {
         await this.WriteDocument({batch, collection: "templates", document: template.objectId, content: template});
       })
     );
+    yield batch.commit();
 
+    batch = writeBatch(this.firestore);
     yield Promise.all(
       Object.values(content.media).map(async media => {
         media = { ...media };
@@ -396,16 +455,28 @@ class DatabaseStore {
         await this.WriteDocument({batch, collection: "media", document: media.objectId, content: media});
       })
     );
-
-
     yield batch.commit();
+  });
 
-    console.timeEnd("initial setup")
+  GetDocument = flow(function * ({collection, document}) {
+    try {
+      const ref = doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
+      const results = yield getDoc(ref);
+
+      if(results.exists()) {
+        return results.data();
+      }
+    } catch(error) {
+      this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_INFO});
+    }
   });
 
   WriteDocument = flow(function * ({batch, collection, document, content}) {
     try {
-      //console.log(batch ? "(batch)" : "", "WRITING", UrlJoin("tenants", this.rootStore.tenantId, collection, document));
+      this.rootStore.DebugLog({
+        message: `${batch ? "(batch) " : ""} Writing ${UrlJoin("tenants", this.rootStore.tenantId, collection, document)}`,
+        level: this.logLevels.DEBUG_LEVEL_INFO
+      })
 
       const ref = doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
       if(batch) {
@@ -414,8 +485,8 @@ class DatabaseStore {
         yield setDoc(ref, content);
       }
     } catch(error) {
-      this.Log({message: `Error writing to firestore: /${collection}/${document}`});
-      this.Log({message: content});
+      this.DebugLog({message: `Error writing to firestore: /${collection}/${document}`, level: this.logLevels.DEBUG_LEVEL_ERROR});
+      this.DebugLog({message: content, level: this.logLevels.DEBUG_LEVEL_ERROR});
       throw error;
     }
   });

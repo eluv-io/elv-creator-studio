@@ -1,0 +1,12 @@
+ui:
+  side_nav:
+    header: Navigation
+
+
+initialization:
+  loading:
+    initializing: Initializing
+    properties: Running Initial Setup - Discovering Properties
+    templates: Running Initial Setup - Discovering Templates
+    media: Running Initial Setup - Discovering Media
+    saving: Running Initial Setup - Saving

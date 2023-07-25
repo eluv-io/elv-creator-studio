@@ -1,19 +1,19 @@
 import {observer} from "mobx-react-lite";
-import {rootStore} from "Stores";
-import Header from "Components/header/Header.jsx";
+import {rootStore, uiStore} from "Stores";
+import AppHeader from "Components/header/AppHeader.jsx";
 
-import {Text, Button, Paper, Loader} from "@mantine/core";
+import {Text, Button, Paper, Loader, Overlay, Modal, Container, Flex, Drawer} from "@mantine/core";
 import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
 import MarketplaceList from "./pages/marketplace/MarketplaceList.jsx";
 
 const Components = observer(() => {
   return (
-    <>
+    <Container fluid>
       <Loader m="xl" size="xl"/>
       <Paper shadow="sm" p="md">Paper?: { rootStore.testValue }</Paper>
       <Button onClick={() => rootStore.Increment()} shadow="xl" m="sm">Test Button</Button>
       <Text m="sm">Test Text</Text>
-    </>
+    </Container>
   )
 });
 
@@ -29,11 +29,35 @@ const Page2 = () => {
   )
 }
 
+const LoaderModal = observer(() => {
+  return (
+    <Modal
+      opened={uiStore.loading}
+      centered
+      withCloseButton={false}
+      onClose={() => {}}
+      size="lg"
+    >
+      <Flex direction="column" align="center" justify="center" gap={30} p="xl">
+        <Loader />
+        <Text fw={500} fz="lg" ta="center">
+          { uiStore.loadingMessage }
+        </Text>
+      </Flex>
+    </Modal>
+  )
+});
+
 const Layout = observer(() => {
   return (
     <>
-      <Header />
-      <Outlet />
+      <AppHeader />
+      <Container fluid>
+        <Drawer title={rootStore.l10n.ui.side_nav.header} opened={uiStore.showSideNav} onClose={() => uiStore.SetShowSideNav(false)}>
+          Drawer
+        </Drawer>
+        <Outlet />
+      </Container>
     </>
   );
 });
@@ -41,6 +65,7 @@ const Layout = observer(() => {
 const App = observer(() => {
   return (
     <main>
+      <LoaderModal />
       <BrowserRouter>
         <Routes>
           <Route element={<Layout/>}>

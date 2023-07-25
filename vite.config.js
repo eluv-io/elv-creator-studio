@@ -1,12 +1,13 @@
 import { defineConfig, splitVendorChunkPlugin } from "vite"
 import { fileURLToPath, URL } from "url";
 import react from "@vitejs/plugin-react-swc"
+import ViteYaml from "@modyfi/vite-plugin-yaml";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    splitVendorChunkPlugin()
+    splitVendorChunkPlugin(),
+    ViteYaml()
   ],
   server: {
     port: 9000,
