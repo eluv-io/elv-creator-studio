@@ -5,7 +5,7 @@ class UIStore {
   loading = false;
   loadingMessage = "";
 
-  showSideNav = true;
+  showSideNav = false;
 
   constructor(rootStore) {
     makeAutoObservable(this);
@@ -14,7 +14,6 @@ class UIStore {
 
   SetLoading(loading) {
     this.loading = loading;
-    this.loadingMessage = "";
   }
 
   SetShowSideNav(show) {

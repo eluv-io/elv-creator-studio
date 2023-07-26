@@ -2,9 +2,11 @@ import {observer} from "mobx-react-lite";
 import {rootStore, uiStore} from "Stores";
 import AppHeader from "Components/header/AppHeader.jsx";
 
-import {Text, Button, Paper, Loader, Overlay, Modal, Container, Flex, Drawer} from "@mantine/core";
+import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
 import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
 import MarketplaceList from "./pages/marketplace/MarketplaceList.jsx";
+
+import MantineTheme from "Assets/MantineTheme";
 
 const Components = observer(() => {
   return (
@@ -14,20 +16,20 @@ const Components = observer(() => {
       <Button onClick={() => rootStore.Increment()} shadow="xl" m="sm">Test Button</Button>
       <Text m="sm">Test Text</Text>
     </Container>
-  )
+  );
 });
 
 const Page1 = () => {
   return (
     <div>Page 1</div>
   );
-}
+};
 
 const Page2 = () => {
   return (
     <div>Page 2</div>
-  )
-}
+  );
+};
 
 const LoaderModal = observer(() => {
   return (
@@ -45,7 +47,7 @@ const LoaderModal = observer(() => {
         </Text>
       </Flex>
     </Modal>
-  )
+  );
 });
 
 const Layout = observer(() => {
@@ -62,22 +64,30 @@ const Layout = observer(() => {
   );
 });
 
+const AppRoutes = observer(() => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout/>}>
+          <Route path="/" element={<Components/>}/>
+          <Route path="/page1" element={<Page1/>}/>
+          <Route path="/page2" element={<Page2/>}/>
+          <Route path="/marketplaces" element={<MarketplaceList/>}/>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+});
+
 const App = observer(() => {
   return (
-    <main>
-      <LoaderModal />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Layout/>}>
-            <Route path="/" element={<Components />} />
-            <Route path="/page1" element={<Page1 />} />
-            <Route path="/page2" element={<Page2 />} />
-            <Route path="/marketplaces" element={<MarketplaceList />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </main>
-  )
+    <MantineProvider withNormalizeCSS theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
+      <main>
+        <LoaderModal />
+        { rootStore.loaded ? <AppRoutes /> : null }
+      </main>
+    </MantineProvider>
+  );
 });
 
 export default App;

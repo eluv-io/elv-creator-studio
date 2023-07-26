@@ -4,4 +4,4 @@ export default {
   headings: {
     fontFamily: "Greycliff CF, sans-serif"
   },
-}
+};

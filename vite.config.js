@@ -1,6 +1,6 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite"
+import { defineConfig, splitVendorChunkPlugin } from "vite";
 import { fileURLToPath, URL } from "url";
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react-swc";
 import ViteYaml from "@modyfi/vite-plugin-yaml";
 
 export default defineConfig({
@@ -28,4 +28,4 @@ export default defineConfig({
   build: {
     manifest: true
   }
-})
+});

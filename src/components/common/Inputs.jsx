@@ -108,4 +108,4 @@ export const CheckboxCard = ({
       </div>
     </UnstyledButton>
   );
-}
+};

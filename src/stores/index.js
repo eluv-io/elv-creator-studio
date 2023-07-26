@@ -1,16 +1,22 @@
 import {flow, makeAutoObservable} from "mobx";
 import {Utils} from "@eluvio/elv-client-js";
+import {ElvClient} from "@eluvio/elv-client-js";
 import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
+import LiveConfig from "@eluvio/elv-client-js/src/walletClient/Configuration";
 
-import MarketplaceStore from "./MarketplaceStore.js";
 import UIStore from "./UIStore.js";
 import DatabaseStore from "./DatabaseStore.js";
+import TenantStore from "./TenantStore.js";
+import MarketplaceStore from "./MarketplaceStore.js";
 
 import LocalizationEN from "Assets/localization/en.yml";
 
 class RootStore {
+  loaded = false;
+
   client;
   address;
+  network;
   l10n = LocalizationEN;
   debugLevel = parseInt(this.StorageHandler({type: "local", mode: "get", key: "debug-level"}) || 0);
 
@@ -21,13 +27,14 @@ class RootStore {
     DEBUG_LEVEL_MEDIUM: 3,
     DEBUG_LEVEL_LOW: 4,
     DEBUG_LEVEL_INFO: 5
-  }
+  };
 
   constructor() {
     makeAutoObservable(this);
 
     this.uiStore = new UIStore(this);
     this.databaseStore = new DatabaseStore(this);
+    this.tenantStore = new TenantStore(this);
     this.marketplaceStore = new MarketplaceStore(this);
 
     this.Initialize();
@@ -48,15 +55,29 @@ class RootStore {
   Initialize = flow(function * () {
     this.DebugTimeStart({key: "Root store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
 
-    this.uiStore.SetLoading(true);
     this.uiStore.SetLoadingMessage(this.l10n.initialization.loading.initializing);
+    this.uiStore.SetLoading(true);
 
-    this.client = new FrameClient({timeout: 60});
+    if(window.top !== window.self) {
+      this.client = new FrameClient({timeout: 60});
+    } else {
+      this.client = yield ElvClient.FromNetworkName({networkName: "demo"});
+      const privateKey = this.StorageHandler({type: "local", mode: "get", key: "pk"});
+      const wallet = this.client.GenerateWallet();
+      const signer = wallet.AddAccount({privateKey});
+      this.client.SetSigner({signer});
+    }
+
     this.address = yield this.client.CurrentAccountAddress();
+    this.network = (yield this.client.NetworkInfo()).name;
+    this.liveConfig = LiveConfig[this.network];
 
     yield this.databaseStore.Initialize();
+    yield this.tenantStore.Initialize();
 
     this.uiStore.SetLoading(false);
+
+    this.loaded = true;
 
     this.DebugTimeEnd({key: "Root store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
   });
@@ -132,6 +153,7 @@ class RootStore {
 export const rootStore = new RootStore();
 export const uiStore = rootStore.uiStore;
 export const databaseStore = rootStore.marketplaceStore;
+export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;
 
 window.rootStore = rootStore;

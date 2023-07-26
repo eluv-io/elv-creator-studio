@@ -1,16 +1,8 @@
 import {flow, makeAutoObservable} from "mobx";
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  connectFirestoreEmulator,
-  collection,
-  doc,
-  writeBatch,
-  getDoc,
-  getDocs,
-  setDoc
-} from "firebase/firestore/lite";
+import {initializeApp} from "firebase/app";
+import * as FS from "firebase/firestore/lite";
 import UrlJoin from "url-join";
+import {ExtractHashFromLink} from "../helpers/Fabric.js";
 
 class DatabaseStore {
   firebase;
@@ -37,7 +29,7 @@ class DatabaseStore {
   }
 
   constructor(rootStore) {
-    makeAutoObservable(this)
+    makeAutoObservable(this);
     this.rootStore = rootStore;
   }
 
@@ -46,11 +38,11 @@ class DatabaseStore {
 
     // eslint-disable-next-line no-undef
     this.firebase = initializeApp(EluvioConfiguration["firebase-config"]);
-    this.firestore = getFirestore(this.firebase);
+    this.firestore = FS.getFirestore(this.firebase);
 
     // eslint-disable-next-line no-undef
     if(EluvioConfiguration["firebase-local"] && !this.firestore._settingsFrozen) {
-      connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
+      FS.connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
     }
 
     if(!this.rootStore.tenantInfo) {
@@ -77,7 +69,7 @@ class DatabaseStore {
         libraryId,
         objectId: libraryId.replace("ilib", "iq__"),
         metadataSubtree: "public"
-      })
+      });
 
       if(metadata?.name?.toLowerCase()?.includes("- properties")) {
         propertiesLibraryId = libraryId;
@@ -98,7 +90,7 @@ class DatabaseStore {
       this.rootStore.SetTenantInfo({
         ...tenantInfo,
         tenantId
-      })
+      });
 
       return;
     }
@@ -124,7 +116,7 @@ class DatabaseStore {
           const metadata = object.versions[0].meta;
           const objectInfo = await this.client.ContentObject({libraryId: propertiesLibraryId, objectId});
           const typeId = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : "";
-          const name = metadata.public?.name || ""
+          const name = metadata.public?.name || "";
 
           if(!typeIds.includes(typeId)) {
             typeIds.push(typeId);
@@ -182,7 +174,7 @@ class DatabaseStore {
               object.brandedName = object.metadata.public?.asset_metadata?.info?.branding?.name || "";
 
               content.marketplaces[object.objectId] = object;
-            })
+            });
           } else if(name.includes("event site")) {
             // Only use newer 'drop event site' type vs old 'event site' type
             if(name.includes("drop event site")) {
@@ -193,7 +185,7 @@ class DatabaseStore {
               if(object.typeId !== typeId) { return; }
 
               content.events[object.objectId] = object;
-            })
+            });
           } else if(name.includes("tenant")) {
             content.types.tenant = typeId;
 
@@ -232,7 +224,7 @@ class DatabaseStore {
       content.events[eventId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
         content.marketplaces[marketplaceId].marketplaceSlug === marketplaceInfo.marketplace_slug &&
         content.marketplaces[marketplaceId].tenantSlug === marketplaceInfo.tenant_slug
-      ) || ""
+      ) || "";
 
       content.events[eventId].additionalMarketplaces = additionalMarketplaces.map(additionalMarketplaceInfo =>
         content.events[eventId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
@@ -253,7 +245,7 @@ class DatabaseStore {
         marketplace.metadata.public?.asset_metadata?.info?.items || [],
         async item => {
           try {
-            const templateHash = item.nft_template?.["/"]?.split("/").find(token => token.startsWith("hq__"));
+            const templateHash = ExtractHashFromLink(item.nft_template);
 
             if(!templateHash) { return;}
 
@@ -284,7 +276,7 @@ class DatabaseStore {
                 objectId: templateId,
                 metadataSubtree: "public"
               })
-            }
+            };
 
             content.templates[templateId] = {
               libraryId: templateLibraryId,
@@ -293,7 +285,7 @@ class DatabaseStore {
               brandedName: metadata.public?.asset_metadata?.nft?.name || "",
               marketplaces: [marketplace.objectId],
               metadata
-            }
+            };
           } catch(error) {
             this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           }
@@ -325,7 +317,7 @@ class DatabaseStore {
                 collectionId: collection.id,
                 mediaId: media.id
               }))
-            ]
+            ];
           })
         );
       } else {
@@ -342,7 +334,7 @@ class DatabaseStore {
               return;
             }
 
-            const mediaHash = media.media_link?.["/"]?.split("/").find(token => token.startsWith("hq__"));
+            const mediaHash = ExtractHashFromLink(media.media_link);
 
             if(!mediaHash) { return; }
 
@@ -388,12 +380,12 @@ class DatabaseStore {
                 mediaId: media.mediaId || ""
               }],
               metadata
-            }
+            };
           } catch(error) {
             this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           }
         }
-      )
+      );
     }
 
     this.rootStore.DebugLog({message: "Saving to database", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
@@ -408,9 +400,9 @@ class DatabaseStore {
     this.rootStore.SetTenantInfo({
       ...tenantInfo,
       tenantId
-    })
+    });
 
-    let batch = writeBatch(this.firestore);
+    let batch = FS.writeBatch(this.firestore);
 
     yield this.WriteDocument({batch, collection: "tenant", document: "info",  content: tenant});
     yield this.WriteDocument({batch, collection: "tenant", document: "types",  content: content.types});
@@ -435,7 +427,7 @@ class DatabaseStore {
 
     yield batch.commit();
 
-    batch = writeBatch(this.firestore);
+    batch = FS.writeBatch(this.firestore);
     yield Promise.all(
       Object.values(content.templates).map(async template => {
         template = { ...template };
@@ -446,7 +438,7 @@ class DatabaseStore {
     );
     yield batch.commit();
 
-    batch = writeBatch(this.firestore);
+    batch = FS.writeBatch(this.firestore);
     yield Promise.all(
       Object.values(content.media).map(async media => {
         media = { ...media };
@@ -458,10 +450,28 @@ class DatabaseStore {
     yield batch.commit();
   });
 
+  GetCollection = flow(function * ({collection, conditions}) {
+    try {
+      let ref = FS.collection(this.firestore, "tenants", this.rootStore.tenantId, collection);
+      if(conditions && conditions.length > 0) {
+        ref = FS.query(ref, FS.where(...conditions));
+      }
+
+      let results = [];
+      (yield FS.getDocs(ref)).forEach(doc =>
+        doc.data() && results.push(doc.data())
+      );
+
+      return results;
+    } catch(error) {
+      this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_INFO});
+    }
+  });
+
   GetDocument = flow(function * ({collection, document}) {
     try {
-      const ref = doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
-      const results = yield getDoc(ref);
+      const ref = FS.doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
+      const results = yield FS.getDoc(ref);
 
       if(results.exists()) {
         return results.data();
@@ -476,13 +486,13 @@ class DatabaseStore {
       this.rootStore.DebugLog({
         message: `${batch ? "(batch) " : ""} Writing ${UrlJoin("tenants", this.rootStore.tenantId, collection, document)}`,
         level: this.logLevels.DEBUG_LEVEL_INFO
-      })
+      });
 
-      const ref = doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
+      const ref = FS.doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
       if(batch) {
         batch.set(ref, content);
       } else {
-        yield setDoc(ref, content);
+        yield FS.setDoc(ref, content);
       }
     } catch(error) {
       this.DebugLog({message: `Error writing to firestore: /${collection}/${document}`, level: this.logLevels.DEBUG_LEVEL_ERROR});
