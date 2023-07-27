@@ -4,7 +4,7 @@ import AppHeader from "Components/header/AppHeader.jsx";
 
 import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
 import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
-import MarketplaceList from "./pages/marketplace/MarketplaceList.jsx";
+import MarketplaceList from "Pages/marketplace/MarketplaceList.jsx";
 
 import MantineTheme from "Assets/MantineTheme";
 
@@ -81,7 +81,7 @@ const AppRoutes = observer(() => {
 
 const App = observer(() => {
   return (
-    <MantineProvider withNormalizeCSS theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
+    <MantineProvider withGlobalStyles theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
       <main>
         <LoaderModal />
         { rootStore.loaded ? <AppRoutes /> : null }

@@ -22,6 +22,8 @@ export default defineConfig({
     alias: [
       { find: "Assets", replacement: fileURLToPath(new URL("./src/static", import.meta.url)) },
       { find: "Components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
+      { find: "Helpers", replacement: fileURLToPath(new URL("./src/helpers", import.meta.url)) },
+      { find: "Pages", replacement: fileURLToPath(new URL("./src/pages", import.meta.url)) },
       { find: "Stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
     ]
   },

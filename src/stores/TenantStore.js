@@ -1,6 +1,6 @@
 import {flow, makeAutoObservable} from "mobx";
-import {ExtractHashFromLink} from "../helpers/Fabric.js";
-import {Capitalize} from "../helpers/Misc.js";
+import {ExtractHashFromLink} from "Helpers/Fabric.js";
+import {Capitalize} from "Helpers/Misc.js";
 
 class TenantStore {
   tenantInfo;

@@ -1,5 +1,5 @@
 import {flow, makeAutoObservable} from "mobx";
-import {Capitalize} from "../helpers/Misc.js";
+import {Capitalize} from "Helpers/Misc.js";
 
 class MarketplaceStore {
   allMarketplaces = [];

@@ -1,9 +1,12 @@
 {
+  "comment": "Keep synchronized with vite config",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "Assets": ["./src/static"],
       "Components": ["./src/components"],
+      "Helpers": ["./src/helpers"],
+      "Pages": ["./src/pages"],
       "Stores": ["./src/stores"]
     }
   }
