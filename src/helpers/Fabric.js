@@ -9,7 +9,7 @@ export const ExtractHashFromLink = link => {
   }
 };
 
-export const FabricUrl = ({libraryId, objectId, versionHash, path=""}) => {
+export const FabricUrl = ({libraryId, objectId, versionHash, path="", auth}) => {
   const url = new URL(
     rootStore.network === "main" ?
       "https://main.net955305.contentfabric.io" :
@@ -17,6 +17,10 @@ export const FabricUrl = ({libraryId, objectId, versionHash, path=""}) => {
   );
 
   let urlPath = UrlJoin("s", rootStore.network);
+  if(auth === "private") {
+    urlPath = UrlJoin("t", rootStore.signedToken);
+  }
+
   if(versionHash) {
     urlPath = UrlJoin(urlPath, "q", versionHash, path);
   } else {

@@ -3,6 +3,7 @@ import {Utils} from "@eluvio/elv-client-js";
 import {ElvClient} from "@eluvio/elv-client-js";
 import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
 import LiveConfig from "@eluvio/elv-client-js/src/walletClient/Configuration";
+import {StorageHandler} from "Helpers/Misc.js";
 
 import UIStore from "./UIStore.js";
 import DatabaseStore from "./DatabaseStore.js";
@@ -10,6 +11,7 @@ import TenantStore from "./TenantStore.js";
 import MarketplaceStore from "./MarketplaceStore.js";
 
 import LocalizationEN from "Assets/localization/en.yml";
+import FileBrowserStore from "./FileBrowserStore.js";
 
 class RootStore {
   loaded = false;
@@ -17,8 +19,13 @@ class RootStore {
   client;
   address;
   network;
+  signedToken;
+  publicToken;
   l10n = LocalizationEN;
-  debugLevel = parseInt(this.StorageHandler({type: "local", mode: "get", key: "debug-level"}) || 0);
+
+
+
+  debugLevel = parseInt(StorageHandler({type: "local", mode: "get", key: "debug-level"}) || 0);
 
   logLevels = {
     DEBUG_LEVEL_ERROR: 0,
@@ -33,6 +40,7 @@ class RootStore {
     makeAutoObservable(this);
 
     this.uiStore = new UIStore(this);
+    this.fileBrowserStore = new FileBrowserStore(this);
     this.databaseStore = new DatabaseStore(this);
     this.tenantStore = new TenantStore(this);
     this.marketplaceStore = new MarketplaceStore(this);
@@ -41,7 +49,7 @@ class RootStore {
   }
 
   get tenantInfo() {
-    return this.StorageHandler({type: "local", mode: "get", key: `${this.address}-tenant-info`, json: true, b64: true});
+    return StorageHandler({type: "local", mode: "get", key: `${this.address}-tenant-info`, json: true, b64: true});
   }
 
   get tenantId() {
@@ -62,7 +70,7 @@ class RootStore {
       this.client = new FrameClient({timeout: 60});
     } else {
       this.client = yield ElvClient.FromNetworkName({networkName: "demo"});
-      const privateKey = this.StorageHandler({type: "local", mode: "get", key: "pk"});
+      const privateKey = StorageHandler({type: "local", mode: "get", key: "pk"});
       const wallet = this.client.GenerateWallet();
       const signer = wallet.AddAccount({privateKey});
       this.client.SetSigner({signer});
@@ -70,6 +78,8 @@ class RootStore {
 
     this.address = yield this.client.CurrentAccountAddress();
     this.network = (yield this.client.NetworkInfo()).name;
+    this.publicToken = this.utils.B64(JSON.stringify({qspace_id: yield this.client.ContentSpaceId()}));
+    this.signedToken = yield this.client.CreateFabricToken();
     this.liveConfig = LiveConfig[this.network];
 
     yield this.databaseStore.Initialize();
@@ -83,7 +93,7 @@ class RootStore {
   });
 
   SetTenantInfo(tenantInfo) {
-    this.StorageHandler({type: "local", mode: "set", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
+    StorageHandler({type: "local", mode: "set", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
   }
 
   DebugLog({message, level}) {
@@ -110,48 +120,13 @@ class RootStore {
   SetDebugLevel(level) {
     this.debugLevel = level;
 
-    this.StorageHandler({type: "local", mode: "set", key: "debug-level", value: level?.toString()});
-  }
-
-  StorageHandler({type, mode, key, value, json, b64}) {
-    try {
-      const storage = type === "session" ? sessionStorage : localStorage;
-
-      if(mode === "remove") {
-        storage.removeItem(key);
-      } else if(mode === "set") {
-        if(json) {
-          value = JSON.stringify(value);
-        }
-
-        if(b64) {
-          value = this.utils.B64(value);
-        }
-
-        storage.setItem(key, value);
-      } else {
-        value = storage.getItem(key);
-
-        if(!value) { return; }
-
-        if(b64) {
-          value = this.utils.FromB64(value);
-        }
-
-        if(json) {
-          value = JSON.parse(value);
-        }
-
-        return value;
-      }
-    } catch(error) {
-      this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_INFO});
-    }
+    StorageHandler({type: "local", mode: "set", key: "debug-level", value: level?.toString()});
   }
 }
 
 export const rootStore = new RootStore();
 export const uiStore = rootStore.uiStore;
+export const fileBrowserStore = rootStore.fileBrowserStore;
 export const databaseStore = rootStore.marketplaceStore;
 export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;

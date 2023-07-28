@@ -1,5 +1,5 @@
 export default {
-  fontFamily: "Verdana, sans-serif",
+  fontFamily: "Montserrat, Helvetica Neue, Helvetica, sans-serif",
   fontFamilyMonospace: "Monaco, Courier, monospace",
   headings: {
     fontFamily: "Greycliff CF, sans-serif"

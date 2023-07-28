@@ -16,10 +16,17 @@ class MarketplaceStore {
     this.allMarketplaces = yield this.rootStore.databaseStore.GetCollection({collection: "marketplaces"});
   });
 
-  LoadMarketplace = flow(function * ({marketplaceId}) {
+  LoadMarketplace = flow(function * ({marketplaceId, force=false}) {
+    if(this.marketplaces[marketplaceId] && !force) { return; }
+
+    yield this.LoadMarketplaces();
+
+    const info = this.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+
     const libraryId = yield this.client.ContentObjectLibraryId({objectId: marketplaceId});
 
     this.marketplaces[marketplaceId] = {
+      ...info,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
           libraryId: libraryId,

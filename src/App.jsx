@@ -4,7 +4,9 @@ import AppHeader from "Components/header/AppHeader.jsx";
 
 import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
 import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
+
 import MarketplaceList from "Pages/marketplace/MarketplaceList.jsx";
+import MarketplaceDetails from "Pages/marketplace/MarketplaceDetails.jsx";
 
 import MantineTheme from "Assets/MantineTheme";
 
@@ -73,6 +75,7 @@ const AppRoutes = observer(() => {
           <Route path="/page1" element={<Page1/>}/>
           <Route path="/page2" element={<Page2/>}/>
           <Route path="/marketplaces" element={<MarketplaceList/>}/>
+          <Route path="/marketplaces/:marketplaceId" element={<MarketplaceDetails/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
