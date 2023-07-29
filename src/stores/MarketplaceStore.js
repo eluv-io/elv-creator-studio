@@ -7,6 +7,7 @@ class MarketplaceStore {
 
   constructor(rootStore) {
     this.rootStore = rootStore;
+
     makeAutoObservable(this);
   }
 

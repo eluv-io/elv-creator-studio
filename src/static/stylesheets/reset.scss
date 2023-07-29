@@ -51,7 +51,9 @@ button {
  }
 }
 
-
+td {
+  vertical-align: middle;
+}
 
 /* revert for bug in Chromium browsers
    - fix for the content editable attribute will work properly. */

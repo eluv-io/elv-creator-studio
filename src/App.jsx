@@ -1,14 +1,16 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, uiStore} from "Stores";
-import AppHeader from "Components/header/AppHeader.jsx";
+import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
 
 import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
-import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
+import {ModalsProvider} from "@mantine/modals";
+import MantineTheme from "Assets/MantineTheme";
+
+import {rootStore, uiStore} from "Stores";
+import AppHeader from "Components/header/AppHeader.jsx";
 
 import MarketplaceList from "Pages/marketplace/MarketplaceList.jsx";
 import MarketplaceDetails from "Pages/marketplace/MarketplaceDetails.jsx";
 
-import MantineTheme from "Assets/MantineTheme";
 
 const Components = observer(() => {
   return (
@@ -85,10 +87,12 @@ const AppRoutes = observer(() => {
 const App = observer(() => {
   return (
     <MantineProvider withGlobalStyles theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
-      <main>
-        <LoaderModal />
-        { rootStore.loaded ? <AppRoutes /> : null }
-      </main>
+      <ModalsProvider>
+        <main>
+          <LoaderModal />
+          { rootStore.loaded ? <AppRoutes /> : null }
+        </main>
+      </ModalsProvider>
     </MantineProvider>
   );
 });

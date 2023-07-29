@@ -9,12 +9,8 @@ export const ExtractHashFromLink = link => {
   }
 };
 
-export const FabricUrl = ({libraryId, objectId, versionHash, path="", auth}) => {
-  const url = new URL(
-    rootStore.network === "main" ?
-      "https://main.net955305.contentfabric.io" :
-      "https://demov3.net955210.contentfabric.io"
-  );
+export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth}) => {
+  const url = new URL(rootStore.fabricNodeUrl);
 
   let urlPath = UrlJoin("s", rootStore.network);
   if(auth === "private") {
@@ -22,9 +18,9 @@ export const FabricUrl = ({libraryId, objectId, versionHash, path="", auth}) => 
   }
 
   if(versionHash) {
-    urlPath = UrlJoin(urlPath, "q", versionHash, path);
+    urlPath = UrlJoin(urlPath, "q", writeToken || versionHash, path);
   } else {
-    urlPath = UrlJoin(urlPath, "qlibs", libraryId, "q", objectId, path);
+    urlPath = UrlJoin(urlPath, "qlibs", libraryId, "q", writeToken || objectId, path);
   }
 
   url.pathname = urlPath;

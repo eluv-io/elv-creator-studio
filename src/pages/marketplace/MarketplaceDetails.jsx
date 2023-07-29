@@ -24,7 +24,9 @@ const MarketplaceDetails = observer(() => {
           fileBrowserProps={{
             title: "Browse Marketplace",
             objectId: marketplaceId,
-            writeToken: marketplace?.writeToken
+            writeToken: marketplace?.writeToken,
+            //multiple: true,
+            Submit: (record) => console.log(record)
           }}
         >
           Test File Browser

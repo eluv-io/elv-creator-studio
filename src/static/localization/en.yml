@@ -1,7 +1,21 @@
 ui:
+  actions:
+    submit: Submit
+    cancel: Cancel
+    delete: Delete
+    upload: Upload
   side_nav:
     header: Navigation
-
+  file_browser:
+    browse_files: Browse Files
+    create_directory: Create Directory
+    download: Download {filename}
+    rename: Rename {filename}
+    delete: Delete {filename}
+    delete_confirm: Are you sure you want to delete this file?
+    new_filename: New Filename
+    validation:
+      filename_must_be_specified: Filename must be specified
 
 initialization:
   loading:
@@ -10,3 +24,4 @@ initialization:
     templates: Running Initial Setup - Discovering Templates
     media: Running Initial Setup - Discovering Media
     saving: Running Initial Setup - Saving
+

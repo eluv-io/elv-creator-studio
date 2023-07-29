@@ -5,13 +5,14 @@ import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
 import LiveConfig from "@eluvio/elv-client-js/src/walletClient/Configuration";
 import {StorageHandler} from "Helpers/Misc.js";
 
-import UIStore from "./UIStore.js";
-import DatabaseStore from "./DatabaseStore.js";
-import TenantStore from "./TenantStore.js";
-import MarketplaceStore from "./MarketplaceStore.js";
+import UIStore from "Stores/UIStore.js";
+import DatabaseStore from "Stores/DatabaseStore.js";
+import EditStore from "Stores/EditStore";
+import FileBrowserStore from "Stores/FileBrowserStore.js";
+import TenantStore from "Stores/TenantStore.js";
+import MarketplaceStore from "Stores/MarketplaceStore.js";
 
 import LocalizationEN from "Assets/localization/en.yml";
-import FileBrowserStore from "./FileBrowserStore.js";
 
 class RootStore {
   loaded = false;
@@ -21,6 +22,7 @@ class RootStore {
   network;
   signedToken;
   publicToken;
+  fabricNodeUrl;
   l10n = LocalizationEN;
 
 
@@ -42,6 +44,7 @@ class RootStore {
     this.uiStore = new UIStore(this);
     this.fileBrowserStore = new FileBrowserStore(this);
     this.databaseStore = new DatabaseStore(this);
+    this.editStore = new EditStore(this);
     this.tenantStore = new TenantStore(this);
     this.marketplaceStore = new MarketplaceStore(this);
 
@@ -75,6 +78,9 @@ class RootStore {
       const signer = wallet.AddAccount({privateKey});
       this.client.SetSigner({signer});
     }
+
+    this.fabricNodeUrl = yield this.client.Nodes().fabricURIs[0];
+    yield this.client.SetNodes({fabricURIs: [this.fabricNodeUrl]});
 
     this.address = yield this.client.CurrentAccountAddress();
     this.network = (yield this.client.NetworkInfo()).name;
@@ -127,6 +133,7 @@ class RootStore {
 export const rootStore = new RootStore();
 export const uiStore = rootStore.uiStore;
 export const fileBrowserStore = rootStore.fileBrowserStore;
+export const editStore = rootStore.editStore;
 export const databaseStore = rootStore.marketplaceStore;
 export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;
