@@ -27,7 +27,7 @@ class RootStore {
 
 
 
-  debugLevel = parseInt(StorageHandler({type: "local", mode: "get", key: "debug-level"}) || 0);
+  debugLevel = parseInt(StorageHandler.get({type: "local", key: "debug-level"}) || 0);
 
   logLevels = {
     DEBUG_LEVEL_ERROR: 0,
@@ -52,7 +52,7 @@ class RootStore {
   }
 
   get tenantInfo() {
-    return StorageHandler({type: "local", mode: "get", key: `${this.address}-tenant-info`, json: true, b64: true});
+    return StorageHandler.get({type: "local", key: `${this.address}-tenant-info`, json: true, b64: true});
   }
 
   get tenantId() {
@@ -73,7 +73,7 @@ class RootStore {
       this.client = new FrameClient({timeout: 60});
     } else {
       this.client = yield ElvClient.FromNetworkName({networkName: "demo"});
-      const privateKey = StorageHandler({type: "local", mode: "get", key: "pk"});
+      const privateKey = StorageHandler.get({type: "local", key: "pk"});
       const wallet = this.client.GenerateWallet();
       const signer = wallet.AddAccount({privateKey});
       this.client.SetSigner({signer});
@@ -90,6 +90,7 @@ class RootStore {
 
     yield this.databaseStore.Initialize();
     yield this.tenantStore.Initialize();
+    yield this.editStore.Initialize();
 
     this.uiStore.SetLoading(false);
 
@@ -99,7 +100,7 @@ class RootStore {
   });
 
   SetTenantInfo(tenantInfo) {
-    StorageHandler({type: "local", mode: "set", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
+    StorageHandler.set({type: "local", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
   }
 
   DebugLog({message, level}) {
@@ -126,7 +127,7 @@ class RootStore {
   SetDebugLevel(level) {
     this.debugLevel = level;
 
-    StorageHandler({type: "local", mode: "set", key: "debug-level", value: level?.toString()});
+    StorageHandler.set({type: "local", key: "debug-level", value: level?.toString()});
   }
 }
 

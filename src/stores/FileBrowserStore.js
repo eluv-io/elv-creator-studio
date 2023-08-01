@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, runInAction} from "mobx";
 import {FabricUrl} from "../helpers/Fabric.js";
 import UrlJoin from "url-join";
 
@@ -7,77 +7,28 @@ class FileBrowserStore {
   imageTypes = ["gif", "jpg", "jpeg", "png", "svg", "webp"];
   libraryIds = {};
 
+  activeUploadJobs = {};
+  uploadStatus = {};
+
   constructor(rootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
   }
 
-  LoadFiles = flow(function * ({objectId}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
-    const writeToken = this.rootStore.editStore.writeTokens[objectId];
+  // Retrieve contents of the specified directory
+  Directory({objectId, path="/"}) {
+    let directory = this.files[objectId] || {};
 
-    this.libraryIds[objectId] = libraryId;
+    path
+      .replace(/^\//, "")
+      .split("/")
+      .filter(pathElement => pathElement)
+      .forEach(pathElement => directory = directory?.[pathElement]);
 
-    this.files[objectId] = (yield this.client.ContentObjectMetadata({
-      libraryId,
-      objectId,
-      writeToken,
-      metadataSubtree: "files",
-      produceLinkUrls: true
-    })) || {};
-  });
-
-  CreateDirectory = flow(function * ({objectId, path, filename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
-    const writeToken = yield this.rootStore.editStore.WriteToken({objectId});
-
-    yield this.client.CreateFileDirectories({
-      libraryId,
-      objectId,
-      writeToken,
-      filePaths: [UrlJoin(path, filename)]
-    });
-
-    yield this.LoadFiles({objectId});
-  });
-
-  RenameFile = flow(function * ({objectId, path, filename, newFilename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
-    const writeToken = yield this.rootStore.editStore.WriteToken({objectId});
-
-    yield this.client.MoveFiles({
-      libraryId,
-      objectId,
-      writeToken,
-      filePaths: [{
-        path: UrlJoin(path, filename),
-        to: UrlJoin(path, newFilename)
-      }]
-    });
-
-    yield this.LoadFiles({objectId});
-  });
-
-  DeleteFile = flow(function * ({objectId, path, filename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
-    const writeToken = yield this.rootStore.editStore.WriteToken({objectId});
-
-    yield this.client.DeleteFiles({
-      libraryId,
-      objectId,
-      writeToken,
-      filePaths: [
-        UrlJoin(path, filename)
-      ]
-    });
-
-    yield this.LoadFiles({objectId});
-  });
-
-  FormatFiles({objectId, directory={}, path}) {
     const libraryId = this.libraryIds[objectId];
-    const writeToken = this.rootStore.editStore.writeTokens[objectId];
+    const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
 
+    // Transform from fabric file metadata
     return Object.keys(directory)
       .map(filename => {
         if(filename === ".") { return; }
@@ -106,17 +57,93 @@ class FileBrowserStore {
       .filter(file => file);
   }
 
-  Directory({objectId, path="/"}) {
-    let directory = this.files[objectId] || {};
+  LoadFiles = flow(function * ({objectId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
 
-    path
-      .replace(/^\//, "")
-      .split("/")
-      .filter(pathElement => pathElement)
-      .forEach(pathElement => directory = directory?.[pathElement]);
+    this.libraryIds[objectId] = libraryId;
 
-    return this.FormatFiles({objectId, path, directory});
-  }
+    this.files[objectId] = (yield this.client.ContentObjectMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "files",
+      produceLinkUrls: true
+    })) || {};
+  });
+
+  CreateDirectory = flow(function * ({objectId, path, filename}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
+
+    yield this.client.CreateFileDirectories({
+      libraryId,
+      objectId,
+      writeToken,
+      filePaths: [UrlJoin(path, filename)]
+    });
+
+    yield this.LoadFiles({objectId});
+  });
+
+  RenameFile = flow(function * ({objectId, path, filename, newFilename}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
+
+    yield this.client.MoveFiles({
+      libraryId,
+      objectId,
+      writeToken,
+      filePaths: [{
+        path: UrlJoin(path, filename),
+        to: UrlJoin(path, newFilename)
+      }]
+    });
+
+    yield this.LoadFiles({objectId});
+  });
+
+  DeleteFile = flow(function * ({objectId, path, filename}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
+
+    yield this.client.DeleteFiles({
+      libraryId,
+      objectId,
+      writeToken,
+      filePaths: [
+        UrlJoin(path, filename)
+      ]
+    });
+
+    yield this.LoadFiles({objectId});
+  });
+
+  UploadFiles = flow(function * ({objectId, files}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
+
+    this.activeUploadJobs[objectId] = (this.activeUploadJobs[objectId] || 0) + 1;
+
+    try {
+      yield this.client.UploadFiles({
+        objectId,
+        libraryId,
+        writeToken,
+        fileInfo: files,
+        callback: uploadStatus => runInAction(() => {
+          this.uploadStatus[objectId] = {
+            ...(this.uploadStatus[objectId] || {}),
+            ...uploadStatus
+          };
+        })
+      });
+    } catch(error) {
+      this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+    } finally {
+      this.activeUploadJobs[objectId] -= 1;
+    }
+  });
 
   get client() {
     return this.rootStore.client;

@@ -1,10 +1,12 @@
 import {flow, makeAutoObservable} from "mobx";
+import {StorageHandler} from "../helpers/Misc.js";
+
+// TODO: Move write token saving to database, load metadata from write token if present
 
 // Store for handling writing content, modification actions and undo/redo functionality
 class EditStore {
   type;
-  writeTokens = {};
-  writeServers = {};
+  writeInfo = StorageHandler.get({type: "local",  key: "write-tokens", json: true, b64: true}) || {};
   actions = {};
 
   constructor(rootStore) {
@@ -13,9 +15,20 @@ class EditStore {
     makeAutoObservable(this);
   }
 
-  WriteToken = flow(function * ({objectId}) {
-    if(this.writeTokens[objectId]) {
-      return this.writeTokens[objectId];
+  Initialize() {
+    // Ensure saved write tokens are mapped to proper nodes in client
+    Object.values(this.writeInfo).forEach(({writeToken, fabricNodeUrl}) =>
+      this.client.RecordWriteToken({writeToken, fabricNodeUrl})
+    );
+  }
+
+  WriteToken({objectId}) {
+    return this.writeInfo[objectId]?.writeToken;
+  }
+
+  InitializeWrite = flow(function * ({objectId}) {
+    if(this.WriteToken({objectId})) {
+      return this.WriteToken({objectId});
     }
 
     const libraryId = yield this.client.ContentObjectLibraryId({objectId});
@@ -25,7 +38,12 @@ class EditStore {
       objectId
     });
 
-    this.writeTokens[objectId] = writeToken;
+    this.writeInfo[objectId] = {
+      writeToken,
+      fabricNodeUrl: this.rootStore.fabricNodeUrl
+    };
+
+    this.SaveWriteInfo();
 
     return writeToken;
   });
@@ -33,23 +51,28 @@ class EditStore {
   Finalize = flow(function * ({objectId}) {
     const libraryId = yield this.client.ContentObjectLibraryId({objectId});
 
-    const writeToken = this.writeTokens[objectId];
+    const writeInfo = this.writeInfo[objectId]?.writeToken;
 
-    if(!writeToken) {
+    if(!writeInfo) {
       this.DebugLog({message: "No write token present for " + objectId, level: this.logLevels.DEBUG_LEVEL_ERROR});
     }
 
     const response = yield this.client.FinalizeContentObject({
       libraryId,
       objectId,
-      writeToken,
+      writeToken: writeInfo.writeToken,
       commitMessage: ""
     });
 
-    delete this.writeTokens[objectId];
+    delete this.writeInfo[objectId];
+    this.SaveWriteInfo();
 
     return response;
   });
+
+  SaveWriteInfo() {
+    StorageHandler.set({type: "local", key: "write-tokens", value: { ...this.writeInfo }, b64: true, json: true});
+  }
 
   get client() {
     return this.rootStore.client;

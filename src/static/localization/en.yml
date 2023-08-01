@@ -1,5 +1,6 @@
 ui:
   actions:
+    done: Done
     submit: Submit
     cancel: Cancel
     delete: Delete
@@ -13,7 +14,16 @@ ui:
     rename: Rename {filename}
     delete: Delete {filename}
     delete_confirm: Are you sure you want to delete this file?
+    directory_name: Directory Name
     new_filename: New Filename
+    upload_files: Upload files to {path}
+    upload_instructions: Drag files here or click to select files
+    columns:
+      actions: Actions
+      filename: Filename
+      progress: Progress
+      size: Size
+      type: Type
     validation:
       filename_must_be_specified: Filename must be specified
 

@@ -1,25 +1,14 @@
 import {Utils} from "@eluvio/elv-client-js";
+import {rootStore} from "Stores";
 
 export const Capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
 
-export const StorageHandler = ({type, mode, key, value, json, b64}) => {
-  try {
-    const storage = type === "session" ? sessionStorage : localStorage;
+export const StorageHandler = ({
+  get: ({type, key, json, b64}) => {
+    try {
+      const storage = type === "session" ? sessionStorage : localStorage;
 
-    if(mode === "remove") {
-      storage.removeItem(key);
-    } else if(mode === "set") {
-      if(json) {
-        value = JSON.stringify(value);
-      }
-
-      if(b64) {
-        value = Utils.B64(value);
-      }
-
-      storage.setItem(key, value);
-    } else {
-      value = storage.getItem(key);
+      let value = storage.getItem(key);
 
       if(!value) { return; }
 
@@ -32,9 +21,34 @@ export const StorageHandler = ({type, mode, key, value, json, b64}) => {
       }
 
       return value;
+    } catch(error) {
+      rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_INFO});
     }
-  } catch(error) {
-    // eslint-disable-next-line no-console
-    console.warn(`Unable to save to ${type}Storage`);
+  },
+  set: ({type, key, value, json, b64}) => {
+    try {
+      const storage = type === "session" ? sessionStorage : localStorage;
+
+      if(json) {
+        value = JSON.stringify(value);
+      }
+
+      if(b64) {
+        value = Utils.B64(value);
+      }
+
+      storage.setItem(key, value);
+    } catch(error) {
+      rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_INFO});
+    }
+  },
+  remove: () => {
+    try {
+      const storage = type === "session" ? sessionStorage : localStorage;
+
+      storage.removeItem(key);
+    } catch(error) {
+      rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_INFO});
+    }
   }
-};
+})

@@ -8,10 +8,12 @@ import {
   HoverCard,
   Image,
   Modal,
+  Progress,
   Text,
   TextInput,
   UnstyledButton
 } from "@mantine/core";
+import {Dropzone} from "@mantine/dropzone";
 import { modals } from "@mantine/modals";
 import {useForm} from "@mantine/form";
 import {useEffect, useState} from "react";
@@ -28,10 +30,144 @@ import {
   File as FileIcon,
   Photo as PhotoIcon,
   TrashX as DeleteIcon,
-  X as XIcon
+  X as XIcon,
+  Upload as UploadIcon,
 } from "tabler-icons-react";
 import UrlJoin from "url-join";
 
+const UploadStatus = observer(({selectedFiles, fileStatus}) => {
+  const [records, setRecords] = useState([]);
+  const [sortStatus, setSortStatus] = useState({columnAccessor: "progress", direction: "asc"});
+
+  useEffect(() => {
+    setRecords(
+      selectedFiles
+        .map(file => ({
+          ...file,
+          ...(fileStatus[file.filename] || {})
+        }))
+        .map(record => ({
+          ...record,
+          total: record.total || record.size,
+          progress: (record.uploaded || 0) / (record.total || record.size) * 100
+        }))
+        .sort((a, b) => (a[sortStatus.columnAccessor] < b[sortStatus.columnAccessor] ? -1 : 1) * (sortStatus.direction === "asc" ? 1 : -1))
+    );
+  }, [selectedFiles, fileStatus, sortStatus]);
+
+  if(records.length === 0) {
+    return null ;
+  }
+
+  return (
+    <DataTable
+      highlightOnHover
+      idAccessor="filename"
+      height={310}
+      records={records}
+      sortStatus={sortStatus}
+      onSortStatusChange={setSortStatus}
+      columns={[
+        { accessor: "filename", title: rootStore.l10n.ui.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
+        { accessor: "size", title: rootStore.l10n.ui.file_browser.columns.size, sortable: true, render: ({total, size}) => PrettyBytes(total || size), width: 100 },
+        {
+          accessor: "uploaded",
+          sortable: true,
+          title: rootStore.l10n.ui.file_browser.columns.progress,
+          width: 150,
+          render: ({progress}) => {
+            return <Progress value={progress} />;
+          }
+        }
+      ]}
+    />
+  );
+});
+
+const UploadForm = observer(({objectId, path, Close}) => {
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const fileStatus = rootStore.fileBrowserStore.uploadStatus[objectId] || {};
+  const uploading = fileBrowserStore.activeUploadJobs[objectId] > 0;
+
+  return (
+    <Modal
+      opened
+      centered
+      size={800}
+      overlayProps={{zIndex: 201}}
+      onClose={uploading ? () => {} : Close}
+      withCloseButton={!uploading}
+      title={LocalizeString(rootStore.l10n.ui.file_browser.upload_files, {path})}
+    >
+      <Container py="xl">
+        <Dropzone
+          multiple
+          maw={500}
+          py={50}
+          mx="auto"
+          onDrop={async (files) => {
+            if(!files || files.length === 0) { return; }
+
+            let formattedFiles = [];
+
+            setSelectedFiles([
+              ...files.map(file => {
+                const filename = (file.webkitRelativePath || file.name);
+                const filepath = UrlJoin(path, filename.replace(/^\/+/g, ""));
+
+                // Formatted request to send to client
+                formattedFiles.push({
+                  path: filepath,
+                  type: "file",
+                  mime_type: file.type,
+                  size: file.size,
+                  data: file,
+                });
+
+                // Add to list of files added
+                return {
+                  filename: (file.webkitRelativePath || file.name),
+                  filepath,
+                  size: file.size
+                };
+              }),
+              ...selectedFiles
+            ]);
+
+            fileBrowserStore.UploadFiles({objectId, files: formattedFiles});
+          }}
+        >
+          <Group position="center" align="center">
+            <Dropzone.Accept>
+              <UploadIcon />
+            </Dropzone.Accept>
+            <Dropzone.Reject>
+              <XIcon />
+            </Dropzone.Reject>
+            <Dropzone.Idle>
+              <PhotoIcon />
+            </Dropzone.Idle>
+
+            <Text size="xl" inline>
+              { rootStore.l10n.ui.file_browser.upload_instructions }
+            </Text>
+          </Group>
+        </Dropzone>
+        {
+          selectedFiles.length === 0 ? null :
+            <Container mt={50}>
+              <UploadStatus selectedFiles={selectedFiles} fileStatus={fileStatus} />
+            </Container>
+        }
+        <Group position="right" mt={50}>
+          <Button w={200} disabled={uploading} loading={uploading} onClick={Close}>
+            { uploading ? "" : rootStore.l10n.ui.actions.done }
+          </Button>
+        </Group>
+      </Container>
+    </Modal>
+  );
+});
 
 const CreateDirectoryForm = ({Create}) => {
   const [renaming, setRenaming] = useState(false);
@@ -60,7 +196,7 @@ const CreateDirectoryForm = ({Create}) => {
       >
         <TextInput
           data-autofocus
-          label={rootStore.l10n.ui.file_browser.filename}
+          label={rootStore.l10n.ui.file_browser.directory_name}
           {...form.getInputProps("filename")}
         />
         <Group mt="md">
@@ -233,7 +369,7 @@ const FileBrowserTable = observer(({
       columns={[
         {
           accessor: "type",
-          title: "Type",
+          title: rootStore.l10n.ui.file_browser.columns.type,
           width: 85,
           sortable: true,
           render: ({filename, type, url}) => {
@@ -262,11 +398,11 @@ const FileBrowserTable = observer(({
             );
           }
         },
-        { accessor: "filename", title: "Filename", sortable: true },
-        { accessor: "size", title: "Size", sortable: true, render: ({size}) => typeof size === "number" ? PrettyBytes(size) : "" },
+        { accessor: "filename", title: rootStore.l10n.ui.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
+        { accessor: "size", width: 100, title: rootStore.l10n.ui.file_browser.columns.size, sortable: true, render: ({size}) => typeof size === "number" ? PrettyBytes(size) : "" },
         {
           accessor: "actions",
-          title: "Actions",
+          title: rootStore.l10n.ui.file_browser.columns.actions,
           textAlignment: "center",
           render: ({type, filename, url, fullPath}) => {
             return (
@@ -334,11 +470,13 @@ const FileBrowserTable = observer(({
 const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Submit}) => {
   const [path, setPath] = useState("/");
   const [selectedRecords, setSelectedRecords] = useState([]);
+  const [showUploadForm, setShowUploadForm] = useState(false);
 
   const pathTokens = path.replace(/^\//, "").split("/");
 
   return (
     <Modal opened onClose={Close} centered size={1000} title={title} padding="xl">
+      { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
         <Group mb="xl" align="center">
           <ActionIcon aria-label="Back to previous directory" disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
@@ -390,7 +528,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Sub
         }
         <Group mt="xl" position="apart">
           <Group>
-            <Button variant="light" onClick={Close}>
+            <Button variant="light" onClick={() => setShowUploadForm(true)}>
               { rootStore.l10n.ui.actions.upload }
             </Button>
             <Button
