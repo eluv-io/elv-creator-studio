@@ -138,6 +138,8 @@ class FileBrowserStore {
           };
         })
       });
+
+      yield this.LoadFiles({objectId});
     } catch(error) {
       this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_ERROR});
     } finally {

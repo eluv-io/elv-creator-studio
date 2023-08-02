@@ -34,29 +34,45 @@ class DatabaseStore {
   }
 
   Initialize = flow(function * () {
-    this.rootStore.DebugTimeStart({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
+    try {
+      this.rootStore.DebugTimeStart({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
 
-    // eslint-disable-next-line no-undef
-    this.firebase = initializeApp(EluvioConfiguration["firebase-config"]);
-    this.firestore = FS.getFirestore(this.firebase);
+      // eslint-disable-next-line no-undef
+      this.firebase = initializeApp(EluvioConfiguration["firebase-config"]);
+      this.firestore = FS.getFirestore(this.firebase);
 
-    // eslint-disable-next-line no-undef
-    if(EluvioConfiguration["firebase-local"] && !this.firestore._settingsFrozen) {
-      FS.connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
-    }
+      // eslint-disable-next-line no-undef
+      if(EluvioConfiguration["firebase-local"] && !this.firestore._settingsFrozen) {
+        FS.connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
+      }
 
-    if(!this.rootStore.tenantInfo) {
+      if(this.rootStore.tenantInfo) {
+        // Tenant info retrieved from localstorage, make sure it's actually in the database
+        const tenantInfoFromDB = yield this.rootStore.databaseStore.GetDocument({
+          collection: "tenant",
+          document: "info"
+        });
+
+        if(tenantInfoFromDB) {
+          this.rootStore.DebugLog({
+            message: "Tenant info retrieved from local storage - skipping initialization",
+            level: this.logLevels.DEBUG_LEVEL_LOW
+          });
+
+          return;
+        }
+      }
+
       yield this.InitialSetup();
-    } else {
-      this.rootStore.DebugLog({message: "Tenant info retrieved from local storage - skipping initialization", level: this.logLevels.DEBUG_LEVEL_LOW});
+    } catch(error) {
+      this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+    } finally {
+      this.rootStore.DebugTimeEnd({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
     }
-
-    this.rootStore.DebugTimeEnd({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
   });
 
   InitialSetup = flow(function * () {
     this.rootStore.DebugLog({message: "Initializing database setup", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-
 
     this.rootStore.DebugLog({message: "Finding properties library", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 

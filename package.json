@@ -4,11 +4,11 @@
   "type": "module",
   "scripts": {
     "serve": "rm -rf node_modules/.vite; vite",
-    "build": "vite build",
+    "build": "rm -rf dist/* ; vite build",
     "preview": "vite preview",
     "lint": "npm-run-all -s lint-js-fix lint-scss-fix",
-    "lint-js": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "lint-js-fix": "eslint . --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint-js": "eslint ./src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint-js-fix": "eslint ./src --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "lint-scss": "npx stylelint \"src/**/*.{css,scss}\"",
     "lint-scss-fix": "npx stylelint \"src/**/*.{css,scss}\" --fix"
   },
@@ -41,7 +41,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
     "tabler-icons-react": "^1.56.0",
-    "url-join": "^5.0.0"
+    "url-join": "^5.0.0",
+    "vite-plugin-static-copy": "^0.17.0"
   },
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.0.4",

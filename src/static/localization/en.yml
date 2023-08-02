@@ -26,6 +26,12 @@ ui:
       type: Type
     validation:
       filename_must_be_specified: Filename must be specified
+  fabric_browser:
+    filter: Filter
+    columns:
+      name: Name
+      library_id: Library ID
+      object_id: Object ID
 
 initialization:
   loading:

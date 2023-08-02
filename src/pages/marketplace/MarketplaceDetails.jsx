@@ -4,6 +4,7 @@ import {Container, Title} from "@mantine/core";
 import AsyncWrapper from "Components/common/AsyncWrapper.jsx";
 import {useParams} from "react-router-dom";
 import {FileBrowserButton} from "../../components/common/FileBrowser.jsx";
+import {FabricBrowserButton} from "../../components/common/FabricBrowser.jsx";
 
 const MarketplaceDetails = observer(() => {
   const { marketplaceId } = useParams();
@@ -31,6 +32,15 @@ const MarketplaceDetails = observer(() => {
         >
           Test File Browser
         </FileBrowserButton>
+        <FabricBrowserButton
+          radius="md"
+          fabricBrowserProps={{
+            title: "Browse Fabric",
+            Submit: (record) => console.log(record)
+          }}
+        >
+          Test Fabric Browser
+        </FabricBrowserButton>
       </Container>
     </AsyncWrapper>
   );

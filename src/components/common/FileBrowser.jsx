@@ -21,6 +21,7 @@ import {rootStore, fileBrowserStore} from "Stores";
 import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
 import {LocalizeString} from "Components/common/Misc";
+import {SortTable} from "Helpers/Misc";
 
 import {
   ArrowBackUp as BackIcon,
@@ -34,7 +35,9 @@ import {
   Upload as UploadIcon,
 } from "tabler-icons-react";
 import UrlJoin from "url-join";
+import {useDebouncedValue} from "@mantine/hooks";
 
+// Table showing the status of file uploads in the upload form
 const UploadStatus = observer(({selectedFiles, fileStatus}) => {
   const [records, setRecords] = useState([]);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "progress", direction: "asc"});
@@ -51,7 +54,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
           total: record.total || record.size,
           progress: (record.uploaded || 0) / (record.total || record.size) * 100
         }))
-        .sort((a, b) => (a[sortStatus.columnAccessor] < b[sortStatus.columnAccessor] ? -1 : 1) * (sortStatus.direction === "asc" ? 1 : -1))
+        .sort(SortTable({sortStatus}))
     );
   }, [selectedFiles, fileStatus, sortStatus]);
 
@@ -84,6 +87,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
   );
 });
 
+// Form for uploading files
 const UploadForm = observer(({objectId, path, Close}) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const fileStatus = rootStore.fileBrowserStore.uploadStatus[objectId] || {};
@@ -169,6 +173,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
   );
 });
 
+// Form for creating directories
 const CreateDirectoryForm = ({Create}) => {
   const [renaming, setRenaming] = useState(false);
 
@@ -213,6 +218,7 @@ const CreateDirectoryForm = ({Create}) => {
   );
 };
 
+// Form for renaming files
 const RenameFileForm = ({filename, Rename}) => {
   const [renaming, setRenaming] = useState(false);
 
@@ -298,6 +304,7 @@ const FileBrowserTable = observer(({
   extensions,
   multiple,
   path,
+  filter,
   setPath,
   selectedRecords,
   setSelectedRecords
@@ -311,26 +318,22 @@ const FileBrowserTable = observer(({
   }, [objectId]);
 
   const directory = fileBrowserStore.Directory({objectId, path})
-    .sort((a, b) => {
-      if(sortStatus.columnAccessor !== "type" && a.type === "directory" && b.type !== "directory") {
-        return -1;
-      } else if(sortStatus.columnAccessor !== "type" && a.type !== "directory" && b.type === "directory") {
-        return 1;
-      }
+    .filter(record => !filter || record.filename.toLowerCase().includes(filter))
+    .sort(
+      SortTable({
+        sortStatus,
+        AdditionalCondition: (a, b) => {
+          // Unless specifically sorting on type, keep directories at the top of the list
+          if(sortStatus.columnAccessor === "type") { return; }
 
-      a = a[sortStatus.columnAccessor];
-      b = b[sortStatus.columnAccessor];
-
-      if(typeof a === "number") {
-        a = a || 0;
-        b = b || 0;
-      } else {
-        a = a?.toLowerCase?.() || a || "";
-        b = b?.toLowerCase?.() || b || "";
-      }
-
-      return (a < b ? -1 : 1) * (sortStatus.direction === "asc" ? 1 : -1);
-    })
+          if(a.type === "directory" && b.type !== "directory") {
+            return -1;
+          } else if(a.type !== "directory" && b.type === "directory") {
+            return 1;
+          }
+        }
+      })
+    )
     .map(file => ({...file, actions: ""}));
 
   return (
@@ -347,6 +350,7 @@ const FileBrowserTable = observer(({
           }
         }
       }}
+      withBorder
       highlightOnHover
       idAccessor="filename"
       sortStatus={sortStatus}
@@ -469,6 +473,8 @@ const FileBrowserTable = observer(({
 
 const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Submit}) => {
   const [path, setPath] = useState("/");
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
 
@@ -495,12 +501,14 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Sub
             )
           }
         </Group>
+        <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
         <Container px={0} h={550}>
           <FileBrowserTable
             objectId={objectId}
             multiple={multiple}
             extensions={extensions}
             path={path}
+            filter={debouncedFilter}
             setPath={setPath}
             selectedRecords={selectedRecords}
             setSelectedRecords={setSelectedRecords}

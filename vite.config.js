@@ -1,5 +1,6 @@
 import { defineConfig, splitVendorChunkPlugin } from "vite";
 import { fileURLToPath, URL } from "url";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import react from "@vitejs/plugin-react-swc";
 import ViteYaml from "@modyfi/vite-plugin-yaml";
 
@@ -7,15 +8,19 @@ export default defineConfig({
   plugins: [
     react(),
     splitVendorChunkPlugin(),
-    ViteYaml()
+    ViteYaml(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: "configuration.js",
+          dest: ""
+        }
+      ]
+    })
   ],
   server: {
     port: 9000,
     host: true
-  },
-  define: {
-    global: "({})",
-    process: {}
   },
   resolve: {
     // Synchronize with jsonconfig.json

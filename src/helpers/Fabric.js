@@ -1,4 +1,4 @@
-import {rootStore} from "Stores";
+import {editStore, rootStore} from "Stores";
 import UrlJoin from "url-join";
 
 export const ExtractHashFromLink = link => {
@@ -10,7 +10,27 @@ export const ExtractHashFromLink = link => {
 };
 
 export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth}) => {
-  const url = new URL(rootStore.fabricNodeUrl);
+  if(versionHash) {
+    objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
+  }
+
+  let url = new URL(
+    rootStore.network === "main" ?
+      "https://main.net955305.contentfabric.io" :
+      "https://demov3.net955210.contentfabric.io"
+  );
+
+  if(editStore.writeInfo[objectId]) {
+    writeToken = editStore.writeInfo[objectId].writeToken || writeToken;
+    const fabricNodeUrl = editStore.writeInfo[objectId]?.fabricNodeUrl;
+
+    if(!fabricNodeUrl) {
+      rootStore.DebugLog({message: `No saved node found for ${writeToken}`, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+      return "";
+    }
+
+    url = new URL(fabricNodeUrl);
+  }
 
   let urlPath = UrlJoin("s", rootStore.network);
   if(auth === "private") {

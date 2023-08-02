@@ -9,6 +9,7 @@ import UIStore from "Stores/UIStore.js";
 import DatabaseStore from "Stores/DatabaseStore.js";
 import EditStore from "Stores/EditStore";
 import FileBrowserStore from "Stores/FileBrowserStore.js";
+import FabricBrowserStore from "Stores/FabricBrowserStore.js";
 import TenantStore from "Stores/TenantStore.js";
 import MarketplaceStore from "Stores/MarketplaceStore.js";
 
@@ -22,7 +23,6 @@ class RootStore {
   network;
   signedToken;
   publicToken;
-  fabricNodeUrl;
   l10n = LocalizationEN;
 
 
@@ -43,6 +43,7 @@ class RootStore {
 
     this.uiStore = new UIStore(this);
     this.fileBrowserStore = new FileBrowserStore(this);
+    this.fabricBrowserStore = new FabricBrowserStore(this);
     this.databaseStore = new DatabaseStore(this);
     this.editStore = new EditStore(this);
     this.tenantStore = new TenantStore(this);
@@ -79,9 +80,6 @@ class RootStore {
       this.client.SetSigner({signer});
     }
 
-    this.fabricNodeUrl = yield this.client.Nodes().fabricURIs[0];
-    yield this.client.SetNodes({fabricURIs: [this.fabricNodeUrl]});
-
     this.address = yield this.client.CurrentAccountAddress();
     this.network = (yield this.client.NetworkInfo()).name;
     this.publicToken = this.utils.B64(JSON.stringify({qspace_id: yield this.client.ContentSpaceId()}));
@@ -103,21 +101,21 @@ class RootStore {
     StorageHandler.set({type: "local", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
   }
 
-  DebugLog({message, level}) {
+  DebugLog({message, level=this.logLevels.DEBUG_LEVEL_INFO}) {
     if(this.debugLevel < level) { return; }
 
     // eslint-disable-next-line no-console
     console.warn(message);
   }
 
-  DebugTimeStart({key, level}) {
+  DebugTimeStart({key, level=this.logLevels.DEBUG_LEVEL_INFO}) {
     if(this.debugLevel < level) { return; }
 
     // eslint-disable-next-line no-console
     console.time(key);
   }
 
-  DebugTimeEnd({key, level}) {
+  DebugTimeEnd({key, level=this.logLevels.DEBUG_LEVEL_INFO}) {
     if(this.debugLevel < level) { return; }
 
     // eslint-disable-next-line no-console
@@ -134,6 +132,7 @@ class RootStore {
 export const rootStore = new RootStore();
 export const uiStore = rootStore.uiStore;
 export const fileBrowserStore = rootStore.fileBrowserStore;
+export const fabricBrowserStore = rootStore.fabricBrowserStore;
 export const editStore = rootStore.editStore;
 export const databaseStore = rootStore.marketplaceStore;
 export const tenantStore = rootStore.tenantStore;
