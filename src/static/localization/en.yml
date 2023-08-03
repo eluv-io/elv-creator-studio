@@ -6,6 +6,10 @@ ui:
     delete: Delete
     upload: Upload
     remove: Remove
+    undo: Undo
+    undo_action: Undo {action}
+    redo: Redo
+    redo_action: Redo {action}
   inputs:
     add: Add {item}
     remove: Remove {item}

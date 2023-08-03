@@ -85,6 +85,7 @@ const ApplyAction = flow(function * ({
   });
 
   this.actionStack[objectId] = actionStack;
+  this.redoStack[objectId] = [];
 });
 
 const UndoQueue = function({objectId, page}) {

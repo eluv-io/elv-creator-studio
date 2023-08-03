@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 import {FileBrowserButton} from "../../components/common/FileBrowser.jsx";
 import {FabricBrowserButton} from "../../components/common/FabricBrowser.jsx";
 import {ActionInput, SimpleList} from "../../components/common/Inputs";
-import {DndListHandle} from "../../components/common/ComponentTest.jsx";
+import UndoRedo from "../../components/common/UndoRedo.jsx";
 
 const MarketplaceDetails = observer(() => {
   const { marketplaceId } = useParams();
@@ -20,6 +20,7 @@ const MarketplaceDetails = observer(() => {
       loadingMessage="Loading Marketplace"
       Load={async () => await marketplaceStore.LoadMarketplace({marketplaceId})}
     >
+      <UndoRedo store={marketplaceStore} objectId={marketplaceId} />
       <Container p="xl" fluid>
         <Title>{`Marketplaces > ${info?.branding?.name}`}</Title>
         <FileBrowserButton
