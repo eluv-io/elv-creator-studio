@@ -485,7 +485,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Sub
       { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
         <Group mb="xl" align="center">
-          <ActionIcon aria-label="Back to previous directory" disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
+          <ActionIcon aria-label={rootStore.l10n.ui.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
             <BackIcon />
           </ActionIcon>
           {

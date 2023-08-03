@@ -188,6 +188,7 @@ class DatabaseStore {
               if(object.typeId !== typeId) { return; }
 
               object.brandedName = object.metadata.public?.asset_metadata?.info?.branding?.name || "";
+              object.description = object.metadata.public?.asset_metadata?.info?.branding?.description || "";
 
               content.marketplaces[object.objectId] = object;
             });

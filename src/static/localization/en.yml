@@ -5,6 +5,11 @@ ui:
     cancel: Cancel
     delete: Delete
     upload: Upload
+    remove: Remove
+  inputs:
+    add: Add {item}
+    remove: Remove {item}
+    remove_confirm: Are you sure you want to remove this {item}?
   side_nav:
     header: Navigation
   file_browser:
@@ -18,6 +23,7 @@ ui:
     new_filename: New Filename
     upload_files: Upload files to {path}
     upload_instructions: Drag files here or click to select files
+    directory_back: Back to previous directory
     columns:
       actions: Actions
       filename: Filename
@@ -28,6 +34,7 @@ ui:
       filename_must_be_specified: Filename must be specified
   fabric_browser:
     filter: Filter
+    back_to_library_selection: Back to library selection
     columns:
       name: Name
       library_id: Library ID

@@ -32,7 +32,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
   return (
     <Container mih={300} p={0}>
       <Group mb="md" align="center">
-        <ActionIcon aria-label="Back to previous directory" variant="transparent" onClick={Back}>
+        <ActionIcon aria-label={rootStore.l10n.ui.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
           <BackIcon />
         </ActionIcon>
         <Text>{ library.name }</Text>

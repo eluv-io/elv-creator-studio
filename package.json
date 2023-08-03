@@ -15,6 +15,7 @@
   "dependencies": {
     "@eluvio/elv-client-js": "^4.0.41",
     "@emotion/react": "^11.11.1",
+    "@hello-pangea/dnd": "^16.3.0",
     "@mantine/carousel": "^6.0.17",
     "@mantine/core": "^6.0.17",
     "@mantine/dates": "^6.0.17",
@@ -33,6 +34,7 @@
     "dayjs": "^1.11.9",
     "embla-carousel-react": "^7.1.0",
     "firebase": "^10.1.0",
+    "lodash": "^4.17.21",
     "mantine-datatable": "^2.9.1",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
