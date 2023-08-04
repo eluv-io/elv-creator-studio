@@ -12,8 +12,15 @@ ui:
     redo_action: Redo {action}
   inputs:
     add: Add {item}
+    select_file: Select file for {item}
     remove: Remove {item}
-    remove_confirm: Are you sure you want to remove this {item}?
+    remove_confirm: Are you sure you want to remove {item}?
+    remove_confirm_list_item: Are you sure you want to remove this {item}?
+    actions:
+      modify_field: Modify {field}
+      add_item: Add item to {field}
+      remove_item: Remove element from {field}
+      move_item: Move item in {field}
   side_nav:
     header: Navigation
   file_browser:
@@ -43,6 +50,11 @@ ui:
       name: Name
       library_id: Library ID
       object_id: Object ID
+
+  hints:
+    hint: Hint
+    general:
+      image_alt_text: Alt text is included with images to enable screen readers to read the information for those who are visually impaired or otherwise unable to view the images. The alt text should include a description of the image as well as any information the image is meant to convey.
 
 initialization:
   loading:

@@ -10,7 +10,9 @@ import {
   createStyles,
   rem,
   Textarea,
-  Container
+  Container,
+  Image,
+  Tooltip
 } from "@mantine/core";
 import { useUncontrolled } from "@mantine/hooks";
 import { DateTimePicker } from "@mantine/dates";
@@ -18,11 +20,19 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {observer} from "mobx-react-lite";
 import {useLocation} from "react-router-dom";
 import UrlJoin from "url-join";
-
-import {X as XIcon, Plus as PlusIcon, GripVertical as GripVerticalIcon} from "tabler-icons-react";
 import {modals} from "@mantine/modals";
 import {rootStore} from "Stores";
 import {LocalizeString} from "./Misc.jsx";
+import {FabricUrl} from "../../helpers/Fabric";
+import {useState} from "react";
+import FileBrowser from "./FileBrowser";
+
+import {
+  X as IconX,
+  Plus as IconPlus,
+  GripVertical as IconGripVertical,
+  InfoCircle as IconInfoCircle
+} from "tabler-icons-react";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -88,7 +98,7 @@ const checkboxCardStyles = createStyles((theme) => ({
   },
 }));
 
-export const CheckboxCard = ({
+const CheckboxCard = ({
   checked,
   defaultChecked,
   onChange,
@@ -132,8 +142,19 @@ export const CheckboxCard = ({
   );
 };
 
-export const ActionInput = observer(({
+const HintIcon = ({hint}) => {
+  return (
+    <Tooltip label={hint} multiline width={350} events={{ hover: true, focus: true, touch: false }}>
+      <Group>
+        <IconInfoCircle alt={rootStore.l10n.ui.hints.hint} size={15} />
+      </Group>
+    </Tooltip>
+  );
+};
+
+const Input = observer(({
   type="text",
+  hint,
   store,
   objectId,
   label,
@@ -143,9 +164,15 @@ export const ActionInput = observer(({
 }) => {
   const location = useLocation();
 
+  let value = store.GetMetadata({objectId, path, field});
+
   let Component = TextInput;
   switch(type) {
+    case "input":
+      value = value || "";
+      break;
     case "textarea":
+      value = value || "";
       Component = Textarea;
       break;
   }
@@ -153,15 +180,145 @@ export const ActionInput = observer(({
   return (
     <Component
       {...componentProps}
-      label={label}
-      value={store.GetMetadata({objectId, path, field})}
+      label={
+        !hint ? label :
+          <Group spacing={5} align="center">
+            <Text>{ label }</Text>
+            <HintIcon hint={hint} />
+          </Group>
+      }
+      value={value}
       onChange={event => store.SetMetadata({objectId, page: location.pathname, path, field, value: event.target.value})}
     />
   );
 });
 
+const SingleImageInput = observer(({
+  store,
+  objectId,
+  label,
+  path,
+  field
+}) => {
+  const location = useLocation();
 
-export const SimpleList = observer(({
+  const [showFileBrowser, setShowFileBrowser] = useState(false);
+
+  const imageMetadata = store.GetMetadata({objectId, path, field});
+
+  let imageUrl;
+  if(imageMetadata) {
+    imageUrl = FabricUrl({objectId, path: imageMetadata["/"]});
+  }
+
+  return (
+    <>
+      <Paper shadow="sm" withBorder w="max-content" p={30} style={{position: "relative"}}>
+        <UnstyledButton onClick={() => setShowFileBrowser(true)}>
+          <Image
+            withPlaceholder
+            height={150}
+            width={150}
+            src={imageUrl}
+            alt={label}
+            caption={<Text>{ label }</Text>}
+            fit="contain"
+          />
+        </UnstyledButton>
+        {
+          !imageMetadata ? null :
+            <ActionIcon
+              radius="100%"
+              style={{position: "absolute", top: "3px", right: "3px"}}
+              onClick={event => {
+                event.stopPropagation();
+
+                modals.openConfirmModal({
+                  title: LocalizeString(rootStore.l10n.ui.inputs.remove, {item: label}),
+                  centered: true,
+                  children: (
+                    <Text size="sm">
+                      { LocalizeString(rootStore.l10n.ui.inputs.remove_confirm, {item: label}) }
+                    </Text>
+                  ),
+                  labels: { confirm: rootStore.l10n.ui.actions.remove, cancel: rootStore.l10n.ui.actions.cancel },
+                  confirmProps: { color: "red.6" },
+                  onConfirm: () => store.SetMetadata({page: location.pathname, objectId, path, field, value: null})
+                });
+              }}
+            >
+              <IconX size={20}/>
+            </ActionIcon>
+        }
+      </Paper>
+      <FileBrowser
+        title={LocalizeString(rootStore.l10n.ui.inputs.select_file, { item: label }, {stringOnly: true})}
+        objectId={objectId}
+        extensions="image"
+        opened={showFileBrowser}
+        Submit={({fullPath}) => {
+          store.SetMetadata({
+            page: location.pathname,
+            objectId,
+            path,
+            field,
+            value: {
+              auto_update: { tag: "latest" },
+              "/": UrlJoin("./files", fullPath)
+            }
+          });
+        }}
+        Close={() => setShowFileBrowser(false)}
+      />
+    </>
+  );
+});
+
+const ImageInput = observer(({
+  store,
+  objectId,
+  label,
+  path,
+  fields,
+  altTextField
+}) => {
+  const location = useLocation();
+
+  return (
+    <Paper withBorder shadow="sm" p="xl" w="max-content" my="xl">
+      <Text>{ label }</Text>
+      <Group my="md">
+        {
+          fields.map(({label, field}) =>
+            <SingleImageInput
+              key={`image-input-${field}`}
+              store={store}
+              objectId={objectId}
+              path={path}
+              label={label}
+              field={field}
+            />
+          )
+        }
+      </Group>
+      {
+        !altTextField ? null :
+          <Input
+            hint={rootStore.l10n.ui.hints.general.image_alt_text}
+            page={location.pathname}
+            type="textarea"
+            store={store}
+            objectId={objectId}
+            label="Alt Text"
+            path={path}
+            field={altTextField}
+          />
+      }
+    </Paper>
+  );
+});
+
+const SimpleList = observer(({
   type="text",
   store,
   objectId,
@@ -185,9 +342,9 @@ export const SimpleList = observer(({
         >
           <Group align="start">
             <div style={{cursor: "grab"}} {...provided.dragHandleProps}>
-              <GripVerticalIcon />
+              <IconGripVertical />
             </div>
-            <ActionInput
+            <Input
               type={type}
               store={store}
               objectId={objectId}
@@ -205,7 +362,7 @@ export const SimpleList = observer(({
                   centered: true,
                   children: (
                     <Text size="sm">
-                      { LocalizeString(rootStore.l10n.ui.inputs.remove_confirm, {item: fieldLabel.toLowerCase()}) }
+                      { LocalizeString(rootStore.l10n.ui.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()}) }
                     </Text>
                   ),
                   labels: { confirm: rootStore.l10n.ui.actions.remove, cancel: rootStore.l10n.ui.actions.cancel },
@@ -214,7 +371,7 @@ export const SimpleList = observer(({
                 });
               }}
             >
-              <XIcon />
+              <IconX />
             </ActionIcon>
           </Group>
         </Paper>
@@ -232,7 +389,7 @@ export const SimpleList = observer(({
           aria-label={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
           onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
         >
-          <PlusIcon />
+          <IconPlus />
         </ActionIcon>
       </Group>
       <Container p={0} m={0} w={500}>
@@ -254,3 +411,10 @@ export const SimpleList = observer(({
     </Container>
   );
 });
+
+export default {
+  Input,
+  SingleImageInput,
+  ImageInput,
+  SimpleList
+};

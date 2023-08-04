@@ -24,15 +24,15 @@ import {LocalizeString} from "Components/common/Misc";
 import {SortTable} from "Helpers/Misc";
 
 import {
-  ArrowBackUp as BackIcon,
-  EditCircle as EditIcon,
-  FileDownload as DownloadIcon,
-  Folder as FolderIcon,
-  File as FileIcon,
-  Photo as PhotoIcon,
-  TrashX as DeleteIcon,
-  X as XIcon,
-  Upload as UploadIcon,
+  ArrowBackUp as IconBackArrow,
+  EditCircle as IconEditCircle,
+  FileDownload as IconDownload,
+  Folder as IconDirectory,
+  File as IconFile,
+  Photo as IconPhoto,
+  TrashX as IconDelete,
+  X as IconX,
+  Upload as IconUpload,
 } from "tabler-icons-react";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
@@ -143,13 +143,13 @@ const UploadForm = observer(({objectId, path, Close}) => {
         >
           <Group position="center" align="center">
             <Dropzone.Accept>
-              <UploadIcon />
+              <IconUpload />
             </Dropzone.Accept>
             <Dropzone.Reject>
-              <XIcon />
+              <IconX />
             </Dropzone.Reject>
             <Dropzone.Idle>
-              <PhotoIcon />
+              <IconPhoto />
             </Dropzone.Idle>
 
             <Text size="xl" inline>
@@ -294,7 +294,7 @@ const DeleteFileButton = ({filename, Delete}) => {
         });
       }}
     >
-      <DeleteIcon/>
+      <IconDelete/>
     </ActionIcon>
   );
 };
@@ -336,13 +336,16 @@ const FileBrowserTable = observer(({
     )
     .map(file => ({...file, actions: ""}));
 
+  const isRecordSelectable = ({type, ext}) =>
+    type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext));
+
   return (
     <DataTable
       fetching={loading}
       onRowClick={(record) => {
         if(record.type === "directory") {
           setPath(UrlJoin(path, record.filename));
-        } else {
+        } else if(isRecordSelectable({type: record.type, ext: record.ext})) {
           if(selectedRecords.find(selectedRecord => selectedRecord.fullPath === record.fullPath)) {
             setSelectedRecords(selectedRecords.filter(selectedRecord => selectedRecord.fullPath !== record.fullPath));
           } else {
@@ -369,7 +372,7 @@ const FileBrowserTable = observer(({
       allRecordsSelectionCheckboxProps={{style: multiple ? {} : {display: "none"}}}
       // Hide directory selection checkbox
       getRecordSelectionCheckboxProps={({type}) => ({style: type === "directory" ? {display: "none"} : {}})}
-      isRecordSelectable={({type, ext}) => type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext))}
+      isRecordSelectable={isRecordSelectable}
       columns={[
         {
           accessor: "type",
@@ -379,7 +382,7 @@ const FileBrowserTable = observer(({
           render: ({filename, type, url}) => {
             if(type !== "image") {
               return (
-                type === "directory" ? <FolderIcon /> : <FileIcon />
+                type === "directory" ? <IconDirectory /> : <IconFile />
               );
             }
 
@@ -387,7 +390,7 @@ const FileBrowserTable = observer(({
               <HoverCard width={200} shadow="md">
                 <HoverCard.Target>
                   <Container p={0} style={{cursor: "pointer"}}>
-                    <PhotoIcon />
+                    <IconPhoto />
                   </Container>
                 </HoverCard.Target>
                 <HoverCard.Dropdown ml={85} bg="gray.1" p="xl" >
@@ -437,7 +440,7 @@ const FileBrowserTable = observer(({
                         })
                       }
                     >
-                      <EditIcon/>
+                      <IconEditCircle/>
                     </ActionIcon>
                 }
                 {
@@ -450,7 +453,7 @@ const FileBrowserTable = observer(({
                       title={LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true})}
                       aria-label={LocalizeString(rootStore.l10n.ui.file_browser.download, {filename})}
                     >
-                      <DownloadIcon/>
+                      <IconDownload/>
                     </ActionIcon>
                 }
                 <DeleteFileButton
@@ -471,22 +474,26 @@ const FileBrowserTable = observer(({
   );
 });
 
-const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Submit}) => {
+const FileBrowser = observer(({objectId, multiple, title, extensions, opened=true, Close, Submit}) => {
   const [path, setPath] = useState("/");
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
 
+  if(extensions === "image") {
+    extensions = fileBrowserStore.imageTypes;
+  }
+
   const pathTokens = path.replace(/^\//, "").split("/");
 
   return (
-    <Modal opened onClose={Close} centered size={1000} title={title} padding="xl">
+    <Modal opened={opened} onClose={Close} centered size={1000} title={title} padding="xl">
       { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
-        <Group mb="xl" align="center">
+        <Group mb="xs" align="center">
           <ActionIcon aria-label={rootStore.l10n.ui.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
-            <BackIcon />
+            <IconBackArrow />
           </ActionIcon>
           {
             pathTokens.map((token, index) =>
@@ -502,7 +509,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Sub
           }
         </Group>
         <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
-        <Container px={0} h={550}>
+        <Container px={0} h={300} >
           <FileBrowserTable
             objectId={objectId}
             multiple={multiple}
@@ -525,7 +532,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, Close, Sub
                       <ActionIcon
                         onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}
                       >
-                        <XIcon size={15} />
+                        <IconX size={15} />
                       </ActionIcon>
                       <Code bg="transparent" >{ fullPath }</Code>
                     </Group>

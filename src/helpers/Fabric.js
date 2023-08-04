@@ -9,9 +9,13 @@ export const ExtractHashFromLink = link => {
   }
 };
 
-export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth}) => {
+export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth, resolve=true}) => {
   if(versionHash) {
     objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
+  } else {
+    // Ensure library ID is loaded for this object
+    rootStore.LibraryId({objectId});
+    libraryId = libraryId || rootStore.libraryIds[objectId];
   }
 
   let url = new URL(
@@ -44,6 +48,10 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path=""
   }
 
   url.pathname = urlPath;
+
+  if(resolve) {
+    url.searchParams.set("resolve", "true");
+  }
 
   return url.toString();
 };

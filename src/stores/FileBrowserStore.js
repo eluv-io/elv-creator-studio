@@ -5,7 +5,6 @@ import UrlJoin from "url-join";
 class FileBrowserStore {
   files = {};
   imageTypes = ["gif", "jpg", "jpeg", "png", "svg", "webp"];
-  libraryIds = {};
 
   activeUploadJobs = {};
   uploadStatus = {};
@@ -25,7 +24,7 @@ class FileBrowserStore {
       .filter(pathElement => pathElement)
       .forEach(pathElement => directory = directory?.[pathElement]);
 
-    const libraryId = this.libraryIds[objectId];
+    const libraryId = this.rootStore.libraryIds[objectId];
     const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
 
     // Transform from fabric file metadata
@@ -48,7 +47,7 @@ class FileBrowserStore {
             filename,
             fullPath: UrlJoin(path, filename),
             ext,
-            url: FabricUrl({libraryId: libraryId, objectId, writeToken, path: UrlJoin("files", path, filename), auth: "private"}),
+            url: FabricUrl({libraryId, objectId, writeToken, path: UrlJoin("files", path, filename), auth: "private"}),
             size: file["."].size,
             encrypted: file.encryption?.scheme !== "none"
           };
@@ -58,10 +57,8 @@ class FileBrowserStore {
   }
 
   LoadFiles = flow(function * ({objectId}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
-
-    this.libraryIds[objectId] = libraryId;
 
     this.files[objectId] = (yield this.client.ContentObjectMetadata({
       libraryId,
@@ -73,7 +70,7 @@ class FileBrowserStore {
   });
 
   CreateDirectory = flow(function * ({objectId, path, filename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
 
     yield this.client.CreateFileDirectories({
@@ -87,7 +84,7 @@ class FileBrowserStore {
   });
 
   RenameFile = flow(function * ({objectId, path, filename, newFilename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
 
     yield this.client.MoveFiles({
@@ -104,7 +101,7 @@ class FileBrowserStore {
   });
 
   DeleteFile = flow(function * ({objectId, path, filename}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
 
     yield this.client.DeleteFiles({
@@ -120,7 +117,7 @@ class FileBrowserStore {
   });
 
   UploadFiles = flow(function * ({objectId, files}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
 
     this.activeUploadJobs[objectId] = (this.activeUploadJobs[objectId] || 0) + 1;

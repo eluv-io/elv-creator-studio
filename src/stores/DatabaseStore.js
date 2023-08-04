@@ -267,7 +267,7 @@ class DatabaseStore {
             if(!templateHash) { return;}
 
             const templateId = this.utils.DecodeVersionHash(templateHash).objectId;
-            const templateLibraryId = await this.client.ContentObjectLibraryId({objectId: templateId});
+            const templateLibraryId = await this.rootStore.LibraryId({objectId: templateId});
 
             if(!content.types.template) {
               const objectInfo = await this.client.ContentObject({libraryId: templateLibraryId, objectId: templateId});
@@ -356,7 +356,7 @@ class DatabaseStore {
             if(!mediaHash) { return; }
 
             const mediaId = this.utils.DecodeVersionHash(mediaHash).objectId;
-            const mediaLibraryId = await this.client.ContentObjectLibraryId({objectId: mediaId});
+            const mediaLibraryId = await this.rootStore.LibraryId({objectId: mediaId});
 
             if(!content.types.mezzanine) {
               const objectInfo = await this.client.ContentObject({libraryId: mediaLibraryId, objectId: mediaId});

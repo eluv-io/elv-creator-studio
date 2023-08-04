@@ -6,7 +6,7 @@ import {StorageHandler} from "../helpers/Misc.js";
 // Store for handling writing content, modification actions and undo/redo functionality
 class EditStore {
   type;
-  writeInfo = StorageHandler.get({type: "local",  key: "write-tokens", json: true, b64: true}) || {};
+  writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
   actions = {};
 
   constructor(rootStore) {
@@ -17,9 +17,14 @@ class EditStore {
 
   Initialize() {
     // Ensure saved write tokens are mapped to proper nodes in client
-    Object.values(this.writeInfo).forEach(({writeToken, fabricNodeUrl}) =>
-      this.client.RecordWriteToken({writeToken, fabricNodeUrl})
-    );
+    Object.values(this.writeInfo).forEach(({writeToken, fabricNodeUrl}) => {
+      if(!fabricNodeUrl) {
+        this.DebugLog({message: `No fabric node URL set for ${writeToken}`, level: this.logLevels.DEBUG_LEVEL_ERROR});
+        return;
+      }
+
+      this.client.RecordWriteToken({writeToken, fabricNodeUrl});
+    });
   }
 
   WriteToken({objectId}) {
@@ -31,7 +36,7 @@ class EditStore {
       return this.WriteToken({objectId});
     }
 
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
 
     const { writeToken } = yield this.client.EditContentObject({
       libraryId,
@@ -40,7 +45,7 @@ class EditStore {
 
     this.writeInfo[objectId] = {
       writeToken,
-      fabricNodeUrl: this.rootStore.fabricNodeUrl
+      fabricNodeUrl: yield this.client.WriteTokenNodeUrl({writeToken})
     };
 
     this.SaveWriteInfo();
@@ -49,7 +54,7 @@ class EditStore {
   });
 
   Finalize = flow(function * ({objectId}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId});
+    const libraryId = yield this.rootStore.LibraryId({objectId});
 
     const writeInfo = this.writeInfo[objectId]?.writeToken;
 
@@ -71,7 +76,7 @@ class EditStore {
   });
 
   SaveWriteInfo() {
-    StorageHandler.set({type: "local", key: "write-tokens", value: { ...this.writeInfo }, b64: true, json: true});
+    StorageHandler.set({type: "local", key: "write-info", value: { ...this.writeInfo }, b64: true, json: true});
   }
 
   get client() {

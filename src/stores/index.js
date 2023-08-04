@@ -18,6 +18,8 @@ import LocalizationEN from "Assets/localization/en.yml";
 class RootStore {
   loaded = false;
 
+  libraryIds = {};
+
   client;
   address;
   network;
@@ -95,6 +97,20 @@ class RootStore {
     this.loaded = true;
 
     this.DebugTimeEnd({key: "Root store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
+  });
+
+  LibraryId = flow(function * ({objectId, versionHash}) {
+    if(!objectId && !versionHash) { return; }
+
+    if(versionHash) {
+      objectId = this.utils.DecodeVersionHash(versionHash).objectId;
+    }
+
+    if(!this.libraryIds[objectId]) {
+      this.libraryIds[objectId] = yield this.client.ContentObjectLibraryId({objectId});
+    }
+
+    return this.libraryIds[objectId];
   });
 
   SetTenantInfo(tenantInfo) {

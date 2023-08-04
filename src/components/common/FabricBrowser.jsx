@@ -5,7 +5,7 @@ import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore} from "Stores";
 import {SortTable} from "Helpers/Misc.js";
 import {useDebouncedValue} from "@mantine/hooks";
-import {ArrowBackUp as BackIcon} from "tabler-icons-react";
+import {ArrowBackUp as IconBackArrow} from "tabler-icons-react";
 
 const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
   const [filter, setFilter] = useState("");
@@ -33,7 +33,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
     <Container mih={300} p={0}>
       <Group mb="md" align="center">
         <ActionIcon aria-label={rootStore.l10n.ui.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
-          <BackIcon />
+          <IconBackArrow />
         </ActionIcon>
         <Text>{ library.name }</Text>
       </Group>

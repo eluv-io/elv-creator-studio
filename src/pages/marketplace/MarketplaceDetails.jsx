@@ -5,7 +5,7 @@ import AsyncWrapper from "Components/common/AsyncWrapper.jsx";
 import {useParams} from "react-router-dom";
 import {FileBrowserButton} from "../../components/common/FileBrowser.jsx";
 import {FabricBrowserButton} from "../../components/common/FabricBrowser.jsx";
-import {ActionInput, SimpleList} from "../../components/common/Inputs";
+import Inputs from "Components/common/Inputs";
 import UndoRedo from "../../components/common/UndoRedo.jsx";
 
 const MarketplaceDetails = observer(() => {
@@ -21,7 +21,7 @@ const MarketplaceDetails = observer(() => {
       Load={async () => await marketplaceStore.LoadMarketplace({marketplaceId})}
     >
       <UndoRedo store={marketplaceStore} objectId={marketplaceId} />
-      <Container p="xl" fluid>
+      <Container p="xl" m={0}>
         <Title>{`Marketplaces > ${info?.branding?.name}`}</Title>
         <FileBrowserButton
           radius="md"
@@ -44,14 +44,14 @@ const MarketplaceDetails = observer(() => {
         >
           Test Fabric Browser
         </FabricBrowserButton>
-        <ActionInput
+        <Inputs.Input
           label="name"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding"
           field="name"
         />
-        <ActionInput
+        <Inputs.Input
           label="description"
           type="textarea"
           store={marketplaceStore}
@@ -59,20 +59,48 @@ const MarketplaceDetails = observer(() => {
           path="/public/asset_metadata/info/branding"
           field="description"
         />
-        <ActionInput
+        <Inputs.Input
           label="tabs -> listings"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding/tabs"
           field="listings"
         />
-        <SimpleList
+        <Inputs.SimpleList
           label="Tags"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding"
           field="tags"
           fieldLabel="Tag"
+        />
+
+
+        <Inputs.SingleImageInput
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/branding"
+          field="card_banner_front"
+          label="Card Banner (Front)"
+        />
+        <Inputs.SingleImageInput
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/branding"
+          field="card_banner_back"
+          label="Card Banner (Back)"
+        />
+
+        <Inputs.ImageInput
+          label="Marketplace Card Images"
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/branding"
+          altTextField="card_banner_alt"
+          fields={[
+            { field: "card_banner_front", label: "Card Banner (Front)" },
+            //{ field: "card_banner_back", label: "Card Banner (Back)" },
+          ]}
         />
       </Container>
     </AsyncWrapper>
