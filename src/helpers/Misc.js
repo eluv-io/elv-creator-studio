@@ -24,6 +24,22 @@ export const SortTable = ({sortStatus, AdditionalCondition}) => {
   };
 };
 
+export const DownloadFromUrl = async ({url, filename}) => {
+  let element = document.createElement("a");
+  element.href = url;
+  element.download = filename;
+
+  element.style.display = "none";
+  element.target = "_blank";
+
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+  window.URL.revokeObjectURL(url);
+};
+
 export const StorageHandler = ({
   get: ({type, key, json, b64}) => {
     try {

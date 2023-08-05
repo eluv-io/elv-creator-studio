@@ -12,7 +12,7 @@ import {
   Textarea,
   Container,
   Image,
-  Tooltip
+  Tooltip, NumberInput
 } from "@mantine/core";
 import { useUncontrolled } from "@mantine/hooks";
 import { DateTimePicker } from "@mantine/dates";
@@ -175,6 +175,14 @@ const Input = observer(({
       value = value || "";
       Component = Textarea;
       break;
+    case "number":
+      Component = NumberInput;
+      break;
+    case "checkbox":
+      Component = Checkbox;
+      componentProps.checked = !!value;
+      value = undefined;
+      break;
   }
 
   return (
@@ -188,7 +196,13 @@ const Input = observer(({
           </Group>
       }
       value={value}
-      onChange={event => store.SetMetadata({objectId, page: location.pathname, path, field, value: event.target.value})}
+      onChange={event => {
+        const value = type === "checkbox" ? event.target.checked :
+          event?.target ?
+            event.target.value :
+            event;
+        store.SetMetadata({objectId, page: location.pathname, path, field, value});
+      }}
     />
   );
 });
@@ -379,7 +393,6 @@ const SimpleList = observer(({
     </Draggable>
   ));
 
-
   return (
     <Container p={0} m={0} my={20}>
       <Group mb={10}>
@@ -414,6 +427,15 @@ const SimpleList = observer(({
 
 export default {
   Input,
+  Text: props => <Input {...props} type="text" />,
+  TextArea: props => <Input {...props} type="textarea" />,
+  Integer: ({min, max, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
+  Number: ({min, max, step, precision, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
+
+  Checkbox,
+
   SingleImageInput,
   ImageInput,
   SimpleList

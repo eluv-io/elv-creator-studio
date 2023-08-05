@@ -1,6 +1,7 @@
 import {flow, makeAutoObservable, runInAction} from "mobx";
 import {FabricUrl} from "../helpers/Fabric.js";
 import UrlJoin from "url-join";
+import {DownloadFromUrl} from "../helpers/Misc";
 
 class FileBrowserStore {
   files = {};
@@ -49,7 +50,7 @@ class FileBrowserStore {
             ext,
             url: FabricUrl({libraryId, objectId, writeToken, path: UrlJoin("files", path, filename), auth: "private"}),
             size: file["."].size,
-            encrypted: file.encryption?.scheme !== "none"
+            encrypted: file["."].encryption?.scheme !== "none"
           };
         }
       })
@@ -128,6 +129,7 @@ class FileBrowserStore {
         libraryId,
         writeToken,
         fileInfo: files,
+        encryption: "cgck",
         callback: uploadStatus => runInAction(() => {
           this.uploadStatus[objectId] = {
             ...(this.uploadStatus[objectId] || {}),
@@ -143,6 +145,29 @@ class FileBrowserStore {
       this.activeUploadJobs[objectId] -= 1;
     }
   });
+
+  async DownloadEncryptedFile({objectId, path, filename, callback}) {
+    try {
+      const libraryId = await this.rootStore.LibraryId({objectId});
+      const writeToken = await this.rootStore.editStore.InitializeWrite({objectId});
+
+      const blob = await this.client.DownloadFile({
+        libraryId,
+        objectId,
+        writeToken,
+        filePath: UrlJoin(path, filename),
+        format: "blob",
+        callback
+      });
+
+      await DownloadFromUrl({
+        url: window.URL.createObjectURL(blob),
+        filename
+      });
+    } catch(error) {
+      this.DebugLog({message: "Download failed", error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+    }
+  }
 
   get client() {
     return this.rootStore.client;

@@ -13,7 +13,7 @@
     "lint-scss-fix": "npx stylelint \"src/**/*.{css,scss}\" --fix"
   },
   "dependencies": {
-    "@eluvio/elv-client-js": "^4.0.41",
+    "@eluvio/elv-client-js": "^4.0.44",
     "@emotion/react": "^11.11.1",
     "@hello-pangea/dnd": "^16.3.0",
     "@mantine/carousel": "^6.0.17",

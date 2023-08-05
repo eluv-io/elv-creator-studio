@@ -44,28 +44,58 @@ const MarketplaceDetails = observer(() => {
         >
           Test Fabric Browser
         </FabricBrowserButton>
-        <Inputs.Input
+        <Inputs.Text
+          componentProps={{description: "Test Description"}}
           label="name"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding"
           field="name"
         />
-        <Inputs.Input
+        <Inputs.TextArea
+          componentProps={{description: "Test Description"}}
           label="description"
-          type="textarea"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding"
           field="description"
         />
-        <Inputs.Input
+        <Inputs.Text
           label="tabs -> listings"
           store={marketplaceStore}
           objectId={marketplaceId}
           path="/public/asset_metadata/info/branding/tabs"
           field="listings"
         />
+        <Inputs.Integer
+          label="price integer"
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/items/0/price"
+          field="USD"
+        />
+        <Inputs.Number
+          label="price number"
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/items/0/price"
+          field="USD"
+          step={0.01}
+          precision={2}
+          componentProps={{description: "Test Description"}}
+        />
+
+        <Inputs.Checkbox
+          label="show"
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/branding"
+          field="show"
+          componentProps={{description: "Test Description"}}
+        />
+
+
+
         <Inputs.SimpleList
           label="Tags"
           store={marketplaceStore}
@@ -76,21 +106,6 @@ const MarketplaceDetails = observer(() => {
         />
 
 
-        <Inputs.SingleImageInput
-          store={marketplaceStore}
-          objectId={marketplaceId}
-          path="/public/asset_metadata/info/branding"
-          field="card_banner_front"
-          label="Card Banner (Front)"
-        />
-        <Inputs.SingleImageInput
-          store={marketplaceStore}
-          objectId={marketplaceId}
-          path="/public/asset_metadata/info/branding"
-          field="card_banner_back"
-          label="Card Banner (Back)"
-        />
-
         <Inputs.ImageInput
           label="Marketplace Card Images"
           store={marketplaceStore}
@@ -99,7 +114,7 @@ const MarketplaceDetails = observer(() => {
           altTextField="card_banner_alt"
           fields={[
             { field: "card_banner_front", label: "Card Banner (Front)" },
-            //{ field: "card_banner_back", label: "Card Banner (Back)" },
+            { field: "card_banner_back", label: "Card Banner (Back)" },
           ]}
         />
       </Container>

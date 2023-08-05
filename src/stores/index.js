@@ -117,11 +117,18 @@ class RootStore {
     StorageHandler.set({type: "local", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
   }
 
-  DebugLog({message, level=this.logLevels.DEBUG_LEVEL_INFO}) {
+  DebugLog({message, error, level=this.logLevels.DEBUG_LEVEL_INFO}) {
     if(this.debugLevel < level) { return; }
 
-    // eslint-disable-next-line no-console
-    console.warn(message);
+    if(message) {
+      // eslint-disable-next-line no-console
+      console.warn(message);
+    }
+
+    if(error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }
 
   DebugTimeStart({key, level=this.logLevels.DEBUG_LEVEL_INFO}) {

@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   Progress,
+  RingProgress,
   Text,
   TextInput,
   UnstyledButton
@@ -22,20 +23,23 @@ import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
 import {LocalizeString} from "Components/common/Misc";
 import {SortTable} from "Helpers/Misc";
+import UrlJoin from "url-join";
+import {useDebouncedValue} from "@mantine/hooks";
 
 import {
   ArrowBackUp as IconBackArrow,
   EditCircle as IconEditCircle,
   FileDownload as IconDownload,
+  CircleCheck as IconDownloadCompleted,
   Folder as IconDirectory,
   File as IconFile,
+  LockSquare as IconFileEncrypted,
   Photo as IconPhoto,
   TrashX as IconDelete,
   X as IconX,
-  Upload as IconUpload,
+  Upload as IconUpload
 } from "tabler-icons-react";
-import UrlJoin from "url-join";
-import {useDebouncedValue} from "@mantine/hooks";
+
 
 // Table showing the status of file uploads in the upload form
 const UploadStatus = observer(({selectedFiles, fileStatus}) => {
@@ -263,6 +267,60 @@ const RenameFileForm = ({filename, Rename}) => {
   );
 };
 
+const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
+  const [downloading, setDownloading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const commonProps = {
+    color: "blue.5",
+    title: LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true}),
+    "aria-label": LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true})
+  };
+
+  if(encrypted) {
+    return (
+      <ActionIcon
+        {...commonProps}
+        sx={{"&[data-loading]::before": { backgroundColor: "rgba(0,0,0,0)"}}}
+        onClick={async () => {
+          try {
+            if(downloading) { return; }
+
+            setDownloading(true);
+
+            await fileBrowserStore.DownloadEncryptedFile({
+              objectId,
+              path,
+              filename,
+              callback: ({bytesFinished, bytesTotal}) => setProgress((bytesFinished || 0) / (bytesTotal || 1) * 100)
+            });
+          } catch(error) {
+            rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+          }
+        }}
+      >
+        {
+          !downloading ? <IconDownload enableBackground={false} /> :
+            progress >= 100 ?
+              <IconDownloadCompleted /> :
+              <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "blue.5"}]}/>
+        }
+      </ActionIcon>
+    );
+  }
+
+  return (
+    <ActionIcon
+      {...commonProps}
+      component="a"
+      href={url}
+      target="_blank"
+    >
+      <IconDownload/>
+    </ActionIcon>
+  );
+};
+
 const DeleteFileButton = ({filename, Delete}) => {
   const [deleting, setDeleting] = useState(false);
 
@@ -379,10 +437,11 @@ const FileBrowserTable = observer(({
           title: rootStore.l10n.ui.file_browser.columns.type,
           width: 85,
           sortable: true,
-          render: ({filename, type, url}) => {
-            if(type !== "image") {
+          render: ({filename, type, encrypted, url}) => {
+            if(type !== "image" || encrypted) {
               return (
-                type === "directory" ? <IconDirectory /> : <IconFile />
+                type === "directory" ? <IconDirectory /> :
+                  encrypted ? <IconFileEncrypted /> : <IconFile />
               );
             }
 
@@ -411,7 +470,7 @@ const FileBrowserTable = observer(({
           accessor: "actions",
           title: rootStore.l10n.ui.file_browser.columns.actions,
           textAlignment: "center",
-          render: ({type, filename, url, fullPath}) => {
+          render: ({type, filename, url, fullPath, encrypted}) => {
             return (
               <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
                 {
@@ -445,16 +504,13 @@ const FileBrowserTable = observer(({
                 }
                 {
                   type === "directory" ? null :
-                    <ActionIcon
-                      color="blue.5"
-                      component="a"
-                      href={url}
-                      target="_blank"
-                      title={LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true})}
-                      aria-label={LocalizeString(rootStore.l10n.ui.file_browser.download, {filename})}
-                    >
-                      <IconDownload/>
-                    </ActionIcon>
+                    <DownloadFileButton
+                      objectId={objectId}
+                      path={path}
+                      filename={filename}
+                      encrypted={encrypted}
+                      url={url}
+                    />
                 }
                 <DeleteFileButton
                   filename={filename}

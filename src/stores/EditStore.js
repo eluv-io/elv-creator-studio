@@ -56,7 +56,7 @@ class EditStore {
   Finalize = flow(function * ({objectId}) {
     const libraryId = yield this.rootStore.LibraryId({objectId});
 
-    const writeInfo = this.writeInfo[objectId]?.writeToken;
+    const writeInfo = this.writeInfo[objectId];
 
     if(!writeInfo) {
       this.DebugLog({message: "No write token present for " + objectId, level: this.logLevels.DEBUG_LEVEL_ERROR});
