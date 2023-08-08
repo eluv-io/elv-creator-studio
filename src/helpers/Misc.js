@@ -24,6 +24,15 @@ export const SortTable = ({sortStatus, AdditionalCondition}) => {
   };
 };
 
+export const ParseDate = date => {
+  try {
+    date = new Date(date);
+
+    return date instanceof Date && !isNaN(date) ? date : undefined;
+  // eslint-disable-next-line no-empty
+  } catch(error) {}
+};
+
 export const DownloadFromUrl = async ({url, filename}) => {
   let element = document.createElement("a");
   element.href = url;

@@ -8,6 +8,15 @@ export const ACTIONS = {
     stackable: true,
     collapsible: true
   },
+  TOGGLE_FIELD: {
+    stackable: false,
+    collapsible: true
+  },
+  SET_DEFAULT: {
+    invisible: true,
+    stackable: false,
+    collapsible: true
+  },
   INSERT_LIST_ELEMENT: {
     stackable: false,
     collapsible: false
@@ -34,7 +43,7 @@ const GetMetadata = function({objectId, path, field}) {
   return Get(this[this.objectsMapKey][objectId].metadata, pathComponents);
 };
 
-const SetMetadata = function({objectId, page, path, field, value}) {
+const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, field, value}) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -48,7 +57,7 @@ const SetMetadata = function({objectId, page, path, field, value}) {
     objectId,
     page,
     key: fullPath,
-    actionType: "MODIFY_FIELD",
+    actionType,
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -57,6 +66,11 @@ const SetMetadata = function({objectId, page, path, field, value}) {
       metadata: value
     })
   });
+};
+
+// Set a default value of a field that will not be subject to the undo/redo flow
+const SetDefaultValue = function({objectId, path, field, value}) {
+  this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, value});
 };
 
 const ListAction = function({actionType, objectId, page, path, field, index, newIndex, value}) {
@@ -263,6 +277,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
 
   storeClass.prototype.GetMetadata = GetMetadata;
   storeClass.prototype.SetMetadata = SetMetadata;
+  storeClass.prototype.SetDefaultValue = SetDefaultValue;
   storeClass.prototype.ListAction = ListAction;
   storeClass.prototype.InsertListElement = InsertListElement;
   storeClass.prototype.MoveListElement = MoveListElement;

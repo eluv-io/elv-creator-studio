@@ -16,6 +16,9 @@ ui:
     remove: Remove {item}
     remove_confirm: Are you sure you want to remove {item}?
     remove_confirm_list_item: Are you sure you want to remove this {item}?
+    show_editor: Show Editor
+    hide_editor: Hide Editor
+    clear: Clear this field
     actions:
       modify_field: Modify {field}
       add_item: Add item to {field}
@@ -33,7 +36,8 @@ ui:
     directory_name: Directory Name
     new_filename: New Filename
     upload_files: Upload files to {path}
-    upload_instructions: Drag files here or click to select files
+    upload_instructions_drag: Drag files here
+    upload_instructions_click: or click to select files
     directory_back: Back to previous directory
     columns:
       actions: Actions
@@ -54,7 +58,7 @@ ui:
   hints:
     hint: Hint
     general:
-      image_alt_text: Alt text is included with images to enable screen readers to read the information for those who are visually impaired or otherwise unable to view the images. The alt text should include a description of the image as well as any information the image is meant to convey.
+      image_alt_text: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
 
 initialization:
   loading:

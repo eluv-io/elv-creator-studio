@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {ActionIcon, Button, Container, Group, Modal, Text, TextInput} from "@mantine/core";
 import {DataTable} from "mantine-datatable";
-import {rootStore, fabricBrowserStore} from "Stores";
+import {rootStore, fabricBrowserStore, uiStore} from "Stores";
 import {SortTable} from "Helpers/Misc.js";
 import {useDebouncedValue} from "@mantine/hooks";
-import {ArrowBackUp as IconBackArrow} from "tabler-icons-react";
+import {IconArrowBackUp as IconBackArrow} from "@tabler/icons-react";
 
 const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
   const [filter, setFilter] = useState("");
@@ -30,7 +30,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
     .sort(SortTable({sortStatus}));
 
   return (
-    <Container mih={300} p={0}>
+    <Container p={0}>
       <Group mb="md" align="center">
         <ActionIcon aria-label={rootStore.l10n.ui.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
           <IconBackArrow />
@@ -39,7 +39,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
       </Group>
       <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
       <DataTable
-        height={500}
+        height={uiStore.viewportHeight - 400}
         fetching={loading}
         idAccessor="objectId"
         sortStatus={sortStatus}
@@ -74,10 +74,10 @@ const LibraryBrowser = observer(({Submit}) => {
     .sort(SortTable({sortStatus}));
 
   return (
-    <Container mih={300} p={0}>
+    <Container p={0}>
       <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
       <DataTable
-        height={500}
+        height={uiStore.viewportHeight - 400}
         fetching={loading}
         withBorder
         idAccessor="libraryId"

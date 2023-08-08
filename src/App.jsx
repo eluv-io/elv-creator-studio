@@ -1,15 +1,16 @@
 import {observer} from "mobx-react-lite";
-import {BrowserRouter, Outlet, Routes, Route} from "react-router-dom";
+import {BrowserRouter, Outlet, Routes, Route, useParams} from "react-router-dom";
 
 import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
 import {ModalsProvider} from "@mantine/modals";
 import MantineTheme from "Assets/MantineTheme";
 
-import {rootStore, uiStore} from "Stores";
+import {marketplaceStore, rootStore, uiStore} from "Stores";
 import AppHeader from "Components/header/AppHeader.jsx";
 
 import MarketplaceList from "Pages/marketplace/MarketplaceList.jsx";
 import MarketplaceDetails from "Pages/marketplace/MarketplaceDetails.jsx";
+import AsyncWrapper from "./components/common/AsyncWrapper.jsx";
 
 
 const Components = observer(() => {
@@ -68,6 +69,19 @@ const Layout = observer(() => {
   );
 });
 
+const MarketplaceWrapper = observer(({Component}) => {
+  const { marketplaceId } = useParams();
+
+  return (
+    <AsyncWrapper
+      loadingMessage="Loading Marketplace"
+      Load={async () => await marketplaceStore.LoadMarketplace({marketplaceId})}
+    >
+      {() => <Component />}
+    </AsyncWrapper>
+  );
+});
+
 const AppRoutes = observer(() => {
   return (
     <BrowserRouter>
@@ -77,7 +91,7 @@ const AppRoutes = observer(() => {
           <Route path="/page1" element={<Page1/>}/>
           <Route path="/page2" element={<Page2/>}/>
           <Route path="/marketplaces" element={<MarketplaceList/>}/>
-          <Route path="/marketplaces/:marketplaceId" element={<MarketplaceDetails/>}/>
+          <Route path="/marketplaces/:marketplaceId" element={<MarketplaceWrapper Component={MarketplaceDetails} />}/>
         </Route>
       </Routes>
     </BrowserRouter>

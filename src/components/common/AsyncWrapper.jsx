@@ -23,7 +23,8 @@ const AsyncWrapper = observer(({children, loadingMessage, Load}) => {
 
   }, [loadingMessage, Load]);
 
-  return loaded ? children : null;
+  return !loaded ? null :
+    typeof children === "function" ? children() : children;
 });
 
 export default AsyncWrapper;

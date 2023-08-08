@@ -1,4 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
+  Input as MantineInput,
+  Button,
   Paper,
   ActionIcon,
   Group,
@@ -7,15 +11,16 @@ import {
   Text,
   Select,
   TextInput,
-  createStyles,
-  rem,
   Textarea,
   Container,
   Image,
-  Tooltip, NumberInput
+  Tooltip,
+  NumberInput,
+  Stack,
+  MultiSelect,
+  JsonInput, PasswordInput
 } from "@mantine/core";
-import { useUncontrolled } from "@mantine/hooks";
-import { DateTimePicker } from "@mantine/dates";
+import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {observer} from "mobx-react-lite";
 import {useLocation} from "react-router-dom";
@@ -24,151 +29,76 @@ import {modals} from "@mantine/modals";
 import {rootStore} from "Stores";
 import {LocalizeString} from "./Misc.jsx";
 import {FabricUrl} from "../../helpers/Fabric";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
+import RichTextEditor from "./RichTextEditor.jsx";
+import {ParseDate} from "../../helpers/Misc";
+import {v4 as UUID, parse as UUIDParse} from "uuid";
 
 import {
-  X as IconX,
-  Plus as IconPlus,
-  GripVertical as IconGripVertical,
-  InfoCircle as IconInfoCircle
-} from "tabler-icons-react";
+  IconX,
+  IconPlus,
+  IconGripVertical,
+  IconQuestionMark
+} from "@tabler/icons-react";
 
-const useStyles = createStyles((theme) => ({
-  root: {
-    position: "relative",
-  },
-
-  input: {
-    height: rem(60),
-    paddingTop: rem(18),
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-  },
-
-  label: {
-    position: "absolute",
-    pointerEvents: "none",
-    fontSize: theme.fontSizes.xs,
-    paddingLeft: theme.spacing.sm,
-    paddingTop: `calc(${theme.spacing.sm} / 2)`,
-    zIndex: 1,
-  },
-}));
-
-export function ContainedInputs() {
-  const { classes } = useStyles();
-
+// Icon with hint tooltip on hover
+const HintIcon = ({hint, componentProps={}}) => {
   return (
-    <div>
-      <TextInput label="Shipping address" placeholder="15329 Huston 21st" classNames={classes} />
-
-      <Select
-        mt="md"
-        withinPortal
-        data={["React", "Angular", "Svelte", "Vue"]}
-        placeholder="Pick one"
-        label="Your favorite library/framework"
-        classNames={classes}
-      />
-
-      <DateTimePicker
-        mt="md"
-        popoverProps={{ withinPortal: true }}
-        label="Departure date"
-        placeholder="When will you leave?"
-        classNames={classes}
-        clearable={false}
-      />
-    </div>
-  );
-}
-
-const checkboxCardStyles = createStyles((theme) => ({
-  button: {
-    display: "flex",
-    border: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[3]
-    }`,
-    borderRadius: theme.radius.sm,
-    padding: theme.spacing.xl,
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
-    "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[9] : theme.colors.gray[0],
-    },
-  },
-}));
-
-const CheckboxCard = ({
-  checked,
-  defaultChecked,
-  onChange,
-  title,
-  description,
-  className,
-  ...args
-}) => {
-  const { classes, cx } = checkboxCardStyles();
-
-  const [value, handleChange] = useUncontrolled({
-    value: checked,
-    defaultValue: defaultChecked,
-    finalValue: false,
-    onChange,
-  });
-
-  return (
-    <UnstyledButton
-      {...args}
-      onClick={() => handleChange(!value)}
-      className={cx(classes.button, className)}
-    >
-      <Checkbox
-        checked={value}
-        onChange={() => {}}
-        tabIndex={-1}
-        size="md"
-        mr="xl"
-        styles={{ input: { cursor: "pointer" } }}
-      />
-      <div>
-        <Text fw={500} mb={7} sx={{ lineHeight: 1 }}>
-          {title}
-        </Text>
-        <Text fz="sm" c="dimmed">
-          {description}
-        </Text>
-      </div>
-    </UnstyledButton>
-  );
-};
-
-const HintIcon = ({hint}) => {
-  return (
-    <Tooltip label={hint} multiline width={350} events={{ hover: true, focus: true, touch: false }}>
-      <Group>
-        <IconInfoCircle alt={rootStore.l10n.ui.hints.hint} size={15} />
+    <Tooltip label={hint} multiline maw={350} w="max-content" withArrow position="top-start" events={{ hover: true, focus: true, touch: false }}>
+      <Group {...componentProps} style={{cursor: "help", ...(componentProps?.style || {})}}>
+        <IconQuestionMark alt={hint} size={12} strokeWidth={1} />
       </Group>
     </Tooltip>
   );
 };
 
+// Field label - includes hint icon if hint is specified
+const InputLabel = ({label, hint}) => {
+  return (
+    !hint ? label :
+      <Group spacing={5} align="center">
+        <Text>{ label }</Text>
+        <HintIcon hint={hint} />
+      </Group>
+  );
+};
+
+
+// General input
 const Input = observer(({
   type="text",
-  hint,
   store,
   objectId,
-  label,
   path,
   field,
+  options,
+  label,
+  description,
+  hint,
+  defaultValue,
+  clearable,
   componentProps={}
 }) => {
   const location = useLocation();
+
+  useEffect(() => {
+    // Ensure the default value is set for this field if the field is not yet defined
+    if((type === "uuid" || typeof defaultValue !== "undefined") && typeof store.GetMetadata({objectId, path, field}) === "undefined") {
+      let value = defaultValue;
+      if(type === "uuid") {
+        value = store.utils.B58(UUIDParse(UUID()));
+      }
+
+      store.SetDefaultValue({objectId, path, field, value});
+    }
+  });
 
   let value = store.GetMetadata({objectId, path, field});
 
   let Component = TextInput;
   switch(type) {
-    case "input":
+    case "text":
       value = value || "";
       break;
     case "textarea":
@@ -176,37 +106,212 @@ const Input = observer(({
       Component = Textarea;
       break;
     case "number":
+      // Additional options: min, max, step
       Component = NumberInput;
       break;
-    case "checkbox":
-      Component = Checkbox;
-      componentProps.checked = !!value;
-      value = undefined;
+    case "uuid":
+      componentProps.disabled = true;
       break;
+    case "json":
+      Component = JsonInput;
+      componentProps.formatOnBlur = true;
+      break;
+    case "select":
+      Component = Select;
+      componentProps.searchable = true;
+      componentProps.data = options;
+      break;
+    case "multiselect":
+      Component = MultiSelect;
+      componentProps.searchable = true;
+      componentProps.data = options;
+      break;
+    case "date":
+      Component = DatePickerInput;
+      componentProps.valueFormat = "LL";
+      value = ParseDate(value);
+      break;
+    case "datetime":
+      Component = DateTimePicker;
+      componentProps.valueFormat = "LLL ZZ";
+      value = ParseDate(value);
+      break;
+  }
+
+  if(clearable) {
+    componentProps.rightSection = (
+      <Tooltip label={rootStore.l10n.ui.inputs.clear} position="top-end" withArrow>
+        <ActionIcon mr="xs" onClick={() => store.SetMetadata({objectId, page: location.pathname, path, field, value: type === "number" ? undefined : ""})}>
+          <IconX size={15} />
+        </ActionIcon>
+      </Tooltip>
+    );
   }
 
   return (
     <Component
+      // Ensure uncontrolled -> controlled transition doesn't print a warning when default value isn't set
+      key={typeof defaultValue === "undefined" ? undefined : `component-${field}-${typeof value === "undefined" ? "uncontrolled" : "controlled"}`}
+      mb="md"
       {...componentProps}
-      label={
-        !hint ? label :
-          <Group spacing={5} align="center">
-            <Text>{ label }</Text>
-            <HintIcon hint={hint} />
-          </Group>
-      }
+      label={<InputLabel label={label} hint={hint} />}
+      description={description}
       value={value}
       onChange={event => {
-        const value = type === "checkbox" ? event.target.checked :
-          event?.target ?
-            event.target.value :
-            event;
+        let value = event?.target ? event.target.value : event;
+
+        if(type === "number" && !value) {
+          // Set missing numbers to undefined instead of empty string
+          value = undefined;
+        } else if(["date", "datetime"].includes(type)) {
+          value = value ? value.toISOString() : undefined;
+        }
+
         store.SetMetadata({objectId, page: location.pathname, path, field, value});
       }}
     />
   );
 });
 
+const SHA512 = async (str) => {
+  if(!str) { return ""; }
+
+  const buf = await crypto.subtle.digest("SHA-512", new TextEncoder("utf-8").encode(str));
+  return Array.prototype.map.call(new Uint8Array(buf), x=>(("00"+x.toString(16)).slice(-2))).join("");
+};
+
+const Password = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  label,
+  description,
+  hint,
+  componentProps={}
+}) => {
+  const location = useLocation();
+
+  const value = store.GetMetadata({objectId, path, field});
+  const [password, setPassword] = useState(value);
+  const [changed, setChanged] = useState(false);
+
+  return (
+    <PasswordInput
+      {...componentProps}
+      label={<InputLabel label={label} hint={hint} />}
+      description={description}
+      mb="md"
+      onFocus={() => setPassword("")}
+      onBlur={async () => {
+        if(!changed) {
+          setPassword(value);
+        } else {
+          const digest = await SHA512(password);
+          setPassword(digest);
+          store.SetMetadata({objectId, page: location.pathname, path, field, value: digest});
+          setChanged(false);
+        }
+      }}
+      value={password}
+      onChange={event => {
+        setChanged(true);
+        setPassword(event.target.value);
+      }}
+    />
+  );
+});
+
+// Checkbox
+const CheckboxCard = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  defaultValue=false,
+  label,
+  description,
+  hint,
+  componentProps={}
+}) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Ensure the default value is set for this field if the field is not yet defined
+    if(typeof store.GetMetadata({objectId, path, field}) === "undefined") {
+      store.SetDefaultValue({objectId, path, field, value: defaultValue});
+    }
+  });
+
+  let value = !!store.GetMetadata({objectId, path, field});
+
+  return (
+    <UnstyledButton
+      style={{display: "block"}}
+      onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
+    >
+      <Paper withBorder p="xl" pt="md" pb="lg" mb="md" w="max-content">
+        <MantineInput.Wrapper
+          pr={50}
+          label={<InputLabel label={label} hint={hint} />}
+          description={description}
+          style={{position: "relative", display: "flex", flexDirection: "column", justifyContent: "center"}}
+        >
+          <Checkbox
+            style={{position: "absolute", right: -25}}
+            {...componentProps}
+            checked={value}
+            onChange={() => {}}
+            tabIndex={-1}
+            size="md"
+            mr="xl"
+            styles={{ input: { cursor: "pointer" } }}
+          />
+        </MantineInput.Wrapper>
+      </Paper>
+    </UnstyledButton>
+  );
+});
+
+// Rich text
+const RichTextInput = observer(({store, objectId, path, field, label, description, hint}) => {
+  const location = useLocation();
+  const [showEditor, setShowEditor] = useState(false);
+
+  return (
+    <Paper withBorder={showEditor} p={showEditor ? "xl" : 0} pt={showEditor ? "md" : 0} mb="md" w={showEditor ? undefined : "max-content"}>
+      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
+        {
+          !showEditor ? null :
+            <Container p={0} m={0} my="xl">
+              <RichTextEditor store={store} objectId={objectId} page={location.pathname} path={path} field={field} />
+            </Container>
+        }
+        <Group mt={showEditor ? 0 : "xs"}>
+          {
+            showEditor ?
+              <Button
+                size="sm"
+                variant="light"
+                onClick={() => setShowEditor(false)}
+                style={{position: "absolute", top: 0, right: 0}}
+              >
+                { rootStore.l10n.ui.inputs.hide_editor }
+              </Button> :
+              <Button
+                size="xs"
+                onClick={() => setShowEditor(true)}
+              >
+                { rootStore.l10n.ui.inputs.show_editor }
+              </Button>
+          }
+        </Group>
+      </MantineInput.Wrapper>
+    </Paper>
+  );
+});
+
+// Single image
 const SingleImageInput = observer(({
   store,
   objectId,
@@ -288,58 +393,65 @@ const SingleImageInput = observer(({
   );
 });
 
+// Multiple images, including optional alt text input
 const ImageInput = observer(({
   store,
   objectId,
-  label,
   path,
   fields,
-  altTextField
+  altTextField,
+  label,
+  description,
+  hint
 }) => {
   const location = useLocation();
 
   return (
-    <Paper withBorder shadow="sm" p="xl" w="max-content" my="xl">
-      <Text>{ label }</Text>
-      <Group my="md">
+    <Paper withBorder shadow="sm" p="xl" pt="md" w="max-content" mb="md">
+      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description}>
+        <Group my="md">
+          {
+            fields.map(({label, field}) =>
+              <SingleImageInput
+                key={`image-input-${field}`}
+                store={store}
+                objectId={objectId}
+                path={path}
+                label={label}
+                field={field}
+              />
+            )
+          }
+        </Group>
         {
-          fields.map(({label, field}) =>
-            <SingleImageInput
-              key={`image-input-${field}`}
+          !altTextField ? null :
+            <Input
+              hint={rootStore.l10n.ui.hints.general.image_alt_text}
+              page={location.pathname}
+              type="textarea"
               store={store}
               objectId={objectId}
+              label="Alt Text"
               path={path}
-              label={label}
-              field={field}
+              field={altTextField}
             />
-          )
         }
-      </Group>
-      {
-        !altTextField ? null :
-          <Input
-            hint={rootStore.l10n.ui.hints.general.image_alt_text}
-            page={location.pathname}
-            type="textarea"
-            store={store}
-            objectId={objectId}
-            label="Alt Text"
-            path={path}
-            field={altTextField}
-          />
-      }
+      </MantineInput.Wrapper>
     </Paper>
   );
 });
 
+// List of inputs with the same type
 const SimpleList = observer(({
   type="text",
   store,
   objectId,
-  label,
   path,
   field,
-  fieldLabel
+  label,
+  hint,
+  description,
+  fieldLabel,
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
@@ -348,9 +460,9 @@ const SimpleList = observer(({
     <Draggable key={`item-${index}`} index={index} draggableId={`item-${index}`}>
       {(provided, snapshot) => (
         <Paper
-          shadow={snapshot.isDragging ? "lg" : "xs"}
+          withBorder
+          shadow={snapshot.isDragging ? "lg" : ""}
           p="sm"
-          mb="xs"
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
@@ -394,48 +506,54 @@ const SimpleList = observer(({
   ));
 
   return (
-    <Container p={0} m={0} my={20}>
-      <Group mb={10}>
-        <Text>{ label }</Text>
-        <ActionIcon
-          title={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-          aria-label={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-          onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
-        >
-          <IconPlus />
-        </ActionIcon>
-      </Group>
-      <Container p={0} m={0} w={500}>
-        <DragDropContext
-          onDragEnd={({source, destination}) =>
-            store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
-          }
-        >
-          <Droppable droppableId="simple-list" direction="vertical">
-            {provided => (
-              <Container p={0} {...provided.droppableProps} ref={provided.innerRef}>
-                { items }
-                { provided.placeholder }
-              </Container>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Container>
-    </Container>
+    <Paper withBorder p="xl" pt="md" m={0} mb="xl">
+      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
+        <Container p={0} m={0} mt="lg">
+          <DragDropContext
+            onDragEnd={({source, destination}) =>
+              store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
+            }
+          >
+            <Droppable droppableId="simple-list" direction="vertical">
+              {provided => (
+                <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
+                  { items }
+                  { provided.placeholder }
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
+            <ActionIcon
+              title={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              aria-label={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
+            >
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+        </Container>
+      </MantineInput.Wrapper>
+    </Paper>
   );
 });
 
 export default {
-  Input,
   Text: props => <Input {...props} type="text" />,
   TextArea: props => <Input {...props} type="textarea" />,
+  UUID: props => <Input {...props} type="uuid" />,
+  JSON: props => <Input {...props} type="json" />,
   Integer: ({min, max, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
   Number: ({min, max, step, precision, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
-
-  Checkbox,
-
+  Select: props => <Input {...props} type="select" />,
+  MultiSelect: props => <Input {...props} type="multiselect" />,
+  Date: props => <Input {...props} type="date" />,
+  DateTime: props => <Input {...props} type="datetime" />,
+  RichText: RichTextInput,
+  Password,
+  Checkbox: CheckboxCard,
   SingleImageInput,
   ImageInput,
   SimpleList

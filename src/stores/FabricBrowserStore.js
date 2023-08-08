@@ -15,6 +15,7 @@ class FabricBrowserStore {
     const libraryIds = yield this.client.ContentLibraries();
 
     // Find properties library
+    let libraries = {};
     yield Promise.all(
       libraryIds.map(async libraryId => {
         if(this.libraries[libraryId]) { return; }
@@ -26,7 +27,7 @@ class FabricBrowserStore {
             metadataSubtree: "public"
           });
 
-          this.libraries[libraryId] = {
+          libraries[libraryId] = {
             libraryId,
             name: metadata?.name || libraryId,
             metadata: {
@@ -38,6 +39,8 @@ class FabricBrowserStore {
         }
       })
     );
+
+    this.libraries = libraries;
 
     this.rootStore.DebugTimeEnd({key: "Load Libraries"});
   });

@@ -18,7 +18,7 @@ import {Dropzone} from "@mantine/dropzone";
 import { modals } from "@mantine/modals";
 import {useForm} from "@mantine/form";
 import {useEffect, useState} from "react";
-import {rootStore, fileBrowserStore} from "Stores";
+import {rootStore, fileBrowserStore, uiStore} from "Stores";
 import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
 import {LocalizeString} from "Components/common/Misc";
@@ -27,18 +27,19 @@ import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
 
 import {
-  ArrowBackUp as IconBackArrow,
-  EditCircle as IconEditCircle,
-  FileDownload as IconDownload,
-  CircleCheck as IconDownloadCompleted,
-  Folder as IconDirectory,
-  File as IconFile,
-  LockSquare as IconFileEncrypted,
-  Photo as IconPhoto,
-  TrashX as IconDelete,
-  X as IconX,
-  Upload as IconUpload
-} from "tabler-icons-react";
+  IconArrowBackUp as IconBackArrow,
+  IconEditCircle,
+  IconFileDownload,
+  IconCircleCheck as IconDownloadCompleted,
+  IconFolder as IconDirectory,
+  IconFile,
+  IconFiles,
+  IconLockSquare as IconFileEncrypted,
+  IconPhoto,
+  IconTrashX as IconDelete,
+  IconX,
+  IconUpload
+} from "@tabler/icons-react";
 
 
 // Table showing the status of file uploads in the upload form
@@ -70,7 +71,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
     <DataTable
       highlightOnHover
       idAccessor="filename"
-      height={310}
+      height={Math.max(250, uiStore.viewportHeight - 600)}
       records={records}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
@@ -153,11 +154,16 @@ const UploadForm = observer(({objectId, path, Close}) => {
               <IconX />
             </Dropzone.Reject>
             <Dropzone.Idle>
-              <IconPhoto />
+              <IconFiles />
             </Dropzone.Idle>
 
             <Text size="xl" inline>
-              { rootStore.l10n.ui.file_browser.upload_instructions }
+              { rootStore.l10n.ui.file_browser.upload_instructions_drag }
+            </Text>
+          </Group>
+          <Group position="center" align="center">
+            <Text size="sm" mt="sm" inline color="dimmed">
+              { rootStore.l10n.ui.file_browser.upload_instructions_click }
             </Text>
           </Group>
         </Dropzone>
@@ -300,7 +306,7 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
         }}
       >
         {
-          !downloading ? <IconDownload enableBackground={false} /> :
+          !downloading ? <IconFileDownload /> :
             progress >= 100 ?
               <IconDownloadCompleted /> :
               <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "blue.5"}]}/>
@@ -316,7 +322,7 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
       href={url}
       target="_blank"
     >
-      <IconDownload/>
+      <IconFileDownload/>
     </ActionIcon>
   );
 };
@@ -375,7 +381,7 @@ const FileBrowserTable = observer(({
       .then(() => setLoading(false));
   }, [objectId]);
 
-  const directory = fileBrowserStore.Directory({objectId, path})
+  let directory = fileBrowserStore.Directory({objectId, path})
     .filter(record => !filter || record.filename.toLowerCase().includes(filter))
     .sort(
       SortTable({
@@ -411,6 +417,7 @@ const FileBrowserTable = observer(({
           }
         }
       }}
+      height={Math.max(250, uiStore.viewportHeight - 500)}
       withBorder
       highlightOnHover
       idAccessor="filename"
@@ -547,13 +554,13 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
     <Modal opened={opened} onClose={Close} centered size={1000} title={title} padding="xl">
       { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
-        <Group mb="xs" align="center">
+        <Group mb="xs" align="center" spacing="xs">
           <ActionIcon aria-label={rootStore.l10n.ui.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
             <IconBackArrow />
           </ActionIcon>
           {
             pathTokens.map((token, index) =>
-              <Group key={`path-token-${token}-${index}`}>
+              <Group spacing="xs" key={`path-token-${token}-${index}`}>
                 <Text>/</Text>
                 <UnstyledButton onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, index + 1)))}>
                   <Text fw={index === pathTokens.length - 1 ? 600 : 400} color="blue.5">
@@ -565,7 +572,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
           }
         </Group>
         <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
-        <Container px={0} h={300} >
+        <Container px={0}>
           <FileBrowserTable
             objectId={objectId}
             multiple={multiple}

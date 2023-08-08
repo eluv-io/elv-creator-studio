@@ -1,4 +1,4 @@
-import {Container, Button, Burger, Flex, Header} from "@mantine/core";
+import {Button, Burger, Flex, Header} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import {uiStore} from "Stores";
