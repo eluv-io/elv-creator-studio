@@ -111,6 +111,7 @@ const Input = observer(({
       break;
     case "uuid":
       componentProps.disabled = true;
+      value = value || "";
       break;
     case "json":
       Component = JsonInput;

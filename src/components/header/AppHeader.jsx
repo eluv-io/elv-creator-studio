@@ -1,20 +1,16 @@
-import {Button, Burger, Flex, Header} from "@mantine/core";
-import {Link} from "react-router-dom";
+import {Flex, Header, ActionIcon} from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import {uiStore} from "Stores";
 
+import {IconBrightnessUpFilled} from "@tabler/icons-react";
+
 const AppHeader = observer(() => {
   return (
-    <Header height="xl">
-      <Flex justify="flex-start" align="center" m="lg" px="xl" gap={50}>
-        <Burger size="md" opened={uiStore.showSideNav} onClick={() => uiStore.SetShowSideNav(!uiStore.showSideNav)} />
-        <Link to="/">Header</Link>
-        <Link to="/page1">Page1</Link>
-        <Link to="/page2">Page2</Link>
-        <Link to="/marketplaces">Marketplaces</Link>
-        <Button onClick={() => uiStore.SetTheme(uiStore.theme === "light" ? "dark" : "light")}>
-          Toggle Theme
-        </Button>
+    <Header height={60}>
+      <Flex justify="flex-end" align="center" m="lg" px="xl" gap={50}>
+        <ActionIcon onClick={() => uiStore.SetTheme(uiStore.theme === "light" ? "dark" : "light")}>
+          <IconBrightnessUpFilled />
+        </ActionIcon>
       </Flex>
     </Header>
   );

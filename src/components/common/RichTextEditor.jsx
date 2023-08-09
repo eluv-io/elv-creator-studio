@@ -13,7 +13,6 @@ import {
 
 
 const RichTextEditor = observer(({store, objectId, page, path, field}) => {
-
   let value = store.GetMetadata({objectId, path, field});
 
   const editor = useEditor({

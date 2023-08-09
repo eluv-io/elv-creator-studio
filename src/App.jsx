@@ -1,41 +1,14 @@
 import {observer} from "mobx-react-lite";
-import {BrowserRouter, Outlet, Routes, Route, useParams} from "react-router-dom";
 
-import {Text, Button, Paper, Loader, Modal, Container, Flex, Drawer, MantineProvider} from "@mantine/core";
+import {Text,  Loader, Modal, Flex,  MantineProvider} from "@mantine/core";
 import {ModalsProvider} from "@mantine/modals";
 import MantineTheme from "Assets/MantineTheme";
 
-import {marketplaceStore, rootStore, uiStore} from "Stores";
-import AppHeader from "Components/header/AppHeader.jsx";
+import {rootStore, uiStore} from "Stores";
 
-import MarketplaceList from "Pages/marketplace/MarketplaceList.jsx";
-import MarketplaceDetails from "Pages/marketplace/MarketplaceDetails.jsx";
-import AsyncWrapper from "./components/common/AsyncWrapper.jsx";
+import AppRoutes from "./Routes.jsx";
 
-
-const Components = observer(() => {
-  return (
-    <Container fluid>
-      <Loader m="xl" size="xl"/>
-      <Paper shadow="sm" p="md">Paper?: { rootStore.testValue }</Paper>
-      <Button onClick={() => rootStore.Increment()} shadow="xl" m="sm">Test Button</Button>
-      <Text m="sm">Test Text</Text>
-    </Container>
-  );
-});
-
-const Page1 = () => {
-  return (
-    <div>Page 1</div>
-  );
-};
-
-const Page2 = () => {
-  return (
-    <div>Page 2</div>
-  );
-};
-
+// Shows an overlay when something in the app is loading
 const LoaderModal = observer(() => {
   return (
     <Modal
@@ -52,49 +25,6 @@ const LoaderModal = observer(() => {
         </Text>
       </Flex>
     </Modal>
-  );
-});
-
-const Layout = observer(() => {
-  return (
-    <>
-      <AppHeader />
-      <Container fluid>
-        <Drawer title={rootStore.l10n.ui.side_nav.header} opened={uiStore.showSideNav} onClose={() => uiStore.SetShowSideNav(false)}>
-          Drawer
-        </Drawer>
-        <Outlet />
-      </Container>
-    </>
-  );
-});
-
-const MarketplaceWrapper = observer(({Component}) => {
-  const { marketplaceId } = useParams();
-
-  return (
-    <AsyncWrapper
-      loadingMessage="Loading Marketplace"
-      Load={async () => await marketplaceStore.LoadMarketplace({marketplaceId})}
-    >
-      {() => <Component />}
-    </AsyncWrapper>
-  );
-});
-
-const AppRoutes = observer(() => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout/>}>
-          <Route path="/" element={<Components/>}/>
-          <Route path="/page1" element={<Page1/>}/>
-          <Route path="/page2" element={<Page2/>}/>
-          <Route path="/marketplaces" element={<MarketplaceList/>}/>
-          <Route path="/marketplaces/:marketplaceId" element={<MarketplaceWrapper Component={MarketplaceDetails} />}/>
-        </Route>
-      </Routes>
-    </BrowserRouter>
   );
 });
 

@@ -66,14 +66,6 @@ const MarketplaceDetails = observer(() => {
           field="listings"
         />
 
-        <Inputs.UUID
-          label="UUID"
-          store={marketplaceStore}
-          objectId={marketplaceId}
-          path="/public/asset_metadata/info/branding/"
-          field="uuid"
-        />
-
         <Inputs.RichText
           label="rich text"
           description="rich text description"
@@ -133,6 +125,15 @@ const MarketplaceDetails = observer(() => {
           path="/public/asset_metadata/info/items/28"
           field="sku"
         />
+
+        <Inputs.UUID
+          label="UUID"
+          store={marketplaceStore}
+          objectId={marketplaceId}
+          path="/public/asset_metadata/info/branding/"
+          field="uuid"
+        />
+
 
 
         <Inputs.Text

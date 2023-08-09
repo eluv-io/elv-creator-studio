@@ -24,8 +24,6 @@ ui:
       add_item: Add item to {field}
       remove_item: Remove element from {field}
       move_item: Move item in {field}
-  side_nav:
-    header: Navigation
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory
