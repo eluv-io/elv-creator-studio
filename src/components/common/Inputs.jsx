@@ -141,7 +141,7 @@ const Input = observer(({
 
   if(clearable) {
     componentProps.rightSection = (
-      <Tooltip label={rootStore.l10n.ui.inputs.clear} position="top-end" withArrow>
+      <Tooltip label={rootStore.l10n.components.inputs.clear} position="top-end" withArrow>
         <ActionIcon mr="xs" onClick={() => store.SetMetadata({objectId, page: location.pathname, path, field, value: type === "number" ? undefined : ""})}>
           <IconX size={15} />
         </ActionIcon>
@@ -297,13 +297,13 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
                 onClick={() => setShowEditor(false)}
                 style={{position: "absolute", top: 0, right: 0}}
               >
-                { rootStore.l10n.ui.inputs.hide_editor }
+                { rootStore.l10n.components.inputs.hide_editor }
               </Button> :
               <Button
                 size="xs"
                 onClick={() => setShowEditor(true)}
               >
-                { rootStore.l10n.ui.inputs.show_editor }
+                { rootStore.l10n.components.inputs.show_editor }
               </Button>
           }
         </Group>
@@ -354,14 +354,14 @@ const SingleImageInput = observer(({
                 event.stopPropagation();
 
                 modals.openConfirmModal({
-                  title: LocalizeString(rootStore.l10n.ui.inputs.remove, {item: label}),
+                  title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: label}),
                   centered: true,
                   children: (
                     <Text size="sm">
-                      { LocalizeString(rootStore.l10n.ui.inputs.remove_confirm, {item: label}) }
+                      { LocalizeString(rootStore.l10n.components.inputs.remove_confirm, {item: label}) }
                     </Text>
                   ),
-                  labels: { confirm: rootStore.l10n.ui.actions.remove, cancel: rootStore.l10n.ui.actions.cancel },
+                  labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
                   confirmProps: { color: "red.6" },
                   onConfirm: () => store.SetMetadata({page: location.pathname, objectId, path, field, value: null})
                 });
@@ -372,7 +372,7 @@ const SingleImageInput = observer(({
         }
       </Paper>
       <FileBrowser
-        title={LocalizeString(rootStore.l10n.ui.inputs.select_file, { item: label }, {stringOnly: true})}
+        title={LocalizeString(rootStore.l10n.components.inputs.select_file, { item: label }, {stringOnly: true})}
         objectId={objectId}
         extensions="image"
         opened={showFileBrowser}
@@ -427,7 +427,7 @@ const ImageInput = observer(({
         {
           !altTextField ? null :
             <Input
-              hint={rootStore.l10n.ui.hints.general.image_alt_text}
+              hint={rootStore.l10n.components.hints.general.image_alt_text}
               page={location.pathname}
               type="textarea"
               store={store}
@@ -481,18 +481,18 @@ const SimpleList = observer(({
               componentProps={{style: {flexGrow: "1"}}}
             />
             <ActionIcon
-              title={LocalizeString(rootStore.l10n.ui.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-              aria-label={LocalizeString(rootStore.l10n.ui.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               onClick={() => {
                 modals.openConfirmModal({
-                  title: LocalizeString(rootStore.l10n.ui.inputs.remove, {item: fieldLabel.toLowerCase()}),
+                  title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}),
                   centered: true,
                   children: (
                     <Text size="sm">
-                      { LocalizeString(rootStore.l10n.ui.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()}) }
+                      { LocalizeString(rootStore.l10n.components.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()}) }
                     </Text>
                   ),
-                  labels: { confirm: rootStore.l10n.ui.actions.remove, cancel: rootStore.l10n.ui.actions.cancel },
+                  labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
                   confirmProps: { color: "red.6" },
                   onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
                 });
@@ -526,8 +526,8 @@ const SimpleList = observer(({
           </DragDropContext>
           <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
             <ActionIcon
-              title={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-              aria-label={LocalizeString(rootStore.l10n.ui.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
             >
               <IconPlus />

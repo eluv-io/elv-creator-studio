@@ -76,12 +76,12 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}
       columns={[
-        { accessor: "filename", title: rootStore.l10n.ui.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
-        { accessor: "size", title: rootStore.l10n.ui.file_browser.columns.size, sortable: true, render: ({total, size}) => PrettyBytes(total || size), width: 100 },
+        { accessor: "filename", title: rootStore.l10n.components.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
+        { accessor: "size", title: rootStore.l10n.components.file_browser.columns.size, sortable: true, render: ({total, size}) => PrettyBytes(total || size), width: 100 },
         {
           accessor: "uploaded",
           sortable: true,
-          title: rootStore.l10n.ui.file_browser.columns.progress,
+          title: rootStore.l10n.components.file_browser.columns.progress,
           width: 150,
           render: ({progress}) => {
             return <Progress value={progress} />;
@@ -106,7 +106,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
       overlayProps={{zIndex: 201}}
       onClose={uploading ? () => {} : Close}
       withCloseButton={!uploading}
-      title={LocalizeString(rootStore.l10n.ui.file_browser.upload_files, {path})}
+      title={LocalizeString(rootStore.l10n.components.file_browser.upload_files, {path})}
     >
       <Container py="xl">
         <Dropzone
@@ -158,12 +158,12 @@ const UploadForm = observer(({objectId, path, Close}) => {
             </Dropzone.Idle>
 
             <Text size="xl" inline>
-              { rootStore.l10n.ui.file_browser.upload_instructions_drag }
+              { rootStore.l10n.components.file_browser.upload_instructions_drag }
             </Text>
           </Group>
           <Group position="center" align="center">
             <Text size="sm" mt="sm" inline color="dimmed">
-              { rootStore.l10n.ui.file_browser.upload_instructions_click }
+              { rootStore.l10n.components.file_browser.upload_instructions_click }
             </Text>
           </Group>
         </Dropzone>
@@ -175,7 +175,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
         }
         <Group position="right" mt={50}>
           <Button w={200} disabled={uploading} loading={uploading} onClick={Close}>
-            { uploading ? "" : rootStore.l10n.ui.actions.done }
+            { uploading ? "" : rootStore.l10n.components.actions.done }
           </Button>
         </Group>
       </Container>
@@ -190,7 +190,7 @@ const CreateDirectoryForm = ({Create}) => {
   const form = useForm({
     initialValues: { filename: "" },
     validate: {
-      filename: value => value ? null : rootStore.l10n.ui.file_browser.validation.filename_must_be_specified
+      filename: value => value ? null : rootStore.l10n.components.file_browser.validation.filename_must_be_specified
     }
   });
 
@@ -211,7 +211,7 @@ const CreateDirectoryForm = ({Create}) => {
       >
         <TextInput
           data-autofocus
-          label={rootStore.l10n.ui.file_browser.directory_name}
+          label={rootStore.l10n.components.file_browser.directory_name}
           {...form.getInputProps("filename")}
         />
         <Group mt="md">
@@ -220,7 +220,7 @@ const CreateDirectoryForm = ({Create}) => {
             loading={renaming}
             type="submit"
           >
-            { rootStore.l10n.ui.actions.submit }
+            { rootStore.l10n.components.actions.submit }
           </Button>
         </Group>
       </form>
@@ -235,7 +235,7 @@ const RenameFileForm = ({filename, Rename}) => {
   const form = useForm({
     initialValues: { newFilename: filename },
     validate: {
-      newFilename: value => value ? null : rootStore.l10n.ui.file_browser.validation.filename_must_be_specified
+      newFilename: value => value ? null : rootStore.l10n.components.file_browser.validation.filename_must_be_specified
     }
   });
 
@@ -256,7 +256,7 @@ const RenameFileForm = ({filename, Rename}) => {
       >
         <TextInput
           data-autofocus
-          label={rootStore.l10n.ui.file_browser.new_filename}
+          label={rootStore.l10n.components.file_browser.new_filename}
           {...form.getInputProps("newFilename")}
         />
         <Group mt="md">
@@ -265,7 +265,7 @@ const RenameFileForm = ({filename, Rename}) => {
             loading={renaming}
             type="submit"
           >
-            { rootStore.l10n.ui.actions.submit }
+            { rootStore.l10n.components.actions.submit }
           </Button>
         </Group>
       </form>
@@ -279,8 +279,8 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
 
   const commonProps = {
     color: "blue.5",
-    title: LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true}),
-    "aria-label": LocalizeString(rootStore.l10n.ui.file_browser.download, {filename}, {stringOnly: true})
+    title: LocalizeString(rootStore.l10n.components.file_browser.download, {filename}, {stringOnly: true}),
+    "aria-label": LocalizeString(rootStore.l10n.components.file_browser.download, {filename}, {stringOnly: true})
   };
 
   if(encrypted) {
@@ -332,20 +332,20 @@ const DeleteFileButton = ({filename, Delete}) => {
 
   return (
     <ActionIcon
-      title={LocalizeString(rootStore.l10n.ui.file_browser.delete, {filename}, {stringOnly: true})}
-      aria-label={LocalizeString(rootStore.l10n.ui.file_browser.delete, {filename})}
+      title={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}, {stringOnly: true})}
+      aria-label={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})}
       color="red.5"
       loading={deleting}
       onClick={() => {
         modals.openConfirmModal({
-          title: LocalizeString(rootStore.l10n.ui.file_browser.delete, {filename}),
+          title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
           centered: true,
           children: (
             <Text size="sm">
-              { rootStore.l10n.ui.file_browser.delete_confirm }
+              { rootStore.l10n.components.file_browser.delete_confirm }
             </Text>
           ),
-          labels: { confirm: rootStore.l10n.ui.actions.delete, cancel: rootStore.l10n.ui.actions.cancel },
+          labels: { confirm: rootStore.l10n.components.actions.delete, cancel: rootStore.l10n.components.actions.cancel },
           confirmProps: { color: "red.5" },
           overlayProps: {
             zIndex: 202
@@ -441,7 +441,7 @@ const FileBrowserTable = observer(({
       columns={[
         {
           accessor: "type",
-          title: rootStore.l10n.ui.file_browser.columns.type,
+          title: rootStore.l10n.components.file_browser.columns.type,
           width: 85,
           sortable: true,
           render: ({filename, type, encrypted, url}) => {
@@ -471,11 +471,11 @@ const FileBrowserTable = observer(({
             );
           }
         },
-        { accessor: "filename", title: rootStore.l10n.ui.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
-        { accessor: "size", width: 100, title: rootStore.l10n.ui.file_browser.columns.size, sortable: true, render: ({size}) => typeof size === "number" ? PrettyBytes(size) : "" },
+        { accessor: "filename", title: rootStore.l10n.components.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
+        { accessor: "size", width: 100, title: rootStore.l10n.components.file_browser.columns.size, sortable: true, render: ({size}) => typeof size === "number" ? PrettyBytes(size) : "" },
         {
           accessor: "actions",
-          title: rootStore.l10n.ui.file_browser.columns.actions,
+          title: rootStore.l10n.components.file_browser.columns.actions,
           textAlignment: "center",
           render: ({type, filename, url, fullPath, encrypted}) => {
             return (
@@ -483,12 +483,12 @@ const FileBrowserTable = observer(({
                 {
                   type === "directory" ? null :
                     <ActionIcon
-                      title={LocalizeString(rootStore.l10n.ui.file_browser.rename, {filename}, {stringOnly: true})}
-                      aria-label={LocalizeString(rootStore.l10n.ui.file_browser.rename, {filename})}
+                      title={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename}, {stringOnly: true})}
+                      aria-label={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})}
                       color="green.5"
                       onClick={() =>
                         modals.open({
-                          title: LocalizeString(rootStore.l10n.ui.file_browser.rename, {filename}),
+                          title: LocalizeString(rootStore.l10n.components.file_browser.rename, {filename}),
                           centered: true,
                           children:
                             <RenameFileForm
@@ -555,7 +555,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
       { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
         <Group mb="xs" align="center" spacing="xs">
-          <ActionIcon aria-label={rootStore.l10n.ui.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
+          <ActionIcon aria-label={rootStore.l10n.components.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
             <IconBackArrow />
           </ActionIcon>
           {
@@ -571,7 +571,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
             )
           }
         </Group>
-        <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+        <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
         <Container px={0}>
           <FileBrowserTable
             objectId={objectId}
@@ -607,13 +607,13 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
         <Group mt="xl" position="apart">
           <Group>
             <Button variant="light" onClick={() => setShowUploadForm(true)}>
-              { rootStore.l10n.ui.actions.upload }
+              { rootStore.l10n.components.actions.upload }
             </Button>
             <Button
               variant="light"
               onClick={() =>
                 modals.open({
-                  title: rootStore.l10n.ui.file_browser.create_directory,
+                  title: rootStore.l10n.components.file_browser.create_directory,
                   centered: true,
                   children:
                     <CreateDirectoryForm Create={async ({filename}) => await fileBrowserStore.CreateDirectory({objectId, path, filename})} />,
@@ -623,12 +623,12 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
                 })
               }
             >
-              { rootStore.l10n.ui.file_browser.create_directory }
+              { rootStore.l10n.components.file_browser.create_directory }
             </Button>
           </Group>
           <Group>
             <Button variant="subtle" w={200} onClick={Close}>
-              { rootStore.l10n.ui.actions.cancel }
+              { rootStore.l10n.components.actions.cancel }
             </Button>
             <Button
               w={200}
@@ -638,7 +638,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
                 Close();
               }}
             >
-              { rootStore.l10n.ui.actions.submit }
+              { rootStore.l10n.components.actions.submit }
             </Button>
           </Group>
         </Group>

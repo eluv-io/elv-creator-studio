@@ -112,7 +112,7 @@ class DatabaseStore {
     }
 
     this.rootStore.DebugLog({message: "Loading content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.properties);
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.properties);
 
     // Retrieve content objects in library and their metadata
     const { contents } = yield this.client.ContentObjects({
@@ -252,7 +252,7 @@ class DatabaseStore {
     });
 
     this.rootStore.DebugLog({message: "Loading templates", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.templates);
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.templates);
 
     // Determine NFT templates
     for(const marketplace of Object.values(content.marketplaces)) {
@@ -313,7 +313,7 @@ class DatabaseStore {
     }
 
     this.rootStore.DebugLog({message: "Loading media", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.media);
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.media);
 
     // Determine media
     for(const template of Object.values(content.templates)) {
@@ -406,7 +406,7 @@ class DatabaseStore {
     }
 
     this.rootStore.DebugLog({message: "Saving to database", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-    this.rootStore.uiStore.SetLoadingMessage(this.l10n.initialization.loading.saving);
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.saving);
 
     // Write data
     let tenant = { ...content.tenant };

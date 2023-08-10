@@ -11,7 +11,7 @@ const SectionLayout = observer(({links=[], backLink, loadingMessage, Load}) => {
   links = links.map(link => {
     let path = link.path;
     Object.keys(params || {}).forEach(paramName => path = path.replaceAll(`:${paramName}`, params[paramName]));
-    return { ...link, path };
+    return { ...link, path, title: link?.PageTitle?.(params) || link.title || link.label };
   });
 
   return (

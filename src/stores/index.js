@@ -69,7 +69,7 @@ class RootStore {
   Initialize = flow(function * () {
     this.DebugTimeStart({key: "Root store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
 
-    this.uiStore.SetLoadingMessage(this.l10n.initialization.loading.initializing);
+    this.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.initializing);
     this.uiStore.SetLoading(true);
 
     if(window.top !== window.self) {

@@ -1,4 +1,14 @@
-ui:
+pages:
+  marketplaces:
+    nav:
+      list: Marketplaces
+      overview: Overview
+      branding: Branding
+
+components:
+  nav:
+    home: Home
+    marketplaces: Marketplaces
   actions:
     done: Done
     submit: Submit
@@ -52,17 +62,17 @@ ui:
       name: Name
       library_id: Library ID
       object_id: Object ID
-
   hints:
     hint: Hint
     general:
       image_alt_text: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
 
-initialization:
-  loading:
-    initializing: Initializing
-    properties: Running Initial Setup - Discovering Properties
-    templates: Running Initial Setup - Discovering Templates
-    media: Running Initial Setup - Discovering Media
-    saving: Running Initial Setup - Saving
+stores:
+  initialization:
+    loading:
+      initializing: Initializing
+      properties: Running Initial Setup - Discovering Properties
+      templates: Running Initial Setup - Discovering Templates
+      media: Running Initial Setup - Discovering Media
+      saving: Running Initial Setup - Saving
 

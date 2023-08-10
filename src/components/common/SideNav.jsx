@@ -1,6 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {createStyles, Navbar, rem, Title, Tooltip} from "@mantine/core";
 import {NavLink, useLocation} from "react-router-dom";
+import {rootStore} from "Stores";
 
 import {Icon123, IconHome, IconBomb, IconArrowBackUp} from "@tabler/icons-react";
 
@@ -46,7 +47,9 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    boxSizing: "border-box",
+    display: "flex",
+    alignItems: "center",
+    fontSize: theme.fontSizes.sm,
     marginBottom: theme.spacing.xl,
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     padding: theme.spacing.md,
@@ -102,8 +105,8 @@ const useStyles = createStyles((theme) => ({
 
 
 const mainLinks = [
-  { label: "Home", icon: <IconHome />, path: "/"},
-  { label: "Marketplaces", icon: <IconBomb />, path: "/marketplaces"},
+  { label: rootStore.l10n.components.nav.home, icon: <IconHome />, path: "/"},
+  { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBomb />, path: "/marketplaces"},
 ];
 
 const SideNav = observer(({links, backLink}) => {
@@ -146,7 +149,7 @@ const SideNav = observer(({links, backLink}) => {
           !(links?.length > 0) ? null :
             <div className={classes.main}>
               <Title order={4} className={classes.title}>
-                {activeLocation?.label}
+                { activeLocation?.title }
               </Title>
               {
                 !backLink ? null :

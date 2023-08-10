@@ -32,12 +32,12 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
   return (
     <Container p={0}>
       <Group mb="md" align="center">
-        <ActionIcon aria-label={rootStore.l10n.ui.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
+        <ActionIcon aria-label={rootStore.l10n.components.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
           <IconBackArrow />
         </ActionIcon>
         <Text>{ library.name }</Text>
       </Group>
-      <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+      <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
       <DataTable
         height={uiStore.viewportHeight - 400}
         fetching={loading}
@@ -49,8 +49,8 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
         onRowClick={record => Submit(record.objectId)}
         records={records}
         columns={[
-          { accessor: "name", title: rootStore.l10n.ui.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
-          { accessor: "objectId", title: rootStore.l10n.ui.fabric_browser.columns.object_id }
+          { accessor: "name", title: rootStore.l10n.components.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
+          { accessor: "objectId", title: rootStore.l10n.components.fabric_browser.columns.object_id }
         ]}
       />
     </Container>
@@ -75,7 +75,7 @@ const LibraryBrowser = observer(({Submit}) => {
 
   return (
     <Container p={0}>
-      <TextInput mb="md" label={rootStore.l10n.ui.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+      <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
       <DataTable
         height={uiStore.viewportHeight - 400}
         fetching={loading}
@@ -87,8 +87,8 @@ const LibraryBrowser = observer(({Submit}) => {
         onRowClick={record => Submit(record.libraryId)}
         records={records}
         columns={[
-          { accessor: "name", title: rootStore.l10n.ui.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
-          { accessor: "libraryId", title: rootStore.l10n.ui.fabric_browser.columns.library_id }
+          { accessor: "name", title: rootStore.l10n.components.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
+          { accessor: "libraryId", title: rootStore.l10n.components.fabric_browser.columns.library_id }
         ]}
       />
     </Container>

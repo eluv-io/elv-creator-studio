@@ -73,15 +73,15 @@ const RichTextEditor = observer(({store, objectId, page, path, field}) => {
 
         <TipTapEditor.ControlsGroup>
           <TipTapEditor.Control
-            aria-label={rootStore.l10n.ui.actions.undo}
-            title={rootStore.l10n.ui.actions.undo}
+            aria-label={rootStore.l10n.components.actions.undo}
+            title={rootStore.l10n.components.actions.undo}
             onClick={() => editor?.commands.undo()}
           >
             <IconUndo size={18} />
           </TipTapEditor.Control>
           <TipTapEditor.Control
-            aria-label={rootStore.l10n.ui.actions.redo}
-            title={rootStore.l10n.ui.actions.redo}
+            aria-label={rootStore.l10n.components.actions.redo}
+            title={rootStore.l10n.components.actions.redo}
             onClick={() => editor?.commands.redo()}
           >
             <IconRedo size={18} />
