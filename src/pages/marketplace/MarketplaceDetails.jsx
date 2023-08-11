@@ -16,7 +16,6 @@ const MarketplaceDetails = observer(() => {
 
   return (
     <div>
-      <HistoryButtons store={marketplaceStore} objectId={marketplaceId} />
       <Container p="xl" m={0}>
         <Title>{`Marketplaces > ${info?.branding?.name}`}</Title>
         <FileBrowserButton

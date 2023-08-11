@@ -4,13 +4,18 @@ import SectionLayout from "Components/common/SectionLayout.jsx";
 import {rootStore, marketplaceStore} from "Stores";
 
 import MarketplaceList from "./MarketplaceList.jsx";
+import MarketplaceGeneralSettings from "./MarketplaceGeneralSettings.jsx";
 import MarketplaceDetails from "./MarketplaceDetails.jsx";
+import MarketplaceImages from "./MarketplaceImages";
+import MarketplaceTheme from "./MarketplaceTheme";
 
 const MarketplaceRoutes = observer(() => {
   const rootPath = "/marketplaces/";
   const routes = [
     { label: rootStore.l10n.pages.marketplaces.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceDetails /> },
-    { label: rootStore.l10n.pages.marketplaces.nav.branding, path: "/marketplaces/:marketplaceId/2", Component: <MarketplaceDetails /> }
+    { label: rootStore.l10n.pages.marketplaces.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },
+    { label: rootStore.l10n.pages.marketplaces.nav.images, path: "/marketplaces/:marketplaceId/images", Component: <MarketplaceImages /> },
+    { label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
   ]
     .map(route => ({
       ...route,

@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 
+import "Assets/stylesheets/rich-text.scss";
+
 import {
   Input as MantineInput,
-  Button,
   Paper,
   ActionIcon,
   Group,
@@ -18,7 +19,7 @@ import {
   NumberInput,
   Stack,
   MultiSelect,
-  JsonInput, PasswordInput
+  JsonInput, PasswordInput, ScrollArea
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -34,13 +35,20 @@ import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
 import {ParseDate} from "../../helpers/Misc";
 import {v4 as UUID, parse as UUIDParse} from "uuid";
+import {Prism} from "@mantine/prism";
+import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
+import SanitizeHTML from "sanitize-html";
 
 import {
   IconX,
   IconPlus,
   IconGripVertical,
-  IconQuestionMark
+  IconQuestionMark,
+  IconPhotoX,
+  IconEdit,
+  IconEditOff
 } from "@tabler/icons-react";
+
 
 // Icon with hint tooltip on hover
 const HintIcon = ({hint, componentProps={}}) => {
@@ -76,11 +84,20 @@ const Input = observer(({
   label,
   description,
   hint,
+  placeholder,
   defaultValue,
   clearable,
+  searchable,
+  disabled,
+  Validate,
+  validateOnLoad=true,
   componentProps={}
 }) => {
+  const [error, setError] = useState(undefined);
   const location = useLocation();
+  const [changed, setChanged] = useState(false);
+
+  let value = store.GetMetadata({objectId, path, field});
 
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
@@ -94,7 +111,11 @@ const Input = observer(({
     }
   });
 
-  let value = store.GetMetadata({objectId, path, field});
+  useEffect(() => {
+    if(!Validate || (!changed && !validateOnLoad)) { return; }
+
+    setError(Validate(value));
+  }, [value, changed, Validate, validateOnLoad]);
 
   let Component = TextInput;
   switch(type) {
@@ -104,6 +125,7 @@ const Input = observer(({
     case "textarea":
       value = value || "";
       Component = Textarea;
+      componentProps.minRows = componentProps.minRows || 3;
       break;
     case "number":
       // Additional options: min, max, step
@@ -119,12 +141,12 @@ const Input = observer(({
       break;
     case "select":
       Component = Select;
-      componentProps.searchable = true;
+      componentProps.searchable = searchable;
       componentProps.data = options;
       break;
     case "multiselect":
       Component = MultiSelect;
-      componentProps.searchable = true;
+      componentProps.searchable = searchable;
       componentProps.data = options;
       break;
     case "date":
@@ -138,6 +160,8 @@ const Input = observer(({
       value = ParseDate(value);
       break;
   }
+
+  componentProps.maw = componentProps.maw || 500;
 
   if(clearable) {
     componentProps.rightSection = (
@@ -154,7 +178,10 @@ const Input = observer(({
       // Ensure uncontrolled -> controlled transition doesn't print a warning when default value isn't set
       key={typeof defaultValue === "undefined" ? undefined : `component-${field}-${typeof value === "undefined" ? "uncontrolled" : "controlled"}`}
       mb="md"
+      disabled={disabled}
       {...componentProps}
+      placeholder={placeholder}
+      error={error}
       label={<InputLabel label={label} hint={hint} />}
       description={description}
       value={value}
@@ -169,6 +196,8 @@ const Input = observer(({
         }
 
         store.SetMetadata({objectId, page: location.pathname, path, field, value});
+
+        setChanged(true);
       }}
     />
   );
@@ -196,6 +225,8 @@ const Password = observer(({
   const value = store.GetMetadata({objectId, path, field});
   const [password, setPassword] = useState(value);
   const [changed, setChanged] = useState(false);
+
+  componentProps.maw = componentProps.maw || 500;
 
   return (
     <PasswordInput
@@ -225,6 +256,7 @@ const Password = observer(({
 
 // Checkbox
 const CheckboxCard = observer(({
+  INVERTED=false,
   store,
   objectId,
   path,
@@ -251,7 +283,7 @@ const CheckboxCard = observer(({
       style={{display: "block"}}
       onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
     >
-      <Paper withBorder p="xl" pt="md" pb="lg" mb="md" w="max-content">
+      <Paper withBorder p="xl" py="md" mb="md" w="max-content">
         <MantineInput.Wrapper
           pr={50}
           label={<InputLabel label={label} hint={hint} />}
@@ -261,7 +293,7 @@ const CheckboxCard = observer(({
           <Checkbox
             style={{position: "absolute", right: -25}}
             {...componentProps}
-            checked={value}
+            checked={INVERTED ? !value : value}
             onChange={() => {}}
             tabIndex={-1}
             size="md"
@@ -280,33 +312,95 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
   const [showEditor, setShowEditor] = useState(false);
 
   return (
-    <Paper withBorder={showEditor} p={showEditor ? "xl" : 0} pt={showEditor ? "md" : 0} mb="md" w={showEditor ? undefined : "max-content"}>
+    <Paper withBorder p="xl" py="md" mb="md" maw={800} w="100%">
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
         {
-          !showEditor ? null :
+          showEditor ?
             <Container p={0} m={0} my="xl">
-              <RichTextEditor store={store} objectId={objectId} page={location.pathname} path={path} field={field} />
-            </Container>
+              <RichTextEditor
+                store={store}
+                objectId={objectId}
+                page={location.pathname}
+                path={path}
+                field={field}
+                componentProps={{mih: 200}}
+              />
+            </Container> :
+            <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
+              <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(store.GetMetadata({objectId, path, field}))}} />
+            </Paper>
         }
-        <Group mt={showEditor ? 0 : "xs"}>
-          {
-            showEditor ?
-              <Button
-                size="sm"
-                variant="light"
-                onClick={() => setShowEditor(false)}
-                style={{position: "absolute", top: 0, right: 0}}
+        <ActionIcon
+          title={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
+          aria-label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
+          onClick={() => setShowEditor(!showEditor)}
+          style={{position: "absolute", top: 0, right: 0}}
+        >
+          { showEditor ? <IconEditOff /> : <IconEdit /> }
+        </ActionIcon>
+      </MantineInput.Wrapper>
+    </Paper>
+  );
+});
+
+
+const CodeInput = observer(({store, objectId, path, field, label, description, hint, defaultValue, language="css", componentProps={}}) => {
+  const [editing, setEditing] = useState(false);
+  const [validationResults, setValidationResults] = useState(undefined);
+
+  let value = store.GetMetadata({objectId, path, field});
+
+  useEffect(() => {
+    if(language === "css") {
+      setValidationResults(ValidateCSS(value));
+    }
+  }, [editing, language, value]);
+
+  let highlightedLines = {};
+  (validationResults?.errors || []).forEach(error =>
+    highlightedLines[error.line] = { color: "red", label: `!${error.line}` }
+  );
+
+  return (
+    <Paper withBorder p="xl" pt="md" maw={800} style={{position: "relative"}}>
+      <MantineInput.Wrapper
+        label={<InputLabel label={label} hint={hint} />}
+        description={description}
+        error={validationResults?.errorMessage}
+        styles={() => ({error: { marginTop: 30 }})}
+      >
+        <ActionIcon
+          title={rootStore.l10n.components.actions.edit}
+          aria-label={rootStore.l10n.components.actions.edit}
+          onClick={() => setEditing(!editing)}
+          style={{position: "absolute", top: 10, right: 10}}
+        >
+          { editing ? <IconEditOff /> : <IconEdit /> }
+        </ActionIcon>
+        {
+          editing ?
+            <Input
+              type="textarea"
+              store={store}
+              objectId={objectId}
+              path={path}
+              field={field}
+              defaultValue={defaultValue}
+              componentProps={{...componentProps, maw: 800, mb:0, minRows: componentProps.minRows || 20}}
+            /> :
+            <ScrollArea mah={500} style={{overflow: "hidden"}}>
+              <Prism
+                mt="xl"
+                language={language}
+                mah={450}
+                withLineNumbers
+                highlightLines={highlightedLines}
               >
-                { rootStore.l10n.components.inputs.hide_editor }
-              </Button> :
-              <Button
-                size="xs"
-                onClick={() => setShowEditor(true)}
-              >
-                { rootStore.l10n.components.inputs.show_editor }
-              </Button>
-          }
-        </Group>
+                {value}
+              </Prism>
+            </ScrollArea>
+
+        }
       </MantineInput.Wrapper>
     </Paper>
   );
@@ -317,6 +411,8 @@ const SingleImageInput = observer(({
   store,
   objectId,
   label,
+  description,
+  hint,
   path,
   field
 }) => {
@@ -336,14 +432,17 @@ const SingleImageInput = observer(({
       <Paper shadow="sm" withBorder w="max-content" p={30} style={{position: "relative"}}>
         <UnstyledButton onClick={() => setShowFileBrowser(true)}>
           <Image
+            mb="xs"
             withPlaceholder
             height={150}
             width={150}
             src={imageUrl}
             alt={label}
-            caption={<Text>{ label }</Text>}
             fit="contain"
+            placeholder={<IconPhotoX size={35} />}
+            styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
           />
+          <MantineInput.Wrapper maw={150} label={<InputLabel label={label} hint={hint} />} description={description} />
         </UnstyledButton>
         {
           !imageMetadata ? null :
@@ -408,17 +507,19 @@ const ImageInput = observer(({
   const location = useLocation();
 
   return (
-    <Paper withBorder shadow="sm" p="xl" pt="md" w="max-content" mb="md">
+    <Paper withBorder p="xl" py="md" w="max-content" mb="md">
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description}>
         <Group my="md">
           {
-            fields.map(({label, field}) =>
+            fields.map(({label, description, hint, field}) =>
               <SingleImageInput
                 key={`image-input-${field}`}
                 store={store}
                 objectId={objectId}
                 path={path}
                 label={label}
+                description={description}
+                hint={hint}
                 field={field}
               />
             )
@@ -427,7 +528,7 @@ const ImageInput = observer(({
         {
           !altTextField ? null :
             <Input
-              hint={rootStore.l10n.components.hints.general.image_alt_text}
+              hint={rootStore.l10n.components.inputs.hints.image_alt_text}
               page={location.pathname}
               type="textarea"
               store={store}
@@ -435,6 +536,7 @@ const ImageInput = observer(({
               label="Alt Text"
               path={path}
               field={altTextField}
+              componentProps={{minRows: 2}}
             />
         }
       </MantineInput.Wrapper>
@@ -541,7 +643,9 @@ const SimpleList = observer(({
 
 export default {
   Text: props => <Input {...props} type="text" />,
+  URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
   TextArea: props => <Input {...props} type="textarea" />,
+  Code: props => <CodeInput {...props} />,
   UUID: props => <Input {...props} type="uuid" />,
   JSON: props => <Input {...props} type="json" />,
   Integer: ({min, max, componentProps, ...props}) =>

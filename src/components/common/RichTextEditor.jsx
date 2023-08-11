@@ -1,5 +1,5 @@
 import { RichTextEditor as TipTapEditor, Link } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
+import { useEditor, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import {observer} from "mobx-react-lite";
@@ -12,7 +12,7 @@ import {
 } from "@tabler/icons-react";
 
 
-const RichTextEditor = observer(({store, objectId, page, path, field}) => {
+const RichTextEditor = observer(({store, objectId, page, path, field, componentProps={}}) => {
   let value = store.GetMetadata({objectId, path, field});
 
   const editor = useEditor({
@@ -41,7 +41,24 @@ const RichTextEditor = observer(({store, objectId, page, path, field}) => {
   }, [editor, value]);
 
   return (
-    <TipTapEditor editor={editor}>
+    <TipTapEditor {...componentProps} editor={editor}>
+      {
+        !editor ? null :
+          <BubbleMenu editor={editor}>
+            <TipTapEditor.ControlsGroup>
+              <TipTapEditor.Bold />
+              <TipTapEditor.Italic />
+              <TipTapEditor.Underline />
+              <TipTapEditor.Strikethrough />
+              <TipTapEditor.ClearFormatting />
+              <TipTapEditor.Code />
+              <TipTapEditor.H1 />
+              <TipTapEditor.H2 />
+              <TipTapEditor.H3 />
+              <TipTapEditor.H4 />
+            </TipTapEditor.ControlsGroup>
+          </BubbleMenu>
+      }
       <TipTapEditor.Toolbar>
         <TipTapEditor.ControlsGroup>
           <TipTapEditor.Bold />

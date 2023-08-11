@@ -1,14 +1,26 @@
 import {Affix, Button, Group} from "@mantine/core";
 import {observer} from "mobx-react-lite";
-import {useLocation} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {
   IconArrowBackUp as IconUndo,
   IconArrowForwardUp as IconRedo
 } from "@tabler/icons-react";
+import {rootStore, marketplaceStore} from "Stores";
 
-const HistoryButtons = observer(({store, objectId}) => {
+const HistoryButtons = observer(({section}) => {
+  const params = useParams();
   const location = useLocation();
   const page = location.pathname;
+
+  let store, objectId;
+  switch(section) {
+    case "marketplace":
+      store = marketplaceStore;
+      objectId = params.marketplaceId;
+      break;
+    default:
+      rootStore.DebugLog({message: `History Buttons: Unknown section type '${section}'`, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+  }
 
   const undoActions = store.UndoQueue({objectId, page});
   const redoActions = store.RedoQueue({objectId, page});

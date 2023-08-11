@@ -1,0 +1,225 @@
+// From media wallet, for rich text preview
+
+$tablet-breakpoint: 850px;
+
+.rich-text-document {
+  --color-text-highlight: #2D61E4;
+  --font-family-primary: "Montserrat", "Helvetica Neue", Helvetica, sans-serif; /* Primary font should be accompanied with 'text-transform: uppercase' */
+  --font-family-secondary: "DM Sans", "Helvetica Neue", Helvetica, sans-serif;
+  --font-family-tertiary: "Inter", Helvetica, sans-serif;
+
+  // Reset
+  /*** The new CSS Reset - version 1.4.2 (last updated 30.11.2021) ***/
+
+  /*
+      Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
+      - The "symbol *" part is to solve Firefox SVG sprite bug
+   */
+  *:where(:not(iframe, canvas, img, svg, input, video):not(svg *, symbol *)) {
+    all: unset;
+    display: revert;
+  }
+
+  /* Preferred box-sizing value */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  /* Remove list styles (bullets/numbers) */
+  ol, ul, menu {
+    list-style: none;
+  }
+
+  /* For images to not be able to exceed their container */
+  img {
+    max-width: 100%;
+  }
+
+  /* removes spacing between cells in tables */
+  table {
+    border-collapse: collapse;
+  }
+
+  /* revert the 'white-space' property for textarea elements on Safari */
+  textarea {
+    white-space: revert;
+  }
+
+  a,
+  button {
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+  }
+
+  button {
+    text-align: center;
+  }
+
+  /* revert for bug in Chromium browsers
+     - fix for the content editable attribute will work properly. */
+  :where([contenteditable]){
+    -moz-user-modify: read-write;
+    -webkit-line-break: after-white-space;
+    -webkit-user-modify: read-write;
+    overflow-wrap: break-word;
+  }
+
+  // sass-lint:disable no-important
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-delay: -1ms !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      background-attachment: initial !important;
+      scroll-behavior: auto !important;
+      transition-delay: 0s !important;
+      transition-duration: 0s !important;
+    }
+  }
+
+
+  * {
+    font-family: var(--font-family-secondary);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-family-primary);
+  }
+
+
+
+  & > * {
+    font-size: 16px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  p {
+    line-height: 1.3em;
+    margin: 1em 0;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  h3 {
+    font-size: 20px;
+  }
+
+  h4 {
+    font-size: 18px;
+  }
+
+  h5 {
+    font-size: 16px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  a {
+    // sass-lint:disable no-important
+    color: var(--color-text-highlight) !important;
+
+    * {
+      color: var(--color-text-highlight) !important;
+    }
+
+    &:hover {
+      // sass-lint:disable no-important
+      color: var(--color-text-highlight) !important;
+
+      * {
+        color: var(--color-text-highlight) !important;
+      }
+    }
+  }
+
+  blockquote {
+    margin: 30px 0 20px 20px;
+  }
+
+  ol {
+    counter-reset: item;
+    list-style: none;
+
+    li {
+      counter-increment: item;
+      margin-bottom: 5px;
+
+      &::before {
+        content: counter(item);
+        display: inline-block;
+        margin-right: 10px;
+        text-align: center;
+        width: 0.8em;
+      }
+    }
+  }
+
+  ul {
+    list-style: disc;
+    margin-left: 1em;
+  }
+
+  @media screen and (max-width: $tablet-breakpoint) {
+    & > * {
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    h3 {
+      font-size: 18px;
+    }
+
+    h4 {
+      font-size: 16px;
+    }
+
+    h5 {
+      font-size: 14px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}

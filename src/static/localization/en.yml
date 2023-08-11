@@ -3,7 +3,9 @@ pages:
     nav:
       list: Marketplaces
       overview: Overview
-      branding: Branding
+      general: General
+      images: Images
+      theme: Theme
 
 components:
   nav:
@@ -16,10 +18,13 @@ components:
     delete: Delete
     upload: Upload
     remove: Remove
+    edit: Edit
     undo: Undo
     undo_action: Undo {action}
     redo: Redo
     redo_action: Redo {action}
+  forms:
+    advanced_settings: Advanced Settings
   inputs:
     add: Add {item}
     select_file: Select file for {item}
@@ -34,6 +39,10 @@ components:
       add_item: Add item to {field}
       remove_item: Remove element from {field}
       move_item: Move item in {field}
+    hints:
+      image_alt_text: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
+    validation:
+      invalid_url: Invalid URL
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory
@@ -62,10 +71,6 @@ components:
       name: Name
       library_id: Library ID
       object_id: Object ID
-  hints:
-    hint: Hint
-    general:
-      image_alt_text: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
 
 stores:
   initialization:

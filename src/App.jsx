@@ -30,7 +30,7 @@ const LoaderModal = observer(() => {
 
 const App = observer(() => {
   return (
-    <MantineProvider withGlobalStyles theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
+    <MantineProvider withGlobalStyles withNormalizeCSS theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
       <ModalsProvider>
         <main>
           <LoaderModal />
