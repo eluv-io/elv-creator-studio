@@ -162,14 +162,17 @@ const SideNav = observer(({links, backLink}) => {
                   </NavLink>
               }
               {
-                links.map(({label, path}) =>
-                  <NavLink
-                    to={path}
-                    key={`nav-link-${path}`}
-                    className={cx(classes.link, {[classes.linkActive]: activeLocation?.path === path})}
-                  >
-                    {label}
-                  </NavLink>
+                links.map(({root, navRoute, label, path}) =>
+                  !navRoute ? null :
+                    <NavLink
+                      to={path}
+                      key={`nav-link-${path}`}
+                      className={({isActive}) =>
+                        cx(classes.link, {[classes.linkActive]: !root ? isActive : activeLocation?.path === path})
+                      }
+                    >
+                      {label}
+                    </NavLink>
                 )
               }
             </div>

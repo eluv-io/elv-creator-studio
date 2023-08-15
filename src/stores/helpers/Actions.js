@@ -8,6 +8,10 @@ export const ACTIONS = {
     stackable: true,
     collapsible: true
   },
+  MODIFY_FIELD_UNSTACKABLE: {
+    stackable: false,
+    collapsible: true
+  },
   TOGGLE_FIELD: {
     stackable: false,
     collapsible: true

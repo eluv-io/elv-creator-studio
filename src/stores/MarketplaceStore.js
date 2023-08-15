@@ -33,7 +33,11 @@ class MarketplaceStore {
         public: (yield this.client.ContentObjectMetadata({
           libraryId: libraryId,
           objectId: marketplaceId,
-          metadataSubtree: "public"
+          metadataSubtree: "public",
+          resolveLinks: true,
+          linkDepthLimit: 1,
+          resolveIgnoreErrors: true,
+          produceLinkUrls: true
         }))
       }
     };

@@ -27,7 +27,8 @@ const RichTextEditor = observer(({store, objectId, page, path, field, componentP
         page,
         path,
         field,
-        value: editor.getHTML()
+        // If editor is empty, just set to empty string instead of empty html
+        value: editor.getText().trim() === "" ? "" : editor.getHTML()
       });
     },
     content: value

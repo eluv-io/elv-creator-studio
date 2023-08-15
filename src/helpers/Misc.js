@@ -1,7 +1,13 @@
 import {Utils} from "@eluvio/elv-client-js";
 import {rootStore} from "Stores";
+import {v4 as UUID, parse as UUIDParse} from "uuid";
 
 export const Capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
+
+export const GenerateUUID = () => rootStore.utils.B58(UUIDParse(UUID()));
+
+export const FormatUSD = usd => typeof usd === "undefined" || usd === "" ? "" :
+  new Intl.NumberFormat(navigator.language || "en-US", { style: "currency", currency: "USD"}).format(usd);
 
 export const SortTable = ({sortStatus, AdditionalCondition}) => {
   return (a, b) => {

@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, configure} from "mobx";
 import {Utils} from "@eluvio/elv-client-js";
 import {ElvClient} from "@eluvio/elv-client-js";
 import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
@@ -14,6 +14,14 @@ import TenantStore from "Stores/TenantStore.js";
 import MarketplaceStore from "Stores/MarketplaceStore.js";
 
 import LocalizationEN from "Assets/localization/en.yml";
+
+configure({
+  enforceActions: "always",
+  //computedRequiresReaction: true,
+  //reactionRequiresObservable: true,
+  //observableRequiresReaction: true,
+  disableErrorBoundaries: true
+});
 
 class RootStore {
   loaded = false;

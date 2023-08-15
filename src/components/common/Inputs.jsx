@@ -4,6 +4,7 @@ import "Assets/stylesheets/rich-text.scss";
 
 import {
   Input as MantineInput,
+  Box,
   Paper,
   ActionIcon,
   Group,
@@ -19,22 +20,21 @@ import {
   NumberInput,
   Stack,
   MultiSelect,
-  JsonInput, PasswordInput, ScrollArea
+  JsonInput, PasswordInput, ScrollArea, Table
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {observer} from "mobx-react-lite";
-import {useLocation} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
 import {rootStore} from "Stores";
-import {LocalizeString} from "./Misc.jsx";
-import {FabricUrl} from "../../helpers/Fabric";
+import {ItemImage, LocalizeString} from "./Misc.jsx";
+import {FabricUrl} from "Helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {ParseDate} from "../../helpers/Misc";
-import {v4 as UUID, parse as UUIDParse} from "uuid";
+import {GenerateUUID, ParseDate} from "Helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
@@ -46,8 +46,10 @@ import {
   IconQuestionMark,
   IconPhotoX,
   IconEdit,
-  IconEditOff
+  IconEditOff,
+  IconTrashX
 } from "@tabler/icons-react";
+import {useDebouncedValue} from "@mantine/hooks";
 
 
 // Icon with hint tooltip on hover
@@ -55,21 +57,55 @@ const HintIcon = ({hint, componentProps={}}) => {
   return (
     <Tooltip label={hint} multiline maw={350} w="max-content" withArrow position="top-start" events={{ hover: true, focus: true, touch: false }}>
       <Group {...componentProps} style={{cursor: "help", ...(componentProps?.style || {})}}>
-        <IconQuestionMark alt={hint} size={12} strokeWidth={1} />
+        <IconQuestionMark alt={hint} size={12} color="#228be6" />
       </Group>
     </Tooltip>
   );
 };
 
 // Field label - includes hint icon if hint is specified
-const InputLabel = ({label, hint}) => {
+const InputLabel = ({label, hint, centered}) => {
   return (
     !hint ? label :
-      <Group spacing={5} align="center">
+      <Group
+        align="center"
+        mx={centered ? "auto" : 0}
+        position={centered ? "center" : "left"}
+        pr={15}
+        pl={centered ? 15 : 0}
+        style={{position: "relative"}}
+        w="max-content"
+      >
         <Text>{ label }</Text>
-        <HintIcon hint={hint} />
+        <HintIcon hint={hint} componentProps={{style: {position: "absolute", right: 0}}} />
       </Group>
   );
+};
+
+const ItemSelectLabelGenerator = (items) => {
+  return observer(({label, value, onRemove, ...others}) => {
+    const item = items.find(item => item.sku === value);
+
+    if(!item) { return null; }
+
+    return (
+      <Paper withBorder p={5} {...others}>
+        <Group>
+          <Box mr={10}>
+            <ItemImage item={item} width={200} imageProps={{width: 30, height: 30, radius: "md"}} />
+          </Box>
+          <Box>{label}</Box>
+          <ActionIcon
+            onClick={onRemove}
+            variant="transparent"
+            tabIndex={-1}
+          >
+            <IconX />
+          </ActionIcon>
+        </Group>
+      </Paper>
+    );
+  });
 };
 
 
@@ -91,6 +127,7 @@ const Input = observer(({
   disabled,
   Validate,
   validateOnLoad=true,
+  items,
   componentProps={}
 }) => {
   const [error, setError] = useState(undefined);
@@ -104,7 +141,7 @@ const Input = observer(({
     if((type === "uuid" || typeof defaultValue !== "undefined") && typeof store.GetMetadata({objectId, path, field}) === "undefined") {
       let value = defaultValue;
       if(type === "uuid") {
-        value = store.utils.B58(UUIDParse(UUID()));
+        value = GenerateUUID();
       }
 
       store.SetDefaultValue({objectId, path, field, value});
@@ -146,8 +183,19 @@ const Input = observer(({
       break;
     case "multiselect":
       Component = MultiSelect;
+
+      if(items) {
+        componentProps.valueComponent = ItemSelectLabelGenerator(items);
+        options = items
+          .map(item =>
+            ({ label: item.name || item.sku, value: item.sku })
+          )
+          .sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1);
+      }
+
       componentProps.searchable = searchable;
       componentProps.data = options;
+
       break;
     case "date":
       Component = DatePickerInput;
@@ -195,7 +243,14 @@ const Input = observer(({
           value = value ? value.toISOString() : undefined;
         }
 
-        store.SetMetadata({objectId, page: location.pathname, path, field, value});
+        store.SetMetadata({
+          actionType: ["select", "multiselect"].includes(type) ? "MODIFY_FIELD_UNSTACKABLE" : "MODIFY_FIELD",
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          value
+        });
 
         setChanged(true);
       }}
@@ -283,7 +338,7 @@ const CheckboxCard = observer(({
       style={{display: "block"}}
       onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
     >
-      <Paper withBorder p="xl" py="md" mb="md" w="max-content">
+      <Paper withBorder p="xl" py="md" mb="md" w="max-content" maw={500}>
         <MantineInput.Wrapper
           pr={50}
           label={<InputLabel label={label} hint={hint} />}
@@ -311,6 +366,7 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
   const location = useLocation();
   const [showEditor, setShowEditor] = useState(false);
 
+  const value = store.GetMetadata({objectId, path, field});
   return (
     <Paper withBorder p="xl" py="md" mb="md" maw={800} w="100%">
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
@@ -326,9 +382,10 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
                 componentProps={{mih: 200}}
               />
             </Container> :
-            <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
-              <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(store.GetMetadata({objectId, path, field}))}} />
-            </Paper>
+            value ?
+              <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
+                <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
+              </Paper> : null
         }
         <ActionIcon
           title={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
@@ -414,7 +471,8 @@ const SingleImageInput = observer(({
   description,
   hint,
   path,
-  field
+  field,
+  componentProps={}
 }) => {
   const location = useLocation();
 
@@ -429,7 +487,7 @@ const SingleImageInput = observer(({
 
   return (
     <>
-      <Paper shadow="sm" withBorder w="max-content" p={30} style={{position: "relative"}}>
+      <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
         <UnstyledButton onClick={() => setShowFileBrowser(true)}>
           <Image
             mb="xs"
@@ -442,7 +500,13 @@ const SingleImageInput = observer(({
             placeholder={<IconPhotoX size={35} />}
             styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
           />
-          <MantineInput.Wrapper maw={150} label={<InputLabel label={label} hint={hint} />} description={description} />
+          <MantineInput.Wrapper
+            maw={150}
+            label={<InputLabel centered label={label} hint={hint} />}
+            description={description}
+            labelProps={{style: { width: "100%", textAlign: "center "}}}
+            descriptionProps={{style: { width: "100%", textAlign: "center "}}}
+          />
         </UnstyledButton>
         {
           !imageMetadata ? null :
@@ -521,6 +585,9 @@ const ImageInput = observer(({
                 description={description}
                 hint={hint}
                 field={field}
+                componentProps={{
+                  mb: 0
+                }}
               />
             )
           }
@@ -544,8 +611,50 @@ const ImageInput = observer(({
   );
 });
 
-// List of inputs with the same type
-const SimpleList = observer(({
+const ListInputs = observer(({
+  type="text",
+  store,
+  objectId,
+  path,
+  field,
+  fieldLabel,
+  fields=[],
+  index
+}) => {
+  // Fields not specified - simple list
+  if(!fields || fields.length === 0) {
+    return (
+      <Input
+        type={type}
+        store={store}
+        objectId={objectId}
+        path={UrlJoin(path, field)}
+        field={index.toString()}
+        label={fieldLabel}
+        componentProps={{style: {flexGrow: "1"}}}
+      />
+    );
+  }
+
+  return (
+    <>
+      {
+        fields.map(({InputComponent, ...props}) =>
+          <InputComponent
+            key={`input-${props.field}`}
+            store={store}
+            objectId={objectId}
+            path={UrlJoin(path, field, index.toString())}
+            {...props}
+          />
+        )
+      }
+    </>
+  );
+});
+
+// List of inputs
+const List = observer(({
   type="text",
   store,
   objectId,
@@ -555,6 +664,7 @@ const SimpleList = observer(({
   hint,
   description,
   fieldLabel,
+  fields=[]
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
@@ -566,23 +676,28 @@ const SimpleList = observer(({
           withBorder
           shadow={snapshot.isDragging ? "lg" : ""}
           p="sm"
+          maw={800}
           ref={provided.innerRef}
           {...provided.draggableProps}
         >
-          <Group align="start">
-            <div style={{cursor: "grab"}} {...provided.dragHandleProps}>
+          <Group align="start" style={{position: "relative"}} px={40}>
+            <div style={{cursor: "grab", position: "absolute", top: 0, left: 0}} {...provided.dragHandleProps}>
               <IconGripVertical />
             </div>
-            <Input
-              type={type}
-              store={store}
-              objectId={objectId}
-              path={UrlJoin(path, field)}
-              field={index.toString()}
-              label={fieldLabel}
-              componentProps={{style: {flexGrow: "1"}}}
-            />
+            <Container p={0} m={0} fluid w="100%">
+              <ListInputs
+                type={type}
+                store={store}
+                objectId={objectId}
+                path={path}
+                field={field}
+                fieldLabel={fieldLabel}
+                fields={fields}
+                index={index}
+              />
+            </Container>
             <ActionIcon
+              style={{position: "absolute", top: 0, right: 0}}
               title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               onClick={() => {
@@ -609,7 +724,7 @@ const SimpleList = observer(({
   ));
 
   return (
-    <Paper withBorder p="xl" pt="md" m={0} mb="xl">
+    <Paper withBorder p="xl" pt="md" m={0} mb="xl" maw={800}>
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
         <Container p={0} m={0} mt="lg">
           <DragDropContext
@@ -641,6 +756,210 @@ const SimpleList = observer(({
   );
 });
 
+const CollectionTableContent = observer(({
+  showDragHandle,
+  containerProvided,
+  store,
+  objectId,
+  path,
+  field,
+  columns=[],
+  fieldLabel,
+  idField="index",
+  values
+}) => {
+  return (
+    <Table
+      {...containerProvided.droppableProps}
+      ref={containerProvided.innerRef}
+      withBorder
+      verticalSpacing="xs"
+    >
+      <thead>
+      <tr>
+        { showDragHandle ? <th></th> : null }
+        { columns.map(({label}) => <th key={`th-${label}`}>{label}</th>)}
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {
+        values.map((value, index) => {
+          const id = (idField === "index" ? index.toString() : value[idField]) || "";
+
+          return (
+            <Draggable key={`item-${id}`} index={index} draggableId={`item-${id}`}>
+              {(rowProvided) => (
+                <tr
+                  ref={rowProvided.innerRef}
+                  {...rowProvided.draggableProps}
+                  key={`tr-${index}`}
+                >
+                  <td style={{width: "40px", display: showDragHandle ? undefined : "none"}}>
+                    <div style={{cursor: "grab"}} {...rowProvided.dragHandleProps}>
+                      <IconGripVertical size={15}/>
+                    </div>
+                  </td>
+                  {columns.map(({field, width, render}) =>
+                    <td key={`td-${field}`} style={{width}}>
+                      {render ? render(value) : (value[field] || "")}
+                    </td>
+                  )}
+                  <td style={{width: "100px"}}>
+                    <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
+                      <ActionIcon
+                        component={Link}
+                        to={UrlJoin(location.pathname, id)}
+                        color="blue.5"
+                      >
+                        <IconEdit/>
+                      </ActionIcon>
+
+                      <ActionIcon
+                        color="red.5"
+                        onClick={() => {
+                          modals.openConfirmModal({
+                            title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}),
+                            centered: true,
+                            children: (
+                              <Text size="sm">
+                                {LocalizeString(rootStore.l10n.components.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()})}
+                              </Text>
+                            ),
+                            labels: {
+                              confirm: rootStore.l10n.components.actions.remove,
+                              cancel: rootStore.l10n.components.actions.cancel
+                            },
+                            confirmProps: {color: "red.6"},
+                            onConfirm: () => store.RemoveListElement({
+                              objectId,
+                              page: location.pathname,
+                              path,
+                              field,
+                              index
+                            })
+                          });
+                        }}
+                      >
+                        <IconTrashX/>
+                      </ActionIcon>
+                    </Group>
+                  </td>
+                </tr>
+              )}
+            </Draggable>
+          );
+        })
+      }
+      </tbody>
+    </Table>
+  );
+});
+
+const CollectionTable = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  label,
+  hint,
+  description,
+  columns=[],
+  fieldLabel,
+  newEntrySpec={},
+  idField="index",
+  filterable,
+  Filter
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  let values = store.GetMetadata({objectId, path, field}) || [];
+
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
+
+  const filteredValues = filterable && debouncedFilter && Filter ?
+    values.filter(value => Filter({filter: debouncedFilter, value})) :
+    values;
+
+  const addButton = (
+    <ActionIcon
+      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      onClick={() => {
+        let id = values.length.toString();
+        let newEntry = { ...newEntrySpec };
+
+        if(idField !== "index") {
+          id = GenerateUUID();
+          newEntry[idField] = id;
+        }
+
+        store.InsertListElement({
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          value: newEntry
+        });
+
+        navigate(UrlJoin(location.pathname, id));
+      }}
+    >
+      <IconPlus />
+    </ActionIcon>
+  );
+
+  return (
+    <Paper m={0} mb="xl" maw={800}>
+      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
+        <Container p={0} m={0} pb={50} mt="lg">
+          {
+            !filterable ? null :
+              <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
+          }
+
+          <DragDropContext
+            onDragEnd={({source, destination}) =>
+              store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
+            }
+          >
+            <Droppable droppableId="simple-list" direction="vertical">
+              {containerProvided => (
+                <>
+                  <CollectionTableContent
+                    showDragHandle={!debouncedFilter}
+                    containerProvided={containerProvided}
+                    store={store}
+                    objectId={objectId}
+                    path={path}
+                    field={field}
+                    columns={columns}
+                    values={filteredValues}
+                    idField={idField}
+                    fieldLabel={fieldLabel}
+                  />
+                  {containerProvided.placeholder}
+                </>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
+            {addButton}
+          </Group>
+          {
+            // Show bottom add button if there are a lot of entries
+            values.length < 10 ? null :
+              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+                {addButton}
+              </Group>
+          }
+        </Container>
+      </MantineInput.Wrapper>
+    </Paper>
+  );
+});
+
 export default {
   Text: props => <Input {...props} type="text" />,
   URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
@@ -661,5 +980,6 @@ export default {
   Checkbox: CheckboxCard,
   SingleImageInput,
   ImageInput,
-  SimpleList
+  List,
+  CollectionTable
 };

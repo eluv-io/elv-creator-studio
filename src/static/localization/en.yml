@@ -6,12 +6,17 @@ pages:
       general: General
       images: Images
       theme: Theme
+      items: Items
+      voting_events: Voting Events
+      analytics: Analytics
 
 components:
   nav:
     home: Home
     marketplaces: Marketplaces
   actions:
+    back: Back
+    back_to: Back to {target}
     done: Done
     submit: Submit
     cancel: Cancel

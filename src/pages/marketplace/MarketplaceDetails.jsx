@@ -5,7 +5,6 @@ import {useParams} from "react-router-dom";
 import {FileBrowserButton} from "../../components/common/FileBrowser.jsx";
 import {FabricBrowserButton} from "../../components/common/FabricBrowser.jsx";
 import Inputs from "Components/common/Inputs";
-import HistoryButtons from "../../components/common/HistoryButtons.jsx";
 
 const MarketplaceDetails = observer(() => {
   const { marketplaceId } = useParams();
@@ -222,7 +221,7 @@ const MarketplaceDetails = observer(() => {
           field="preview_password_digest"
         />
 
-        <Inputs.SimpleList
+        <Inputs.List
           label="Tags"
           description="tags description"
           hint="tags description"
