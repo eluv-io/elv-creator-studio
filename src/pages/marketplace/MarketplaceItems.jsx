@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/common/Inputs";
+import Inputs from "Components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {Title} from "@mantine/core";
 import {ItemImage} from "Components/common/Misc";
@@ -29,6 +29,7 @@ const itemSpec = {
   max_per_user: undefined,
   viewable: false,
   hide_available: false,
+  // unused?
   hide_description_on_card_face: false,
   video_has_audio: false,
   play_on_storefront: false,
@@ -93,6 +94,11 @@ export const MarketplaceItem = observer(() => {
         label="Image"
         field="image"
       />
+      <Inputs.Text
+        {...inputProps}
+        field="name"
+        label="Name"
+      />
       <Inputs.UUID
         {...inputProps}
         field="sku"
@@ -100,8 +106,13 @@ export const MarketplaceItem = observer(() => {
       />
       <Inputs.Text
         {...inputProps}
-        field="name"
-        label="Name"
+        field="subtitle"
+        label="Subtitle"
+      />
+      <Inputs.Text
+        {...inputProps}
+        field="subtitle2"
+        label="Subtitle 2"
       />
       <Inputs.TextArea
         {...inputProps}
@@ -114,8 +125,218 @@ export const MarketplaceItem = observer(() => {
         label="Description (Rich Text)"
       />
 
-      <Title order={3} mt={50} mb="md">Voting Event Settings</Title>
+      <Inputs.List
+        {...inputProps}
+        field="tags"
+        label="Tags"
+        fieldLabel="Tag"
+      />
 
+      <Title order={3} mt={50} mb="md">Display Options</Title>
+
+      {
+        !item.video ? null :
+          <>
+            <Inputs.Checkbox
+              {...inputProps}
+              field="vide_has_audio"
+              label="Video has Audio"
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              field="play_on_storefront"
+              label="Play Video on Storefront"
+            />
+          </>
+      }
+
+      <Inputs.Checkbox
+        {...inputProps}
+        INVERTED
+        field="hide_available"
+        label="Show Available Stock"
+      />
+
+      <Title order={3} mt={50} mb="md">Purchase Details</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        field="for_sale"
+        label="Available"
+      />
+      {
+        item.for_sale ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            field="viewable"
+            label="Viewable when not for sale"
+          />
+      }
+
+      <Inputs.Checkbox
+        {...inputProps}
+        field="free"
+        label="Free"
+      />
+
+      {
+        item.free ? null :
+          <>
+            <Inputs.Price
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "price")}
+              field="USD"
+              label="Price (USD)"
+            />
+            <Inputs.Integer
+              {...inputProps}
+              field="max_per_checkout"
+              label="Max Purchasable per Checkout"
+            />
+            <Inputs.Integer
+              {...inputProps}
+              field="max_per_user"
+              label="Max Purchasable per User"
+            />
+          </>
+      }
+
+      <Inputs.Price
+        {...inputProps}
+        path={UrlJoin(inputProps.path, "min_secondary_price")}
+        field="USD"
+        label="Minimum Secondary Market Price (USD)"
+      />
+
+
+
+      <Title order={3} mt={50} mb="md">Availability</Title>
+
+      <Inputs.DateTime
+        {...inputProps}
+        field="available_at"
+        label="Release Date"
+      />
+      <Inputs.DateTime
+        {...inputProps}
+        field="expires_at"
+        label="Available Until"
+      />
+
+      {
+        !item.available_at ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            field="show_if_unreleased"
+            label="Viewable Before Release"
+          />
+      }
+
+      {
+        !item.available_at || !item.show_if_unreleased ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            field="viewable_if_unreleased"
+            label="Item Page Viewable Before Release"
+          />
+      }
+
+
+      <Title order={3} mt={50} mb="md">Permissions</Title>
+      <Inputs.Checkbox
+        {...inputProps}
+        field="requires_permissions"
+        label="Requires Permissions to View"
+      />
+
+      {
+        !item.requires_permissions ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            field="show_if_unauthorized"
+            label="Show if Unauthorized"
+          />
+      }
+      {
+        !item.requires_permissions || !item.show_if_unauthorized ? null :
+          <>
+            <Inputs.Text
+              {...inputProps}
+              field="permission_message"
+              label="Permission Denied Message"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              field="permission_description"
+              label="Permission Denied Description"
+            />
+          </>
+      }
+
+
+      <Title order={3} mt={50} mb="md">Analytics</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        field="use_analytics"
+        label="Use Analytics for this Item"
+      />
+
+      {
+        !item.use_analytics ? null :
+          <>
+            <Title order={5} mt={20} mb="md">Item Page View Analytics</Title>
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "page_view_analytics")}
+              field="google_conversion_label"
+              label="Google Conversion Label"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "page_view_analytics")}
+              field="google_conversion_id"
+              label="Google Conversion ID"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "page_view_analytics")}
+              field="facebook_event_id"
+              label="Facebook Event ID"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "page_view_analytics")}
+              field="twitter_event_id"
+              label="Twitter Event ID"
+            />
+            <Title order={5} mt={40} mb="md">Item Purchase Analytics</Title>
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "purchase_analytics")}
+              field="google_conversion_label"
+              label="Google Conversion Label"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "purchase_analytics")}
+              field="google_conversion_id"
+              label="Google Conversion ID"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "purchase_analytics")}
+              field="facebook_event_id"
+              label="Facebook Event ID"
+            />
+            <Inputs.Text
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "purchase_analytics")}
+              field="twitter_event_id"
+              label="Twitter Event ID"
+            />
+          </>
+      }
     </PageContent>
   );
 });

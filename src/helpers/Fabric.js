@@ -9,7 +9,7 @@ export const ExtractHashFromLink = link => {
   }
 };
 
-export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth, resolve=true}) => {
+export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth, resolve=true, width}) => {
   if(versionHash) {
     objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
   } else {
@@ -51,6 +51,10 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path=""
 
   if(resolve) {
     url.searchParams.set("resolve", "true");
+  }
+
+  if(width) {
+    url.searchParams.set("width", width);
   }
 
   return url.toString();

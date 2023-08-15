@@ -2,7 +2,8 @@ import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/common/Inputs";
+import Inputs from "Components/inputs/Inputs";
+import MarketplaceItemInput from "../../components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Title} from "@mantine/core";
 
@@ -96,12 +97,11 @@ export const MarketplaceVotingEvent = observer(() => {
       />
       {
         votingEvent.type === "all" ? null :
-          <Inputs.MultiSelect
+          <MarketplaceItemInput
             {...inputProps}
             field="items"
             label="Votable Items"
             searchable
-            items={info.items || []}
           />
       }
 

@@ -40,6 +40,7 @@ import {
   IconX,
   IconUpload
 } from "@tabler/icons-react";
+import {ConfirmDelete} from "./Inputs.jsx";
 
 
 // Table showing the status of file uploads in the upload form
@@ -337,18 +338,13 @@ const DeleteFileButton = ({filename, Delete}) => {
       color="red.5"
       loading={deleting}
       onClick={() => {
-        modals.openConfirmModal({
+        ConfirmDelete({
           title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
-          centered: true,
-          children: (
-            <Text size="sm">
-              { rootStore.l10n.components.file_browser.delete_confirm }
-            </Text>
-          ),
-          labels: { confirm: rootStore.l10n.components.actions.delete, cancel: rootStore.l10n.components.actions.cancel },
-          confirmProps: { color: "red.5" },
-          overlayProps: {
-            zIndex: 202
+          itemName: filename,
+          modalProps: {
+            overlayProps: {
+              zIndex: 202
+            }
           },
           onConfirm: () => {
             setDeleting(true);
@@ -450,6 +446,12 @@ const FileBrowserTable = observer(({
                 type === "directory" ? <IconDirectory /> :
                   encrypted ? <IconFileEncrypted /> : <IconFile />
               );
+            }
+
+            if(url) {
+              url = new URL(url);
+              url.searchParams.set("width", 200);
+              url = url.toString();
             }
 
             return (

@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, marketplaceStore, tenantStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
-import Inputs from "Components/common/Inputs";
+import Inputs from "Components/inputs/Inputs";
 
 import {IconSettings} from "@tabler/icons-react";
 
@@ -53,6 +53,14 @@ const MarketplaceGeneralSettings = observer(() => {
         path="/public/asset_metadata/info"
         field="tenant_slug"
         defaultValue={tenantStore.tenantInfo?.tenantSlug}
+        {...inputProps}
+      />
+
+      <Inputs.Text
+        label="Marketplace Slug"
+        disabled
+        path="/public/asset_metadata"
+        field="slug"
         {...inputProps}
       />
 
@@ -121,19 +129,23 @@ const MarketplaceGeneralSettings = observer(() => {
         {...inputProps}
       />
 
-      <Inputs.Text
-        label="Notification Header"
-        path="/public/asset_metadata/info/branding/notification"
-        field="header"
-        {...inputProps}
-      />
-
-      <Inputs.RichText
-        label="Notification Text"
-        path="/public/asset_metadata/info/branding/notification"
-        field="text"
-        {...inputProps}
-      />
+      {
+        !info.branding?.notification?.active ? null :
+          <>
+            <Inputs.Text
+              label="Notification Header"
+              path="/public/asset_metadata/info/branding/notification"
+              field="header"
+              {...inputProps}
+            />
+            <Inputs.RichText
+              label="Notification Text"
+              path="/public/asset_metadata/info/branding/notification"
+              field="text"
+              {...inputProps}
+            />
+          </>
+      }
 
 
 

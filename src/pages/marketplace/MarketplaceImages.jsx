@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import {Group} from "@mantine/core";
-import Inputs from "Components/common/Inputs";
+import Inputs from "Components/inputs/Inputs";
 
 const MarketplaceImages = observer(() => {
   const { marketplaceId } = useParams();

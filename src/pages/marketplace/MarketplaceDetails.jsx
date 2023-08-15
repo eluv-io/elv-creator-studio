@@ -2,9 +2,9 @@ import {observer} from "mobx-react-lite";
 import {marketplaceStore} from "Stores";
 import {Container, Title} from "@mantine/core";
 import {useParams} from "react-router-dom";
-import {FileBrowserButton} from "../../components/common/FileBrowser.jsx";
-import {FabricBrowserButton} from "../../components/common/FabricBrowser.jsx";
-import Inputs from "Components/common/Inputs";
+import {FileBrowserButton} from "Components/inputs/FileBrowser.jsx";
+import {FabricBrowserButton} from "Components/inputs/FabricBrowser.jsx";
+import Inputs from "Components/inputs/Inputs";
 
 const MarketplaceDetails = observer(() => {
   const { marketplaceId } = useParams();

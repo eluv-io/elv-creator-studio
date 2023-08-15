@@ -1,10 +1,9 @@
-/* eslint-disable react-refresh/only-export-components */
+
 
 import "Assets/stylesheets/rich-text.scss";
 
 import {
   Input as MantineInput,
-  Box,
   Paper,
   ActionIcon,
   Group,
@@ -29,7 +28,7 @@ import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
 import {rootStore} from "Stores";
-import {ItemImage, LocalizeString} from "./Misc.jsx";
+import {LocalizeString} from "Components/common/Misc.jsx";
 import {FabricUrl} from "Helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
@@ -82,32 +81,21 @@ const InputLabel = ({label, hint, centered}) => {
   );
 };
 
-const ItemSelectLabelGenerator = (items) => {
-  return observer(({label, value, onRemove, ...others}) => {
-    const item = items.find(item => item.sku === value);
-
-    if(!item) { return null; }
-
-    return (
-      <Paper withBorder p={5} {...others}>
-        <Group>
-          <Box mr={10}>
-            <ItemImage item={item} width={200} imageProps={{width: 30, height: 30, radius: "md"}} />
-          </Box>
-          <Box>{label}</Box>
-          <ActionIcon
-            onClick={onRemove}
-            variant="transparent"
-            tabIndex={-1}
-          >
-            <IconX />
-          </ActionIcon>
-        </Group>
-      </Paper>
-    );
+export const ConfirmDelete = ({title, itemName, modalProps={}, onConfirm}) => {
+  modals.openConfirmModal({
+    title: title || LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName}),
+    centered: true,
+    children: (
+      <Text size="sm">
+        { LocalizeString(rootStore.l10n.components.inputs.remove_confirm, {item: itemName}) }
+      </Text>
+    ),
+    labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
+    confirmProps: { color: "red.6" },
+    onConfirm,
+    ...modalProps
   });
 };
-
 
 // General input
 const Input = observer(({
@@ -127,7 +115,6 @@ const Input = observer(({
   disabled,
   Validate,
   validateOnLoad=true,
-  items,
   componentProps={}
 }) => {
   const [error, setError] = useState(undefined);
@@ -167,6 +154,7 @@ const Input = observer(({
     case "number":
       // Additional options: min, max, step
       Component = NumberInput;
+      value = value || "";
       break;
     case "uuid":
       componentProps.disabled = true;
@@ -183,28 +171,19 @@ const Input = observer(({
       break;
     case "multiselect":
       Component = MultiSelect;
-
-      if(items) {
-        componentProps.valueComponent = ItemSelectLabelGenerator(items);
-        options = items
-          .map(item =>
-            ({ label: item.name || item.sku, value: item.sku })
-          )
-          .sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1);
-      }
-
       componentProps.searchable = searchable;
       componentProps.data = options;
-
       break;
     case "date":
       Component = DatePickerInput;
       componentProps.valueFormat = "LL";
+      clearable = true;
       value = ParseDate(value);
       break;
     case "datetime":
       Component = DateTimePicker;
       componentProps.valueFormat = "LLL ZZ";
+      clearable = true;
       value = ParseDate(value);
       break;
   }
@@ -338,7 +317,7 @@ const CheckboxCard = observer(({
       style={{display: "block"}}
       onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
     >
-      <Paper withBorder p="xl" py="md" mb="md" w="max-content" maw={500}>
+      <Paper withBorder p="xl" py="md" mb="md" w="max-content" maw={500} miw={500}>
         <MantineInput.Wrapper
           pr={50}
           label={<InputLabel label={label} hint={hint} />}
@@ -368,7 +347,7 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
 
   const value = store.GetMetadata({objectId, path, field});
   return (
-    <Paper withBorder p="xl" py="md" mb="md" maw={800} w="100%">
+    <Paper withBorder p="xl" py="md" mb="md" maw={!value && !showEditor ? 500 : 800} w="100%">
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
         {
           showEditor ?
@@ -482,7 +461,7 @@ const SingleImageInput = observer(({
 
   let imageUrl;
   if(imageMetadata) {
-    imageUrl = FabricUrl({objectId, path: imageMetadata["/"]});
+    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: 200});
   }
 
   return (
@@ -515,17 +494,8 @@ const SingleImageInput = observer(({
               style={{position: "absolute", top: "3px", right: "3px"}}
               onClick={event => {
                 event.stopPropagation();
-
-                modals.openConfirmModal({
-                  title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: label}),
-                  centered: true,
-                  children: (
-                    <Text size="sm">
-                      { LocalizeString(rootStore.l10n.components.inputs.remove_confirm, {item: label}) }
-                    </Text>
-                  ),
-                  labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
-                  confirmProps: { color: "red.6" },
+                ConfirmDelete({
+                  itemName: label,
                   onConfirm: () => store.SetMetadata({page: location.pathname, objectId, path, field, value: null})
                 });
               }}
@@ -668,6 +638,7 @@ const List = observer(({
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
+  const simpleList = !fields || fields.length === 0;
 
   const items = values.map((value, index) => (
     <Draggable key={`item-${index}`} index={index} draggableId={`item-${index}`}>
@@ -701,16 +672,8 @@ const List = observer(({
               title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
               onClick={() => {
-                modals.openConfirmModal({
-                  title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}),
-                  centered: true,
-                  children: (
-                    <Text size="sm">
-                      { LocalizeString(rootStore.l10n.components.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()}) }
-                    </Text>
-                  ),
-                  labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
-                  confirmProps: { color: "red.6" },
+                ConfirmDelete({
+                  itemName: fieldLabel?.toLowerCase(),
                   onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
                 });
               }}
@@ -723,10 +686,22 @@ const List = observer(({
     </Draggable>
   ));
 
+  const addButton = (
+    <ActionIcon
+      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
+    >
+      <IconPlus />
+    </ActionIcon>
+  );
+
+  const showBottomAddButton = items.length >= 5;
+
   return (
-    <Paper withBorder p="xl" pt="md" m={0} mb="xl" maw={800}>
+    <Paper withBorder px="xl" py="md" m={0} mb="xl" maw={simpleList ? 500 : 800}>
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
-        <Container p={0} m={0} mt="lg">
+        <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
           <DragDropContext
             onDragEnd={({source, destination}) =>
               store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
@@ -741,15 +716,15 @@ const List = observer(({
               )}
             </Droppable>
           </DragDropContext>
-          <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
-            <ActionIcon
-              title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-              aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-              onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
-            >
-              <IconPlus />
-            </ActionIcon>
+          <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+            {addButton}
           </Group>
+          {
+            !showBottomAddButton ? null :
+              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+                {addButton}
+              </Group>
+          }
         </Container>
       </MantineInput.Wrapper>
     </Paper>
@@ -818,26 +793,9 @@ const CollectionTableContent = observer(({
                       <ActionIcon
                         color="red.5"
                         onClick={() => {
-                          modals.openConfirmModal({
-                            title: LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}),
-                            centered: true,
-                            children: (
-                              <Text size="sm">
-                                {LocalizeString(rootStore.l10n.components.inputs.remove_confirm_list_item, {item: fieldLabel.toLowerCase()})}
-                              </Text>
-                            ),
-                            labels: {
-                              confirm: rootStore.l10n.components.actions.remove,
-                              cancel: rootStore.l10n.components.actions.cancel
-                            },
-                            confirmProps: {color: "red.6"},
-                            onConfirm: () => store.RemoveListElement({
-                              objectId,
-                              page: location.pathname,
-                              path,
-                              field,
-                              index
-                            })
+                          ConfirmDelete({
+                            itemName: fieldLabel?.toLowerCase(),
+                            onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
                           });
                         }}
                       >
@@ -971,6 +929,7 @@ export default {
     <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
   Number: ({min, max, step, precision, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
+  Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
   Select: props => <Input {...props} type="select" />,
   MultiSelect: props => <Input {...props} type="multiselect" />,
   Date: props => <Input {...props} type="date" />,

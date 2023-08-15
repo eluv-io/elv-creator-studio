@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/common/Inputs";
+import Inputs from "Components/inputs/Inputs";
 import {Title} from "@mantine/core";
 
 const MarketplaceAnalytics = observer(() => {
