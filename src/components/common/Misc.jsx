@@ -25,13 +25,13 @@ export const ItemImage = ({item, width, imageProps={}}) => {
   return <Image {...imageProps} src={url} alt={item.name || item.sku} withPlaceholder />;
 };
 
-export const LocalizeString = (text="", variables={}, options={stringOnly: false}) => {
+export const LocalizeString = (text="", variables={}, options={reactNode: false}) => {
   let result = text
     .split(/{(\w+)}/)
     .filter(s => s)
     .map(token => typeof variables[token] !== "undefined" ? variables[token] : token);
 
-  if(options.stringOnly) {
+  if(!options.reactNode) {
     return result.join("");
   }
 

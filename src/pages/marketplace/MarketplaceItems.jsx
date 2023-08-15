@@ -30,7 +30,6 @@ const itemSpec = {
   viewable: false,
   hide_available: false,
   // unused?
-  hide_description_on_card_face: false,
   video_has_audio: false,
   play_on_storefront: false,
   show_if_unreleased: false,
@@ -134,12 +133,19 @@ export const MarketplaceItem = observer(() => {
 
       <Title order={3} mt={50} mb="md">Display Options</Title>
 
+      <Inputs.FabricBrowser
+        {...inputProps}
+        field="video"
+        label="Video"
+        previewable
+      />
+
       {
         !item.video ? null :
           <>
             <Inputs.Checkbox
               {...inputProps}
-              field="vide_has_audio"
+              field="video_has_audio"
               label="Video has Audio"
             />
             <Inputs.Checkbox

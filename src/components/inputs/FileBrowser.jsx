@@ -280,8 +280,8 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
 
   const commonProps = {
     color: "blue.5",
-    title: LocalizeString(rootStore.l10n.components.file_browser.download, {filename}, {stringOnly: true}),
-    "aria-label": LocalizeString(rootStore.l10n.components.file_browser.download, {filename}, {stringOnly: true})
+    title: LocalizeString(rootStore.l10n.components.file_browser.download, {filename}),
+    "aria-label": LocalizeString(rootStore.l10n.components.file_browser.download, {filename})
   };
 
   if(encrypted) {
@@ -333,7 +333,7 @@ const DeleteFileButton = ({filename, Delete}) => {
 
   return (
     <ActionIcon
-      title={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}, {stringOnly: true})}
+      title={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})}
       aria-label={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})}
       color="red.5"
       loading={deleting}
@@ -485,7 +485,7 @@ const FileBrowserTable = observer(({
                 {
                   type === "directory" ? null :
                     <ActionIcon
-                      title={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename}, {stringOnly: true})}
+                      title={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})}
                       aria-label={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})}
                       color="green.5"
                       onClick={() =>

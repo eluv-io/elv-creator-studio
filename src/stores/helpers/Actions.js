@@ -21,6 +21,10 @@ export const ACTIONS = {
     stackable: false,
     collapsible: true
   },
+  SET_LINK: {
+    stackable: false,
+    collapsible: true
+  },
   INSERT_LIST_ELEMENT: {
     stackable: false,
     collapsible: false
@@ -76,6 +80,59 @@ const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, f
 const SetDefaultValue = function({objectId, path, field, value}) {
   this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, value});
 };
+
+// Links
+const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, field, linkObjectId, linkPath="/public/asset_metadata"}) {
+  if(!objectId) {
+    this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const fullPath = UrlJoin(path, field);
+  const pathComponents = fullPath.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  const originalValue = this.GetMetadata({objectId, path, field});
+
+  // Local metadata must contain resolved link, but must write out link structure to fabric
+  let metadataValue, writeValue;
+  if(linkObjectId) {
+    const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
+
+    metadataValue = yield this.client.ContentObjectMetadata({
+      versionHash: targetHash,
+      metadataSubtree: linkPath,
+      produceMetadataLinks: true,
+    });
+
+    metadataValue["."] = {
+      source: targetHash
+    };
+
+    writeValue = {
+      ".": {
+        "auto_update": {
+          "tag": "latest"
+        }
+      },
+      "/": objectId === linkObjectId ?
+        UrlJoin("./meta", linkPath) :
+        UrlJoin("/qfab", targetHash, "meta", linkPath)
+    };
+  }
+
+  this.ApplyAction({
+    objectId,
+    page,
+    key: fullPath,
+    actionType,
+    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
+    Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
+    Write: async (objectParams) => await this.client.ReplaceMetadata({
+      ...objectParams,
+      metadataSubtree: fullPath,
+      metadata: writeValue
+    })
+  });
+});
 
 const ListAction = function({actionType, objectId, page, path, field, index, newIndex, value}) {
   if(!objectId) {
@@ -282,6 +339,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.GetMetadata = GetMetadata;
   storeClass.prototype.SetMetadata = SetMetadata;
   storeClass.prototype.SetDefaultValue = SetDefaultValue;
+  storeClass.prototype.SetLink = SetLink;
   storeClass.prototype.ListAction = ListAction;
   storeClass.prototype.InsertListElement = InsertListElement;
   storeClass.prototype.MoveListElement = MoveListElement;

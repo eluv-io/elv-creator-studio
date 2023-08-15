@@ -70,7 +70,13 @@ components:
     validation:
       filename_must_be_specified: Filename must be specified
   fabric_browser:
+    select_library: Select Library
+    select_object: Select Object
+    title_with_label: Select Object for {item}
+    show_preview: Show Video Preview
+    hide_preview: Hide Video Preview
     filter: Filter
+    select: Select {item}
     back_to_library_selection: Back to library selection
     columns:
       name: Name

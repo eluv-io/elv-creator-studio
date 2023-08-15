@@ -37,6 +37,7 @@ class MarketplaceStore {
           resolveLinks: true,
           linkDepthLimit: 1,
           resolveIgnoreErrors: true,
+          resolveIncludeSource: true,
           produceLinkUrls: true
         }))
       }

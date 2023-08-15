@@ -37,6 +37,8 @@ import {GenerateUUID, ParseDate} from "Helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
+import {useDebouncedValue} from "@mantine/hooks";
+import {FabricBrowserInput} from "./FabricBrowser.jsx";
 
 import {
   IconX,
@@ -48,7 +50,7 @@ import {
   IconEditOff,
   IconTrashX
 } from "@tabler/icons-react";
-import {useDebouncedValue} from "@mantine/hooks";
+
 
 
 // Icon with hint tooltip on hover
@@ -63,7 +65,7 @@ const HintIcon = ({hint, componentProps={}}) => {
 };
 
 // Field label - includes hint icon if hint is specified
-const InputLabel = ({label, hint, centered}) => {
+export const InputLabel = ({label, hint, centered}) => {
   return (
     !hint ? label :
       <Group
@@ -81,13 +83,13 @@ const InputLabel = ({label, hint, centered}) => {
   );
 };
 
-export const ConfirmDelete = ({title, itemName, modalProps={}, onConfirm}) => {
+export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfirm}) => {
   modals.openConfirmModal({
     title: title || LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName}),
     centered: true,
     children: (
       <Text size="sm">
-        { LocalizeString(rootStore.l10n.components.inputs.remove_confirm, {item: itemName}) }
+        { LocalizeString(rootStore.l10n.components.inputs[listItem ? "remove_confirm_list_item" : "remove_confirm"], {item: itemName}) }
       </Text>
     ),
     labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
@@ -505,7 +507,7 @@ const SingleImageInput = observer(({
         }
       </Paper>
       <FileBrowser
-        title={LocalizeString(rootStore.l10n.components.inputs.select_file, { item: label }, {stringOnly: true})}
+        title={LocalizeString(rootStore.l10n.components.inputs.select_file, { item: label })}
         objectId={objectId}
         extensions="image"
         opened={showFileBrowser}
@@ -669,10 +671,11 @@ const List = observer(({
             </Container>
             <ActionIcon
               style={{position: "absolute", top: 0, right: 0}}
-              title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-              aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+              title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
+              aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
               onClick={() => {
                 ConfirmDelete({
+                  listItem: true,
                   itemName: fieldLabel?.toLowerCase(),
                   onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
                 });
@@ -688,8 +691,8 @@ const List = observer(({
 
   const addButton = (
     <ActionIcon
-      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
+      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
       onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
     >
       <IconPlus />
@@ -794,6 +797,7 @@ const CollectionTableContent = observer(({
                         color="red.5"
                         onClick={() => {
                           ConfirmDelete({
+                            listItem: true,
                             itemName: fieldLabel?.toLowerCase(),
                             onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
                           });
@@ -842,8 +846,8 @@ const CollectionTable = observer(({
 
   const addButton = (
     <ActionIcon
-      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
-      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()}, {stringOnly: true})}
+      title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
+      aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
       onClick={() => {
         let id = values.length.toString();
         let newEntry = { ...newEntrySpec };
@@ -940,5 +944,6 @@ export default {
   SingleImageInput,
   ImageInput,
   List,
-  CollectionTable
+  CollectionTable,
+  FabricBrowser: FabricBrowserInput
 };
