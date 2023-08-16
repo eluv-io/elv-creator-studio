@@ -29,6 +29,7 @@ export default defineConfig({
       { find: "Components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
       { find: "Helpers", replacement: fileURLToPath(new URL("./src/helpers", import.meta.url)) },
       { find: "Pages", replacement: fileURLToPath(new URL("./src/pages", import.meta.url)) },
+      { find: "Specs", replacement: fileURLToPath(new URL("./src/specs", import.meta.url)) },
       { find: "Stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
     ]
   },

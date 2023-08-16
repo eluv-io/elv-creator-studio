@@ -1,12 +1,27 @@
 import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
-import {Input as MantineInput, Paper, ActionIcon, Button, Container, Group, Modal, Text, TextInput} from "@mantine/core";
+import {
+  Input as MantineInput,
+  Paper,
+  ActionIcon,
+  Button,
+  Container,
+  Group,
+  Modal,
+  Text,
+  TextInput,
+  Image
+} from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore, uiStore} from "Stores";
 import {SortTable} from "Helpers/Misc.js";
 import {useDebouncedValue} from "@mantine/hooks";
 import {ConfirmDelete, InputLabel} from "./Inputs.jsx";
 import Video from "Components/common/Video.jsx";
+import {LocalizeString} from "Components/common/Misc.jsx";
+import {useLocation} from "react-router-dom";
+import {useForm} from "@mantine/form";
+import {modals} from "@mantine/modals";
 
 import {
   IconArrowBackUp,
@@ -15,10 +30,103 @@ import {
   IconPlayerPause,
   IconX
 } from "@tabler/icons-react";
-import {LocalizeString} from "../common/Misc.jsx";
-import {useLocation} from "react-router-dom";
 
-const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
+const ParseContentID = value => {
+  if(!value) { return; }
+
+  try {
+    let objectId;
+    if(value.startsWith("iq__")) {
+      objectId = value;
+    } else if(value.startsWith("hq__")) {
+      objectId = rootStore.utils.DecodeVersionHash(value).objectId;
+    } else {
+      objectId = rootStore.utils.AddressToObjectId(value);
+    }
+
+    if(rootStore.utils.HashToAddress(objectId).length === 42) {
+      // Valid
+      return objectId;
+    }
+    // eslint-disable-next-line no-empty
+  } catch(error) {}
+};
+
+// Form for inputing object id / hash / contract directly
+const DirectSelectionForm = ({Submit}) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const form = useForm({
+    initialValues: { contentId: "" },
+    validate: {
+      contentId: contentId => {
+        if(!ParseContentID(contentId)) {
+          return rootStore.l10n.components.fabric_browser.validation.invalid_content_id;
+        }
+      }
+    }
+  });
+
+  return (
+    <Container p={0}>
+      <form
+        onSubmit={form.onSubmit(async values => {
+          setSubmitting(true);
+
+          try {
+            const objectId = ParseContentID(values.contentId);
+            const libraryId = await rootStore.LibraryId({objectId});
+            await Submit({libraryId, objectId});
+            modals.closeAll();
+          } catch(error) {
+            rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+            form.setFieldError("contentId", rootStore.l10n.components.fabric_browser.validation.invalid_content_id);
+            setSubmitting(false);
+          }
+        })}
+      >
+        <TextInput
+          data-autofocus
+          label={rootStore.l10n.components.fabric_browser.content_id}
+          placeholder={rootStore.l10n.components.fabric_browser.direct_selection_placeholder}
+          {...form.getInputProps("contentId")}
+        />
+        <Group mt="md">
+          <Button
+            w="100%"
+            loading={submitting}
+            type="submit"
+          >
+            { rootStore.l10n.components.actions.submit }
+          </Button>
+        </Group>
+      </form>
+    </Container>
+  );
+};
+
+const DirectSelectionButton = observer(({label, Submit}) => {
+  return (
+    <ActionIcon
+      size={36}
+      onClick={() =>
+        modals.open({
+          title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
+          centered: true,
+          children:
+            <DirectSelectionForm Submit={Submit} />,
+          overlayProps: {
+            zIndex: 202
+          }
+        })
+      }
+    >
+      <IconSelect />
+    </ActionIcon>
+  );
+});
+
+const ObjectBrowser = observer(({label, libraryId, Back, Submit}) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 500);
   const [loading, setLoading] = useState(true);
@@ -48,7 +156,10 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
         </ActionIcon>
         <Text>{ library.name }</Text>
       </Group>
-      <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+      <Group align="end" mb="md">
+        <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+        <DirectSelectionButton label={label} Submit={Submit} />
+      </Group>
       <DataTable
         height={uiStore.viewportHeight - 400}
         fetching={loading}
@@ -57,15 +168,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
         withBorder
         onSortStatusChange={setSortStatus}
         highlightOnHover
-        onRowClick={async record => {
-          try {
-            setLoading(true);
-            await Submit(record.objectId);
-          } catch(error) {
-            rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-            setLoading(false);
-          }
-        }}
+        onRowClick={async record => await Submit({libraryId, objectId: record.objectId})}
         records={records}
         columns={[
           { accessor: "name", title: rootStore.l10n.components.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
@@ -76,7 +179,7 @@ const ObjectBrowser = observer(({libraryId, Back, Submit}) => {
   );
 });
 
-const LibraryBrowser = observer(({Submit}) => {
+const LibraryBrowser = observer(({label, Submit}) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [loading, setLoading] = useState(true);
@@ -94,7 +197,10 @@ const LibraryBrowser = observer(({Submit}) => {
 
   return (
     <Container p={0}>
-      <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+      <Group align="end" mb="md">
+        <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+        <DirectSelectionButton label={label} Submit={Submit} />
+      </Group>
       <DataTable
         height={uiStore.viewportHeight - 400}
         fetching={loading}
@@ -103,7 +209,7 @@ const LibraryBrowser = observer(({Submit}) => {
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
         highlightOnHover
-        onRowClick={record => Submit(record.libraryId)}
+        onRowClick={record => Submit({libraryId: record.libraryId})}
         records={records}
         columns={[
           { accessor: "name", title: rootStore.l10n.components.fabric_browser.columns.name, sortable: true, render: ({name}) => <Text style={{wordWrap: "anywhere"}}>{name}</Text> },
@@ -121,19 +227,21 @@ export const FabricBrowser = observer(({title, label, Close, Submit}) => {
     (label && LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label})) ||
     rootStore.l10n.components.fabric_browser[libraryId ? "select_object" : "select_library"];
 
+  const SubmitContent = async ({libraryId, objectId}) => {
+    if(!objectId) {
+      setLibraryId(libraryId);
+    } else {
+      await Submit({libraryId, objectId});
+      Close();
+    }
+  };
+
   return (
     <Modal opened onClose={Close} centered size={1000} title={title} padding="xl">
       {
         libraryId ?
-          <ObjectBrowser
-            libraryId={libraryId}
-            Back={() => setLibraryId(undefined)}
-            Submit={async objectId => {
-              await Submit({libraryId, objectId});
-              Close();
-            }}
-          /> :
-          <LibraryBrowser Close={Close} Submit={setLibraryId}/>
+          <ObjectBrowser label={label} libraryId={libraryId} Back={() => setLibraryId(undefined)} Submit={SubmitContent}/> :
+          <LibraryBrowser label={label} Close={Close} Submit={SubmitContent}/>
       }
     </Modal>
   );
@@ -159,7 +267,10 @@ export const FabricBrowserInput = observer(({
   description,
   hint,
   previewable,
+  previewIsAnimation,
+  previewOptions={},
   GetName,
+  GetImage,
   fabricBrowserProps={}
 }) => {
   const location = useLocation();
@@ -170,6 +281,7 @@ export const FabricBrowserInput = observer(({
 
   let value = store.GetMetadata({objectId, path, field});
   const name = value ? GetName(value) : "";
+  const imageUrl = GetImage?.(value);
 
   useEffect(() => {
     // Hide preview when anything changes
@@ -233,8 +345,24 @@ export const FabricBrowserInput = observer(({
                   </ActionIcon>
                 </Group>
                 <Container p={0} pr={70}>
-                  <Text fz="xs">
+                  {
+                    !imageUrl ? null :
+                      <Image
+                        mb="xs"
+                        height={125}
+                        fit="contain"
+                        alt={name}
+                        src={imageUrl}
+                        withPlaceholder
+                        bg="gray.1"
+                        p="xs"
+                      />
+                  }
+                  <Text fz="sm">
                     { name }
+                  </Text>
+                  <Text fz={11} color="dimmed">
+                    {rootStore.utils.DecodeVersionHash(value["."]?.source)?.objectId}
                   </Text>
                   <Text fz={8} color="dimmed">
                     {value["."]?.source}
@@ -244,7 +372,7 @@ export const FabricBrowserInput = observer(({
                 {
                   !showPreview ? null :
                     <Paper mt="sm">
-                      <Video videoLink={value}/>
+                      <Video videoLink={value} animation={previewIsAnimation} playerOptions={previewOptions} />
                     </Paper>
                 }
               </Paper>

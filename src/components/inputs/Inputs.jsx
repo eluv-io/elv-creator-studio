@@ -756,7 +756,15 @@ const CollectionTableContent = observer(({
       <thead>
       <tr>
         { showDragHandle ? <th></th> : null }
-        { columns.map(({label}) => <th key={`th-${label}`}>{label}</th>)}
+        {
+          columns.map(({label, centered}) =>
+            <th key={`th-${label}`}>
+              <Group position={centered ? "center" : "left"}>
+                {label}
+              </Group>
+            </th>
+          )
+        }
         <th></th>
       </tr>
       </thead>
@@ -778,9 +786,9 @@ const CollectionTableContent = observer(({
                       <IconGripVertical size={15}/>
                     </div>
                   </td>
-                  {columns.map(({field, width, render}) =>
+                  {columns.map(({field, width, render}, index) =>
                     <td key={`td-${field}`} style={{width}}>
-                      {render ? render(value) : (value[field] || "")}
+                      {render ? render(value, index) : (value[field] || "")}
                     </td>
                   )}
                   <td style={{width: "100px"}}>

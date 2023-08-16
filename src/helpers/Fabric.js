@@ -9,6 +9,15 @@ export const ExtractHashFromLink = link => {
   }
 };
 
+export const ScaleImage = (url, width) => {
+  if(!url) { return ""; }
+
+  url = new URL(url);
+  url.searchParams.set("width", width);
+
+  return url.toString();
+};
+
 export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth, resolve=true, width}) => {
   if(versionHash) {
     objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;

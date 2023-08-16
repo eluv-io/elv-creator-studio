@@ -1,6 +1,7 @@
 import {Utils} from "@eluvio/elv-client-js";
 import {rootStore} from "Stores";
 import {v4 as UUID, parse as UUIDParse} from "uuid";
+import DayJS from "dayjs";
 
 export const Capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
 
@@ -35,8 +36,16 @@ export const ParseDate = date => {
     date = new Date(date);
 
     return date instanceof Date && !isNaN(date) ? date : undefined;
-  // eslint-disable-next-line no-empty
+    // eslint-disable-next-line no-empty
   } catch(error) {}
+};
+
+export const FormatDate = (date, {time=true}={}) => {
+  date = ParseDate(date);
+
+  if(!date) { return ""; }
+
+  return DayJS(date).format(time ? "LLL ZZ" : "LL ZZ");
 };
 
 export const DownloadFromUrl = async ({url, filename}) => {

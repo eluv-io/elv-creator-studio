@@ -7,16 +7,7 @@ import MarketplaceItemInput from "../../components/inputs/MarketplaceItemInput.j
 import UrlJoin from "url-join";
 import {Title} from "@mantine/core";
 
-const votingEventSpec = {
-  id: "",
-  title: "<New Voting Event>",
-  description: "",
-  exclusive: false,
-  start_date: undefined,
-  end_date: undefined,
-  type: "specified",
-  items: []
-};
+import {MarketplaceVotingEventSpec} from "Specs/MarketplaceSpecs.js";
 
 export const MarketplaceVotingEvent = observer(() => {
   const { marketplaceId, votingEventId } = useParams();
@@ -134,7 +125,7 @@ const MarketplaceVotingEvents = observer(() => {
           { label: "Title", field: "title" },
           { label: "Type", field: "type" },
         ]}
-        newEntrySpec={votingEventSpec}
+        newEntrySpec={MarketplaceVotingEventSpec}
       />
     </PageContent>
   );

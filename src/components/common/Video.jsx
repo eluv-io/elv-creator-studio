@@ -4,7 +4,7 @@ import {rootStore} from "Stores";
 import {observer} from "mobx-react-lite";
 import {ExtractHashFromLink} from "Helpers/Fabric.js";
 
-const Video = observer(({videoLink, videoHash, playerOptions={}, className=""}) => {
+const Video = observer(({videoLink, videoHash, animation, playerOptions={}, className=""}) => {
   const targetRef = useRef();
 
   useEffect(() => {
@@ -12,6 +12,22 @@ const Video = observer(({videoLink, videoHash, playerOptions={}, className=""}) 
 
     let playerPromise;
     const timeout = setTimeout(() => {
+      let controls;
+      if(animation) {
+        controls = {
+          muted: EluvioPlayerParameters.muted.ON,
+          autoplay: EluvioPlayerParameters.autoplay.ON,
+          controls: EluvioPlayerParameters.controls.OFF,
+          loop: EluvioPlayerParameters.loop.ON
+        };
+      } else {
+        controls = {
+          muted: EluvioPlayerParameters.muted.OFF,
+          autoplay: EluvioPlayerParameters.autoplay.OFF,
+          controls: EluvioPlayerParameters.controls.AUTO_HIDE
+        };
+      }
+
       playerPromise = new EluvioPlayer(
         targetRef.current,
         {
@@ -25,9 +41,7 @@ const Video = observer(({videoLink, videoHash, playerOptions={}, className=""}) 
           },
           playerOptions: {
             watermark: EluvioPlayerParameters.watermark.OFF,
-            muted: EluvioPlayerParameters.muted.OFF,
-            autoplay: EluvioPlayerParameters.autoplay.OFF,
-            controls: EluvioPlayerParameters.controls.AUTO_HIDE,
+            ...controls,
             ...playerOptions
           },
         }
@@ -42,7 +56,7 @@ const Video = observer(({videoLink, videoHash, playerOptions={}, className=""}) 
       const player = await playerPromise;
       player.Destroy();
     };
-  }, [targetRef, videoLink, videoHash, playerOptions]);
+  }, [targetRef, videoLink, videoHash, playerOptions, animation]);
 
   return <div className={className} ref={targetRef} />;
 });

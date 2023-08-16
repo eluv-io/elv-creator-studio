@@ -8,9 +8,10 @@ import MarketplaceGeneralSettings from "./MarketplaceGeneralSettings.jsx";
 import MarketplaceDetails from "./MarketplaceDetails.jsx";
 import MarketplaceImages from "./MarketplaceImages";
 import MarketplaceTheme from "./MarketplaceTheme";
-import MarketplaceAnalytics from "./MarketplaceAnalytics";
-import MarketplaceVotingEvents, {MarketplaceVotingEvent} from "./MarketplaceVotingEvents.jsx";
 import MarketplaceItems, {MarketplaceItem} from "./MarketplaceItems.jsx";
+import MarketplaceCollections, {MarketplaceCollection} from "./MarketplaceCollections.jsx";
+import MarketplaceVotingEvents, {MarketplaceVotingEvent} from "./MarketplaceVotingEvents.jsx";
+import MarketplaceAnalytics from "./MarketplaceAnalytics";
 
 const MarketplaceRoutes = observer(() => {
   const rootPath = "/marketplaces/";
@@ -21,6 +22,8 @@ const MarketplaceRoutes = observer(() => {
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items", Component: <MarketplaceItems /> },
     { label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items/:sku", Component: <MarketplaceItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections", Component: <MarketplaceCollections /> },
+    { label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections/:collectionId", Component: <MarketplaceCollection /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events", Component: <MarketplaceVotingEvents /> },
     { label: rootStore.l10n.pages.marketplaces.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events/:votingEventId", Component: <MarketplaceVotingEvent /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.analytics, path: "/marketplaces/:marketplaceId/analytics", Component: <MarketplaceAnalytics /> },

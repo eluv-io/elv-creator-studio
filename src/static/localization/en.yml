@@ -7,8 +7,15 @@ pages:
       images: Images
       theme: Theme
       items: Items
+      collections: Collections
       voting_events: Voting Events
       analytics: Analytics
+    items:
+      status:
+        available: Available
+        not_for_sale: Not for Sale
+        unreleased: Available {date}
+        expired: Expired {date}
 
 components:
   nav:
@@ -72,16 +79,20 @@ components:
   fabric_browser:
     select_library: Select Library
     select_object: Select Object
-    title_with_label: Select Object for {item}
+    title_with_label: Select {item}
     show_preview: Show Video Preview
     hide_preview: Hide Video Preview
     filter: Filter
     select: Select {item}
+    content_id: Content ID
+    direct_selection_placeholder: Object ID, version hash or contract address
     back_to_library_selection: Back to library selection
     columns:
       name: Name
       library_id: Library ID
       object_id: Object ID
+    validation:
+      invalid_content_id: Invalid Content ID
 
 stores:
   initialization:

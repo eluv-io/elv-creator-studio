@@ -1,62 +1,16 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import UrlJoin from "url-join";
-import {Title} from "@mantine/core";
-import {ItemImage} from "Components/common/Misc";
-import {FormatUSD} from "Helpers/Misc.js";
+import {Group, Box, Title, Tooltip} from "@mantine/core";
+import {ItemImage, LocalizeString} from "Components/common/Misc";
+import {FormatDate, FormatUSD, ParseDate} from "Helpers/Misc.js";
 
-const itemSpec = {
-  sku: "",
-  type: "nft",
-  nft_template: undefined,
-  name: "<New Item>",
-  subtitle: "",
-  subtitle_2: "",
-  description: "",
-  description_rich_text: "",
-  for_sale: false,
-  free: false,
-  price: {
-    USD: undefined
-  },
-  min_secondary_price: {
-    USD: undefined
-  },
-  max_per_checkout: undefined,
-  max_per_user: undefined,
-  viewable: false,
-  hide_available: false,
-  // unused?
-  video_has_audio: false,
-  play_on_storefront: false,
-  show_if_unreleased: false,
-  viewable_if_unreleased: false,
-  requires_permissions: false,
-  permission_message: "",
-  permission_description: "",
-  show_if_unauthorized: false,
-  available_at: undefined,
-  expires_at: undefined,
-  image: undefined,
-  video: undefined,
-  tags: [],
-  use_analytics: false,
-  page_view_analytics: {
-    google_conversion_label: "",
-    google_conversion_id: "",
-    facebook_event_id: "",
-    twitter_event_id: ""
-  },
-  purchase_analytics: {
-    google_conversion_label: "",
-    google_conversion_id: "",
-    facebook_event_id: "",
-    twitter_event_id: ""
-  }
-};
+import {MarketplaceItemSpec} from "Specs/MarketplaceSpecs.js";
+
+import {IconCheck, IconX, IconClock} from "@tabler/icons-react";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -102,6 +56,14 @@ export const MarketplaceItem = observer(() => {
         {...inputProps}
         field="sku"
         label="SKU"
+      />
+      <Inputs.FabricBrowser
+        {...inputProps}
+        field="nft_template"
+        label="Item Template"
+        previewable={item.nft_template?.nft?.playable}
+        previewIsAnimation={!item.nft_template?.nft?.has_audio}
+        GetImage={nft_template => nft_template?.nft?.image}
       />
       <Inputs.Text
         {...inputProps}
@@ -374,8 +336,43 @@ const MarketplaceItems = observer(() => {
           { field: "image", width: "80px", render: item => <ItemImage item={item} width={200} imageProps={{width: 50, height: 50, radius: "md"}} /> },
           { label: "Name", field: "name", render: item => item.name || item.nft_template?.nft?.name },
           { label: "Price", field: "price", width: "100px", render: item => item.free ? "Free" : FormatUSD(item.price.USD) },
+          {
+            label: "Status",
+            centered: true,
+            field: "for_sale",
+            width: "100px",
+            render: item => {
+              let status = rootStore.l10n.pages.marketplaces.items.status.available;
+              let Icon = IconCheck;
+              let color = "green";
+
+              if(!item.for_sale) {
+                status = rootStore.l10n.pages.marketplaces.items.status.not_for_sale;
+                color = "red";
+                Icon = IconX;
+              } else if(item.available_at && ParseDate(item.available_at) > new Date()) {
+                status = LocalizeString(rootStore.l10n.pages.marketplaces.items.status.unreleased, { date: FormatDate(item.available_at)});
+                color = "yellow";
+                Icon = IconClock;
+              } else if(item.expires_at && ParseDate(item.expires_at) < new Date()) {
+                status = LocalizeString(rootStore.l10n.pages.marketplaces.items.status.expired, { date: FormatDate(item.expires_at)});
+                color = "red";
+                Icon = IconClock;
+              }
+
+              return (
+                <Group position="center">
+                  <Tooltip label={status} events={{ hover: true, focus: true, touch: true }}>
+                    <Box sx={theme => ({color: theme.colors[color][7] })}>
+                      <Icon alt={status} />
+                    </Box>
+                  </Tooltip>
+                </Group>
+              );
+            }
+          }
         ]}
-        newEntrySpec={itemSpec}
+        newEntrySpec={MarketplaceItemSpec}
       />
     </PageContent>
   );

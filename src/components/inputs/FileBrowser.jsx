@@ -25,6 +25,8 @@ import {LocalizeString} from "Components/common/Misc";
 import {SortTable} from "Helpers/Misc";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
+import {ConfirmDelete} from "./Inputs.jsx";
+import {ScaleImage} from "Helpers/Fabric.js";
 
 import {
   IconArrowBackUp as IconBackArrow,
@@ -40,7 +42,7 @@ import {
   IconX,
   IconUpload
 } from "@tabler/icons-react";
-import {ConfirmDelete} from "./Inputs.jsx";
+
 
 
 // Table showing the status of file uploads in the upload form
@@ -448,12 +450,6 @@ const FileBrowserTable = observer(({
               );
             }
 
-            if(url) {
-              url = new URL(url);
-              url.searchParams.set("width", 200);
-              url = url.toString();
-            }
-
             return (
               <HoverCard width={200} shadow="md">
                 <HoverCard.Target>
@@ -465,7 +461,7 @@ const FileBrowserTable = observer(({
                   <Image
                     caption={<Text style={{wordWrap: "anywhere"}}>{ filename }</Text>}
                     alt={filename}
-                    src={url}
+                    src={ScaleImage(url, 200)}
                     fit="contain"
                   />
                 </HoverCard.Dropdown>
