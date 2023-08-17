@@ -41,7 +41,7 @@ export const MarketplaceItem = observer(() => {
       backLink={UrlJoin("/marketplaces", marketplaceId, "items")}
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Basic Info</Title>
+      <Title order={3} mt={50} mb="md">Item Info</Title>
       <Inputs.SingleImageInput
         {...inputProps}
         label="Image"

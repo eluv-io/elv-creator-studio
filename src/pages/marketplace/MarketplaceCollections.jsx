@@ -39,10 +39,10 @@ export const MarketplaceCollection = observer(() => {
     <PageContent
       title={`${info.branding?.name || "Marketplace"} - Collections - ${collection.name}`}
       section="marketplace"
-      backLink={UrlJoin("/marketplaces", marketplaceId, "voting-events")}
+      backLink={UrlJoin("/marketplaces", marketplaceId, "collections")}
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Basic Info</Title>
+      <Title order={3} mt={50} mb="md">Collection Info</Title>
       <Inputs.UUID
         {...inputProps}
         field="sku"
@@ -52,6 +52,11 @@ export const MarketplaceCollection = observer(() => {
         {...inputProps}
         field="name"
         label="Name"
+      />
+      <MarketplaceItemInput
+        {...inputProps}
+        label="Collection Items"
+        field="items"
       />
       <Inputs.Text
         {...inputProps}
@@ -83,12 +88,6 @@ export const MarketplaceCollection = observer(() => {
         />
       </Group>
 
-      <MarketplaceItemInput
-        {...inputProps}
-        label="Collection Items"
-        field="items"
-      />
-
       <Title order={3} mt={50} mb="md">Collection Redemption</Title>
 
       <Inputs.Checkbox
@@ -106,60 +105,65 @@ export const MarketplaceCollection = observer(() => {
               field="redeem_items"
             />
 
-            <Title order={3} mt={50} mb="md">Redemption</Title>
+            <Accordion mt={50} maw={600} variant="contained">
+              <Accordion.Item value="photos">
+                <Accordion.Control icon={<IconSettings />}>
+                  Redemption Settings
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    INVERTED
+                    field="hide_text"
+                    label="Show info when redeeming"
+                  />
 
-            <Inputs.Checkbox
-              {...inputProps}
-              INVERTED
-              field="hide_text"
-              label="Show info when redeeming"
-            />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    field="redeem_animation"
+                    label="Redemption Animation"
+                    previewable
+                    previewIsAnimation
+                  />
 
-            <Inputs.FabricBrowser
-              {...inputProps}
-              field="redeem_animation"
-              label="Redemption Animation"
-              previewable
-              previewIsAnimation
-            />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    field="redeem_animation_mobile"
+                    label="Redemption Animation (Mobile)"
+                    previewable
+                    previewIsAnimation
+                  />
 
-            <Inputs.FabricBrowser
-              {...inputProps}
-              field="redeem_animation_mobile"
-              label="Redemption Animation (Mobile)"
-              previewable
-              previewIsAnimation
-            />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    field="reveal_animation"
+                    label="Reveal Animation"
+                    previewable
+                    previewOptions={{
+                      muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
+                      autoplay: EluvioPlayerParameters.autoplay.ON,
+                      controls: EluvioPlayerParameters.controls.OFF_WITH_VOLUME_TOGGLE,
+                      loop: EluvioPlayerParameters.loop.OFF
+                    }}
+                  />
 
-            <Inputs.FabricBrowser
-              {...inputProps}
-              field="reveal_animation"
-              label="Reveal Animation"
-              previewable
-              previewOptions={{
-                muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
-                autoplay: EluvioPlayerParameters.autoplay.ON,
-                controls: EluvioPlayerParameters.controls.OFF_WITH_VOLUME_TOGGLE,
-                loop: EluvioPlayerParameters.loop.OFF
-              }}
-            />
-
-            <Inputs.FabricBrowser
-              {...inputProps}
-              field="reveal_animation_mobile"
-              label="Reveal Animation (Mobile)"
-              previewable
-              previewOptions={{
-                muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
-                autoplay: EluvioPlayerParameters.autoplay.ON,
-                controls: EluvioPlayerParameters.controls.OFF_WITH_VOLUME_TOGGLE,
-                loop: EluvioPlayerParameters.loop.OFF
-              }}
-            />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    field="reveal_animation_mobile"
+                    label="Reveal Animation (Mobile)"
+                    previewable
+                    previewOptions={{
+                      muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
+                      autoplay: EluvioPlayerParameters.autoplay.ON,
+                      controls: EluvioPlayerParameters.controls.OFF_WITH_VOLUME_TOGGLE,
+                      loop: EluvioPlayerParameters.loop.OFF
+                    }}
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
           </>
       }
-
-
     </PageContent>
   );
 });
@@ -183,7 +187,25 @@ const MarketplaceCollections = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Collection Info</Title>
+      <Inputs.CollectionTable
+        {...inputProps}
+        path="/public/asset_metadata/info"
+        field="collections"
+        fieldLabel="Collection"
+        idField="sku"
+        columns={[
+          {
+            field: "image",
+            width: "80px",
+            render: (collection) => <Image src={ScaleImage(collection?.collection_icon?.url, 200)} width={50} height={50} radius="md" withPlaceholder />
+          },
+          { label: "Title", field: "name" },
+          { label: "Items", field: "items", width: "80px", centered: true, render: collection => collection?.items?.length || "0" },
+        ]}
+        newEntrySpec={MarketplaceCollectionSpec}
+      />
+
+      <Title order={3} mb="md">Collections Page</Title>
 
       <Inputs.Text
         {...inputProps}
@@ -221,14 +243,12 @@ const MarketplaceCollections = observer(() => {
         />
       </Group>
 
-      <Accordion mt="xs" maw={540} variant="contained">
+      <Accordion mt="xs" maw={600} variant="contained">
         <Accordion.Item value="photos">
           <Accordion.Control icon={<IconSettings />}>
             Default Redemption Settings
           </Accordion.Control>
           <Accordion.Panel>
-
-
             <Inputs.Checkbox
               {...inputProps}
               INVERTED
@@ -280,26 +300,6 @@ const MarketplaceCollections = observer(() => {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-
-      <Title order={3} mt={50}>Collections</Title>
-
-      <Inputs.CollectionTable
-        {...inputProps}
-        path="/public/asset_metadata/info"
-        field="collections"
-        fieldLabel="Collection"
-        idField="sku"
-        columns={[
-          {
-            field: "image",
-            width: "80px",
-            render: (collection) => <Image src={ScaleImage(collection?.collection_icon?.url, 200)} width={50} height={50} radius="md" withPlaceholder />
-          },
-          { label: "Title", field: "name" },
-          { label: "Items", field: "items", render: collection => collection?.items?.length || 0 },
-        ]}
-        newEntrySpec={MarketplaceCollectionSpec}
-      />
     </PageContent>
   );
 });

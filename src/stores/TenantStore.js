@@ -1,6 +1,5 @@
 import {flow, makeAutoObservable} from "mobx";
 import {ExtractHashFromLink} from "Helpers/Fabric.js";
-import {Capitalize} from "Helpers/Misc.js";
 
 class TenantStore {
   tenantInfo;
@@ -66,7 +65,7 @@ class TenantStore {
       };
     });
 
-    this[`tenant${Capitalize(environment)}`] = {
+    this[`tenant${environment.capitalize()}`] = {
       versionHash: tenantHash,
       metadata,
       marketplaces,

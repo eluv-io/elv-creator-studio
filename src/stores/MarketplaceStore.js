@@ -1,5 +1,4 @@
 import {flow, makeAutoObservable} from "mobx";
-import {Capitalize} from "Helpers/Misc.js";
 import {AddActions} from "./helpers/Actions.js";
 
 class MarketplaceStore {
@@ -45,11 +44,11 @@ class MarketplaceStore {
   });
 
   DeployedHash({environment, marketplaceId}) {
-    return this.rootStore.tenantStore[`tenant${Capitalize(environment)}`]?.marketplaces?.[marketplaceId]?.versionHash;
+    return this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId]?.versionHash;
   }
 
   IsMarketplaceDeployed({environment="latest", marketplaceId}) {
-    return !!this.rootStore.tenantStore[`tenant${Capitalize(environment)}`]?.marketplaces?.[marketplaceId];
+    return !!this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId];
   }
 
   IsLatestMarketplaceDeployed({environment, marketplaceId}) {

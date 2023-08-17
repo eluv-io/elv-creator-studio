@@ -114,7 +114,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
       <Container py="xl">
         <Dropzone
           multiple
-          maw={500}
+          maw={600}
           py={50}
           mx="auto"
           onDrop={async (files) => {
@@ -398,8 +398,8 @@ const FileBrowserTable = observer(({
     )
     .map(file => ({...file, actions: ""}));
 
-  const isRecordSelectable = ({type, ext}) =>
-    type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext));
+  const isRecordSelectable = ({encrypted, type, ext}) =>
+    !encrypted && type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext));
 
   return (
     <DataTable

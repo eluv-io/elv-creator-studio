@@ -3,7 +3,12 @@ import {rootStore} from "Stores";
 import {v4 as UUID, parse as UUIDParse} from "uuid";
 import DayJS from "dayjs";
 
-export const Capitalize = word => word.charAt(0).toUpperCase() + word.slice(1);
+String.prototype.capitalize =
+  function() {
+    return this.replace(/_/g, " ").replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  };
 
 export const GenerateUUID = () => rootStore.utils.B58(UUIDParse(UUID()));
 

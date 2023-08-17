@@ -301,7 +301,7 @@ export const FabricBrowserInput = observer(({
             }}
           />
       }
-      <Paper withBorder px="xl" pt="md" pb="lg" mb="md" maw={500}>
+      <Paper withBorder px="xl" pt="md" pb="lg" mb="md" maw={600}>
         <MantineInput.Wrapper
           label={<InputLabel label={label} hint={hint} />}
           description={description}

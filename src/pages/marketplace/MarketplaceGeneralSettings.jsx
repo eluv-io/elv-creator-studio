@@ -22,7 +22,7 @@ const MarketplaceGeneralSettings = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} my="md">Basic Info</Title>
+      <Title order={3} my="md">Marketplace Info</Title>
 
       <Inputs.Text
         label="Name"

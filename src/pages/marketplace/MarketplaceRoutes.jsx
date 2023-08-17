@@ -9,6 +9,7 @@ import MarketplaceDetails from "./MarketplaceDetails.jsx";
 import MarketplaceImages from "./MarketplaceImages";
 import MarketplaceTheme from "./MarketplaceTheme";
 import MarketplaceItems, {MarketplaceItem} from "./MarketplaceItems.jsx";
+import MarketplaceStorefront, {MarketplaceStorefrontSection} from "./MarketplaceStorefront.jsx";
 import MarketplaceCollections, {MarketplaceCollection} from "./MarketplaceCollections.jsx";
 import MarketplaceVotingEvents, {MarketplaceVotingEvent} from "./MarketplaceVotingEvents.jsx";
 import MarketplaceAnalytics from "./MarketplaceAnalytics";
@@ -22,6 +23,8 @@ const MarketplaceRoutes = observer(() => {
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items", Component: <MarketplaceItems /> },
     { label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items/:sku", Component: <MarketplaceItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.storefront, path: "/marketplaces/:marketplaceId/storefront", Component: <MarketplaceStorefront /> },
+    { label: rootStore.l10n.pages.marketplaces.nav.storefront, path: "/marketplaces/:marketplaceId/storefront/:sectionId", Component: <MarketplaceStorefrontSection /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections", Component: <MarketplaceCollections /> },
     { label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections/:collectionId", Component: <MarketplaceCollection /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events", Component: <MarketplaceVotingEvents /> },

@@ -7,6 +7,7 @@ pages:
       images: Images
       theme: Theme
       items: Items
+      storefront: Storefront
       collections: Collections
       voting_events: Voting Events
       analytics: Analytics

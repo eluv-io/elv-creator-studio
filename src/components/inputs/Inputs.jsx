@@ -19,7 +19,7 @@ import {
   NumberInput,
   Stack,
   MultiSelect,
-  JsonInput, PasswordInput, ScrollArea, Table
+  JsonInput, PasswordInput, ScrollArea, Table, HoverCard
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -29,7 +29,7 @@ import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
 import {rootStore} from "Stores";
 import {LocalizeString} from "Components/common/Misc.jsx";
-import {FabricUrl} from "Helpers/Fabric";
+import {FabricUrl, ScaleImage} from "Helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
@@ -190,7 +190,7 @@ const Input = observer(({
       break;
   }
 
-  componentProps.maw = componentProps.maw || 500;
+  componentProps.maw = componentProps.maw || 600;
 
   if(clearable) {
     componentProps.rightSection = (
@@ -262,7 +262,7 @@ const Password = observer(({
   const [password, setPassword] = useState(value);
   const [changed, setChanged] = useState(false);
 
-  componentProps.maw = componentProps.maw || 500;
+  componentProps.maw = componentProps.maw || 600;
 
   return (
     <PasswordInput
@@ -317,9 +317,12 @@ const CheckboxCard = observer(({
   return (
     <UnstyledButton
       style={{display: "block"}}
+      width="100%"
+      w="100%"
+      maw={600}
       onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
     >
-      <Paper withBorder p="xl" py="md" mb="md" w="max-content" maw={500} miw={500}>
+      <Paper withBorder p="xl" py="md" mb="md">
         <MantineInput.Wrapper
           pr={50}
           label={<InputLabel label={label} hint={hint} />}
@@ -349,7 +352,7 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
 
   const value = store.GetMetadata({objectId, path, field});
   return (
-    <Paper withBorder p="xl" py="md" mb="md" maw={!value && !showEditor ? 500 : 800} w="100%">
+    <Paper withBorder p="xl" py="md" mb="md" maw={!value && !showEditor ? 600 : 800} w="100%">
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
         {
           showEditor ?
@@ -466,29 +469,47 @@ const SingleImageInput = observer(({
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: 200});
   }
 
+
   return (
     <>
       <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
-        <UnstyledButton onClick={() => setShowFileBrowser(true)}>
-          <Image
-            mb="xs"
-            withPlaceholder
-            height={150}
-            width={150}
-            src={imageUrl}
-            alt={label}
-            fit="contain"
-            placeholder={<IconPhotoX size={35} />}
-            styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
-          />
-          <MantineInput.Wrapper
-            maw={150}
-            label={<InputLabel centered label={label} hint={hint} />}
-            description={description}
-            labelProps={{style: { width: "100%", textAlign: "center "}}}
-            descriptionProps={{style: { width: "100%", textAlign: "center "}}}
-          />
-        </UnstyledButton>
+        <HoverCard shadow="xl" openDelay={imageUrl ? 500 : 100000}>
+          <HoverCard.Target>
+            <UnstyledButton onClick={() => setShowFileBrowser(true)}>
+              <Image
+                mb="xs"
+                withPlaceholder
+                height={150}
+                width={150}
+                src={imageUrl}
+                alt={label}
+                fit="contain"
+                placeholder={<IconPhotoX size={35} />}
+                styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
+              />
+              <MantineInput.Wrapper
+                maw={150}
+                label={<InputLabel centered label={label} hint={hint} />}
+                description={description}
+                labelProps={{style: { width: "100%", textAlign: "center "}}}
+                descriptionProps={{style: { width: "100%", textAlign: "center "}}}
+              />
+            </UnstyledButton>
+          </HoverCard.Target>
+          <HoverCard.Dropdown bg="gray.1" p="xl" >
+            <Image
+              mb="xs"
+              withPlaceholder
+              height={400}
+              width={400}
+              src={ScaleImage(imageUrl, 1000)}
+              alt={label}
+              fit="contain"
+              placeholder={<IconPhotoX size={35} />}
+              styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
+            />
+          </HoverCard.Dropdown>
+        </HoverCard>
         {
           !imageMetadata ? null :
             <ActionIcon
@@ -702,7 +723,7 @@ const List = observer(({
   const showBottomAddButton = items.length >= 5;
 
   return (
-    <Paper withBorder px="xl" py="md" m={0} mb="xl" maw={simpleList ? 500 : 800}>
+    <Paper withBorder px="xl" py="md" m={0} mb="xl" maw={simpleList ? 600 : 800}>
       <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
           <DragDropContext
@@ -786,9 +807,11 @@ const CollectionTableContent = observer(({
                       <IconGripVertical size={15}/>
                     </div>
                   </td>
-                  {columns.map(({field, width, render}, index) =>
+                  {columns.map(({field, width, render, centered}, index) =>
                     <td key={`td-${field}`} style={{width}}>
-                      {render ? render(value, index) : (value[field] || "")}
+                      <Group position={centered ? "center" : "left"}>
+                        {render ? render(value, index) : (value[field] || "")}
+                      </Group>
                     </td>
                   )}
                   <td style={{width: "100px"}}>

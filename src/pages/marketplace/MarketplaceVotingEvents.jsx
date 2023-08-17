@@ -123,7 +123,8 @@ const MarketplaceVotingEvents = observer(() => {
         idField="id"
         columns={[
           { label: "Title", field: "title" },
-          { label: "Type", field: "type" },
+          { label: "Type", field: "type", width: "80px", render: votingEvent => votingEvent.type?.capitalize() },
+          { label: "Items", field: "items", width: "80px", centered: true, render: votingEvent => votingEvent.type !== "specified" ? "N/A" : votingEvent?.items?.length || "0" },
         ]}
         newEntrySpec={MarketplaceVotingEventSpec}
       />

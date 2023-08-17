@@ -11,7 +11,11 @@ const MarketplaceTheme = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
-  const inputProps = { store: marketplaceStore, objectId: marketplaceId };
+  const inputProps = {
+    store: marketplaceStore,
+    objectId: marketplaceId,
+    path: "/public/asset_metadata/info/branding"
+  };
 
   return (
     <PageContent
@@ -20,48 +24,43 @@ const MarketplaceTheme = observer(() => {
       useHistory
     >
       <Inputs.Checkbox
-        label="Use Tenant Styling"
-        path="/public/asset_metadata/info/branding"
+        {...inputProps}
         field="use_tenant_styling"
-        defaultValue={false}
-        {...inputProps}
+        label="Use Tenant Styling"
+        description="Override marketplace styling with tenant styling on pages outside of the store"
       />
 
       <Inputs.Select
-        label="Text Justification"
-        path="/public/asset_metadata/info/branding"
+        {...inputProps}
         field="text_justification"
+        label="Text Justification"
         defaultValue="Left"
         options={["Left", "Center"]}
-        {...inputProps}
       />
 
       <Inputs.Select
-        label="Item Text Justification"
-        path="/public/asset_metadata/info/branding"
+        {...inputProps}
         field="item_text_justification"
+        label="Item Text Justification"
         defaultValue="Left"
         options={["Left", "Center"]}
-        {...inputProps}
       />
 
       <Inputs.Select
-        label="Theme"
-        path="/public/asset_metadata/info/branding"
+        {...inputProps}
         field="color_scheme"
+        label="Theme"
         defaultValue="Light"
         options={["Light", "Dark", "Custom"]}
-        {...inputProps}
       />
 
       {
         info?.branding?.color_scheme !== "Custom" ? null :
           <Inputs.Code
-            language="css"
-            label="Custom CSS"
-            path="/public/asset_metadata/info/branding"
-            field="custom_css"
             {...inputProps}
+            field="custom_css"
+            label="Custom CSS"
+            language="css"
           />
       }
     </PageContent>

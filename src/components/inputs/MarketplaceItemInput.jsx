@@ -42,7 +42,7 @@ const MarketplaceItemMultiselect = observer(({
   const options = items
     .map(item =>
       ({
-        image: <ItemImage item={item} width={200} imageProps={{width: 40, height: 40, radius: "md"}} />,
+        image: <ItemImage item={item} width={200} imageProps={{width: 40, height: 40}} />,
         label: item.name || item.sku,
         value: item.sku
       })
@@ -63,16 +63,14 @@ const MarketplaceItemMultiselect = observer(({
             ref={itemProvided.innerRef}
             {...itemProvided.draggableProps}
             shadow={snapshot.isDragging ? "lg" : ""}
-            p={5}
+            p={0}
             withBorder
           >
-            <Group pr={25} style={{position: "relative"}}>
+            <Group pl="xs" pr={25} spacing="sm" style={{position: "relative"}}>
               <div style={{cursor: "grab"}} {...itemProvided.dragHandleProps}>
                 <IconGripVertical size={15}/>
               </div>
-              <Box mr={10}>
-                <ItemImage item={item} width={200} imageProps={{width: 50, height: 50, radius: "md"}} />
-              </Box>
+              <ItemImage item={item} width={200} imageProps={{width: 50, height: 50}} />
               <div>
                 <Text fz="sm">{item.name || item.sku}</Text>
                 <Text fz="xs" color="dimmed">{sku}</Text>
@@ -98,7 +96,7 @@ const MarketplaceItemMultiselect = observer(({
   });
 
   return (
-    <Paper withBorder p="xl" pt="md" maw={500}>
+    <Paper withBorder p="xl" pt="md" mb="md" maw={600}>
       <Inputs.MultiSelect
         store={store}
         objectId={objectId}
