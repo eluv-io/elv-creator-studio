@@ -171,7 +171,7 @@ export const MarketplaceItemMultiselect = observer(({
     if(!item) { return null; }
 
     return (
-      <Draggable key={`item-${sku}`} index={index} draggableId={`item-${sku}`}>
+      <Draggable key={`draggable-item-${sku}`} index={index} draggableId={`item-${sku}`}>
         {(itemProvided, snapshot) => (
           <SelectedItem
             key={`item-${sku}`}

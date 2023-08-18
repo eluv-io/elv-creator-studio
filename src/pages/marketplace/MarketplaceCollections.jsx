@@ -193,6 +193,7 @@ const MarketplaceCollections = observer(() => {
         field="collections"
         fieldLabel="Collection"
         idField="sku"
+        label="Collections"
         columns={[
           {
             field: "image",

@@ -24,7 +24,7 @@ const MarketplaceDetails = observer(() => {
             objectId: marketplaceId,
             writeToken: marketplace?.writeToken,
             //multiple: true,
-            Submit: (record) => console.log(record)
+            //Submit: (record) => console.log(record)
           }}
         >
           Test File Browser
@@ -33,7 +33,7 @@ const MarketplaceDetails = observer(() => {
           radius="md"
           fabricBrowserProps={{
             title: "Browse Fabric",
-            Submit: (record) => console.log(record)
+            //Submit: (record) => console.log(record)
           }}
         >
           Test Fabric Browser

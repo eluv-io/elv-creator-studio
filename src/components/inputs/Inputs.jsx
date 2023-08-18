@@ -922,7 +922,7 @@ const List = observer(({
     const id = (idField === "index" ? index.toString() : value[idField]) || "";
 
     return (
-      <Draggable key={`item-${id}`} index={index} draggableId={`item-${id}`}>
+      <Draggable key={`draggable-item-${id}`} index={index} draggableId={`item-${id}`}>
         {(provided, snapshot) => (
           <Paper
             withBorder
@@ -930,6 +930,7 @@ const List = observer(({
             p="sm"
             maw={800}
             ref={provided.innerRef}
+            key={`list-item-${id}`}
             {...provided.draggableProps}
           >
             <Group align="start" style={{position: "relative"}} px={40}>
@@ -1015,9 +1016,8 @@ const List = observer(({
   );
 });
 
-const CollectionTableContent = observer(({
+const CollectionTableRows = observer(({
   showDragHandle,
-  containerProvided,
   store,
   objectId,
   path,
@@ -1028,84 +1028,58 @@ const CollectionTableContent = observer(({
   values
 }) => {
   return (
-    <Table
-      {...containerProvided.droppableProps}
-      ref={containerProvided.innerRef}
-      withBorder
-      verticalSpacing="xs"
-    >
-      <thead>
-      <tr>
-        { showDragHandle ? <th></th> : null }
-        {
-          columns.map(({label, centered}) =>
-            <th key={`th-${label}`}>
-              <Group position={centered ? "center" : "left"}>
-                {label}
-              </Group>
-            </th>
-          )
-        }
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      {
-        values.map((value, index) => {
-          const id = (idField === "index" ? index.toString() : value[idField]) || "";
+    values.map((value, index) => {
+      const id = (idField === "index" ? index.toString() : value[idField]) || "";
 
-          return (
-            <Draggable key={`item-${id}`} index={index} draggableId={`item-${id}`}>
-              {(rowProvided) => (
-                <tr
-                  ref={rowProvided.innerRef}
-                  {...rowProvided.draggableProps}
-                  key={`tr-${index}`}
-                >
-                  <td style={{width: "40px", display: showDragHandle ? undefined : "none"}}>
-                    <div style={{cursor: "grab"}} {...rowProvided.dragHandleProps}>
-                      <IconGripVertical size={15}/>
-                    </div>
-                  </td>
-                  {columns.map(({field, width, render, centered}, index) =>
-                    <td key={`td-${field}`} style={{width}}>
-                      <Group position={centered ? "center" : "left"}>
-                        {render ? render(value, index) : (value[field] || "")}
-                      </Group>
-                    </td>
-                  )}
-                  <td style={{width: "100px"}}>
-                    <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
-                      <ActionIcon
-                        component={Link}
-                        to={UrlJoin(location.pathname, id)}
-                        color="blue.5"
-                      >
-                        <IconEdit/>
-                      </ActionIcon>
-
-                      <ActionIcon
-                        color="red.5"
-                        onClick={() => {
-                          ConfirmDelete({
-                            listItem: true,
-                            itemName: fieldLabel?.toLowerCase(),
-                            onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
-                          });
-                        }}
-                      >
-                        <IconTrashX/>
-                      </ActionIcon>
-                    </Group>
-                  </td>
-                </tr>
+      return (
+        <Draggable key={`draggable-item-${id}}`} index={index} draggableId={`item-${id}`}>
+          {(rowProvided) => (
+            <tr
+              ref={rowProvided.innerRef}
+              {...rowProvided.draggableProps}
+              key={`tr-${id}`}
+            >
+              <td style={{width: "40px", display: showDragHandle ? undefined : "none"}}>
+                <div style={{cursor: "grab"}} {...rowProvided.dragHandleProps}>
+                  <IconGripVertical size={15}/>
+                </div>
+              </td>
+              {columns.map(({field, width, render, centered}, index) =>
+                <td key={`td-${id}-${field}`} style={{width: width || "100%"}}>
+                  <Group position={centered ? "center" : "left"}>
+                    {render ? render(value, index) : (value[field] || "")}
+                  </Group>
+                </td>
               )}
-            </Draggable>
-          );
-        })
-      }
-      </tbody>
-    </Table>
+              <td style={{width: "100px"}}>
+                <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
+                  <ActionIcon
+                    component={Link}
+                    to={UrlJoin(location.pathname, id)}
+                    color="blue.5"
+                  >
+                    <IconEdit/>
+                  </ActionIcon>
+
+                  <ActionIcon
+                    color="red.5"
+                    onClick={() => {
+                      ConfirmDelete({
+                        listItem: true,
+                        itemName: fieldLabel?.toLowerCase(),
+                        onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
+                      });
+                    }}
+                  >
+                    <IconTrashX/>
+                  </ActionIcon>
+                </Group>
+              </td>
+            </tr>
+          )}
+        </Draggable>
+      );
+    })
   );
 });
 
@@ -1165,6 +1139,8 @@ const CollectionTable = observer(({
     </ActionIcon>
   );
 
+  const showDragHandle = !debouncedFilter;
+
   return (
     <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={800}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
@@ -1178,25 +1154,44 @@ const CollectionTable = observer(({
             store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
           }
         >
-          <Droppable droppableId="simple-list" direction="vertical">
-            {containerProvided => (
-              <>
-                <CollectionTableContent
-                  showDragHandle={!debouncedFilter}
-                  containerProvided={containerProvided}
-                  store={store}
-                  objectId={objectId}
-                  path={path}
-                  field={field}
-                  columns={columns}
-                  values={filteredValues}
-                  idField={idField}
-                  fieldLabel={fieldLabel}
-                />
-                {containerProvided.placeholder}
-              </>
-            )}
-          </Droppable>
+          <Table
+            withBorder
+            verticalSpacing="xs"
+          >
+            <thead>
+            <tr>
+              { showDragHandle ? <th></th> : null }
+              {
+                columns.map(({label, centered}) =>
+                  <th key={`th-${label}`}>
+                    <Group position={centered ? "center" : "left"}>
+                      {label}
+                    </Group>
+                  </th>
+                )
+              }
+              <th></th>
+            </tr>
+            </thead>
+            <Droppable droppableId="collection-table" direction="vertical">
+              {containerProvided => (
+                <tbody {...containerProvided.droppableProps} ref={containerProvided.innerRef}>
+                  <CollectionTableRows
+                    showDragHandle={showDragHandle}
+                    store={store}
+                    objectId={objectId}
+                    path={path}
+                    field={field}
+                    columns={columns}
+                    values={filteredValues}
+                    idField={idField}
+                    fieldLabel={fieldLabel}
+                  />
+                  {containerProvided.placeholder}
+                </tbody>
+              )}
+            </Droppable>
+          </Table>
         </DragDropContext>
         <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
           {addButton}
