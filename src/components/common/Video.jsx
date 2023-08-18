@@ -46,7 +46,7 @@ const Video = observer(({videoLink, videoHash, animation, playerOptions={}, clas
           },
         }
       );
-    }, 50);
+    }, 250);
 
     return async () => {
       clearTimeout(timeout);

@@ -2,6 +2,7 @@ import {flow} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
+import {FabricUrl} from "../../helpers/Fabric.js";
 
 export const ACTIONS = {
   MODIFY_FIELD: {
@@ -82,7 +83,7 @@ const SetDefaultValue = function({objectId, path, field, value}) {
 };
 
 // Links
-const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, field, linkObjectId, linkPath="/public/asset_metadata"}) {
+const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, field, linkObjectId, linkType="meta", linkPath="/public/asset_metadata"}) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -97,16 +98,6 @@ const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, f
   if(linkObjectId) {
     const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
 
-    metadataValue = yield this.client.ContentObjectMetadata({
-      versionHash: targetHash,
-      metadataSubtree: linkPath,
-      produceMetadataLinks: true,
-    });
-
-    metadataValue["."] = {
-      source: targetHash
-    };
-
     writeValue = {
       ".": {
         "auto_update": {
@@ -115,14 +106,37 @@ const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, f
       },
       "/": objectId === linkObjectId ?
         UrlJoin("./meta", linkPath) :
-        UrlJoin("/qfab", targetHash, "meta", linkPath)
+        UrlJoin("/qfab", targetHash, linkType, linkPath)
     };
+
+    if(linkType === "meta") {
+      // Metadata links should contain resolved metadata
+      metadataValue = yield this.client.ContentObjectMetadata({
+        versionHash: targetHash,
+        metadataSubtree: linkPath,
+        produceMetadataLinks: true,
+      });
+
+      metadataValue["."] = {
+        source: targetHash
+      };
+    } else {
+      // File links should contain regular fabric link content, in addition to URL to file
+      metadataValue = {
+        ...writeValue,
+        url: FabricUrl({
+          objectId,
+          path: linkPath
+        })
+      };
+    }
   }
 
   this.ApplyAction({
     objectId,
     page,
     key: fullPath,
+    target: writeValue ? writeValue["/"] : "",
     actionType,
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),

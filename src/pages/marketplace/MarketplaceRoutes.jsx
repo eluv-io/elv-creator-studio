@@ -6,8 +6,8 @@ import {rootStore, marketplaceStore} from "Stores";
 import MarketplaceList from "./MarketplaceList.jsx";
 import MarketplaceGeneralSettings from "./MarketplaceGeneralSettings.jsx";
 import MarketplaceDetails from "./MarketplaceDetails.jsx";
-import MarketplaceImages from "./MarketplaceImages";
 import MarketplaceTheme from "./MarketplaceTheme";
+import MarketplaceLoginCustomization from "./MarketplaceLoginCustomization.jsx";
 import MarketplaceItems, {MarketplaceItem} from "./MarketplaceItems.jsx";
 import MarketplaceStorefront, {MarketplaceStorefrontSection} from "./MarketplaceStorefront.jsx";
 import MarketplaceCollections, {MarketplaceCollection} from "./MarketplaceCollections.jsx";
@@ -19,8 +19,8 @@ const MarketplaceRoutes = observer(() => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceDetails /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.images, path: "/marketplaces/:marketplaceId/images", Component: <MarketplaceImages /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.login, path: "/marketplaces/:marketplaceId/login", Component: <MarketplaceLoginCustomization /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items", Component: <MarketplaceItems /> },
     { label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items/:sku", Component: <MarketplaceItem /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.storefront, path: "/marketplaces/:marketplaceId/storefront", Component: <MarketplaceStorefront /> },

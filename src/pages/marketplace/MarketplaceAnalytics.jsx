@@ -23,6 +23,7 @@ const MarketplaceAnalytics = observer(() => {
       <Title order={3} mt={50} mb="md">General Analytics</Title>
       <Inputs.List
         {...inputProps}
+        showBottomAddButton
         path="/public/asset_metadata/info"
         field="analytics_ids"
         label="Analytics Collections"

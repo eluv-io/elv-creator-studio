@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
-import MarketplaceItemInput from "../../components/inputs/MarketplaceItemInput.jsx";
+import MarketplaceItemMultiselect from "../../components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Group, Image, Title} from "@mantine/core";
 import {ScaleImage} from "Helpers/Fabric.js";
@@ -53,7 +53,7 @@ export const MarketplaceCollection = observer(() => {
         field="name"
         label="Name"
       />
-      <MarketplaceItemInput
+      <MarketplaceItemMultiselect
         {...inputProps}
         label="Collection Items"
         field="items"
@@ -99,7 +99,7 @@ export const MarketplaceCollection = observer(() => {
       {
         !collection.redeemable ? null :
           <>
-            <MarketplaceItemInput
+            <MarketplaceItemMultiselect
               {...inputProps}
               label="Collection Rewards"
               field="redeem_items"

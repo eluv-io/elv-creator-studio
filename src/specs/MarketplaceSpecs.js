@@ -94,7 +94,7 @@ export const MarketplaceStorefrontSectionSpec = {
   }
 };
 
-const MarketplaceStorefrontBannerSpec = {
+export const MarketplaceStorefrontBannerSpec = {
   image: undefined,
   image_mobile: undefined,
   video: undefined,
@@ -104,7 +104,7 @@ const MarketplaceStorefrontBannerSpec = {
   sku: ""
 };
 
-const MarketplaceFooterLinkSpec = {
+export const MarketplaceFooterLinkSpec = {
   text: "",
   url: "",
   image: "",
@@ -113,7 +113,14 @@ const MarketplaceFooterLinkSpec = {
   content_html: undefined
 };
 
-const MarketplaceSpec = {
+export const MarketplaceLoginConsentOption = {
+  key: "",
+  message: "",
+  initially_checked: false,
+  required: false
+};
+
+export const MarketplaceSpec = {
   tenant_id: "",
   tenant_slug: "",
   tenant_name: "",

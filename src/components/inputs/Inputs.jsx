@@ -19,7 +19,12 @@ import {
   NumberInput,
   Stack,
   MultiSelect,
-  JsonInput, PasswordInput, ScrollArea, Table, HoverCard
+  JsonInput,
+  PasswordInput,
+  ScrollArea,
+  Table,
+  HoverCard,
+  ColorInput
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -38,7 +43,7 @@ import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
 import {useDebouncedValue} from "@mantine/hooks";
-import {FabricBrowserInput} from "./FabricBrowser.jsx";
+import FabricBrowser from "./FabricBrowser.jsx";
 
 import {
   IconX,
@@ -48,8 +53,12 @@ import {
   IconPhotoX,
   IconEdit,
   IconEditOff,
-  IconTrashX
+  IconTrashX,
+  IconSelect,
+  IconFile,
+  IconDownload, IconPlayerPause, IconPlayerPlay
 } from "@tabler/icons-react";
+import Video from "../common/Video.jsx";
 
 
 
@@ -98,6 +107,24 @@ export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfi
     ...modalProps
   });
 };
+
+const InputWrapper = observer(({label, description, hint, children, flex, wrapperProps={}, ...componentProps}) => {
+  wrapperProps.style = wrapperProps.style ||
+    (!flex ? { position: "relative" } : { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "});
+
+  return (
+    <Paper withBorder p="xl" py="md" mb="md" maw={600} {...componentProps}>
+      <MantineInput.Wrapper
+        label={<InputLabel label={label} hint={hint} />}
+        description={description}
+        style={{position: "relative"}}
+        {...wrapperProps}
+      >
+          { children }
+      </MantineInput.Wrapper>
+    </Paper>
+  );
+});
 
 // General input
 const Input = observer(({
@@ -161,6 +188,10 @@ const Input = observer(({
     case "uuid":
       componentProps.disabled = true;
       value = value || "";
+      break;
+    case "color":
+      Component = ColorInput;
+      componentProps.withEyeDropper = true;
       break;
     case "json":
       Component = JsonInput;
@@ -322,25 +353,24 @@ const CheckboxCard = observer(({
       maw={600}
       onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
     >
-      <Paper withBorder p="xl" py="md" mb="md">
-        <MantineInput.Wrapper
-          pr={50}
-          label={<InputLabel label={label} hint={hint} />}
-          description={description}
-          style={{position: "relative", display: "flex", flexDirection: "column", justifyContent: "center"}}
-        >
-          <Checkbox
-            style={{position: "absolute", right: -25}}
-            {...componentProps}
-            checked={INVERTED ? !value : value}
-            onChange={() => {}}
-            tabIndex={-1}
-            size="md"
-            mr="xl"
-            styles={{ input: { cursor: "pointer" } }}
-          />
-        </MantineInput.Wrapper>
-      </Paper>
+      <InputWrapper
+        label={label}
+        description={description}
+        hint={hint}
+        flex
+        wrapperProps={{pr: 50}}
+      >
+        <Checkbox
+          style={{position: "absolute", right: -25}}
+          {...componentProps}
+          checked={INVERTED ? !value : value}
+          onChange={() => {}}
+          tabIndex={-1}
+          size="md"
+          mr="xl"
+          styles={{ input: { cursor: "pointer" } }}
+        />
+      </InputWrapper>
     </UnstyledButton>
   );
 });
@@ -352,35 +382,33 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
 
   const value = store.GetMetadata({objectId, path, field});
   return (
-    <Paper withBorder p="xl" py="md" mb="md" maw={!value && !showEditor ? 600 : 800} w="100%">
-      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
-        {
-          showEditor ?
-            <Container p={0} m={0} my="xl">
-              <RichTextEditor
-                store={store}
-                objectId={objectId}
-                page={location.pathname}
-                path={path}
-                field={field}
-                componentProps={{mih: 200}}
-              />
-            </Container> :
-            value ?
-              <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
-                <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
-              </Paper> : null
-        }
-        <ActionIcon
-          title={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
-          aria-label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
-          onClick={() => setShowEditor(!showEditor)}
-          style={{position: "absolute", top: 0, right: 0}}
-        >
-          { showEditor ? <IconEditOff /> : <IconEdit /> }
-        </ActionIcon>
-      </MantineInput.Wrapper>
-    </Paper>
+    <InputWrapper label={label} description={description} hint={hint} maw={!value && !showEditor ? 600 : 800} w="100%">
+      {
+        showEditor ?
+          <Container p={0} m={0} my="xl">
+            <RichTextEditor
+              store={store}
+              objectId={objectId}
+              page={location.pathname}
+              path={path}
+              field={field}
+              componentProps={{mih: 200}}
+            />
+          </Container> :
+          value ?
+            <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
+              <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
+            </Paper> : null
+      }
+      <ActionIcon
+        title={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
+        aria-label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
+        onClick={() => setShowEditor(!showEditor)}
+        style={{position: "absolute", top: 0, right: 0}}
+      >
+        { showEditor ? <IconEditOff /> : <IconEdit /> }
+      </ActionIcon>
+    </InputWrapper>
   );
 });
 
@@ -403,47 +431,39 @@ const CodeInput = observer(({store, objectId, path, field, label, description, h
   );
 
   return (
-    <Paper withBorder p="xl" pt="md" maw={800} style={{position: "relative"}}>
-      <MantineInput.Wrapper
-        label={<InputLabel label={label} hint={hint} />}
-        description={description}
-        error={validationResults?.errorMessage}
-        styles={() => ({error: { marginTop: 30 }})}
+    <InputWrapper label={label} description={description} hint={hint} maw={800} wrapperProps={{error: validationResults?.errorMessage, styles: () => ({error: { marginTop: 30 }})}}>
+      <ActionIcon
+        title={rootStore.l10n.components.actions.edit}
+        aria-label={rootStore.l10n.components.actions.edit}
+        onClick={() => setEditing(!editing)}
+        style={{position: "absolute", top: 10, right: 10}}
       >
-        <ActionIcon
-          title={rootStore.l10n.components.actions.edit}
-          aria-label={rootStore.l10n.components.actions.edit}
-          onClick={() => setEditing(!editing)}
-          style={{position: "absolute", top: 10, right: 10}}
-        >
-          { editing ? <IconEditOff /> : <IconEdit /> }
-        </ActionIcon>
-        {
-          editing ?
-            <Input
-              type="textarea"
-              store={store}
-              objectId={objectId}
-              path={path}
-              field={field}
-              defaultValue={defaultValue}
-              componentProps={{...componentProps, maw: 800, mb:0, minRows: componentProps.minRows || 20}}
-            /> :
-            <ScrollArea mah={500} style={{overflow: "hidden"}}>
-              <Prism
-                mt="xl"
-                language={language}
-                mah={450}
-                withLineNumbers
-                highlightLines={highlightedLines}
-              >
-                {value}
-              </Prism>
-            </ScrollArea>
-
-        }
-      </MantineInput.Wrapper>
-    </Paper>
+        { editing ? <IconEditOff /> : <IconEdit /> }
+      </ActionIcon>
+      {
+        editing ?
+          <Input
+            type="textarea"
+            store={store}
+            objectId={objectId}
+            path={path}
+            field={field}
+            defaultValue={defaultValue}
+            componentProps={{...componentProps, maw: 800, mb:0, minRows: componentProps.minRows || 20}}
+          /> :
+          <ScrollArea mah={500} style={{overflow: "hidden"}}>
+            <Prism
+              mt="xl"
+              language={language}
+              mah={450}
+              withLineNumbers
+              highlightLines={highlightedLines}
+            >
+              {value}
+            </Prism>
+          </ScrollArea>
+      }
+    </InputWrapper>
   );
 });
 
@@ -468,7 +488,6 @@ const SingleImageInput = observer(({
   if(imageMetadata) {
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: 200});
   }
-
 
   return (
     <>
@@ -518,7 +537,7 @@ const SingleImageInput = observer(({
               onClick={event => {
                 event.stopPropagation();
                 ConfirmDelete({
-                  itemName: label,
+                  itemName: label || "this image",
                   onConfirm: () => store.SetMetadata({page: location.pathname, objectId, path, field, value: null})
                 });
               }}
@@ -550,6 +569,218 @@ const SingleImageInput = observer(({
   );
 });
 
+export const FileInput = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  label,
+  description,
+  hint,
+  extensions,
+  fileBrowserProps={}
+}) => {
+  const location = useLocation();
+  const [showBrowser, setShowBrowser] = useState(false);
+
+  let value = store.GetMetadata({objectId, path, field});
+
+  const filename = value?.["/"]?.split("/files/")?.[1] || "File";
+
+  return (
+    <>
+      {
+        !showBrowser ? null :
+          <FileBrowser
+            {...fileBrowserProps}
+            objectId={objectId}
+            extensions={extensions}
+            label={label}
+            Close={() => setShowBrowser(false)}
+            Submit={async (filePath) => {
+              await store.SetLink({objectId, path, field, linkObjectId: objectId, linkType: "file", filePath});
+            }}
+          />
+      }
+      <InputWrapper
+        label={label}
+        description={description}
+        hint={hint}
+        px="xl"
+        pt="md"
+        pb="lg"
+        mb="md"
+        flex
+      >
+        <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
+          <ActionIcon
+            title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            onClick={() => setShowBrowser(true)}
+          >
+            <IconSelect />
+          </ActionIcon>
+        </Group>
+        {
+          !value ? null :
+            <Paper withBorder p="xl" mt="md" style={{position: "relative"}}>
+              <Group spacing={0} style={{position: "absolute", top: 5, right: 5}}>
+                <ActionIcon
+                  component="a"
+                  href={value.url}
+                  target="_blank"
+                  title={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
+                  aria-label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
+                >
+                  <IconDownload size={15} />
+                </ActionIcon>
+                <ActionIcon
+                  title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  onClick={() => {
+                    ConfirmDelete({
+                      itemName: name,
+                      onConfirm: () => store.SetLink({objectId, page: location.pathname, path, field, linkObjectId: undefined})
+                    });
+                  }}
+                >
+                  <IconX size={15} />
+                </ActionIcon>
+              </Group>
+              <Group align="center">
+                <IconFile />
+                <Text fz="sm">
+                  { filename }
+                </Text>
+              </Group>
+            </Paper>
+        }
+      </InputWrapper>
+    </>
+  );
+});
+
+
+
+export const FabricBrowserInput = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  label,
+  description,
+  hint,
+  previewable,
+  previewIsAnimation,
+  previewOptions={},
+  GetName,
+  GetImage,
+  fabricBrowserProps={}
+}) => {
+  const location = useLocation();
+  const [showPreview, setShowPreview] = useState(false);
+  const [showBrowser, setShowBrowser] = useState(false);
+
+  GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
+
+  let value = store.GetMetadata({objectId, path, field});
+  const name = value ? GetName(value) : "";
+  const imageUrl = GetImage?.(value);
+
+  useEffect(() => {
+    // Hide preview when anything changes
+    setShowPreview(false);
+  }, [value, previewable, previewIsAnimation]);
+
+  return (
+    <>
+      {
+        !showBrowser ? null :
+          <FabricBrowser
+            {...fabricBrowserProps}
+            label={label}
+            Close={() => setShowBrowser(false)}
+            Submit={async (target) => {
+              await store.SetLink({objectId, path, field, linkObjectId: target.objectId});
+            }}
+          />
+      }
+      <InputWrapper label={label} description={description} hint={hint} flex>
+        <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
+          <ActionIcon
+            title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            onClick={() => setShowBrowser(true)}
+          >
+            <IconSelect />
+          </ActionIcon>
+        </Group>
+        {
+          !value ? null :
+            <Paper withBorder p="xl" mt="md" style={{position: "relative"}}>
+              <Group spacing={0} style={{position: "absolute", top: 5, right: 5}}>
+                {
+                  !previewable ? null :
+                    <ActionIcon
+                      title={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
+                      aria-label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
+                      onClick={() => setShowPreview(!showPreview)}
+                      color={showPreview ? "red.7" : "blue.5"}
+                    >
+                      {showPreview ? <IconPlayerPause size={15}/> : <IconPlayerPlay size={15}/>}
+                    </ActionIcon>
+                }
+                <ActionIcon
+                  title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  onClick={() => {
+                    ConfirmDelete({
+                      itemName: name,
+                      onConfirm: () => store.SetLink({objectId, page: location.pathname, path, field, linkObjectId: undefined})
+                    });
+                  }}
+                >
+                  <IconX size={15} />
+                </ActionIcon>
+              </Group>
+              <Container p={0} pr={70}>
+                {
+                  !imageUrl ? null :
+                    <Image
+                      mb="xs"
+                      height={125}
+                      fit="contain"
+                      alt={name}
+                      src={imageUrl}
+                      withPlaceholder
+                      bg="gray.1"
+                      p="xs"
+                    />
+                }
+                <Text fz="sm">
+                  { name }
+                </Text>
+                <Text fz={11} color="dimmed">
+                  {rootStore.utils.DecodeVersionHash(value["."]?.source)?.objectId}
+                </Text>
+                <Text fz={8} color="dimmed">
+                  {value["."]?.source}
+                </Text>
+              </Container>
+
+              {
+                !showPreview ? null :
+                  <Paper mt="sm">
+                    <Video videoLink={value} animation={previewIsAnimation} playerOptions={previewOptions} />
+                  </Paper>
+              }
+            </Paper>
+        }
+      </InputWrapper>
+    </>
+  );
+});
+
 // Multiple images, including optional alt text input
 const ImageInput = observer(({
   store,
@@ -564,43 +795,41 @@ const ImageInput = observer(({
   const location = useLocation();
 
   return (
-    <Paper withBorder p="xl" py="md" w="max-content" mb="md">
-      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description}>
-        <Group my="md">
-          {
-            fields.map(({label, description, hint, field}) =>
-              <SingleImageInput
-                key={`image-input-${field}`}
-                store={store}
-                objectId={objectId}
-                path={path}
-                label={label}
-                description={description}
-                hint={hint}
-                field={field}
-                componentProps={{
-                  mb: 0
-                }}
-              />
-            )
-          }
-        </Group>
+    <InputWrapper label={label} description={description} hint={hint} h="max-content" w="max-content">
+      <Group my="md">
         {
-          !altTextField ? null :
-            <Input
-              hint={rootStore.l10n.components.inputs.hints.image_alt_text}
-              page={location.pathname}
-              type="textarea"
+          fields.map(({label, description, hint, field}) =>
+            <SingleImageInput
+              key={`image-input-${field}`}
               store={store}
               objectId={objectId}
-              label="Alt Text"
               path={path}
-              field={altTextField}
-              componentProps={{minRows: 2}}
+              label={label}
+              description={description}
+              hint={hint}
+              field={field}
+              componentProps={{
+                mb: 0
+              }}
             />
+          )
         }
-      </MantineInput.Wrapper>
-    </Paper>
+      </Group>
+      {
+        !altTextField ? null :
+          <Input
+            hint={rootStore.l10n.components.inputs.hints.image_alt_text}
+            page={location.pathname}
+            type="textarea"
+            store={store}
+            objectId={objectId}
+            label="Alt Text"
+            path={path}
+            field={altTextField}
+            componentProps={{minRows: 2}}
+          />
+      }
+    </InputWrapper>
   );
 });
 
@@ -612,8 +841,20 @@ const ListInputs = observer(({
   field,
   fieldLabel,
   fields=[],
-  index
+  index,
+  renderItem
 }) => {
+  if(renderItem) {
+    const value = (store.GetMetadata({objectId, path: UrlJoin(path, field), field: index.toString()}) || []);
+
+    return renderItem({
+      value,
+      store,
+      objectId,
+      path: UrlJoin(path, field, index.toString())
+    });
+  }
+
   // Fields not specified - simple list
   if(!fields || fields.length === 0) {
     return (
@@ -632,15 +873,25 @@ const ListInputs = observer(({
   return (
     <>
       {
-        fields.map(({InputComponent, ...props}) =>
-          <InputComponent
-            key={`input-${props.field}`}
-            store={store}
-            objectId={objectId}
-            path={UrlJoin(path, field, index.toString())}
-            {...props}
-          />
-        )
+        fields.map(({InputComponent, render, ...props}) => {
+          const fieldPath = UrlJoin(path, field, index.toString());
+          const key = `input-${props.field}`;
+
+          if(render) {
+            return render({...props, key, index, store, objectId, path: fieldPath, field: props.field});
+          } else {
+            return (
+              <InputComponent
+                key={key}
+                store={store}
+                objectId={objectId}
+                path={fieldPath}
+                field={props.field}
+                {...props}
+              />
+            );
+          }
+        })
       }
     </>
   );
@@ -656,102 +907,111 @@ const List = observer(({
   label,
   hint,
   description,
+  idField="index",
   fieldLabel,
-  fields=[]
+  fields=[],
+  newEntrySpec={},
+  renderItem,
+  showBottomAddButton
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
-  const simpleList = !fields || fields.length === 0;
+  const simpleList = !renderItem && (!fields || fields.length === 0);
 
-  const items = values.map((value, index) => (
-    <Draggable key={`item-${index}`} index={index} draggableId={`item-${index}`}>
-      {(provided, snapshot) => (
-        <Paper
-          withBorder
-          shadow={snapshot.isDragging ? "lg" : ""}
-          p="sm"
-          maw={800}
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-        >
-          <Group align="start" style={{position: "relative"}} px={40}>
-            <div style={{cursor: "grab", position: "absolute", top: 0, left: 0}} {...provided.dragHandleProps}>
-              <IconGripVertical />
-            </div>
-            <Container p={0} m={0} fluid w="100%">
-              <ListInputs
-                type={type}
-                store={store}
-                objectId={objectId}
-                path={path}
-                field={field}
-                fieldLabel={fieldLabel}
-                fields={fields}
-                index={index}
-              />
-            </Container>
-            <ActionIcon
-              style={{position: "absolute", top: 0, right: 0}}
-              title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
-              aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
-              onClick={() => {
-                ConfirmDelete({
-                  listItem: true,
-                  itemName: fieldLabel?.toLowerCase(),
-                  onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
-                });
-              }}
-            >
-              <IconX />
-            </ActionIcon>
-          </Group>
-        </Paper>
-      )}
-    </Draggable>
-  ));
+  const items = values.map((value, index) => {
+    const id = (idField === "index" ? index.toString() : value[idField]) || "";
+
+    return (
+      <Draggable key={`item-${id}`} index={index} draggableId={`item-${id}`}>
+        {(provided, snapshot) => (
+          <Paper
+            withBorder
+            shadow={snapshot.isDragging ? "lg" : ""}
+            p="sm"
+            maw={800}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+          >
+            <Group align="start" style={{position: "relative"}} px={40}>
+              <div style={{cursor: "grab", position: "absolute", top: 0, left: 0}} {...provided.dragHandleProps}>
+                <IconGripVertical/>
+              </div>
+              <Container p={0} m={0} fluid w="100%">
+                <ListInputs
+                  type={type}
+                  store={store}
+                  objectId={objectId}
+                  path={path}
+                  field={field}
+                  fieldLabel={fieldLabel}
+                  fields={fields}
+                  index={index}
+                  renderItem={renderItem}
+                />
+              </Container>
+              <ActionIcon
+                style={{position: "absolute", top: 0, right: 0}}
+                title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
+                aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
+                onClick={() => {
+                  ConfirmDelete({
+                    listItem: true,
+                    itemName: fieldLabel?.toLowerCase(),
+                    onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
+                  });
+                }}
+              >
+                <IconX/>
+              </ActionIcon>
+            </Group>
+          </Paper>
+        )}
+      </Draggable>
+    );
+  });
 
   const addButton = (
     <ActionIcon
       title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
       aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
-      onClick={() => store.InsertListElement({objectId, page: location.pathname, path, field, value: ""})}
+      onClick={() =>
+        store.InsertListElement({objectId, page: location.pathname, path, field, value: simpleList ? "" : newEntrySpec})
+    }
     >
       <IconPlus />
     </ActionIcon>
   );
 
-  const showBottomAddButton = items.length >= 5;
+  showBottomAddButton = showBottomAddButton || items.length >= 5;
 
   return (
-    <Paper withBorder px="xl" py="md" m={0} mb="xl" maw={simpleList ? 600 : 800}>
-      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
-        <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
-          <DragDropContext
-            onDragEnd={({source, destination}) =>
-              store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
-            }
-          >
-            <Droppable droppableId="simple-list" direction="vertical">
-              {provided => (
-                <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
-                  { items }
-                  { provided.placeholder }
-                </Stack>
-              )}
-            </Droppable>
-          </DragDropContext>
-          <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
-            {addButton}
-          </Group>
-          {
-            !showBottomAddButton ? null :
-              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
-                {addButton}
-              </Group>
+    <InputWrapper label={label} description={description} hint={hint} maw={simpleList ? 600 : 800}>
+      <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
+        <DragDropContext
+          onDragEnd={({source, destination}) =>
+            store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
           }
-        </Container>
-      </MantineInput.Wrapper>
-    </Paper>
+        >
+          <Droppable droppableId="simple-list" direction="vertical">
+            {provided => (
+              <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
+                { items }
+                { provided.placeholder }
+              </Stack>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+          {addButton}
+        </Group>
+        {
+          !showBottomAddButton ? null :
+            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+              {addButton}
+            </Group>
+        }
+      </Container>
+    </InputWrapper>
   );
 });
 
@@ -875,6 +1135,8 @@ const CollectionTable = observer(({
     values.filter(value => Filter({filter: debouncedFilter, value})) :
     values;
 
+  // Only show bottom add button if there are a lot of entries
+  const showBottomAddButton = values.length >= 10;
   const addButton = (
     <ActionIcon
       title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
@@ -904,52 +1166,49 @@ const CollectionTable = observer(({
   );
 
   return (
-    <Paper m={0} mb="xl" maw={800}>
-      <MantineInput.Wrapper label={<InputLabel label={label} hint={hint} />} description={description} style={{position: "relative"}}>
-        <Container p={0} m={0} pb={50} mt="lg">
-          {
-            !filterable ? null :
-              <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
-          }
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={800}>
+      <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
+        {
+          !filterable ? null :
+            <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
+        }
 
-          <DragDropContext
-            onDragEnd={({source, destination}) =>
-              store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
-            }
-          >
-            <Droppable droppableId="simple-list" direction="vertical">
-              {containerProvided => (
-                <>
-                  <CollectionTableContent
-                    showDragHandle={!debouncedFilter}
-                    containerProvided={containerProvided}
-                    store={store}
-                    objectId={objectId}
-                    path={path}
-                    field={field}
-                    columns={columns}
-                    values={filteredValues}
-                    idField={idField}
-                    fieldLabel={fieldLabel}
-                  />
-                  {containerProvided.placeholder}
-                </>
-              )}
-            </Droppable>
-          </DragDropContext>
-          <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
-            {addButton}
-          </Group>
-          {
-            // Show bottom add button if there are a lot of entries
-            values.length < 10 ? null :
-              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
-                {addButton}
-              </Group>
+        <DragDropContext
+          onDragEnd={({source, destination}) =>
+            store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
           }
-        </Container>
-      </MantineInput.Wrapper>
-    </Paper>
+        >
+          <Droppable droppableId="simple-list" direction="vertical">
+            {containerProvided => (
+              <>
+                <CollectionTableContent
+                  showDragHandle={!debouncedFilter}
+                  containerProvided={containerProvided}
+                  store={store}
+                  objectId={objectId}
+                  path={path}
+                  field={field}
+                  columns={columns}
+                  values={filteredValues}
+                  idField={idField}
+                  fieldLabel={fieldLabel}
+                />
+                {containerProvided.placeholder}
+              </>
+            )}
+          </Droppable>
+        </DragDropContext>
+        <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
+          {addButton}
+        </Group>
+        {
+          !showBottomAddButton ? null :
+            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+              {addButton}
+            </Group>
+        }
+      </Container>
+    </InputWrapper>
   );
 });
 
@@ -960,6 +1219,7 @@ export default {
   Code: props => <CodeInput {...props} />,
   UUID: props => <Input {...props} type="uuid" />,
   JSON: props => <Input {...props} type="json" />,
+  Color: props => <Input {...props} type="color" />,
   Integer: ({min, max, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
   Number: ({min, max, step, precision, componentProps, ...props}) =>
@@ -976,5 +1236,7 @@ export default {
   ImageInput,
   List,
   CollectionTable,
-  FabricBrowser: FabricBrowserInput
+  FabricBrowser: FabricBrowserInput,
+  File: FileInput,
+  InputWrapper
 };

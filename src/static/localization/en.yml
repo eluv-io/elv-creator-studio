@@ -6,6 +6,7 @@ pages:
       general: General
       images: Images
       theme: Theme
+      login: Login
       items: Items
       storefront: Storefront
       collections: Collections

@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
-import MarketplaceItemInput from "../../components/inputs/MarketplaceItemInput.jsx";
+import {MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Title} from "@mantine/core";
 
@@ -88,7 +88,7 @@ export const MarketplaceVotingEvent = observer(() => {
       />
       {
         votingEvent.type === "all" ? null :
-          <MarketplaceItemInput
+          <MarketplaceItemMultiselect
             {...inputProps}
             field="items"
             label="Votable Items"

@@ -30,6 +30,18 @@ const MarketplaceTheme = observer(() => {
         description="Override marketplace styling with tenant styling on pages outside of the store"
       />
 
+      {
+        info.branding.use_tenant_styling ? null :
+          <Inputs.ImageInput
+            {...inputProps}
+            label="App Background"
+            fields={[
+              { field: "background", label: "Background (Desktop)" },
+              { field: "background_mobile", label: "Background (Mobile)" },
+            ]}
+          />
+      }
+
       <Inputs.Select
         {...inputProps}
         field="text_justification"

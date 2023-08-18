@@ -81,6 +81,17 @@ const MarketplaceGeneralSettings = observer(() => {
         {...inputProps}
       />
 
+      <Inputs.ImageInput
+        label="Marketplace Card Images"
+        path="/public/asset_metadata/info/branding"
+        altTextField="card_banner_alt"
+        fields={[
+          { field: "card_banner_front", label: "Card Banner (Front)" },
+          { field: "card_banner_back", label: "Card Banner (Back)" },
+        ]}
+        {...inputProps}
+      />
+
       <Inputs.Checkbox
         INVERTED
         label="Show Global Navigation"
