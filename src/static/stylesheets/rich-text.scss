@@ -28,41 +28,6 @@ $tablet-breakpoint: 850px;
     box-sizing: border-box;
   }
 
-  body {
-    line-height: 1.5;
-  }
-
-  /* Remove list styles (bullets/numbers) */
-  ol, ul, menu {
-    list-style: none;
-  }
-
-  /* For images to not be able to exceed their container */
-  img {
-    max-width: 100%;
-  }
-
-  /* removes spacing between cells in tables */
-  table {
-    border-collapse: collapse;
-  }
-
-  /* revert the 'white-space' property for textarea elements on Safari */
-  textarea {
-    white-space: revert;
-  }
-
-  a,
-  button {
-    &:not(:disabled) {
-      cursor: pointer;
-    }
-  }
-
-  button {
-    text-align: center;
-  }
-
   /* revert for bug in Chromium browsers
      - fix for the content editable attribute will work properly. */
   :where([contenteditable]){
@@ -87,10 +52,66 @@ $tablet-breakpoint: 850px;
     }
   }
 
-
   * {
     font-family: var(--font-family-secondary);
   }
+
+  & > * {
+    font-size: 16px;
+  }
+
+
+  body {
+    line-height: 1.5;
+  }
+
+  /* Remove list styles (bullets/numbers) */
+  ol, ul, menu {
+    list-style: none;
+  }
+
+  /* For images to not be able to exceed their container */
+  img {
+    max-width: 100%;
+  }
+
+  /* removes spacing between cells in tables */
+  table {
+    border-collapse: collapse;
+  }
+
+  /* revert the 'white-space' property for textarea elements on Safari */
+  textarea {
+    white-space: revert;
+  }
+
+  button {
+    text-align: center;
+
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+  }
+
+  a {
+    // sass-lint:disable no-important
+    color: var(--color-text-highlight) !important;
+
+    * {
+      color: var(--color-text-highlight) !important;
+    }
+
+    &:hover {
+      // sass-lint:disable no-important
+      color: var(--color-text-highlight) !important;
+
+      * {
+        color: var(--color-text-highlight) !important;
+      }
+    }
+  }
+
+
 
   h1,
   h2,
@@ -99,12 +120,6 @@ $tablet-breakpoint: 850px;
   h5,
   h6 {
     font-family: var(--font-family-primary);
-  }
-
-
-
-  & > * {
-    font-size: 16px;
   }
 
   h1,
@@ -143,24 +158,6 @@ $tablet-breakpoint: 850px;
 
   strong {
     font-weight: 600;
-  }
-
-  a {
-    // sass-lint:disable no-important
-    color: var(--color-text-highlight) !important;
-
-    * {
-      color: var(--color-text-highlight) !important;
-    }
-
-    &:hover {
-      // sass-lint:disable no-important
-      color: var(--color-text-highlight) !important;
-
-      * {
-        color: var(--color-text-highlight) !important;
-      }
-    }
   }
 
   blockquote {

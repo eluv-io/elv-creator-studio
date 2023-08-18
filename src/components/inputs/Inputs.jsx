@@ -1208,22 +1208,22 @@ const CollectionTable = observer(({
 });
 
 export default {
-  Text: props => <Input {...props} type="text" />,
-  URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
-  TextArea: props => <Input {...props} type="textarea" />,
-  Code: props => <CodeInput {...props} />,
-  UUID: props => <Input {...props} type="uuid" />,
-  JSON: props => <Input {...props} type="json" />,
-  Color: props => <Input {...props} type="color" />,
-  Integer: ({min, max, componentProps, ...props}) =>
-    <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
-  Number: ({min, max, step, precision, componentProps, ...props}) =>
-    <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
-  Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
-  Select: props => <Input {...props} type="select" />,
-  MultiSelect: props => <Input {...props} type="multiselect" />,
-  Date: props => <Input {...props} type="date" />,
-  DateTime: props => <Input {...props} type="datetime" />,
+  Text: observer(props => <Input {...props} type="text" />),
+  URL: observer(props => <Input {...props} type="text" Validate={ValidateUrl} />),
+  TextArea: observer(props => <Input {...props} type="textarea" />),
+  Code: observer(props => <CodeInput {...props} />),
+  UUID: observer(props => <Input {...props} type="uuid" />),
+  JSON: observer(props => <Input {...props} type="json" />),
+  Color: observer(props => <Input {...props} type="color" />),
+  Integer: observer(({min, max, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />),
+  Number: observer(({min, max, step, precision, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />),
+  Price: observer(({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />),
+  Select: observer(props => <Input {...props} type="select" />),
+  MultiSelect: observer(props => <Input {...props} type="multiselect" />),
+  Date: observer(props => <Input {...props} type="date" />),
+  DateTime: observer(props => <Input {...props} type="datetime" />),
   RichText: RichTextInput,
   Password,
   Checkbox: CheckboxCard,

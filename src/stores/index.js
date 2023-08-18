@@ -17,10 +17,7 @@ import LocalizationEN from "Assets/localization/en.yml";
 
 configure({
   enforceActions: "always",
-  //computedRequiresReaction: true,
-  //reactionRequiresObservable: true,
-  //observableRequiresReaction: true,
-  disableErrorBoundaries: true
+  disableErrorBoundaries: window.location.hostname === "localhost"
 });
 
 class RootStore {

@@ -1,12 +1,13 @@
 import {Button, Image} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {rootStore} from "Stores";
+import {observer} from "mobx-react-lite";
 
-export const LinkButton = (props) => {
+export const LinkButton = observer((props) => {
   return <Button component={Link} {...props} />;
-};
+});
 
-export const ItemImage = ({item, width, imageProps={}}) => {
+export const ItemImage = observer(({item, width, imageProps={}}) => {
   let url;
   try {
     if(item?.image?.url) {
@@ -23,9 +24,9 @@ export const ItemImage = ({item, width, imageProps={}}) => {
   }
 
   return <Image {...imageProps} src={url} alt={item.name || item.sku} withPlaceholder />;
-};
+});
 
-export const LocalizeString = (text="", variables={}, options={reactNode: false}) => {
+export const LocalizeString = observer((text="", variables={}, options={reactNode: false}) => {
   let result = text
     .split(/{(\w+)}/)
     .filter(s => s)
@@ -40,4 +41,4 @@ export const LocalizeString = (text="", variables={}, options={reactNode: false}
       {result}
     </>
   );
-};
+});
