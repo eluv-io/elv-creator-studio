@@ -33,6 +33,7 @@ components:
     upload: Upload
     remove: Remove
     edit: Edit
+    save: Save
     undo: Undo
     undo_action: Undo {action}
     redo: Redo
@@ -95,6 +96,9 @@ components:
       object_id: Object ID
     validation:
       invalid_content_id: Invalid Content ID
+  save_modal:
+    title: Save Changes
+    changelist: Change List
 
 stores:
   initialization:

@@ -129,7 +129,6 @@ class FileBrowserStore {
         libraryId,
         writeToken,
         fileInfo: files,
-        encryption: "cgck",
         callback: uploadStatus => runInAction(() => {
           this.uploadStatus[objectId] = {
             ...(this.uploadStatus[objectId] || {}),

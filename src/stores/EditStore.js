@@ -8,6 +8,7 @@ class EditStore {
   type;
   writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
   actions = {};
+  showSaveModal = false;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -26,6 +27,57 @@ class EditStore {
       this.client.RecordWriteToken({writeToken, fabricNodeUrl});
     });
   }
+
+  get changeList() {
+    const marketplaceActions = Object.keys(this.rootStore.marketplaceStore.actionStack)
+      .map(marketplaceId => {
+        const actions = this.rootStore.marketplaceStore.actionStack[marketplaceId];
+        if(!actions || actions.length === 0) { return; }
+
+        const marketplace = this.rootStore.marketplaceStore.marketplaces[marketplaceId];
+        const name = marketplace?.metadata?.public?.asset_metadata?.info?.branding?.name || marketplaceId;
+        return {
+          type: "Marketplace",
+          name,
+          objectId: marketplaceId,
+          object: marketplace,
+          actions
+        };
+      });
+
+    return [
+      ...marketplaceActions
+    ]
+      .filter(actions => actions);
+  }
+
+  ToggleSaveModal(show) {
+    this.showSaveModal = show;
+  }
+
+  Save = flow(function * (excludeList) {
+    for(const item of this.changeList) {
+      if(excludeList[item.objectId]) { continue; }
+
+      try {
+        this.rootStore.uiStore.SetLoading(true);
+        this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.type} ${item.name}`);
+
+        const libraryId = yield this.rootStore.LibraryId({objectId: item.objectId});
+        const writeToken = yield this.InitializeWrite({objectId: item.objectId});
+
+        for(const action of item.actions) {
+          yield action.Write({libraryId, objectId: item.objectId, writeToken});
+        }
+
+        yield this.Finalize({objectId: item.objectId});
+      } catch(error) {
+        this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+      }
+    }
+
+    this.rootStore.uiStore.SetLoading(false);
+  });
 
   WriteToken({objectId}) {
     return this.writeInfo[objectId]?.writeToken;

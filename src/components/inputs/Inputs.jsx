@@ -1,5 +1,3 @@
-
-
 import "Assets/stylesheets/rich-text.scss";
 
 import {
@@ -8,7 +6,6 @@ import {
   ActionIcon,
   Group,
   UnstyledButton,
-  Checkbox,
   Text,
   Select,
   TextInput,
@@ -44,12 +41,14 @@ import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
 import {useDebouncedValue} from "@mantine/hooks";
 import FabricBrowser from "./FabricBrowser.jsx";
+import CheckboxCard from "./CheckboxCard.jsx";
+import InputWrapper, {InputLabel} from "./InputWrapper.jsx";
+import Video from "Components/common/Video.jsx";
 
 import {
   IconX,
   IconPlus,
   IconGripVertical,
-  IconQuestionMark,
   IconPhotoX,
   IconEdit,
   IconEditOff,
@@ -58,39 +57,7 @@ import {
   IconFile,
   IconDownload, IconPlayerPause, IconPlayerPlay
 } from "@tabler/icons-react";
-import Video from "../common/Video.jsx";
 
-
-
-// Icon with hint tooltip on hover
-const HintIcon = ({hint, componentProps={}}) => {
-  return (
-    <Tooltip label={hint} multiline maw={350} w="max-content" withArrow position="top-start" events={{ hover: true, focus: true, touch: false }}>
-      <Group {...componentProps} style={{cursor: "help", ...(componentProps?.style || {})}}>
-        <IconQuestionMark alt={hint} size={12} color="#228be6" />
-      </Group>
-    </Tooltip>
-  );
-};
-
-// Field label - includes hint icon if hint is specified
-export const InputLabel = ({label, hint, centered}) => {
-  return (
-    !hint ? label :
-      <Group
-        align="center"
-        mx={centered ? "auto" : 0}
-        position={centered ? "center" : "left"}
-        pr={15}
-        pl={centered ? 15 : 0}
-        style={{position: "relative"}}
-        w="max-content"
-      >
-        <Text>{ label }</Text>
-        <HintIcon hint={hint} componentProps={{style: {position: "absolute", right: 0}}} />
-      </Group>
-  );
-};
 
 export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfirm}) => {
   modals.openConfirmModal({
@@ -108,23 +75,7 @@ export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfi
   });
 };
 
-const InputWrapper = observer(({label, description, hint, children, flex, wrapperProps={}, ...componentProps}) => {
-  wrapperProps.style = wrapperProps.style ||
-    (!flex ? { position: "relative" } : { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "});
 
-  return (
-    <Paper withBorder p="xl" py="md" mb="md" maw={600} {...componentProps}>
-      <MantineInput.Wrapper
-        label={<InputLabel label={label} hint={hint} />}
-        description={description}
-        style={{position: "relative"}}
-        {...wrapperProps}
-      >
-          { children }
-      </MantineInput.Wrapper>
-    </Paper>
-  );
-});
 
 // General input
 const Input = observer(({
@@ -322,7 +273,7 @@ const Password = observer(({
 });
 
 // Checkbox
-const CheckboxCard = observer(({
+const CheckboxInput = observer(({
   INVERTED=false,
   store,
   objectId,
@@ -346,32 +297,15 @@ const CheckboxCard = observer(({
   let value = !!store.GetMetadata({objectId, path, field});
 
   return (
-    <UnstyledButton
-      style={{display: "block"}}
-      width="100%"
-      w="100%"
-      maw={600}
-      onClick={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
-    >
-      <InputWrapper
-        label={label}
-        description={description}
-        hint={hint}
-        flex
-        wrapperProps={{pr: 50}}
-      >
-        <Checkbox
-          style={{position: "absolute", right: -25}}
-          {...componentProps}
-          checked={INVERTED ? !value : value}
-          onChange={() => {}}
-          tabIndex={-1}
-          size="md"
-          mr="xl"
-          styles={{ input: { cursor: "pointer" } }}
-        />
-      </InputWrapper>
-    </UnstyledButton>
+    <CheckboxCard
+      label={label}
+      description={description}
+      hint={hint}
+      INVERTED={INVERTED}
+      checked={value}
+      onChange={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
+      componentProps={componentProps}
+    />
   );
 });
 
@@ -1208,25 +1142,25 @@ const CollectionTable = observer(({
 });
 
 export default {
-  Text: observer(props => <Input {...props} type="text" />),
-  URL: observer(props => <Input {...props} type="text" Validate={ValidateUrl} />),
-  TextArea: observer(props => <Input {...props} type="textarea" />),
-  Code: observer(props => <CodeInput {...props} />),
-  UUID: observer(props => <Input {...props} type="uuid" />),
-  JSON: observer(props => <Input {...props} type="json" />),
-  Color: observer(props => <Input {...props} type="color" />),
-  Integer: observer(({min, max, componentProps, ...props}) =>
-    <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />),
-  Number: observer(({min, max, step, precision, componentProps, ...props}) =>
-    <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />),
-  Price: observer(({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />),
-  Select: observer(props => <Input {...props} type="select" />),
-  MultiSelect: observer(props => <Input {...props} type="multiselect" />),
-  Date: observer(props => <Input {...props} type="date" />),
-  DateTime: observer(props => <Input {...props} type="datetime" />),
+  Text: props => <Input {...props} type="text" />,
+  URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
+  TextArea: props => <Input {...props} type="textarea" />,
+  Code: props => <CodeInput {...props} />,
+  UUID: props => <Input {...props} type="uuid" />,
+  JSON: props => <Input {...props} type="json" />,
+  Color: props => <Input {...props} type="color" />,
+  Integer: ({min, max, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
+  Number: ({min, max, step, precision, componentProps, ...props}) =>
+    <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
+  Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
+  Select: props => <Input {...props} type="select" />,
+  MultiSelect: props => <Input {...props} type="multiselect" />,
+  Date: props => <Input {...props} type="date" />,
+  DateTime: props => <Input {...props} type="datetime" />,
   RichText: RichTextInput,
   Password,
-  Checkbox: CheckboxCard,
+  Checkbox: CheckboxInput,
   SingleImageInput,
   ImageInput,
   List,

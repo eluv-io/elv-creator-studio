@@ -7,6 +7,7 @@ import MantineTheme from "Assets/MantineTheme";
 import {rootStore, uiStore} from "Stores";
 
 import AppRoutes from "./Routes.jsx";
+import SaveModal from "./components/common/SaveModal.jsx";
 
 // Shows an overlay when something in the app is loading
 const LoaderModal = observer(() => {
@@ -17,6 +18,7 @@ const LoaderModal = observer(() => {
       withCloseButton={false}
       onClose={() => {}}
       size="lg"
+      overlayProps={{zIndex: 201}}
     >
       <Flex direction="column" align="center" justify="center" gap={30} p="xl">
         <Loader />
@@ -33,8 +35,9 @@ const App = observer(() => {
     <MantineProvider withGlobalStyles withNormalizeCSS theme={{colorScheme: uiStore.theme, ...MantineTheme}}>
       <ModalsProvider>
         <main>
-          <LoaderModal />
+          <SaveModal />
           { rootStore.loaded ? <AppRoutes /> : null }
+          <LoaderModal />
         </main>
       </ModalsProvider>
     </MantineProvider>

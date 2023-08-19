@@ -106,7 +106,7 @@ export const MarketplaceCollection = observer(() => {
             />
 
             <Accordion mt={50} maw={600} variant="contained">
-              <Accordion.Item value="photos">
+              <Accordion.Item value="default">
                 <Accordion.Control icon={<IconSettings />}>
                   Redemption Settings
                 </Accordion.Control>
@@ -245,7 +245,7 @@ const MarketplaceCollections = observer(() => {
       </Group>
 
       <Accordion mt="xs" maw={600} variant="contained">
-        <Accordion.Item value="photos">
+        <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             Default Redemption Settings
           </Accordion.Control>

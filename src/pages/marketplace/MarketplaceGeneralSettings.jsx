@@ -200,7 +200,7 @@ const MarketplaceGeneralSettings = observer(() => {
 
 
       <Accordion mt={50} maw={800} variant="contained">
-        <Accordion.Item value="photos">
+        <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             { rootStore.l10n.components.forms.advanced_settings }
           </Accordion.Control>

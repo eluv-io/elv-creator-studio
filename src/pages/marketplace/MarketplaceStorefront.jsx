@@ -202,7 +202,7 @@ const MarketplaceStorefront = observer(() => {
       />
 
       <Accordion maw={600} mb="md" variant="contained">
-        <Accordion.Item value="photos">
+        <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             Item Purchase Status Page
           </Accordion.Control>
@@ -341,7 +341,7 @@ const MarketplaceStorefront = observer(() => {
               }
 
               <Accordion maw={600} mb="md" variant="contained">
-                <Accordion.Item value="photos">
+                <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
                     Banner Media
                   </Accordion.Control>
@@ -412,7 +412,7 @@ const MarketplaceStorefront = observer(() => {
               />
 
               <Accordion maw={600} mb="md" variant="contained">
-                <Accordion.Item value="photos">
+                <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
                     Footer Link Content
                   </Accordion.Control>
