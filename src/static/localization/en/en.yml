@@ -19,6 +19,9 @@ pages:
         unreleased: Available {date}
         expired: Expired {date}
 
+forms:
+  common:
+
 components:
   nav:
     home: Home
@@ -54,8 +57,9 @@ components:
       add_item: Add item to {field}
       remove_item: Remove element from {field}
       move_item: Move item in {field}
-    hints:
-      image_alt_text: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
+    alt_text:
+      label: Alt Text
+      hint: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
     validation:
       invalid_url: Invalid URL
   file_browser:
@@ -108,4 +112,13 @@ stores:
       templates: Running Initial Setup - Discovering Templates
       media: Running Initial Setup - Discovering Media
       saving: Running Initial Setup - Saving
+
+actions:
+  MODIFY_FIELD: Modified {label}
+  MODIFY_FIELD_UNSTACKABLE: Modified {label}
+  TOGGLE_FIELD: Toggled {label}
+  SET_LINK: Modified {label}
+  INSERT_LIST_ELEMENT: Added {label}
+  REMOVE_LIST_ELEMENT: Removed {label}
+  MOVE_LIST_ELEMENT: Moved {label}
 

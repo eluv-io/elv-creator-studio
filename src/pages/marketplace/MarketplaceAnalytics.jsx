@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore ,marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import {Title} from "@mantine/core";
@@ -12,7 +12,8 @@ const MarketplaceAnalytics = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
-  const inputProps = { store: marketplaceStore, objectId: marketplaceId };
+  const l10n = rootStore.l10n.pages.marketplace.form;
+  const inputProps = { store: marketplaceStore, objectId: marketplaceId, category: l10n.categories.analytics };
 
   return (
     <PageContent
@@ -20,30 +21,29 @@ const MarketplaceAnalytics = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} mt={50} mb="md">General Analytics</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.general_analytics}</Title>
       <Inputs.List
         {...inputProps}
+        {...l10n.analytics.analytics_collections}
+        subcategory={l10n.categories.general_analytics}
         showBottomAddButton
         path="/public/asset_metadata/info"
         field="analytics_ids"
-        label="Analytics Collections"
-        fieldLabel="Analytics Collection"
         fields={[
           {
+            ...l10n.analytics.collection_label,
             InputComponent: Inputs.Text,
             field: "label",
-            label: "Collection Label",
           },
           {
+            ...l10n.analytics.analytics_ids,
             InputComponent: Inputs.List,
             field: "ids",
-            label: "Analytics IDs",
-            fieldLabel: "Analytics Key",
             fields: [
               {
+                ...l10n.analytics.analytics_type,
                 InputComponent: Inputs.Select,
                 field: "type",
-                label: "Analytics Type",
                 options: [
                   "Google Analytics ID",
                   "Google Tag Manager ID",
@@ -54,6 +54,7 @@ const MarketplaceAnalytics = observer(() => {
                 ]
               },
               {
+                ...l10n.analytics.id,
                 InputComponent: Inputs.Text,
                 field: "id",
                 label: "ID"
@@ -63,31 +64,35 @@ const MarketplaceAnalytics = observer(() => {
         ]}
       />
 
-      <Title order={3} mt={50} mb="md">Storefront Page View Analytics</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.storefront_analytics}</Title>
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.analytics.google_conversion_label}
+        subcategory={l10n.categories.storefront_analytics}
         path="/public/asset_metadata/info/storefront_page_view_analytics"
         field="google_conversion_label"
-        label="Google Conversion Label"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.analytics.google_conversion_id}
+        subcategory={l10n.categories.storefront_analytics}
         path="/public/asset_metadata/info/storefront_page_view_analytics"
         field="google_conversion_id"
-        label="Google Conversion ID"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.analytics.facebook_event_id}
+        subcategory={l10n.categories.storefront_analytics}
         path="/public/asset_metadata/info/storefront_page_view_analytics"
         field="facebook_event_id"
-        label="Facebook Event ID"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.analytics.twitter_event_id}
+        subcategory={l10n.categories.storefront_analytics}
         path="/public/asset_metadata/info/storefront_page_view_analytics"
         field="twitter_event_id"
-        label="Twitter Event ID"
       />
     </PageContent>
   );

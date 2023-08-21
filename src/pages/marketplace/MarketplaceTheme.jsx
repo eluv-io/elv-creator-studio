@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 
@@ -11,10 +11,12 @@ const MarketplaceTheme = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: "/public/asset_metadata/info/branding"
+    path: "/public/asset_metadata/info/branding",
+    category: l10n.categories.theme
   };
 
   return (
@@ -25,43 +27,42 @@ const MarketplaceTheme = observer(() => {
     >
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.theme.use_tenant_styling}
         field="use_tenant_styling"
-        label="Use Tenant Styling"
-        description="Override marketplace styling with tenant styling on pages outside of the store"
       />
 
       {
         info.branding.use_tenant_styling ? null :
           <Inputs.ImageInput
             {...inputProps}
-            label="App Background"
+            {...l10n.theme.app_background}
             fields={[
-              { field: "background", label: "Background (Desktop)" },
-              { field: "background_mobile", label: "Background (Mobile)" },
+              { field: "background", ...l10n.theme.background_desktop },
+              { field: "background_mobile", ...l10n.theme.background_mobile }
             ]}
           />
       }
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.theme.text_justification}
         field="text_justification"
-        label="Text Justification"
         defaultValue="Left"
         options={["Left", "Center"]}
       />
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.theme.item_text_justification}
         field="item_text_justification"
-        label="Item Text Justification"
         defaultValue="Left"
         options={["Left", "Center"]}
       />
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.theme.theme}
         field="color_scheme"
-        label="Theme"
         defaultValue="Light"
         options={["Light", "Dark", "Custom"]}
       />
@@ -70,8 +71,8 @@ const MarketplaceTheme = observer(() => {
         info?.branding?.color_scheme !== "Custom" ? null :
           <Inputs.Code
             {...inputProps}
+            {...l10n.theme.custom_css}
             field="custom_css"
-            label="Custom CSS"
             language="css"
           />
       }

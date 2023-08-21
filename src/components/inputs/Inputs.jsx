@@ -84,10 +84,13 @@ const Input = observer(({
   objectId,
   path,
   field,
-  options,
+  category,
+  subcategory,
   label,
   description,
   hint,
+  actionLabel,
+  options,
   placeholder,
   defaultValue,
   clearable,
@@ -177,7 +180,17 @@ const Input = observer(({
   if(clearable) {
     componentProps.rightSection = (
       <Tooltip label={rootStore.l10n.components.inputs.clear} position="top-end" withArrow>
-        <ActionIcon mr="xs" onClick={() => store.SetMetadata({objectId, page: location.pathname, path, field, value: type === "number" ? undefined : ""})}>
+        <ActionIcon mr="xs" onClick={() => store.SetMetadata({
+          objectId,
+          page:
+          location.pathname,
+          path,
+          field,
+          value: type === "number" ? undefined : "",
+          category,
+          subcategory,
+          label: actionLabel || label
+        })}>
           <IconX size={15} />
         </ActionIcon>
       </Tooltip>
@@ -212,7 +225,10 @@ const Input = observer(({
           page: location.pathname,
           path,
           field,
-          value
+          value,
+          category,
+          subcategory,
+          label
         });
 
         setChanged(true);
@@ -233,6 +249,8 @@ const Password = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   description,
   hint,
@@ -259,7 +277,16 @@ const Password = observer(({
         } else {
           const digest = await SHA512(password);
           setPassword(digest);
-          store.SetMetadata({objectId, page: location.pathname, path, field, value: digest});
+          store.SetMetadata({
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            value: digest,
+            category,
+            subcategory,
+            label
+          });
           setChanged(false);
         }
       }}
@@ -279,10 +306,12 @@ const CheckboxInput = observer(({
   objectId,
   path,
   field,
-  defaultValue=false,
+  category,
+  subcategory,
   label,
   description,
   hint,
+  defaultValue=false,
   componentProps={}
 }) => {
   const location = useLocation();
@@ -303,14 +332,24 @@ const CheckboxInput = observer(({
       hint={hint}
       INVERTED={INVERTED}
       checked={value}
-      onChange={() => store.SetMetadata({actionType: "TOGGLE_FIELD", objectId, page: location.pathname, path, field, value: !value})}
+      onChange={() => store.SetMetadata({
+        actionType: "TOGGLE_FIELD",
+        objectId,
+        page: location.pathname,
+        path,
+        field,
+        value: !value,
+        category,
+        subcategory,
+        label
+      })}
       componentProps={componentProps}
     />
   );
 });
 
 // Rich text
-const RichTextInput = observer(({store, objectId, path, field, label, description, hint}) => {
+const RichTextInput = observer(({store, objectId, path, field, category, subcategory, label, description, hint}) => {
   const location = useLocation();
   const [showEditor, setShowEditor] = useState(false);
 
@@ -326,6 +365,9 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
               page={location.pathname}
               path={path}
               field={field}
+              category={category}
+              subcategory={subcategory}
+              label={label}
               componentProps={{mih: 200}}
             />
           </Container> :
@@ -346,8 +388,20 @@ const RichTextInput = observer(({store, objectId, path, field, label, descriptio
   );
 });
 
-
-const CodeInput = observer(({store, objectId, path, field, label, description, hint, defaultValue, language="css", componentProps={}}) => {
+const CodeInput = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  description,
+  hint,
+  defaultValue,
+  language="css",
+  componentProps={}}
+) => {
   const [editing, setEditing] = useState(false);
   const [validationResults, setValidationResults] = useState(undefined);
 
@@ -382,6 +436,9 @@ const CodeInput = observer(({store, objectId, path, field, label, description, h
             objectId={objectId}
             path={path}
             field={field}
+            category={category}
+            subcategory={subcategory}
+            actionLabel={label}
             defaultValue={defaultValue}
             componentProps={{...componentProps, maw: 800, mb:0, minRows: componentProps.minRows || 20}}
           /> :
@@ -405,9 +462,12 @@ const CodeInput = observer(({store, objectId, path, field, label, description, h
 const SingleImageInput = observer(({
   store,
   objectId,
+  category,
+  subcategory,
   label,
   description,
   hint,
+  actionLabel,
   path,
   field,
   componentProps={}
@@ -472,7 +532,16 @@ const SingleImageInput = observer(({
                 event.stopPropagation();
                 ConfirmDelete({
                   itemName: label || "this image",
-                  onConfirm: () => store.SetMetadata({page: location.pathname, objectId, path, field, value: null})
+                  onConfirm: () => store.SetMetadata({
+                    page: location.pathname,
+                    objectId,
+                    path,
+                    field,
+                    value: null,
+                    category,
+                    subcategory,
+                    label: actionLabel || label
+                  })
                 });
               }}
             >
@@ -494,7 +563,10 @@ const SingleImageInput = observer(({
             value: {
               auto_update: { tag: "latest" },
               "/": UrlJoin("./files", fullPath)
-            }
+            },
+            category,
+            subcategory,
+            label: actionLabel || label
           });
         }}
         Close={() => setShowFileBrowser(false)}
@@ -508,6 +580,8 @@ export const FileInput = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   description,
   hint,
@@ -532,7 +606,17 @@ export const FileInput = observer(({
             label={label}
             Close={() => setShowBrowser(false)}
             Submit={async (filePath) => {
-              await store.SetLink({objectId, path, field, linkObjectId: objectId, linkType: "file", filePath});
+              await store.SetLink({
+                objectId,
+                path,
+                field,
+                linkObjectId: objectId,
+                linkType: "file",
+                filePath,
+                category,
+                subcategory,
+                label
+              });
             }}
           />
       }
@@ -574,7 +658,16 @@ export const FileInput = observer(({
                   onClick={() => {
                     ConfirmDelete({
                       itemName: name,
-                      onConfirm: () => store.SetLink({objectId, page: location.pathname, path, field, linkObjectId: undefined})
+                      onConfirm: () => store.SetLink({
+                        objectId,
+                        page: location.pathname,
+                        path,
+                        field,
+                        linkObjectId: undefined,
+                        category,
+                        subcategory,
+                        label
+                      })
                     });
                   }}
                 >
@@ -601,6 +694,8 @@ export const FabricBrowserInput = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   description,
   hint,
@@ -635,7 +730,15 @@ export const FabricBrowserInput = observer(({
             label={label}
             Close={() => setShowBrowser(false)}
             Submit={async (target) => {
-              await store.SetLink({objectId, path, field, linkObjectId: target.objectId});
+              await store.SetLink({
+                objectId,
+                path,
+                field,
+                linkObjectId: target.objectId,
+                category,
+                subcategory,
+                label
+              });
             }}
           />
       }
@@ -670,7 +773,16 @@ export const FabricBrowserInput = observer(({
                   onClick={() => {
                     ConfirmDelete({
                       itemName: name,
-                      onConfirm: () => store.SetLink({objectId, page: location.pathname, path, field, linkObjectId: undefined})
+                      onConfirm: () => store.SetLink({
+                        objectId,
+                        page: location.pathname,
+                        path,
+                        field,
+                        linkObjectId: undefined,
+                        category,
+                        subcategory,
+                        label
+                      })
                     });
                   }}
                 >
@@ -722,6 +834,8 @@ const ImageInput = observer(({
   path,
   fields,
   altTextField,
+  category,
+  subcategory,
   label,
   description,
   hint
@@ -732,16 +846,19 @@ const ImageInput = observer(({
     <InputWrapper label={label} description={description} hint={hint} h="max-content" w="max-content">
       <Group my="md">
         {
-          fields.map(({label, description, hint, field}) =>
+          fields.map((field) =>
             <SingleImageInput
-              key={`image-input-${field}`}
+              key={`image-input-${field.field}`}
               store={store}
               objectId={objectId}
               path={path}
-              label={label}
-              description={description}
-              hint={hint}
-              field={field}
+              category={category}
+              subcategory={subcategory}
+              label={field.label}
+              description={field.description}
+              hint={field.hint}
+              field={field.field}
+              actionLabel={field.label || label}
               componentProps={{
                 mb: 0
               }}
@@ -752,12 +869,15 @@ const ImageInput = observer(({
       {
         !altTextField ? null :
           <Input
-            hint={rootStore.l10n.components.inputs.hints.image_alt_text}
             page={location.pathname}
             type="textarea"
             store={store}
             objectId={objectId}
-            label="Alt Text"
+            category={category}
+            subcategory={subcategory}
+            label={rootStore.l10n.components.inputs.alt_text.label}
+            actionLabel={`${label} - ${rootStore.l10n.components.inputs.alt_text.label}`}
+            hint={rootStore.l10n.components.inputs.alt_text.hint}
             path={path}
             field={altTextField}
             componentProps={{minRows: 2}}
@@ -773,6 +893,9 @@ const ListInputs = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
+  actionLabel,
   fieldLabel,
   fields=[],
   index,
@@ -798,7 +921,10 @@ const ListInputs = observer(({
         objectId={objectId}
         path={UrlJoin(path, field)}
         field={index.toString()}
+        category={category}
+        subcategory={subcategory}
         label={fieldLabel}
+        actionLabel={actionLabel}
         componentProps={{style: {flexGrow: "1"}}}
       />
     );
@@ -812,7 +938,18 @@ const ListInputs = observer(({
           const key = `input-${props.field}`;
 
           if(render) {
-            return render({...props, key, index, store, objectId, path: fieldPath, field: props.field});
+            return render({
+              ...props,
+              key,
+              index,
+              store,
+              objectId,
+              path: fieldPath,
+              field: props.field,
+              category,
+              subcategory,
+              ...props
+            });
           } else {
             return (
               <InputComponent
@@ -821,6 +958,8 @@ const ListInputs = observer(({
                 objectId={objectId}
                 path={fieldPath}
                 field={props.field}
+                category={category}
+                subcategory={subcategory}
                 {...props}
               />
             );
@@ -838,9 +977,12 @@ const List = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   hint,
   description,
+  actionLabel,
   idField="index",
   fieldLabel,
   fields=[],
@@ -878,6 +1020,9 @@ const List = observer(({
                   objectId={objectId}
                   path={path}
                   field={field}
+                  category={category}
+                  subcategory={subcategory}
+                  actionLabel={actionLabel}
                   fieldLabel={fieldLabel}
                   fields={fields}
                   index={index}
@@ -892,7 +1037,16 @@ const List = observer(({
                   ConfirmDelete({
                     listItem: true,
                     itemName: fieldLabel?.toLowerCase(),
-                    onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
+                    onConfirm: () => store.RemoveListElement({
+                      objectId,
+                      page: location.pathname,
+                      path,
+                      field,
+                      index,
+                      category,
+                      subcategory,
+                      label: actionLabel || fieldLabel
+                    })
                   });
                 }}
               >
@@ -910,7 +1064,16 @@ const List = observer(({
       title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
       aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel.toLowerCase()})}
       onClick={() =>
-        store.InsertListElement({objectId, page: location.pathname, path, field, value: simpleList ? "" : newEntrySpec})
+        store.InsertListElement({
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          value: simpleList ? "" : newEntrySpec,
+          category,
+          subcategory,
+          label: actionLabel || fieldLabel
+        })
     }
     >
       <IconPlus />
@@ -924,7 +1087,17 @@ const List = observer(({
       <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
         <DragDropContext
           onDragEnd={({source, destination}) =>
-            store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
+            store.MoveListElement({
+              objectId,
+              page: location.pathname,
+              path,
+              field,
+              index: source.index,
+              newIndex: destination.index,
+              category,
+              subcategory,
+              label
+            })
           }
         >
           <Droppable droppableId="simple-list" direction="vertical">
@@ -956,6 +1129,9 @@ const CollectionTableRows = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
+  actionLabel,
   columns=[],
   fieldLabel,
   idField="index",
@@ -1001,7 +1177,16 @@ const CollectionTableRows = observer(({
                       ConfirmDelete({
                         listItem: true,
                         itemName: fieldLabel?.toLowerCase(),
-                        onConfirm: () => store.RemoveListElement({objectId, page: location.pathname, path, field, index})
+                        onConfirm: () => store.RemoveListElement({
+                          objectId,
+                          page: location.pathname,
+                          path,
+                          field,
+                          index,
+                          category,
+                          subcategory,
+                          label: actionLabel || fieldLabel
+                        })
                       });
                     }}
                   >
@@ -1022,9 +1207,12 @@ const CollectionTable = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
-  hint,
   description,
+  hint,
+  actionLabel,
   columns=[],
   fieldLabel,
   newEntrySpec={},
@@ -1063,7 +1251,10 @@ const CollectionTable = observer(({
           page: location.pathname,
           path,
           field,
-          value: newEntry
+          value: newEntry,
+          category,
+          subcategory,
+          label: actionLabel || fieldLabel
         });
 
         navigate(UrlJoin(location.pathname, id));
@@ -1085,7 +1276,17 @@ const CollectionTable = observer(({
 
         <DragDropContext
           onDragEnd={({source, destination}) =>
-            store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
+            store.MoveListElement({
+              objectId,
+              page: location.pathname,
+              path,
+              field,
+              index: source.index,
+              newIndex: destination.index,
+              category,
+              subcategory,
+              label: actionLabel || fieldLabel
+            })
           }
         >
           <Table
@@ -1116,6 +1317,10 @@ const CollectionTable = observer(({
                     objectId={objectId}
                     path={path}
                     field={field}
+                    category={category}
+                    subcategory={subcategory}
+                    label={label}
+                    actionLabel={actionLabel}
                     columns={columns}
                     values={filteredValues}
                     idField={idField}

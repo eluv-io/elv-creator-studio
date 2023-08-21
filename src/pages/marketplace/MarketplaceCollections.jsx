@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import MarketplaceItemMultiselect from "../../components/inputs/MarketplaceItemInput.jsx";
@@ -29,10 +29,12 @@ export const MarketplaceCollection = observer(() => {
     );
   }
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/collections", collectionIndex.toString())
+    path: UrlJoin("/public/asset_metadata/info/collections", collectionIndex.toString()),
+    category: l10n.categories.collection
   };
 
   return (
@@ -42,37 +44,43 @@ export const MarketplaceCollection = observer(() => {
       backLink={UrlJoin("/marketplaces", marketplaceId, "collections")}
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Collection Info</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.collection_info }</Title>
       <Inputs.UUID
         {...inputProps}
+        {...l10n.collection.id}
+        subcategory={l10n.categories.collection_info}
         field="sku"
-        label="ID"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.collection.name}
+        subcategory={l10n.categories.collection_info}
         field="name"
-        label="Name"
-      />
-      <MarketplaceItemMultiselect
-        {...inputProps}
-        label="Collection Items"
-        field="items"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.collection.header}
+        subcategory={l10n.categories.collection_info}
         field="collection_header"
-        label="Header"
       />
       <Inputs.TextArea
         {...inputProps}
+        {...l10n.collection.description}
+        subcategory={l10n.categories.collection_info}
         field="collection_subheader"
-        label="Description"
+      />
+      <MarketplaceItemMultiselect
+        {...inputProps}
+        {...l10n.collection.items}
+        subcategory={l10n.categories.collection_info}
+        field="items"
       />
 
       <Group align="top">
         <Inputs.ImageInput
           {...inputProps}
-          label="Icon"
+          {...l10n.collection.icon}
+          subcategory={l10n.categories.collection_info}
           altTextField="collection_icon_alt"
           fields={[
             { field: "collection_icon" },
@@ -80,7 +88,8 @@ export const MarketplaceCollection = observer(() => {
         />
         <Inputs.ImageInput
           {...inputProps}
-          label="Banner"
+          {...l10n.collection.banner}
+          subcategory={l10n.categories.collection_info}
           altTextField="collection_banner_alt"
           fields={[
             { field: "collection_banner" },
@@ -88,12 +97,13 @@ export const MarketplaceCollection = observer(() => {
         />
       </Group>
 
-      <Title order={3} mt={50} mb="md">Collection Redemption</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.collection_redemption }</Title>
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.collection.redeemable}
+        subcategory={l10n.categories.collection_redemption}
         field="redeemable"
-        label="Collection Redeemable"
       />
 
       {
@@ -101,43 +111,47 @@ export const MarketplaceCollection = observer(() => {
           <>
             <MarketplaceItemMultiselect
               {...inputProps}
-              label="Collection Rewards"
+              {...l10n.collection.rewards}
+              subcategory={l10n.categories.collection_redemption}
               field="redeem_items"
             />
 
-            <Accordion mt={50} maw={600} variant="contained">
+            <Accordion maw={600} variant="contained">
               <Accordion.Item value="default">
                 <Accordion.Control icon={<IconSettings />}>
-                  Redemption Settings
+                  {l10n.collection.redemption_settings.label}
                 </Accordion.Control>
                 <Accordion.Panel>
                   <Inputs.Checkbox
                     {...inputProps}
-                    INVERTED
+                    {...l10n.collections.hide_info_when_redeeming}
+                    subcategory={l10n.categories.collection_redemption}
                     field="hide_text"
-                    label="Show info when redeeming"
                   />
 
                   <Inputs.FabricBrowser
                     {...inputProps}
+                    {...l10n.collections.redeem_animation}
+                    subcategory={l10n.categories.collection_redemption}
                     field="redeem_animation"
-                    label="Redemption Animation"
                     previewable
                     previewIsAnimation
                   />
 
                   <Inputs.FabricBrowser
                     {...inputProps}
+                    {...l10n.collections.redeem_animation_mobile}
+                    subcategory={l10n.categories.collection_redemption}
                     field="redeem_animation_mobile"
-                    label="Redemption Animation (Mobile)"
                     previewable
                     previewIsAnimation
                   />
 
                   <Inputs.FabricBrowser
                     {...inputProps}
+                    {...l10n.collections.reveal_animation}
+                    subcategory={l10n.categories.collection_redemption}
                     field="reveal_animation"
-                    label="Reveal Animation"
                     previewable
                     previewOptions={{
                       muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
@@ -149,8 +163,9 @@ export const MarketplaceCollection = observer(() => {
 
                   <Inputs.FabricBrowser
                     {...inputProps}
+                    {...l10n.collections.reveal_animation_mobile}
+                    subcategory={l10n.categories.collection_redemption}
                     field="reveal_animation_mobile"
-                    label="Reveal Animation (Mobile)"
                     previewable
                     previewOptions={{
                       muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
@@ -175,10 +190,12 @@ const MarketplaceCollections = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: "/public/asset_metadata/info/collections_info"
+    path: "/public/asset_metadata/info/collections_info",
+    category: l10n.categories.collections_page
   };
 
   return (
@@ -189,46 +206,46 @@ const MarketplaceCollections = observer(() => {
     >
       <Inputs.CollectionTable
         {...inputProps}
+        {...l10n.collections.collections}
+        category={l10n.categories.collections}
         path="/public/asset_metadata/info"
         field="collections"
-        fieldLabel="Collection"
         idField="sku"
-        label="Collections"
         columns={[
           {
             field: "image",
             width: "80px",
             render: (collection) => <Image src={ScaleImage(collection?.collection_icon?.url, 200)} width={50} height={50} radius="md" withPlaceholder />
           },
-          { label: "Title", field: "name" },
-          { label: "Items", field: "items", width: "80px", centered: true, render: collection => collection?.items?.length || "0" },
+          { label: l10n.collections.collections.columns.title, field: "name" },
+          { label: l10n.collections.collections.columns.items, field: "items", width: "80px", centered: true, render: collection => collection?.items?.length || "0" },
         ]}
         newEntrySpec={MarketplaceCollectionSpec}
       />
 
-      <Title order={3} mb="md">Collections Page</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.collections_page }</Title>
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.collections.header}
         field="header"
-        label="Header"
       />
       <Inputs.TextArea
         {...inputProps}
+        {...l10n.collections.description}
         field="subheader"
-        label="Description"
       />
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.collections.show_on_storefront}
         field="show_on_storefront"
-        label="Show Collections on Storefront"
       />
 
       <Group align="top">
         <Inputs.ImageInput
           {...inputProps}
-          label="Icon"
+          {...l10n.collections.icon}
           altTextField="icon_alt"
           fields={[
             { field: "icon" },
@@ -236,7 +253,7 @@ const MarketplaceCollections = observer(() => {
         />
         <Inputs.ImageInput
           {...inputProps}
-          label="Banner"
+          {...l10n.collections.banner}
           altTextField="banner_alt"
           fields={[
             { field: "banner" },
@@ -247,36 +264,40 @@ const MarketplaceCollections = observer(() => {
       <Accordion mt="xs" maw={600} variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
-            Default Redemption Settings
+            { l10n.collections.default_redemption_settings.label }
           </Accordion.Control>
           <Accordion.Panel>
+            <Title m="sm" mt={0} order={6} color="dimmed">{ l10n.collections.default_redemption_settings.description }</Title>
             <Inputs.Checkbox
               {...inputProps}
-              INVERTED
+              {...l10n.collections.hide_info_when_redeeming}
+              subcategory={l10n.categories.default_collection_redemption}
               field="hide_text"
-              label="Show info when redeeming"
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.collections.redeem_animation}
+              subcategory={l10n.categories.default_collection_redemption}
               field="redeem_animation"
-              label="Redemption Animation"
               previewable
               previewIsAnimation
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.collections.redeem_animation_mobile}
+              subcategory={l10n.categories.default_collection_redemption}
               field="redeem_animation_mobile"
-              label="Redemption Animation (Mobile)"
               previewable
               previewIsAnimation
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.collections.reveal_animation}
+              subcategory={l10n.categories.default_collection_redemption}
               field="reveal_animation"
-              label="Reveal Animation"
               previewable
               previewOptions={{
                 muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
@@ -288,8 +309,9 @@ const MarketplaceCollections = observer(() => {
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.collections.reveal_animation_mobile}
+              subcategory={l10n.categories.default_collection_redemption}
               field="reveal_animation_mobile"
-              label="Reveal Animation (Mobile)"
               previewable
               previewOptions={{
                 muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,

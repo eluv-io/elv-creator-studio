@@ -17,8 +17,75 @@ import {
 } from "@mantine/core";
 import CheckboxCard from "../inputs/CheckboxCard.jsx";
 import {IconEdit} from "@tabler/icons-react";
+import {LocalizeString} from "./Misc.jsx";
+
+const FormatChangeList = changelist => {
+  let formattedChangeList = {
+    uncategorized: []
+  };
+
+  changelist.actions.forEach((action) => {
+    if(!rootStore.l10n.actions[action.actionType]) { return; }
+
+    if(!action.label) {
+      rootStore.DebugLog({message: "Unlabelled action", level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
+      rootStore.DebugLog({message: action, level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
+      return;
+    }
+
+    if(!action.category) {
+      formattedChangeList.uncategorized.push(action);
+      return;
+    }
+
+    formattedChangeList[action.category] = formattedChangeList[action.category] || { uncategorized: [] };
+
+    if(!action.subcategory) {
+      formattedChangeList[action.category].uncategorized.push(action);
+    } else {
+      formattedChangeList[action.category][action.subcategory] = formattedChangeList[action.category][action.subcategory] || [];
+      formattedChangeList[action.category][action.subcategory].push(action);
+    }
+  });
+
+  let changelistString = [];
+  Object.keys(formattedChangeList).forEach(category => {
+    if(category === "uncategorized") { return; }
+
+    changelistString.push(`${category}:`);
+
+    Object.keys(formattedChangeList[category]).forEach(subcategory => {
+      if(subcategory === "uncategorized") { return; }
+
+      changelistString.push(`  ${subcategory}:`);
+      formattedChangeList[category][subcategory].forEach(action =>
+        changelistString.push(`    ${LocalizeString(rootStore.l10n.actions[action.actionType], {label: action.label})}`)
+      );
+    });
+
+    if(formattedChangeList[category].uncategorized.length > 0) {
+      changelistString.push("  Other Changes:");
+      formattedChangeList[category].uncategorized.forEach(action =>
+        changelistString.push(`    ${LocalizeString(rootStore.l10n.actions[action.actionType], {label: action.label})}`)
+      );
+    }
+  });
+
+  if(formattedChangeList.uncategorized.length > 0) {
+    changelistString.push("Other Changes:");
+    formattedChangeList.uncategorized.forEach(action =>
+      changelistString.push(`  ${LocalizeString(rootStore.l10n.actions[action.actionType], {label: action.label})}`)
+    );
+  }
+
+
+  console.log(changelistString.join("\n"));
+
+  return formattedChangeList;
+};
 
 const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
+  console.log(FormatChangeList(item));
   return (
     <Paper withBorder p="xl">
       <CheckboxCard
@@ -28,7 +95,7 @@ const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
         onChange={() => setExcludeList({...excludeList, [item.objectId]: !excludeList[item.objectId]})}
       />
 
-      <Accordion variant="contained">
+      <Accordion variant="contained" defaultValue="default">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconEdit />}>
             { rootStore.l10n.components.save_modal.changelist }
@@ -37,7 +104,7 @@ const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
             { item.actions.map((action, index) =>
               <Group key={`action-${item.objectId}-${index}`}>
                 <Text>{action.actionType}</Text>
-                <Text>{action.key}</Text>
+                <Text>{action.category} | { action.subcategory } | { action.label }</Text>
               </Group>
             )}
           </Accordion.Panel>

@@ -14,7 +14,8 @@ const MarketplaceGeneralSettings = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
-  const inputProps = { store: marketplaceStore, objectId: marketplaceId };
+  const l10n = rootStore.l10n.pages.marketplace.form;
+  const inputProps = { store: marketplaceStore, objectId: marketplaceId, category: l10n.categories.general };
 
   return (
     <PageContent
@@ -22,99 +23,93 @@ const MarketplaceGeneralSettings = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} my="md">Marketplace Info</Title>
+      <Title order={3} my="md">{ l10n.categories.info }</Title>
 
       <Inputs.Text
-        label="Name"
+        {...inputProps}
+        {...l10n.common.name}
         path="/public/asset_metadata/info/branding"
         field="name"
-        {...inputProps}
       />
 
       <Inputs.TextArea
-        label="Description"
+        {...inputProps}
+        {...l10n.common.description}
         path="/public/asset_metadata/info/branding"
         field="description"
-        {...inputProps}
       />
 
       <Inputs.Text
-        label="Tenant ID"
+        {...inputProps}
+        {...l10n.general.tenant_id}
         disabled
         path="/public/asset_metadata/info"
         field="tenant_id"
         defaultValue={rootStore.tenantId}
-        {...inputProps}
       />
 
       <Inputs.Text
-        label="Tenant Slug"
+        {...inputProps}
+        {...l10n.general.tenant_slug}
         disabled
         path="/public/asset_metadata/info"
         field="tenant_slug"
         defaultValue={tenantStore.tenantInfo?.tenantSlug}
-        {...inputProps}
       />
 
       <Inputs.Text
-        label="Marketplace Slug"
+        {...inputProps}
+        {...l10n.general.marketplace_slug}
         disabled
         path="/public/asset_metadata"
         field="slug"
-        {...inputProps}
       />
 
       <Inputs.Password
-        label="Preview Password"
+        {...inputProps}
+        {...l10n.general.preview_password}
         path="/public/asset_metadata/info"
         field="preview_password_digest"
-        {...inputProps}
       />
 
-      <Title order={3} mt={50} mb="md">Global Marketplace Settings</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.global_settings }</Title>
 
       <Inputs.Checkbox
-        label="Show on Global Marketplace"
+        {...inputProps}
+        {...l10n.general.show_global}
+        subcategory={l10n.categories.global_settings}
         path="/public/asset_metadata/info/branding"
         field="show"
         defaultValue={false}
-        {...inputProps}
       />
 
       <Inputs.ImageInput
-        label="Marketplace Card Images"
+        {...inputProps}
+        {...l10n.general.card_images}
+        subcategory={l10n.categories.global_settings}
         path="/public/asset_metadata/info/branding"
         altTextField="card_banner_alt"
         fields={[
-          { field: "card_banner_front", label: "Card Banner (Front)" },
-          { field: "card_banner_back", label: "Card Banner (Back)" },
+          { field: "card_banner_front", ...l10n.general.card_front },
+          { field: "card_banner_back", ...l10n.general.card_back },
         ]}
-        {...inputProps}
       />
-
-      <Inputs.Checkbox
-        INVERTED
-        label="Show Global Navigation"
-        path="/public/asset_metadata/info/branding"
-        field="hide_global_navigation"
-        defaultValue={false}
-        {...inputProps}
-      />
-
 
       {
         !info?.branding?.show ? null :
           <Inputs.URL
-            label="External Link"
-            hint="If specified, the link for this marketplace in the global marketplace view will redirect to this URL instead"
+            {...inputProps}
+            {...l10n.general.external_link}
+            subcategory={l10n.categories.global_settings}
             path="/public/asset_metadata/info/branding"
             field="external_link"
-            {...inputProps}
           />
       }
 
       <Inputs.MultiSelect
-        label="Tags"
+        {...inputProps}
+        {...l10n.general.tags}
+        subcategory={l10n.categories.global_settings}
         path="/public/asset_metadata/info/branding"
         field="tags"
         fieldLabel="Tag"
@@ -126,76 +121,40 @@ const MarketplaceGeneralSettings = observer(() => {
           "Music",
           "Software"
         ]}
-        {...inputProps}
       />
 
 
-      <Title order={3} mt={50} mb="md">Notification</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.notification }</Title>
 
       <Inputs.Checkbox
-        label="Show Store Notification"
+        {...inputProps}
+        {...l10n.general.show_notification}
+        subcategory={l10n.categories.notification}
         path="/public/asset_metadata/info/branding/notification"
         field="active"
         defaultValue={false}
-        {...inputProps}
       />
 
       {
         !info.branding?.notification?.active ? null :
           <>
             <Inputs.Text
-              label="Notification Header"
+              {...inputProps}
+              {...l10n.general.notification_header}
+              subcategory={l10n.categories.notification}
               path="/public/asset_metadata/info/branding/notification"
               field="header"
-              {...inputProps}
             />
             <Inputs.RichText
-              label="Notification Text"
+              {...inputProps}
+              {...l10n.general.notification_text}
+              subcategory={l10n.categories.notification}
               path="/public/asset_metadata/info/branding/notification"
               field="text"
-              {...inputProps}
             />
           </>
       }
 
-
-
-      <Title order={3} mt={50} mb="md">Page Tabs</Title>
-
-      <Inputs.Text
-        label="Store"
-        path="/public/asset_metadata/info/branding/tabs"
-        field="store"
-        placeholder="Store"
-        {...inputProps}
-      />
-
-      {
-        !(info?.branding?.additional_marketplaces?.length > 0) ? null :
-          <Inputs.Text
-            label="Stores (Plural)"
-            path="/public/asset_metadata/info/branding/tabs"
-            field="stores"
-            placeholder="Stores"
-            {...inputProps}
-          />
-      }
-
-      <Inputs.Text
-        label="Listings"
-        path="/public/asset_metadata/info/branding/tabs"
-        field="listings"
-        placeholder="Listings"
-        {...inputProps}
-      />
-
-      <Inputs.Text
-        label="My Items"
-        path="/public/asset_metadata/info/branding/tabs"
-        field="my_items"
-        placeholder="My Items"
-        {...inputProps}
-      />
 
 
 
@@ -205,49 +164,111 @@ const MarketplaceGeneralSettings = observer(() => {
             { rootStore.l10n.components.forms.advanced_settings }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.InputWrapper
+              {...l10n.general.page_tabs}
+              mt="md"
+            >
+              <Inputs.Text
+                {...inputProps}
+                {...l10n.general.page_tab_store}
+                subcategory={l10n.categories.page_tabs}
+                path="/public/asset_metadata/info/branding/tabs"
+                field="store"
+                placeholder="Store"
+              />
+
+              {
+                !(info?.branding?.additional_marketplaces?.length > 0) ? null :
+                  <Inputs.Text
+                    {...inputProps}
+                    {...l10n.general.page_tab_stores}
+                    subcategory={l10n.categories.page_tabs}
+                    path="/public/asset_metadata/info/branding/tabs"
+                    field="stores"
+                    placeholder="Stores"
+                  />
+              }
+
+              <Inputs.Text
+                {...inputProps}
+                {...l10n.general.page_tab_listings}
+                subcategory={l10n.categories.page_tabs}
+                path="/public/asset_metadata/info/branding/tabs"
+                field="listings"
+                placeholder="Listings"
+              />
+
+              <Inputs.Text
+                {...inputProps}
+                {...l10n.general.page_tab_my_items}
+                subcategory={l10n.categories.page_tabs}
+                path="/public/asset_metadata/info/branding/tabs"
+                field="my_items"
+                placeholder="My Items"
+              />
+            </Inputs.InputWrapper>
+
             <Inputs.Checkbox
               INVERTED
-              label="Show Leaderboard"
-              path="/public/asset_metadata/info/branding"
-              field="hide_leaderboard"
-              defaultValue={true}
               {...inputProps}
+              {...l10n.general.show_global_nav}
+              subcategory={l10n.categories.advanced_settings}
+              path="/public/asset_metadata/info/branding"
+              field="hide_global_navigation"
+              defaultValue={false}
             />
 
             <Inputs.Checkbox
-              label="Disable Secondary Market"
+              INVERTED
+              {...inputProps}
+              {...l10n.general.show_leaderboard}
+              subcategory={l10n.categories.advanced_settings}
+              path="/public/asset_metadata/info/branding"
+              field="hide_leaderboard"
+              defaultValue={false}
+            />
+
+            <Inputs.Checkbox
+              INVERTED
+              {...inputProps}
+              {...l10n.general.disable_secondary_marketplace}
+              subcategory={l10n.categories.advanced_settings}
               path="/public/asset_metadata/info/branding"
               field="disable_secondary_market"
               defaultValue={false}
-              {...inputProps}
             />
 
             {
               // Irrelevant if header image is set
               info?.branding?.header_image ? null :
                 <Inputs.Checkbox
-                  label="Hide Name on Store Page"
+                  {...inputProps}
+                  {...l10n.general.hide_name}
+                  subcategory={l10n.categories.advanced_settings}
                   path="/public/asset_metadata/info/branding"
                   field="hide_name"
                   defaultValue={false}
-                  {...inputProps}
                 />
             }
 
             <Inputs.Checkbox
-              label="Hide Secondary Sales Stats on Store Product Page"
+              INVERTED
+              {...inputProps}
+              {...l10n.general.show_secondary_stats}
+              subcategory={l10n.categories.advanced_settings}
               path="/public/asset_metadata/info/branding"
               field="hide_secondary_in_store"
               defaultValue={false}
-              {...inputProps}
             />
 
             <Inputs.Checkbox
-              label="Disable USDC"
+              INVERTED
+              {...inputProps}
+              {...l10n.general.allow_usdc}
+              subcategory={l10n.categories.advanced_settings}
               path="/public/asset_metadata/info/branding"
               field="disable_usdc"
               defaultValue={false}
-              {...inputProps}
             />
           </Accordion.Panel>
         </Accordion.Item>

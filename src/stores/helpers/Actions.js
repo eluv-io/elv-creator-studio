@@ -52,7 +52,7 @@ const GetMetadata = function({objectId, path, field}) {
   return Get(this[this.objectsMapKey][objectId].metadata, pathComponents);
 };
 
-const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, field, value}) {
+const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, field, value, category, subcategory, label}) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -67,6 +67,9 @@ const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, f
     page,
     key: fullPath,
     actionType,
+    category,
+    subcategory,
+    label,
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -83,7 +86,19 @@ const SetDefaultValue = function({objectId, path, field, value}) {
 };
 
 // Links
-const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, field, linkObjectId, linkType="meta", linkPath="/public/asset_metadata"}) {
+const SetLink = flow(function * ({
+  actionType="SET_LINK",
+  objectId,
+  page,
+  path,
+  field,
+  linkObjectId,
+  linkType="meta",
+  linkPath="/public/asset_metadata",
+  category,
+  subcategory,
+  label
+}) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -138,6 +153,9 @@ const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, f
     key: fullPath,
     target: writeValue ? writeValue["/"] : "",
     actionType,
+    category,
+    subcategory,
+    label,
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -148,7 +166,7 @@ const SetLink = flow(function * ({actionType="SET_LINK", objectId, page, path, f
   });
 });
 
-const ListAction = function({actionType, objectId, page, path, field, index, newIndex, value}) {
+const ListAction = function({actionType, objectId, page, path, field, index, newIndex, value, category, subcategory, label}) {
   if(!objectId) {
     this.DebugLog({message: "List Action: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -203,6 +221,9 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
     key: fullPath,
     listIndex: index || originalList.length,
     actionType,
+    category,
+    subcategory,
+    label,
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, newList),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalList),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -213,16 +234,16 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
   });
 };
 
-const InsertListElement = function({objectId, page, path, field, index, value}) {
-  this.ListAction({actionType: "INSERT_LIST_ELEMENT", objectId, page, path, field, index, value});
+const InsertListElement = function({objectId, page, path, field, index, value, ...args}) {
+  this.ListAction({actionType: "INSERT_LIST_ELEMENT", objectId, page, path, field, index, value, ...args});
 };
 
-const MoveListElement = function({objectId, page, path, field, index, newIndex}) {
-  this.ListAction({actionType: "MOVE_LIST_ELEMENT", objectId, page, path, field, index, newIndex});
+const MoveListElement = function({objectId, page, path, field, index, newIndex, ...args}) {
+  this.ListAction({actionType: "MOVE_LIST_ELEMENT", objectId, page, path, field, index, newIndex, ...args});
 };
 
-const RemoveListElement = function({objectId, page, path, field, index}) {
-  this.ListAction({actionType: "REMOVE_LIST_ELEMENT", objectId, page, path, field, index});
+const RemoveListElement = function({objectId, page, path, field, index, ...args}) {
+  this.ListAction({actionType: "REMOVE_LIST_ELEMENT", objectId, page, path, field, index, ...args});
 };
 
 
@@ -236,6 +257,7 @@ const ApplyAction = flow(function * ({
   key,
   category,
   subcategory,
+  label,
   description,
   Apply,
   Undo,
@@ -287,6 +309,7 @@ const ApplyAction = flow(function * ({
     key,
     category,
     subcategory,
+    label,
     description,
     Apply,
     Undo,

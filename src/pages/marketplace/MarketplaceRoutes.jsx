@@ -5,7 +5,7 @@ import {rootStore, marketplaceStore} from "Stores";
 
 import MarketplaceList from "./MarketplaceList.jsx";
 import MarketplaceGeneralSettings from "./MarketplaceGeneralSettings.jsx";
-import MarketplaceDetails from "./MarketplaceDetails.jsx";
+import MarketplaceOverview from "./MarketplaceOverview.jsx";
 import MarketplaceTheme from "./MarketplaceTheme";
 import MarketplaceLoginCustomization from "./MarketplaceLoginCustomization.jsx";
 import MarketplaceItems, {MarketplaceItem} from "./MarketplaceItems.jsx";
@@ -17,7 +17,7 @@ import MarketplaceAnalytics from "./MarketplaceAnalytics";
 const MarketplaceRoutes = observer(() => {
   const rootPath = "/marketplaces/";
   const routes = [
-    { root: true, navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceDetails /> },
+    { root: true, navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.login, path: "/marketplaces/:marketplaceId/login", Component: <MarketplaceLoginCustomization /> },

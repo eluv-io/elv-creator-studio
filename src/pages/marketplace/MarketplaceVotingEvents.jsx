@@ -1,11 +1,10 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import {MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
-import {Title} from "@mantine/core";
 
 import {MarketplaceVotingEventSpec} from "Specs/MarketplaceSpecs.js";
 
@@ -26,10 +25,12 @@ export const MarketplaceVotingEvent = observer(() => {
     );
   }
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/voting_events", votingEventIndex.toString())
+    path: UrlJoin("/public/asset_metadata/info/voting_events", votingEventIndex.toString()),
+    category: l10n.categories.voting_event
   };
 
   return (
@@ -39,47 +40,41 @@ export const MarketplaceVotingEvent = observer(() => {
       backLink={UrlJoin("/marketplaces", marketplaceId, "voting-events")}
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Basic Info</Title>
       <Inputs.UUID
         {...inputProps}
+        {...l10n.voting_events.id}
         field="id"
-        label="ID"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.voting_events.title}
         field="title"
-        label="Title"
       />
       <Inputs.RichText
         {...inputProps}
+        {...l10n.voting_events.description}
         field="description"
-        label="Description"
       />
-
-      <Title order={3} mt={50} mb="md">Voting Event Settings</Title>
-
       <Inputs.DateTime
         {...inputProps}
+        {...l10n.voting_events.start_date}
         field="start_date"
-        label="Start Date"
       />
       <Inputs.DateTime
         {...inputProps}
+        {...l10n.voting_events.end_date}
         field="end_date"
-        label="End Date"
       />
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.voting_events.exclusive}
         field="exclusive"
-        label="Exclusive"
         defaultValue={false}
-        description="If a user vote on multiple items"
       />
       <Inputs.Select
         {...inputProps}
+        {...l10n.voting_events.type}
         field="type"
-        label="Type"
-        description="Can a user vote on all items in a marketplace, or only specific items?"
         defaultValue="specified"
         options={[
           {label: "Specified Items", value: "specified"},
@@ -90,8 +85,8 @@ export const MarketplaceVotingEvent = observer(() => {
         votingEvent.type === "all" ? null :
           <MarketplaceItemMultiselect
             {...inputProps}
+            {...l10n.voting_events.items}
             field="items"
-            label="Votable Items"
             searchable
           />
       }
@@ -107,6 +102,7 @@ const MarketplaceVotingEvents = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = { store: marketplaceStore, objectId: marketplaceId };
 
   return (
@@ -117,14 +113,14 @@ const MarketplaceVotingEvents = observer(() => {
     >
       <Inputs.CollectionTable
         {...inputProps}
+        {...l10n.voting_events.voting_events}
         path="/public/asset_metadata/info"
         field="voting_events"
-        fieldLabel="Voting Event"
         idField="id"
         columns={[
-          { label: "Title", field: "title" },
-          { label: "Type", field: "type", width: "80px", render: votingEvent => votingEvent.type?.capitalize() },
-          { label: "Items", field: "items", width: "80px", centered: true, render: votingEvent => votingEvent.type !== "specified" ? "N/A" : votingEvent?.items?.length || "0" },
+          { label: l10n.voting_events.voting_events.columns.title, field: "title" },
+          { label: l10n.voting_events.voting_events.columns.type, field: "type", width: "80px", render: votingEvent => votingEvent.type?.capitalize() },
+          { label: l10n.voting_events.voting_events.columns.items, field: "items", width: "80px", centered: true, render: votingEvent => votingEvent.type !== "specified" ? "N/A" : votingEvent?.items?.length || "0" },
         ]}
         newEntrySpec={MarketplaceVotingEventSpec}
       />

@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import {Group, Title} from "@mantine/core";
@@ -13,10 +13,12 @@ const MarketplaceLoginCustomization = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: "/public/asset_metadata/info/login_customization"
+    path: "/public/asset_metadata/info/login_customization",
+    category: l10n.categories.login_customization
   };
 
   return (
@@ -25,14 +27,15 @@ const MarketplaceLoginCustomization = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={6} mb="xl" color="dimmed">Note: Login customization does not apply when your marketplace is accessed via the global marketplace</Title>
+      <Title order={6} color="dimmed">{ l10n.login.note }</Title>
 
-      <Title order={3} mt="xl" mb="xl">Login Theme</Title>
+      <Title order={3} mt="xl" mb="xl">{ l10n.categories.login_theme }</Title>
 
       <Group align="top">
         <Inputs.ImageInput
           {...inputProps}
-          label="Logo"
+          {...l10n.login.logo}
+          subcategory={l10n.categories.login_theme}
           altTextField="logo_alt"
           fields={[
             { field: "logo", label: "Logo" },
@@ -41,109 +44,118 @@ const MarketplaceLoginCustomization = observer(() => {
 
         <Inputs.ImageInput
           {...inputProps}
-          label="Login Background"
+          {...l10n.login.background}
+          subcategory={l10n.categories.login_theme}
           fields={[
-            { field: "background", label: "Background (Desktop)" },
-            { field: "background_mobile", label: "Background (Mobile)" },
+            { field: "background", ...l10n.login.background_desktop },
+            { field: "background_mobile", ...l10n.login.background_mobile },
           ]}
         />
       </Group>
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.login.increase_logo_size}
+        subcategory={l10n.categories.login_theme}
         field="large_logo_mode"
-        label="Increase Logo Size"
-        description="Make your logo image larger in proportion to the login box"
       />
 
-      <Inputs.InputWrapper label="Log In Button">
+      <Inputs.InputWrapper {...l10n.login.log_in_button}>
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.text_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/log_in_button/text_color"
           field="color"
-          label="Text Color"
         />
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.background_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/log_in_button/background_color"
           field="color"
-          label="Background Color"
         />
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.border_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/log_in_button/border_color"
           field="color"
-          label="Border Color"
         />
       </Inputs.InputWrapper>
 
-      <Inputs.InputWrapper label="Sign Up Button">
+      <Inputs.InputWrapper {...l10n.login.sign_up_button}>
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.text_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/sign_up_button/text_color"
           field="color"
-          label="Text Color"
         />
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.background_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/sign_up_button/background_color"
           field="color"
-          label="Background Color"
         />
         <Inputs.Color
           {...inputProps}
+          {...l10n.login.border_color}
+          subcategory={l10n.categories.login_theme}
           path="/public/asset_metadata/info/login_customization/sign_up_button/border_color"
           field="color"
-          label="Border Color"
         />
       </Inputs.InputWrapper>
 
       <Inputs.Checkbox
-        {...inputProps}
         INVERTED
+        {...inputProps}
+        {...l10n.login.allow_third_party}
+        subcategory={l10n.categories.login_theme}
         field="disable_third_party"
-        label="Allow Third Party Login"
-        description="Allow users to log in with Google or Apple accounts"
       />
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.login.require_email_verification}
+        subcategory={l10n.categories.login_theme}
         field="require_email_verification"
         defaultValue={true}
-        label="Require Email Verification"
       />
 
 
 
-      <Title order={3} mt="xl" mb="md">Terms and User Consent</Title>
-      <Title order={5} mb="xl">User Data Sharing</Title>
+      <Title order={3} mt="xl" mb="md">{l10n.categories.terms_and_consent}</Title>
+      <Title order={5} mb="xl">{l10n.login.subheaders.user_data_sharing}</Title>
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.login.require_user_consent}
+        subcategory={l10n.categories.terms_and_consent}
         field="require_consent"
-        label="Require User Consent to Collect Information"
-        description="By default, logging in to your marketplace will result in the user's information being shared with you. By checking this box, the user will be able to opt out of sharing their data via a checkbox on the login screen."
       />
 
       {
         !info?.login_customization?.require_consent ? null :
           <Inputs.Checkbox
             {...inputProps}
+            {...l10n.login.consent_by_default}
+            subcategory={l10n.categories.terms_and_consent}
             field="default_consent"
-            label="Consent by Default"
             defaultValue={true}
           />
       }
 
 
-      <Title order={5} mt="xl" mb="xl">Custom Consent Options</Title>
+      <Title order={5} mt="xl" mb="xl">{l10n.login.subheaders.custom_consent_options}</Title>
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.login.customize_user_consent}
+        subcategory={l10n.categories.terms_and_consent}
         path={UrlJoin(inputProps.path, "custom_consent")}
         field="enabled"
-        label="Customize User Consent"
-        description="Define additional conditions for the user to consent to prior to logging in"
       />
 
       {
@@ -151,9 +163,10 @@ const MarketplaceLoginCustomization = observer(() => {
           <>
             <Inputs.Select
               {...inputProps}
+              {...l10n.login.consent_presentation}
+              subcategory={l10n.categories.terms_and_consent}
               path={UrlJoin(inputProps.path, "custom_consent")}
               field="type"
-              label="Consent Presentation"
               options={[
                 { label: "Checkboxes on Login Page", value: "Checkboxes" },
                 { label: "Post-login Form", value: "Modal" }
@@ -165,15 +178,17 @@ const MarketplaceLoginCustomization = observer(() => {
                 <>
                   <Inputs.Text
                     {...inputProps}
+                    {...l10n.login.consent_modal_header}
+                    subcategory={l10n.categories.terms_and_consent}
                     path={UrlJoin(inputProps.path, "custom_consent")}
                     field="consent_modal_header"
-                    label="Consent Form Header"
                   />
                   <Inputs.Text
                     {...inputProps}
+                    {...l10n.login.consent_form_button_text}
+                    subcategory={l10n.categories.terms_and_consent}
                     path={UrlJoin(inputProps.path, "custom_consent")}
                     field="button_text"
-                    label="Consent Form Accept Button Text"
                     description="Default: 'I Accept'"
                   />
                 </>
@@ -181,15 +196,15 @@ const MarketplaceLoginCustomization = observer(() => {
 
             <Inputs.List
               {...inputProps}
+              {...l10n.login.consent_options}
+              subcategory={l10n.categories.terms_and_consent}
               path={UrlJoin(inputProps.path, "custom_consent")}
               field="options"
-              label="Consent Options"
-              fieldLabel="Consent Option"
               fields={[
-                { InputComponent: Inputs.Text, field: "key", label: "Profile Metadata Key", description: "Define the key to which the user's consent choice will be saved" },
-                { InputComponent: Inputs.Checkbox, field: "required", label: "Required", description: "If specified, the user will not be allowed to proceed unless they consent to these conditions" },
-                { InputComponent: Inputs.Checkbox, field: "initially_checked", label: "Consent Initially Checked" },
-                { InputComponent: Inputs.RichText, field: "message", label: "Description", description: "Describe the conditions to which the user is consenting" }
+                { InputComponent: Inputs.Text, field: "key", ...l10n.login.profile_metadata_key },
+                { InputComponent: Inputs.Checkbox, field: "required", ...l10n.login.required },
+                { InputComponent: Inputs.Checkbox, field: "initially_checked", ...l10n.login.initially_checked },
+                { InputComponent: Inputs.RichText, field: "message", ...l10n.login.description }
               ]}
             />
           </>

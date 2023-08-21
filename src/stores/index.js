@@ -13,7 +13,7 @@ import FabricBrowserStore from "Stores/FabricBrowserStore.js";
 import TenantStore from "Stores/TenantStore.js";
 import MarketplaceStore from "Stores/MarketplaceStore.js";
 
-import LocalizationEN from "Assets/localization/en.yml";
+import LocalizationEN from "Assets/localization/en/en.js";
 
 configure({
   enforceActions: "always",

@@ -29,6 +29,9 @@ const SelectedItem = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
+  label,
   index,
   item,
   componentProps={},
@@ -63,8 +66,8 @@ const SelectedItem = observer(({
               itemName: item.name || item.sku,
               onConfirm: () => {
                 single ?
-                  store.SetMetadata({objectId, page: location.pathname, path, field, value: ""}) :
-                  store.RemoveListElement({objectId, page: location.pathname, path, field, index});
+                  store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
+                  store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label});
               }
             });
           }}
@@ -146,6 +149,8 @@ export const MarketplaceItemMultiselect = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   description,
   hint
@@ -218,7 +223,17 @@ export const MarketplaceItemMultiselect = observer(({
       />
       <DragDropContext
         onDragEnd={({source, destination}) =>
-          store.MoveListElement({objectId, page: location.pathname, path, field, index: source.index, newIndex: destination.index})
+          store.MoveListElement({
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            index: source.index,
+            newIndex: destination.index,
+            category,
+            subcategory,
+            label
+          })
         }
       >
         <Droppable droppableId="simple-list" direction="vertical">

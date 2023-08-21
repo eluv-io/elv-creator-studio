@@ -12,7 +12,7 @@ import {
 } from "@tabler/icons-react";
 
 
-const RichTextEditor = observer(({store, objectId, page, path, field, componentProps={}}) => {
+const RichTextEditor = observer(({store, objectId, page, path, field, category, subcategory, label, componentProps={}}) => {
   let value = store.GetMetadata({objectId, path, field});
 
   const editor = useEditor({
@@ -28,7 +28,10 @@ const RichTextEditor = observer(({store, objectId, page, path, field, componentP
         path,
         field,
         // If editor is empty, just set to empty string instead of empty html
-        value: editor.getText().trim() === "" ? "" : editor.getHTML()
+        value: editor.getText().trim() === "" ? "" : editor.getHTML(),
+        category,
+        subcategory,
+        label
       });
     },
     content: value

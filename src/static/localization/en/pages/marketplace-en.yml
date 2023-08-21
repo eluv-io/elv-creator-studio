@@ -1,0 +1,277 @@
+form:
+  categories:
+    general: General
+    info: Marketplace Info
+    global_settings: Global Marketplace Settings
+    notification: Notification
+    advanced_settings: Advanced Settings
+    page_tabs: Page Names
+    theme: Theme
+    login_customization: Login Customization
+    login_theme: Login Theme
+    terms_and_consent: Terms and User Consent
+    collections: Collections
+    collections_page: Collections Page
+    default_collection_redemption: Default Collection Redemption
+    collection: Collection
+    collection_info: Collection Info
+    collection_redemption: Collection Redemption
+    voting_events: Voting Events
+    voting_event: Voting Event
+    analytics: Analytics
+    general_analytics: General Analytics
+    storefront_analytics: Storefront Analytics
+  common:
+    id:
+      label: ID
+    name:
+      label: Name
+    description:
+      label: Description
+  general:
+    tenant_id:
+      label: Tenant ID
+    tenant_slug:
+      label: Tenant Slug
+    marketplace_slug:
+      label: Marketplace Slug
+    preview_password:
+      label: Preview Password
+      description: Require a password to access your marketplace in preview mode. This helps prevent unauthorized users from viewing unpublished changes to your marketplace.
+    show_global:
+      label: Show on Global Marketplace
+      description: Make your marketplace visible in the global marketplace list
+    card_images:
+      label: Marketplace Card Images
+      description: These images will be shown in the global marketplace list
+    card_front:
+      label: Card Image (Front)
+    card_back:
+      label: Card Image (Back)
+    external_link:
+      label: External Link
+      description: If specified, the link for this marketplace in the global marketplace view will redirect to this URL instead
+    tags:
+      label: Tags
+    show_notification:
+      label: Show Store Notification
+      description: If enabled, a notification banner will be shown at the top of your marketplace when the user first accesses it
+    notification_header:
+      label: Notification Header
+    notification_text:
+      label: Notification Text
+    page_tabs:
+      label: Page Names
+      description: Override the default names of the pages in your marketplace
+    page_tab_store:
+      label: Store
+    page_tab_stores:
+      label: Stores (Plural)
+    page_tab_listings:
+      label: Listings
+    page_tab_my_items:
+      label: My Items
+    show_global_nav:
+      label: Show Global Navigation
+      description: Allow users to access the global marketplace from your marketplace (Only applies when your marketplace is accessed from a site)
+    show_leaderboard:
+      label: Show Leaderboard
+      description: The leaderboard is a page ranking your users by number of items owned
+    disable_secondary_marketplace:
+      label: Disable Secondary Marketplace
+      description: "Hide options for resale of items within your marketplace. Note: This does not prevent items from your marketplace from being listed on the global marketplace. See options in item templates for restricting resale."
+    hide_name:
+      label: Hide Marketplace Name
+    show_secondary_stats:
+      label: Show Secondary Sales Stats on Store Product Page
+    allow_usdc:
+      label: Allow USDC
+
+  theme:
+    use_tenant_styling:
+      label: Use Tenant Styling
+      description: Override marketplace styling with tenant styling on pages outside of the store
+    app_background:
+      label: App Background
+    background_desktop:
+      label: Background (Desktop)
+    background_mobile:
+      label: Background (Mobile)
+    text_justification:
+      label: Text Justification
+    item_text_justification:
+      label: Item Text Justification
+    theme:
+      label: Theme
+    custom_css:
+      label: Custom CSS
+
+  login:
+    note: "Note: Login customization does not apply when your marketplace is accessed via the global marketplace"
+    subheaders:
+      user_data_sharing: User Data Sharing
+      custom_consent_options: Custom Consent Options
+    logo:
+      label: Logo
+    background:
+      label: Login Background
+    background_desktop:
+      label: Background (Desktop)
+    background_mobile:
+      label: Background (Mobile)
+    increase_logo_size:
+      label: Increase Logo Size
+      description: Make your logo image larger in proportion to the login box
+    log_in_button:
+      label: Log In Button
+    sign_up_button:
+      label: Sign Up Button
+    text_color:
+      label: Text Color
+    background_color:
+      label: Background Color
+    border_color:
+      label: Border Color
+    allow_third_party:
+      label: Allow Third Party Login
+      description: Allow users to log in with Google or Apple accounts
+    require_email_verification:
+      label: Require Email Verification
+    require_user_consent:
+      label: Require User Consent to Collect Information
+      description: By default, logging in to your marketplace will result in the user's information being shared with you. By checking this box, the user will be able to opt out of sharing their data via a checkbox on the login screen.
+    consent_by_default:
+      label: Consent by Default
+    customize_user_consent:
+      label: Customize User Consent
+      description: Define additional conditions for the user to consent to prior to logging in
+    consent_presentation:
+      label: Consent Presentation
+    consent_modal_header:
+      label: Consent Form Header
+    consent_form_button_text:
+      label: Consent Form Accept Button Text
+    consent_options:
+      label: Consent Options
+      fieldLabel: Consent Option
+    profile_metadata_key:
+      label: Profile Metadata Key
+      description: Define the key to which the user's consent choice will be saved
+    required:
+      label: Required
+      description: If specified, the user will not be allowed to proceed unless they consent to these conditions
+    initially_checked:
+      label: Consent Initially Checked
+    description:
+      label: Description
+      description: Describe the conditions to which the user is consenting
+
+  collections:
+    collections:
+      label: Collections
+      fieldLabel: Collection
+      columns:
+        title: Title
+        items: Items
+    header:
+      label: Header
+    description:
+      label: Description
+    show_on_storefront:
+      label: Show Collection on Storefront
+    icon:
+      label: Icon
+    banner:
+      label: Banner
+    default_redemption_settings:
+      label: Default Redemption Settings
+      description: "Note: These options may be overridden on a per-collection basis"
+    hide_info_when_redeeming:
+      label: Hide Default Text when Redeeming
+    redeem_animation:
+      label: Redemption Animation
+      description: Animation shown while waiting for collection redemption to finish
+    redeem_animation_mobile:
+      label: Redemption Animation (Mobile)
+      description: Animation shown while waiting for collection redemption to finish
+    reveal_animation:
+      label: Reveal Animation
+      description: Animation shown after collection redemption is complete before showing results
+    reveal_animation_mobile:
+      label: Reveal Animation (Mobile)
+      description: Animation shown after collection redemption is complete before showing results
+
+  collection:
+    id:
+      label: ID
+    name:
+      label: Name
+    items:
+      label: Collection Items
+    header:
+      label: Header
+    description:
+      label: Description
+    icon:
+      label: Icon
+    banner:
+      label: Banner
+    redeemable:
+      label: Redeemable
+    rewards:
+      label: Collection Rewards
+    redemption_settings:
+      label: Redemption Settings
+
+
+  voting_events:
+    voting_events:
+      label: Voting Events
+      description: Set up voting events to allow users to vote on their favorite items
+      fieldLabel: Voting Event
+      columns:
+        title: Title
+        type: Type
+        items: Items
+    id:
+      label: ID
+    title:
+      label: Title
+    description:
+      label: Description
+    start_date:
+      label: Start Date
+    end_date:
+      label: End Date
+    exclusive:
+      label: Exclusive
+      description: Whether or not a user can vote on multiple items
+    type:
+      label: Type
+      description: Whether users can vote on all items in the marketplace, or only specific items
+    items:
+      label: Votable Items
+
+
+  analytics:
+    analytics_collections:
+      label: Analytics Collections
+      fieldLabel: Analytics Collection
+    collection_label:
+      label: Collection Label
+    analytics_ids:
+      label: Analytics IDs
+      fieldLabel: Analytics ID
+    analytics_type:
+      label: Analytics Type
+    id:
+      label: ID
+    google_conversion_label:
+      label: Google Conversion Label
+    google_conversion_id:
+      label: Google Conversion ID
+    facebook_event_id:
+      label: Facebook Event Id
+    twitter_event_id:
+      label: Twitter Event ID
+
