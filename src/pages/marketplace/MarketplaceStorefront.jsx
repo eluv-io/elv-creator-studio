@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceItemInput.jsx";
@@ -32,10 +32,12 @@ export const MarketplaceStorefrontSection = observer(() => {
     );
   }
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/storefront/sections", sectionIndex.toString())
+    path: UrlJoin("/public/asset_metadata/info/storefront/sections", sectionIndex.toString()),
+    category: l10n.categories.storefront_item_section
   };
 
   return (
@@ -45,54 +47,63 @@ export const MarketplaceStorefrontSection = observer(() => {
       backLink={UrlJoin("/marketplaces", marketplaceId, "storefront")}
       useHistory
     >
-      <Title order={3} mt={50} mb="md">Section Info</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.storefront_item_section_info}</Title>
       <Inputs.UUID
         {...inputProps}
+        {...l10n.storefront_section.id}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="id"
-        label="ID"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.storefront_section.name}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="name"
-        label="Name"
-      />
-      <MarketplaceItemMultiselect
-        {...inputProps}
-        label="Items"
-        field="items"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.storefront_section.header}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="section_header"
-        label="Header"
       />
       <Inputs.RichText
         {...inputProps}
+        {...l10n.storefront_section.header_rich_text}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="section_header_rich_text"
-        label="Header (Rich Text)"
       />
       <Inputs.Text
         {...inputProps}
+        {...l10n.storefront_section.subheader}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="section_subheader"
-        label="Subheader"
       />
 
       <Inputs.RichText
         {...inputProps}
+        {...l10n.storefront_section.footer}
+        subcategory={l10n.categories.storefront_item_section_info}
         field="section_footer"
-        label="Footer"
       />
 
-      <Title order={3} mt={50} mb="md">Section Settings</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.storefront_item_section_settings}</Title>
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.storefront_section.type}
+        subcategory={l10n.categories.storefront_item_section_settings}
         field="type"
-        label="Section Type"
         options={[
           { label: "Standard", value: "Standard" },
           { label: "Featured", value: "Featured" }
         ]}
+      />
+
+      <MarketplaceItemMultiselect
+        {...inputProps}
+        {...l10n.storefront_section.items}
+        subcategory={l10n.categories.storefront_item_section_settings}
+        field="items"
       />
 
       {
@@ -100,23 +111,26 @@ export const MarketplaceStorefrontSection = observer(() => {
           <>
             <Inputs.Select
               {...inputProps}
+              {...l10n.storefront_section.featured_view_justification}
+              subcategory={l10n.categories.storefront_item_section_settings}
               field="featured_view_justification"
-              label="Featured View Justification"
               options={["Left", "Right", "Center"]}
             />
             <Inputs.Checkbox
               {...inputProps}
+              {...l10n.storefront_section.show_carousel_gallery}
+              subcategory={l10n.categories.storefront_item_section_settings}
               field="show_carousel_gallery"
-              label="Show Carousel Gallery"
-              description="Show selectable icons of items in the list below the featured view. Will not be displayed when only one item is in the list"
+              defaultValue={true}
             />
           </>
       }
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.storefront_section.show_countdown}
+        subcategory={l10n.categories.storefront_item_section_settings}
         field="show_countdown"
-        label="Show Countdown"
       />
 
       {
@@ -124,15 +138,17 @@ export const MarketplaceStorefrontSection = observer(() => {
           <>
             <Inputs.Text
               {...inputProps}
+              {...l10n.storefront_section.countdown_text}
+              subcategory={l10n.categories.storefront_item_section_settings}
               path={UrlJoin(inputProps.path, "countdown")}
               field="header"
-              label="Countdown Text"
             />
             <Inputs.DateTime
               {...inputProps}
+              {...l10n.storefront_section.countdown_date}
+              subcategory={l10n.categories.storefront_item_section_settings}
               path={UrlJoin(inputProps.path, "countdown")}
               field="date"
-              label="Countdown Date"
             />
           </>
       }
@@ -147,10 +163,12 @@ const MarketplaceStorefront = observer(() => {
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
 
+  const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: "/public/asset_metadata/info/storefront"
+    path: "/public/asset_metadata/info/storefront",
+    category: l10n.categories.storefront
   };
 
   return (
@@ -159,89 +177,92 @@ const MarketplaceStorefront = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} mb="md">Storefront Settings</Title>
+      <Title order={3} mb="md">{ l10n.categories.storefront }</Title>
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.storefront.header}
         field="header"
-        label="Header"
       />
       <Inputs.TextArea
         {...inputProps}
+        {...l10n.storefront.subheader}
         field="subheader"
-        label="Subheader"
       />
 
       <Inputs.CollectionTable
         {...inputProps}
+        {...l10n.storefront.sections}
         path="/public/asset_metadata/info/storefront"
         field="sections"
-        fieldLabel="Section"
         idField="id"
-        label="Storefront Item Sections"
         columns={[
-          { label: "Title", field: "header", render: section => section.name || section.header || section.id || "" },
-          { label: "Type", field: "type", centered: true },
-          { label: "Items", field: "items", width: "80px", centered: true, render: section => section?.items?.length || "0" },
+          { label: l10n.storefront.sections.columns.title, field: "header", render: section => section.name || section.header || section.id || "" },
+          { label: l10n.storefront.sections.columns.type, field: "type", centered: true },
+          { label: l10n.storefront.sections.columns.items, field: "items", width: "80px", centered: true, render: section => section?.items?.length || "0" },
         ]}
         newEntrySpec={MarketplaceStorefrontSectionSpec}
       />
 
-      <Title order={3} mb="md" mt={50}>Item Settings</Title>
+      <Title order={3} mb="md" mt={50}>{ l10n.categories.storefront_item_settings }</Title>
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.storefront.show_rich_text_descriptions}
+        subcategory={l10n.categories.storefront_item_settings}
         field="show_rich_text_descriptions"
-        label="Show Rich Text Descriptions on Item Cards"
       />
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.storefront.show_card_cta}
+        subcategory={l10n.categories.storefront_item_settings}
         field="show_card_cta"
-        label="Show CTA Button on Item Cards"
       />
 
       <Accordion maw={600} mb="md" variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
-            Item Purchase Status Page
+            { l10n.categories.storefront_purchase_status_settings }
           </Accordion.Control>
           <Accordion.Panel>
             <Inputs.Checkbox
               {...inputProps}
-              INVERTED
+              {...l10n.storefront.skip_reveal}
+              subcategory={l10n.categories.purchase_status_settings}
               field="skip_reveal"
-              label="Skip Purchase Reveal"
-              description="If a single item was purchased, proceed directly to the item page on purchase completion instead of showing the results"
             />
 
             <Inputs.Checkbox
               {...inputProps}
-              INVERTED
+              {...l10n.storefront.hide_info}
+              subcategory={l10n.categories.purchase_status_settings}
               field="hide_text"
-              label="Show info on status page"
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.storefront.purchase_animation}
+              subcategory={l10n.categories.purchase_status_settings}
               field="purchase_animation"
-              label="Status Animation"
               previewable
               previewIsAnimation
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.storefront.purchase_animation_mobile}
+              subcategory={l10n.categories.purchase_status_settings}
               field="purchase_animation_mobile"
-              label="Status Animation (Mobile)"
               previewable
               previewIsAnimation
             />
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.storefront.reveal_animation}
+              subcategory={l10n.categories.purchase_status_settings}
               field="reveal_animation"
-              label="Reveal Animation"
               previewable
               previewOptions={{
                 muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
@@ -253,8 +274,9 @@ const MarketplaceStorefront = observer(() => {
 
             <Inputs.FabricBrowser
               {...inputProps}
+              {...l10n.storefront.reveal_animation}
+              subcategory={l10n.categories.purchase_status_settings}
               field="reveal_animation_mobile"
-              label="Reveal Animation (Mobile)"
               previewable
               previewOptions={{
                 muted: EluvioPlayerParameters.muted.OFF_IF_POSSIBLE,
@@ -267,21 +289,23 @@ const MarketplaceStorefront = observer(() => {
         </Accordion.Item>
       </Accordion>
 
-      <Title order={3} mb="md" mt={50}>Storefront Media</Title>
+      <Title order={3} mb="md" mt={50}>{l10n.categories.storefront_media}</Title>
 
       <Inputs.ImageInput
         {...inputProps}
-        label="Storefront Background"
+        {...l10n.storefront.storefront_background}
+        subcategory={l10n.categories.storefront_media}
         fields={[
-          { field: "background", label: "Background (Desktop)" },
-          { field: "background_mobile", label: "Background (Mobile)" },
+          { field: "background", ...l10n.storefront.background_desktop },
+          { field: "background_mobile", ...l10n.storefront.background_mobile },
         ]}
       />
 
       <Group align="top">
         <Inputs.ImageInput
           {...inputProps}
-          label="Header Logo"
+          {...l10n.storefront.header_logo}
+          subcategory={l10n.categories.storefront_media}
           path="/public/asset_metadata/info/branding"
           altTextField="header_logo_alt"
           fields={[
@@ -290,7 +314,8 @@ const MarketplaceStorefront = observer(() => {
         />
         <Inputs.ImageInput
           {...inputProps}
-          label="Header Image"
+          {...l10n.storefront.header_image}
+          subcategory={l10n.categories.storefront_media}
           path="/public/asset_metadata/info/branding"
           altTextField="header_image_alt"
           fields={[
@@ -301,11 +326,10 @@ const MarketplaceStorefront = observer(() => {
 
       <Inputs.List
         {...inputProps}
+        {...l10n.storefront_banners.banners}
+        category={l10n.categories.storefront_banner}
         path="/public/asset_metadata/info"
         field="banners"
-        fieldLabel="Banner"
-        label="Banners"
-        description="Banners displayed at the top of the storefront. The banner will display either an image or a video. When clicked, the banner can link to a URL, an item for sale on the marketplace, or it can open a modal with video content."
         idField="id"
         showBottomAddButton
         newEntrySpec={MarketplaceStorefrontBannerSpec}
@@ -314,52 +338,67 @@ const MarketplaceStorefront = observer(() => {
             <>
               <Inputs.UUID
                 {...props}
+                {...l10n.storefront_banners.id}
+                subcategory={l10n.categories.storefront_banner_info}
                 field="id"
-                label="ID"
               />
               <Inputs.Text
                 {...props}
+                {...l10n.storefront_banners.name}
+                subcategory={l10n.categories.storefront_banner_info}
                 field="name"
-                label="Name"
               />
               {
-                value.sku ? null :
+                value.sku || value.modal_video ? null :
                   <Inputs.URL
                     {...props}
+                    {...l10n.storefront_banners.link_url}
+                    subcategory={l10n.categories.storefront_banner_info}
                     field="link"
-                    label="Link URL"
                   />
               }
               {
-                value.link ? null :
+                value.link || value.modal_video ? null :
                   <MarketplaceItemSelect
                     {...props}
+                    {...l10n.storefront_banners.sku}
+                    subcategory={l10n.categories.storefront_banner_info}
                     field="sku"
-                    label="Item Link SKU"
-                    description="If specified, the banner will link to the specified item"
+                  />
+              }
+              {
+                value.link || value.sku ? null :
+                  <Inputs.FabricBrowser
+                    {...props}
+                    {...l10n.storefront_banners.modal_video}
+                    subcategory={l10n.categories.storefront_banner_info}
+                    field="modal_video"
+                    previewable
                   />
               }
 
               <Accordion maw={600} mb="md" variant="contained">
                 <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
-                    Banner Media
+                    { l10n.categories.storefront_banner_media }
                   </Accordion.Control>
                   <Accordion.Panel>
                     <Inputs.ImageInput
                       {...props}
-                      label="Images"
+                      {...l10n.storefront_banners.images}
+                      subcategory={l10n.categories.storefront_banner_media}
                       altTextField="image_alt"
                       fields={[
-                        { field: "image", label: "Banner Image" },
-                        { field: "image_mobile", label: "Banner Image (Mobile)" },
+                        { field: "image", ...l10n.storefront_banners.image },
+                        { field: "image_mobile", ...l10n.storefront_banners.image_mobile }
                       ]}
                     />
 
                     <Inputs.FabricBrowser
                       {...props}
+                      {...l10n.storefront_banners.video}
+                      subcategory={l10n.categories.storefront_banner_media}
                       field="video"
-                      label="Video"
                       previewable
                       previewIsAnimation={value.video_muted}
                     />
@@ -368,9 +407,9 @@ const MarketplaceStorefront = observer(() => {
                       !value.video ? null :
                         <Inputs.Checkbox
                           {...props}
+                          {...l10n.storefront_banners.video_muted}
+                          subcategory={l10n.categories.storefront_banner_media}
                           field="video_muted"
-                          label="Video Muted"
-                          description="Muted banner videos will autoplay"
                           defaultValue={true}
                         />
                     }
@@ -384,45 +423,71 @@ const MarketplaceStorefront = observer(() => {
 
       <Inputs.List
         {...inputProps}
+        {...l10n.storefront_footer_links.footer_links}
+        category={l10n.categories.storefront_footer_link}
         path="/public/asset_metadata/info"
         field="footer_links"
-        fieldLabel="Footer Link"
-        label="Footer Links"
-        description="Each footer link can link to a URL, or open a modal containing either an image, rich text content or HTML content"
         idField="id"
         showBottomAddButton
         newEntrySpec={MarketplaceFooterLinkSpec}
         renderItem={({value, ...props}) => {
+          let type;
+          if(value.image) {
+            type = l10n.storefront_footer_links.types.image;
+          } else if(value.link) {
+            type = l10n.storefront_footer_links.types.link;
+          } else if(value.content_rich_text) {
+            type = l10n.storefront_footer_links.types.rich_text;
+          } else if(value.content_html) {
+            type = l10n.storefront_footer_links.types.html;
+          }
+
           return (
             <>
               <Inputs.UUID
                 {...props}
+                {...l10n.storefront_footer_links.id}
+                subcategory={l10n.categories.storefront_footer_link_info}
                 field="id"
-                label="ID"
               />
               <Inputs.Text
                 {...props}
+                {...l10n.storefront_footer_links.name}
+                subcategory={l10n.categories.storefront_footer_link_info}
                 field="name"
-                label="Name"
               />
               <Inputs.Text
                 {...props}
+                {...l10n.storefront_footer_links.text}
+                subcategory={l10n.categories.storefront_footer_link_info}
                 field="text"
-                label="Text"
               />
+
+              {
+                !type ? null :
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.storefront_footer_links.type}
+                    subcategory={l10n.categories.storefront_footer_link_info}
+                    field="type"
+                    disabled
+                    value={type}
+                  />
+              }
 
               <Accordion maw={600} mb="md" variant="contained">
                 <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
-                    Footer Link Content
+                    {l10n.categories.storefront_footer_link_content}
                   </Accordion.Control>
                   <Accordion.Panel>
                     {
                       value.image || value.content_rich_text || value.content_html ? null :
                         <Inputs.URL
                           {...props}
+                          {...l10n.storefront_footer_links.link_url}
+                          subcategory={l10n.categories.storefront_footer_link_info}
                           field="link"
-                          label="Link URL"
                         />
                     }
 
@@ -430,7 +495,8 @@ const MarketplaceStorefront = observer(() => {
                       value.link || value.content_rich_text || value.content_html ? null :
                         <Inputs.ImageInput
                           {...props}
-                          label="Image"
+                          {...l10n.storefront_footer_links.image}
+                          subcategory={l10n.categories.storefront_footer_link_info}
                           altTextField="image_alt"
                           fields={[
                             { field: "image" },
@@ -442,8 +508,9 @@ const MarketplaceStorefront = observer(() => {
                       value.image || value.link || value.content_html ? null :
                         <Inputs.RichText
                           {...props}
+                          {...l10n.storefront_footer_links.content_rich_text}
+                          subcategory={l10n.categories.storefront_footer_link_info}
                           field="content_rich_text"
-                          label="Rich Text Content"
                         />
                     }
 
@@ -451,8 +518,9 @@ const MarketplaceStorefront = observer(() => {
                       value.image || value.link || value.content_rich_text ? null :
                         <Inputs.File
                           {...props}
+                          {...l10n.storefront_footer_links.content_html}
+                          subcategory={l10n.categories.storefront_footer_link_info}
                           field="content_html"
-                          label="HTML Content"
                           extensions="html"
                         />
                     }

@@ -207,7 +207,7 @@ const MarketplaceCollections = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.collections.collections}
-        category={l10n.categories.collections}
+        category={l10n.categories.collection}
         path="/public/asset_metadata/info"
         field="collections"
         idField="sku"

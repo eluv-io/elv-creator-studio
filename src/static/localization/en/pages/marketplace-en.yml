@@ -10,13 +10,33 @@ form:
     login_customization: Login Customization
     login_theme: Login Theme
     terms_and_consent: Terms and User Consent
-    collections: Collections
+    item: Marketplace Item
+    item_info: Item Info
+    item_display_options: Display Options
+    item_purchase_details: Purchase Details
+    item_availability: Availability
+    item_permissions: Permissions
+    item_analytics: Analytics
+    item_page_view_analytics: Page View Analytics
+    item_purchase_analytics: Purchase Analytics
+    storefront: Storefront Settings
+    storefront_item_settings: Storefront Item Settings
+    storefront_media: Storefront Media
+    storefront_purchase_status_settings: Purchase Status Page
+    storefront_banner: Storefront Banner
+    storefront_banner_info: Storefront Banner Info
+    storefront_banner_media: Storefront Banner Media
+    storefront_footer_link: Storefront Footer Link
+    storefront_footer_link_info: Storefront Footer Link Info
+    storefront_footer_link_content: Storefront Footer Link Content
+    storefront_item_section: Storefront Item Section
+    storefront_item_section_info: Storefront Section Info
+    storefront_item_section_settings: Storefront Section Settings
     collections_page: Collections Page
     default_collection_redemption: Default Collection Redemption
     collection: Collection
     collection_info: Collection Info
     collection_redemption: Collection Redemption
-    voting_events: Voting Events
     voting_event: Voting Event
     analytics: Analytics
     general_analytics: General Analytics
@@ -165,6 +185,220 @@ form:
     description:
       label: Description
       description: Describe the conditions to which the user is consenting
+
+  items:
+    items:
+      label: Items
+      fieldLabel: Item
+      description: All items associated with your marketplace
+      columns:
+        name: Name
+        price: Price
+        status: Status
+    status:
+      available: Available
+      not_for_sale: Not for Sale
+      unreleased: Available {date}
+      expired: Expired {date}
+  item:
+    image:
+      label: Image
+    name:
+      label: Name
+    sku:
+      label: SKU
+    item_template:
+      label: Item Template
+    subtitle:
+      label: Subtitle
+    subtitle_2:
+      label: Subtitle 2
+    description:
+      label: Description
+    description_rich_text:
+      label: Description (Rich Text)
+    tags:
+      label: Tags
+      fieldLabel: Tag
+    video:
+      label: Video
+    video_has_audio:
+      label: Video has Audio
+    play_on_storefront:
+      label: Play on Storefront
+      description: If checked, the video for this item will play on the storefront, instead of just the item details page.
+    show_available_stock:
+      label: Show Available Stock
+      description: Show the quantity of this item still available for purchase
+    available:
+      label: Available
+    viewable:
+      label: Viewable When Not For Sale
+    free:
+      label: Free
+    price:
+      label: Price (USD)
+    max_per_checkout:
+      label: Maximum Quantity Purchasable per Checkout
+    max_per_user:
+      label: Maximum Quantity Purchasable per User
+    min_secondary_price:
+      label: Minimum Secondary Market Price (USD)
+    available_at:
+      label: Release Date
+      description: If specified, the item will not be available for purchase until this date
+    expires_at:
+      label: Available Util
+      description: If specified, the item will not be available for purchase after this date
+    show_if_unreleased:
+      label: Viewable on Storefront Before Release
+    viewable_if_unreleased:
+      label: Item Details Viewable Before Release
+    requires_permissions:
+      label: Requires Permissions to View
+    show_if_unauthorized:
+      label: Show if Unauthorized
+    permission_message:
+      label: Permission Denied Message
+    permission_description:
+      label: Permission Denied Description
+    use_analytics:
+      label: Use Analytics for this Item
+
+
+
+  storefront:
+    header:
+      label: Header
+    subheader:
+      label: Subheader
+    sections:
+      label: Storefront Item Sections
+      fieldLabel: Item Section
+      columns:
+        title: Title
+        type: Type
+        items: Items
+    show_rich_text_descriptions:
+      label: Show Rich Text Descriptions on Items Cards
+    show_card_cta:
+      label: Show CTA Buttons on Item Cards
+    item_purchase_status:
+      label: Item Purchase Status Page
+    skip_reveal:
+      label: Skip Purchase Reveal
+      description: If a single item was purchased, proceed directly to the item page on purchase completion instead of showing the results
+    hide_info:
+      label: Hide Default Text on Purchase Status Page
+    purchase_animation:
+      label: Status Animation
+      description: Animation shown while waiting for item purchase to finish
+    purchase_animation_mobile:
+      label: Status Animation (Mobile)
+      description: Animation shown while waiting for item purchase to finish
+    reveal_animation:
+      label: Reveal Animation
+      description: Animation shown after purchase is complete before showing results
+    reveal_animation_mobile:
+      label: Reveal Animation (Mobile)
+      description: Animation shown after purchase is complete before showing results
+    storefront_background:
+      label: Storefront Background
+    background_desktop:
+      label: Background (Desktop)
+    background_mobile:
+      label: Background (Mobile)
+    header_logo:
+      label: Header Logo
+    header_image:
+      label: Header Image
+
+  storefront_section:
+    id:
+      label: ID
+    name:
+      label: Name
+    header:
+      label: Section Header
+    header_rich_text:
+      label: Section Header (Rich Text)
+      description: Specify the section header as rich text. Overrides Section Header.
+    subheader:
+      label: Section Subheader
+    footer:
+      label: Section Footer
+    type:
+      label: Section Type
+    items:
+      label: Items
+    featured_view_justification:
+      label: Featured View Justification
+    show_carousel_gallery:
+      label: Show Carousel Gallery
+      description: Show selectable icons of items in the list below the featured view. Will not be displayed when only one item is in the list
+    show_countdown:
+      label: Show Countdown
+    countdown_text:
+      label: Countdown Text
+    countdown_date:
+      label: Countdown Date
+
+  storefront_banners:
+    banners:
+      label: Banners
+      description: Banners displayed at the top of the storefront. The banner will display either an image or a video. When clicked, the banner can link to a URL, an item for sale on the marketplace, or it can open a modal with video content.
+      fieldLabel: Banner
+    id:
+      label: ID
+    name:
+      label: Name
+    link_url:
+      label: Link URL
+      description: If specified, the banner will link to the specified URL
+    sku:
+      label: Item Link
+      description: If specified, the banner will link to the specified item
+    modal_video:
+      label: Modal Video
+      description: If specified, the banner will open a modal with the specified video
+    images:
+      label: Images
+    image:
+      label: Banner Image
+    image_mobile:
+      label: Banner Image (Mobile)
+    video:
+      label: Video
+    video_muted:
+      label: Video Muted
+      description: Muted banner videos will autoplay
+  storefront_footer_links:
+    footer_links:
+      label: Footer Links
+      description: Each footer link can link to a URL, or open a modal containing either an image, rich text content or HTML content
+      fieldLabel: Footer Link
+    type:
+      label: Content
+    types:
+      image: Image
+      link: Link
+      rich_text: Rich Text
+      html: HTML
+    id:
+      label: ID
+    name:
+      label: Name
+    text:
+      label: Text
+    link_url:
+      label: Link URL
+    image:
+      label: Image
+    content_rich_text:
+      label: Content (Rich Text)
+    content_html:
+      label: Content (HTML)
+
 
   collections:
     collections:

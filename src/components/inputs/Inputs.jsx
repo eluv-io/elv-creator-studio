@@ -90,6 +90,7 @@ const Input = observer(({
   description,
   hint,
   actionLabel,
+  value,
   options,
   placeholder,
   defaultValue,
@@ -104,7 +105,7 @@ const Input = observer(({
   const location = useLocation();
   const [changed, setChanged] = useState(false);
 
-  let value = store.GetMetadata({objectId, path, field});
+  value = value || store.GetMetadata({objectId, path, field});
 
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
@@ -228,7 +229,7 @@ const Input = observer(({
           value,
           category,
           subcategory,
-          label
+          label: actionLabel || label
         });
 
         setChanged(true);
@@ -908,7 +909,11 @@ const ListInputs = observer(({
       value,
       store,
       objectId,
-      path: UrlJoin(path, field, index.toString())
+      path: UrlJoin(path, field, index.toString()),
+      category,
+      subcategory,
+      actionLabel,
+      fieldLabel
     });
   }
 
