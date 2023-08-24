@@ -16,7 +16,7 @@ import {
 import CheckboxCard from "../inputs/CheckboxCard.jsx";
 import {IconEdit} from "@tabler/icons-react";
 
-const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
+const ModifiedItem = observer(({item, selected, setSelected}) => {
   const indentWidth = 25;
 
   return (
@@ -24,11 +24,17 @@ const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
       <CheckboxCard
         label={item.name}
         description={item.objectId}
-        checked={!excludeList[item.objectId]}
-        onChange={() => setExcludeList({...excludeList, [item.objectId]: !excludeList[item.objectId]})}
+        checked={selected.includes(item.objectId)}
+        onChange={checked => {
+          if(checked) {
+            setSelected([...selected, item.objectId]);
+          } else {
+            setSelected(selected.filter(objectId => objectId !== item.objectId));
+          }
+        }}
       />
 
-      <Accordion variant="contained" defaultValue="default">
+      <Accordion variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconEdit />}>
             { rootStore.l10n.components.save_modal.changelist }
@@ -65,7 +71,7 @@ const ModifiedItem = observer(({item, excludeList, setExcludeList}) => {
 });
 
 const SaveModalContent = observer(() => {
-  const [excludeList, setExcludeList] = useState({});
+  const [selected, setSelected] = useState(editStore.ChangeLists().map(item => item.objectId));
   const [saving, setSaving] = useState(false);
 
   const modifiedItems = (
@@ -73,8 +79,8 @@ const SaveModalContent = observer(() => {
       <ModifiedItem
         key={`modified-item-${item.objectId}`}
         item={item}
-        excludeList={excludeList}
-        setExcludeList={setExcludeList}
+        selected={selected}
+        setSelected={setSelected}
       />
     )
   );
@@ -89,12 +95,14 @@ const SaveModalContent = observer(() => {
           { rootStore.l10n.components.actions.cancel }
         </Button>
         <Button
+          disabled={selected.length === 0}
           loading={saving}
           w={200}
           onClick={async () => {
             setSaving(true);
             try {
-              await editStore.Save(excludeList);
+              await editStore.Save(selected);
+              editStore.ToggleSaveModal(false);
             } catch(error) {
               setSaving(false);
             }

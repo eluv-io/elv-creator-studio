@@ -17,7 +17,7 @@ const CheckboxCard = observer(({
       width="100%"
       w="100%"
       maw={600}
-      onClick={onChange}
+      onClick={() => onChange(!checked)}
     >
       <InputWrapper
         label={label}

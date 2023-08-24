@@ -6,7 +6,7 @@ export const LinkButton = (props) => {
   return <Button component={Link} {...props} />;
 };
 
-export const ItemImage = ({item, width, imageProps={}}) => {
+export const ItemImage = ({item, scale, ...props}) => {
   let url;
   try {
     if(item?.image?.url) {
@@ -15,14 +15,14 @@ export const ItemImage = ({item, width, imageProps={}}) => {
       url = new URL(item.nft_template.nft.image);
     }
 
-    if(url && width) {
-      url.searchParams.set("width", width);
+    if(url && scale) {
+      url.searchParams.set("width", scale);
     }
   } catch(error) {
     rootStore.DebugLog({error: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
   }
 
-  return <Image {...imageProps} src={url} alt={item.name || item.sku} withPlaceholder />;
+  return <Image {...props} src={url} alt={item.name || item.sku} withPlaceholder />;
 };
 
 export const LocalizeString = (text="", variables={}, options={reactNode: false}) => {

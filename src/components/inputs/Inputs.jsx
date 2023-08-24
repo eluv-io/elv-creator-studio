@@ -15,7 +15,7 @@ import {
   Tooltip,
   NumberInput,
   Stack,
-  MultiSelect,
+  MultiSelect as MantineMultiSelect,
   JsonInput,
   PasswordInput,
   ScrollArea,
@@ -75,7 +75,102 @@ export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfi
   });
 };
 
+// General input
+const MultiSelect = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  description,
+  hint,
+  value,
+  options,
+  placeholder,
+  clearable,
+  searchable,
+  disabled,
+  componentProps={}
+}) => {
+  const location = useLocation();
 
+  const values = value || store.GetMetadata({objectId, path, field}) || [];
+
+  componentProps.maw = componentProps.maw || 600;
+
+  if(clearable) {
+    componentProps.rightSection = (
+      <Tooltip label={rootStore.l10n.components.inputs.clear} position="top-end" withArrow>
+        <ActionIcon
+          mr="xs"
+          onClick={() =>{
+            for(let i = values.length - 1; i >= 0; i--) {
+              store.RemoveListElement({
+                objectId,
+                page: location.pathname,
+                path,
+                field,
+                index: i,
+                category,
+                subcategory,
+                label: values[i]
+              });
+            }
+          }}
+        >
+          <IconX size={15} />
+        </ActionIcon>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <MantineMultiSelect
+      mb="md"
+      disabled={disabled}
+      searchable={searchable}
+      data={options}
+      {...componentProps}
+      placeholder={placeholder}
+      label={<InputLabel label={label} hint={hint} />}
+      description={description}
+      value={values}
+      onChange={newValues => {
+        const removedValues = values.filter(value => !newValues.includes(value));
+        removedValues.forEach(removedValue => {
+          const option = options.find(option => option === removedValue || option?.value === removedValue);
+          store.RemoveListElement({
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            index: values.findIndex(value => value === removedValue),
+            category,
+            subcategory,
+            label: option?.label || option || ""
+          });
+        });
+
+        const addedValues = newValues.filter(value => !values.includes(value));
+        addedValues.forEach(newValue => {
+          const option = options.find(option => option === newValue || option?.value === newValue);
+          store.InsertListElement({
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            category,
+            subcategory,
+            label: option?.label || option || "",
+            value: newValue
+          });
+        });
+      }}
+    />
+  );
+});
 
 // General input
 const Input = observer(({
@@ -157,11 +252,6 @@ const Input = observer(({
       componentProps.searchable = searchable;
       componentProps.data = options;
       break;
-    case "multiselect":
-      Component = MultiSelect;
-      componentProps.searchable = searchable;
-      componentProps.data = options;
-      break;
     case "date":
       Component = DatePickerInput;
       componentProps.valueFormat = "LL";
@@ -221,7 +311,7 @@ const Input = observer(({
         }
 
         store.SetMetadata({
-          actionType: ["select", "multiselect"].includes(type) ? "MODIFY_FIELD_UNSTACKABLE" : "MODIFY_FIELD",
+          actionType: type === "select" ? "MODIFY_FIELD_UNSTACKABLE" : "MODIFY_FIELD",
           objectId,
           page: location.pathname,
           path,
@@ -1191,7 +1281,8 @@ const CollectionTableRows = observer(({
                           index,
                           category,
                           subcategory,
-                          label: actionLabel || fieldLabel
+                          label: actionLabel || fieldLabel,
+                          useLabel: false
                         })
                       });
                     }}
@@ -1240,7 +1331,7 @@ const CollectionTable = observer(({
 
   if(categoryFnParams) {
     category = (action) => {
-      const index = action.actionType === "REMOVE_LIST_ELEMENT" ? action.info.index : action.info.newIndex;
+      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
       let label = categoryFnParams.fields
         .map(labelField =>
           store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
@@ -1274,7 +1365,8 @@ const CollectionTable = observer(({
           value: newEntry,
           category,
           subcategory,
-          label: actionLabel || fieldLabel
+          label: actionLabel || fieldLabel,
+          useLabel: false
         });
 
         navigate(UrlJoin(location.pathname, id));
@@ -1305,7 +1397,8 @@ const CollectionTable = observer(({
               newIndex: destination.index,
               category,
               subcategory,
-              label: actionLabel || fieldLabel
+              label: actionLabel || fieldLabel,
+              useLabel: false
             })
           }
         >
@@ -1379,10 +1472,10 @@ export default {
   Number: ({min, max, step, precision, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
   Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
-  Select: props => <Input {...props} type="select" />,
-  MultiSelect: props => <Input {...props} type="multiselect" />,
   Date: props => <Input {...props} type="date" />,
   DateTime: props => <Input {...props} type="datetime" />,
+  Select: props => <Input {...props} type="select" />,
+  MultiSelect,
   RichText: RichTextInput,
   Password,
   Checkbox: CheckboxInput,

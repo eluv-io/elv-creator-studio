@@ -184,7 +184,20 @@ const SetLink = flow(function * ({
   });
 });
 
-const ListAction = function({actionType, objectId, page, path, field, index, newIndex, value, category, subcategory, label}) {
+const ListAction = function({
+  actionType,
+  objectId,
+  page,
+  path,
+  field,
+  index,
+  newIndex,
+  value,
+  category,
+  subcategory,
+  label,
+  useLabel=true
+}) {
   if(!objectId) {
     this.DebugLog({message: "List Action: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -205,12 +218,14 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
   let newList;
   switch(actionType) {
     case "INSERT_LIST_ELEMENT":
-      newList =
-        typeof index === "undefined" ?
-          // Append
-          [...originalList, value] :
-          // Insert
-          [...originalList.slice(0, index), value, ...originalList.slice(index)];
+      if(typeof index === "undefined") {
+        // Append
+        index = originalList.length;
+        newList =[...originalList, value];
+      } else {
+        // Insert at position
+        newList = [...originalList.slice(0, index), value, ...originalList.slice(index)];
+      }
       break;
     case "REMOVE_LIST_ELEMENT":
       if(typeof index === "undefined" || index < 0 || index >= originalList.length) {
@@ -254,6 +269,7 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
     category,
     subcategory,
     label,
+    useLabel,
     info: {
       index,
       newIndex
@@ -283,7 +299,7 @@ const RemoveListElement = function({objectId, page, path, field, index, ...args}
 
 // Action handling
 
-const ApplyAction = flow(function * ({
+const ApplyAction = function ({
   id,
   actionType,
   objectId,
@@ -293,7 +309,7 @@ const ApplyAction = flow(function * ({
   category,
   subcategory,
   label,
-  description,
+  useLabel=true,
   info={},
   Apply,
   Undo,
@@ -305,7 +321,7 @@ const ApplyAction = flow(function * ({
 
   const { stackable } = ACTIONS[actionType];
 
-  yield Apply();
+  Apply();
 
   if(stackable) {
     let stackableActions = [];
@@ -346,7 +362,7 @@ const ApplyAction = flow(function * ({
     category,
     subcategory,
     label,
-    description,
+    useLabel,
     info,
     Apply,
     Undo,
@@ -355,7 +371,7 @@ const ApplyAction = flow(function * ({
 
   this.actionStack[objectId] = actionStack;
   this.redoStack[objectId] = [];
-});
+};
 
 const UndoQueue = function({objectId, page}) {
   return (this.actionStack[objectId] || [])
@@ -405,6 +421,17 @@ const RedoAction = flow(function * ({objectId, page}) {
   this.actionStack[objectId].push(action);
 });
 
+const Save = flow(function * ({libraryId, objectId, writeToken}) {
+  for(const action of this.actionStack[objectId]) {
+    yield action.Write({libraryId, objectId, writeToken});
+  }
+});
+
+const ClearActions = function({objectId}) {
+  this.actionStack[objectId] = [];
+  this.redoStack[objectId] = [];
+};
+
 export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.objectsMapKey = objectsMapKey;
   storeClass.prototype.actionStack = {};
@@ -424,4 +451,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.RedoAction = RedoAction;
   storeClass.prototype.UndoQueue = UndoQueue;
   storeClass.prototype.RedoQueue = RedoQueue;
+
+  storeClass.prototype.Save = Save;
+  storeClass.prototype.ClearActions = ClearActions;
 };

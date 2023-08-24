@@ -31,8 +31,11 @@ components:
     actions:
       modify_field: Modify {field}
       add_item: Add item to {field}
-      remove_item: Remove element from {field}
+      add_item_label: Add {label} to {field}
+      remove_item: Remove item from {field}
+      remove_item_label: Remove {label} from {field}
       move_item: Move item in {field}
+      move_item_label: Move {label} in {field}
     alt_text:
       label: Alt Text
       hint: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
@@ -97,7 +100,10 @@ actions:
   TOGGLE_FIELD_ON: Toggled '{label}' On
   TOGGLE_FIELD_OFF: Toggled '{label}' Off
   SET_LINK: Modified '{label}'
-  INSERT_LIST_ELEMENT: Added to list
-  REMOVE_LIST_ELEMENT: Removed from list
-  MOVE_LIST_ELEMENT: Moved list position
+  INSERT_LIST_ELEMENT: Added '{label}'
+  INSERT_LIST_ELEMENT_UNLABELLED: Added to list
+  REMOVE_LIST_ELEMENT: Removed '{label}'
+  REMOVE_LIST_ELEMENT_UNLABELLED: Removed from list
+  MOVE_LIST_ELEMENT: Moved '{label}'
+  MOVE_LIST_ELEMENT_UNLABELLED: Moved list position
 

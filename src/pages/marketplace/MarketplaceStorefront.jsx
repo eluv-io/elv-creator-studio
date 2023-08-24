@@ -186,16 +186,18 @@ const MarketplaceStorefront = observer(() => {
       section="marketplace"
       useHistory
     >
-      <Title order={3} mb="md">{ l10n.categories.storefront }</Title>
+      <Title order={3} mb="md">{ l10n.categories.storefront_settings }</Title>
 
       <Inputs.Text
         {...inputProps}
         {...l10n.storefront.header}
+        subcategory={l10n.categories.storefront_settings}
         field="header"
       />
       <Inputs.TextArea
         {...inputProps}
         {...l10n.storefront.subheader}
+        subcategory={l10n.categories.storefront_settings}
         field="subheader"
       />
 

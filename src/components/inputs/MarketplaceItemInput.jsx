@@ -42,7 +42,7 @@ const SelectedItem = observer(({
   return (
     <Paper
       {...componentProps}
-      p={0}
+      p={3}
       withBorder
     >
       <Group pl={single ? 0 : "xs"} pr={25} spacing="sm" style={{position: "relative"}}>
@@ -52,7 +52,7 @@ const SelectedItem = observer(({
               <IconGripVertical size={15}/>
             </div>
         }
-        <ItemImage item={item} width={200} imageProps={{width: 50, height: 50}} />
+        <ItemImage item={item} scale={200} width={40} height={40} radius="sm" />
         <div>
           <Text fz="sm">{item.name || item.sku}</Text>
           <Text fz="xs" color="dimmed">{item.sku}</Text>
@@ -67,7 +67,7 @@ const SelectedItem = observer(({
               onConfirm: () => {
                 single ?
                   store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
-                  store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label});
+                  store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
               }
             });
           }}
@@ -98,7 +98,7 @@ export const MarketplaceItemSelect = observer(({
   const options = items
     .map(item =>
       ({
-        image: <ItemImage item={item} width={200} imageProps={{width: 40, height: 40}} />,
+        image: <ItemImage item={item} scale={200} width={40} height={40} />,
         label: item.name || item.sku,
         value: item.sku
       })
@@ -166,7 +166,7 @@ export const MarketplaceItemMultiselect = observer(({
   const options = items
     .map(item =>
       ({
-        image: <ItemImage item={item} width={200} imageProps={{width: 40, height: 40}} />,
+        image: <ItemImage item={item} scale={200} width={40} height={40} />,
         label: item.name || item.sku,
         value: item.sku
       })
@@ -188,6 +188,9 @@ export const MarketplaceItemMultiselect = observer(({
             objectId={objectId}
             path={path}
             field={field}
+            category={category}
+            subcategory={subcategory}
+            label={label}
             index={index}
             item={item}
             componentProps={{
@@ -228,7 +231,10 @@ export const MarketplaceItemMultiselect = observer(({
         }}
       />
       <DragDropContext
-        onDragEnd={({source, destination}) =>
+        onDragEnd={({source, destination}) => {
+          const sku = selectedSKUs[source.index];
+          const item = items.find(item => item.sku === sku);
+
           store.MoveListElement({
             objectId,
             page: location.pathname,
@@ -238,9 +244,9 @@ export const MarketplaceItemMultiselect = observer(({
             newIndex: destination.index,
             category,
             subcategory,
-            label
-          })
-        }
+            label: item?.name || item?.sku || ""
+          });
+        }}
       >
         <Droppable droppableId="simple-list" direction="vertical">
           {provided => (

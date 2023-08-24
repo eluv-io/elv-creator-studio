@@ -16,6 +16,7 @@ form:
     general: General
     info: Marketplace Info
     global_settings: Global Marketplace Settings
+    tags: Marketplace Tags
     notification: Notification
     advanced_settings: Advanced Settings
     page_tabs: Page Names
@@ -33,7 +34,8 @@ form:
     item_analytics: Analytics
     item_page_view_analytics: Page View Analytics
     item_purchase_analytics: Purchase Analytics
-    storefront: Storefront Settings
+    storefront: Storefront
+    storefront_settings: Storefront Settings
     storefront_item_settings: Storefront Item Settings
     storefront_media: Storefront Media
     storefront_purchase_status_settings: Purchase Status Page
@@ -53,10 +55,13 @@ form:
     collection: Collection
     collection_label: Collection '{label}'
     collection_info: Collection Info
+    collection_items: Collection Items
     collection_redemption: Collection Redemption
+    collection_rewards: Collection Rewards
     voting_event: Voting Event
     voting_event_label: Voting Event '{label}'
     voting_event_details: Event Details
+    voting_event_items: Items
     analytics: Analytics
     general_analytics: General Analytics
     storefront_analytics: Storefront Analytics

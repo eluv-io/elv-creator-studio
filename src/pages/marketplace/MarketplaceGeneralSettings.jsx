@@ -115,7 +115,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.tags}
-        subcategory={l10n.categories.global_settings}
+        subcategory={l10n.categories.tags}
         path="/public/asset_metadata/info/branding"
         field="tags"
         fieldLabel="Tag"

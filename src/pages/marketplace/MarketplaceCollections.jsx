@@ -81,7 +81,7 @@ export const MarketplaceCollection = observer(() => {
       <MarketplaceItemMultiselect
         {...inputProps}
         {...l10n.collection.items}
-        subcategory={l10n.categories.collection_info}
+        subcategory={l10n.categories.collection_items}
         field="items"
       />
 
@@ -121,7 +121,7 @@ export const MarketplaceCollection = observer(() => {
             <MarketplaceItemMultiselect
               {...inputProps}
               {...l10n.collection.rewards}
-              subcategory={l10n.categories.collection_redemption}
+              subcategory={l10n.categories.collection_rewards}
               field="redeem_items"
             />
 

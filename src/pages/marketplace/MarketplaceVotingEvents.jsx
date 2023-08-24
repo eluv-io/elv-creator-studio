@@ -96,6 +96,7 @@ export const MarketplaceVotingEvent = observer(() => {
           <MarketplaceItemMultiselect
             {...inputProps}
             {...l10n.voting_events.items}
+            subcategory={l10n.categories.voting_event_items}
             field="items"
             searchable
           />

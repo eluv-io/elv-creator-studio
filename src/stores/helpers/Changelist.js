@@ -134,7 +134,7 @@ const ProcessChangeList = changeList => {
 };
 
 const ActionToString = action => {
-  let string = rootStore.l10n.actions[action.actionType];
+  let string = rootStore.l10n.actions[action.useLabel ? action.actionType : `${action.actionType}_UNLABELLED`];
   if(action.actionType === "TOGGLE_FIELD") {
     const unchecked = action.info.inverted ? !action.info.cleared : action.info.cleared;
     string = rootStore.l10n.actions[unchecked ? "TOGGLE_FIELD_OFF" : "TOGGLE_FIELD_ON"];
@@ -183,20 +183,29 @@ export const FormatChangeList = changeList => {
 
   let changeListString = [];
   let changeListElements = [];
-  Object.keys(formattedChangeList).sort().forEach(category => {
+
+  const categories = [...new Set(Object.keys(formattedChangeList))].sort();
+  categories.forEach(category => {
     if(category === "uncategorized") { return; }
 
     changeListString.push(`${category}:`);
     changeListElements.push({type: "category", value: category, level: 0});
 
-    Object.keys(formattedChangeList[category]).sort().forEach(subcategory => {
+    const subcategories = [...new Set(Object.keys(formattedChangeList[category]))].sort();
+    subcategories.forEach(subcategory => {
       if(subcategory === "uncategorized") { return; }
 
       changeListString.push(`  ${subcategory}:`);
       changeListElements.push({type: "subcategory", value: subcategory, level: 1});
 
-      formattedChangeList[category][subcategory].forEach(action => {
-        const modification = ActionToString(action);
+      const modifications = [
+        ...new Set(
+          formattedChangeList[category][subcategory]
+            .map(action => ActionToString(action))
+        )
+      ].sort();
+
+      modifications.forEach(modification => {
         changeListString.push(`    ${modification}`);
         changeListElements.push({type: "field", value: modification, level: 2});
       });

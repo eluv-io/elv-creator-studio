@@ -383,7 +383,7 @@ const MarketplaceItems = observer(() => {
         filterable
         Filter={({value, filter}) => value.name?.toLowerCase().includes(filter)}
         columns={[
-          { field: "image", width: "80px", render: item => <ItemImage item={item} width={200} imageProps={{width: 50, height: 50, radius: "md"}} /> },
+          { field: "image", width: "80px", render: item => <ItemImage item={item} scale={200} width={50} height={50} radius="md" /> },
           { label: l10n.items.items.columns.name, field: "name", render: item => item.name || item.nft_template?.nft?.name },
           { label: l10n.items.items.columns.price, field: "price", width: "100px", render: item => item.free ? "Free" : FormatUSD(item.price.USD) },
           {

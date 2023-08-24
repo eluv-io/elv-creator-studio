@@ -39,6 +39,7 @@ class EditStore {
         const name = marketplace?.metadata?.public?.asset_metadata?.info?.branding?.name || marketplaceId;
         return {
           type: "Marketplace",
+          store: "marketplaceStore",
           name,
           objectId: marketplaceId,
           object: marketplace,
@@ -57,24 +58,30 @@ class EditStore {
     this.showSaveModal = show;
   }
 
-  Save = flow(function * (excludeList) {
-    for(const item of this.changeList) {
-      if(excludeList[item.objectId]) { continue; }
+  Save = flow(function * (selectedObjectIds) {
+    for(const item of this.ChangeLists()) {
+      if(!selectedObjectIds.includes(item.objectId)) {
+        continue;
+      }
+      const store = this.rootStore[item.store];
+      const objectId = item.objectId;
 
       try {
         this.rootStore.uiStore.SetLoading(true);
         this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.type} ${item.name}`);
 
-        const libraryId = yield this.rootStore.LibraryId({objectId: item.objectId});
-        const writeToken = yield this.InitializeWrite({objectId: item.objectId});
+        const libraryId = yield this.rootStore.LibraryId({objectId});
+        const writeToken = yield this.InitializeWrite({objectId});
 
-        for(const action of item.actions) {
-          yield action.Write({libraryId, objectId: item.objectId, writeToken});
-        }
+        yield store.Save({libraryId, objectId, writeToken});
 
-        yield this.Finalize({objectId: item.objectId});
+        yield this.Finalize({objectId});
+
+        yield store.ClearActions({objectId});
       } catch(error) {
         this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+        // Draft may have partial writes, must discard
+        this.DiscardWriteToken({objectId});
       }
     }
 
@@ -83,6 +90,10 @@ class EditStore {
 
   WriteToken({objectId}) {
     return this.writeInfo[objectId]?.writeToken;
+  }
+
+  DiscardWriteToken({objectId}) {
+    delete this.writeInfo[objectId];
   }
 
   InitializeWrite = flow(function * ({objectId}) {
