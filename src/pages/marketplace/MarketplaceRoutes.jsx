@@ -17,19 +17,19 @@ import MarketplaceAnalytics from "./MarketplaceAnalytics";
 const MarketplaceRoutes = observer(() => {
   const rootPath = "/marketplaces/";
   const routes = [
-    { root: true, navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceOverview /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.login, path: "/marketplaces/:marketplaceId/login", Component: <MarketplaceLoginCustomization /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items", Component: <MarketplaceItems /> },
-    { label: rootStore.l10n.pages.marketplaces.nav.items, path: "/marketplaces/:marketplaceId/items/:sku", Component: <MarketplaceItem /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.storefront, path: "/marketplaces/:marketplaceId/storefront", Component: <MarketplaceStorefront /> },
-    { label: rootStore.l10n.pages.marketplaces.nav.storefront, path: "/marketplaces/:marketplaceId/storefront/:sectionId", Component: <MarketplaceStorefrontSection /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections", Component: <MarketplaceCollections /> },
-    { label: rootStore.l10n.pages.marketplaces.nav.collections, path: "/marketplaces/:marketplaceId/collections/:collectionId", Component: <MarketplaceCollection /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events", Component: <MarketplaceVotingEvents /> },
-    { label: rootStore.l10n.pages.marketplaces.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events/:votingEventId", Component: <MarketplaceVotingEvent /> },
-    { navRoute: true, label: rootStore.l10n.pages.marketplaces.nav.analytics, path: "/marketplaces/:marketplaceId/analytics", Component: <MarketplaceAnalytics /> },
+    { root: true, navRoute: true, label: rootStore.l10n.pages.marketplace.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceOverview /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.theme, path: "/marketplaces/:marketplaceId/theme", Component: <MarketplaceTheme /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.login, path: "/marketplaces/:marketplaceId/login", Component: <MarketplaceLoginCustomization /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.items, path: "/marketplaces/:marketplaceId/items", Component: <MarketplaceItems /> },
+    { label: rootStore.l10n.pages.marketplace.nav.items, path: "/marketplaces/:marketplaceId/items/:sku", Component: <MarketplaceItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.storefront, path: "/marketplaces/:marketplaceId/storefront", Component: <MarketplaceStorefront /> },
+    { label: rootStore.l10n.pages.marketplace.nav.storefront, path: "/marketplaces/:marketplaceId/storefront/:sectionId", Component: <MarketplaceStorefrontSection /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.collections, path: "/marketplaces/:marketplaceId/collections", Component: <MarketplaceCollections /> },
+    { label: rootStore.l10n.pages.marketplace.nav.collections, path: "/marketplaces/:marketplaceId/collections/:collectionId", Component: <MarketplaceCollection /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events", Component: <MarketplaceVotingEvents /> },
+    { label: rootStore.l10n.pages.marketplace.nav.voting_events, path: "/marketplaces/:marketplaceId/voting-events/:votingEventId", Component: <MarketplaceVotingEvent /> },
+    { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.analytics, path: "/marketplaces/:marketplaceId/analytics", Component: <MarketplaceAnalytics /> },
   ]
     .map(route => ({
       ...route,
@@ -47,7 +47,7 @@ const MarketplaceRoutes = observer(() => {
         <Route
           element={
             <SectionLayout
-              backLink={({label: rootStore.l10n.pages.marketplaces.nav.list, path: "/marketplaces"})}
+              backLink={({label: rootStore.l10n.pages.marketplace.nav.list, path: "/marketplaces"})}
               links={routes}
               loadingMessage="Loading Marketplace"
               Load={async ({marketplaceId}) => marketplaceId && marketplaceStore.LoadMarketplace({marketplaceId})}

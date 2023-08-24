@@ -1,5 +1,6 @@
 import {flow, makeAutoObservable} from "mobx";
-import {StorageHandler} from "../helpers/Misc.js";
+import {StorageHandler} from "Helpers/Misc.js";
+import {FormatChangeList} from "./helpers/Changelist.js";
 
 // TODO: Move write token saving to database, load metadata from write token if present
 
@@ -28,7 +29,7 @@ class EditStore {
     });
   }
 
-  get changeList() {
+  ChangeLists() {
     const marketplaceActions = Object.keys(this.rootStore.marketplaceStore.actionStack)
       .map(marketplaceId => {
         const actions = this.rootStore.marketplaceStore.actionStack[marketplaceId];
@@ -41,7 +42,8 @@ class EditStore {
           name,
           objectId: marketplaceId,
           object: marketplace,
-          actions
+          actions,
+          changeList: FormatChangeList(actions)
         };
       });
 

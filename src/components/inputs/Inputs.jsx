@@ -342,7 +342,8 @@ const CheckboxInput = observer(({
         value: !value,
         category,
         subcategory,
-        label
+        label,
+        inverted: INVERTED
       })}
       componentProps={componentProps}
     />
@@ -1212,6 +1213,7 @@ const CollectionTable = observer(({
   objectId,
   path,
   field,
+  categoryFnParams,
   category,
   subcategory,
   label,
@@ -1235,6 +1237,19 @@ const CollectionTable = observer(({
   const filteredValues = filterable && debouncedFilter && Filter ?
     values.filter(value => Filter({filter: debouncedFilter, value})) :
     values;
+
+  if(categoryFnParams) {
+    category = (action) => {
+      const index = action.actionType === "REMOVE_LIST_ELEMENT" ? action.info.index : action.info.newIndex;
+      let label = categoryFnParams.fields
+        .map(labelField =>
+          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
+        )
+        .filter(f => f)[0];
+
+      return LocalizeString(categoryFnParams.l10n, { label });
+    };
+  }
 
   // Only show bottom add button if there are a lot of entries
   const showBottomAddButton = values.length >= 10;

@@ -85,6 +85,8 @@ export const MarketplaceItemSelect = observer(({
   objectId,
   path,
   field,
+  category,
+  subcategory,
   label,
   description,
   hint
@@ -111,6 +113,8 @@ export const MarketplaceItemSelect = observer(({
         objectId={objectId}
         path={path}
         field={field}
+        category={category}
+        subcategory={subcategory}
         label={label}
         description={description}
         hint={hint}
@@ -205,6 +209,8 @@ export const MarketplaceItemMultiselect = observer(({
         objectId={objectId}
         path={path}
         field={field}
+        category={category}
+        subcategory={subcategory}
         label={label}
         description={description}
         hint={hint}

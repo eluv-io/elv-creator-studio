@@ -1,27 +1,3 @@
-pages:
-  marketplaces:
-    nav:
-      list: Marketplaces
-      overview: Overview
-      general: General
-      images: Images
-      theme: Theme
-      login: Login
-      items: Items
-      storefront: Storefront
-      collections: Collections
-      voting_events: Voting Events
-      analytics: Analytics
-    items:
-      status:
-        available: Available
-        not_for_sale: Not for Sale
-        unreleased: Available {date}
-        expired: Expired {date}
-
-forms:
-  common:
-
 components:
   nav:
     home: Home
@@ -114,11 +90,14 @@ stores:
       saving: Running Initial Setup - Saving
 
 actions:
-  MODIFY_FIELD: Modified {label}
-  MODIFY_FIELD_UNSTACKABLE: Modified {label}
-  TOGGLE_FIELD: Toggled {label}
-  SET_LINK: Modified {label}
-  INSERT_LIST_ELEMENT: Added {label}
-  REMOVE_LIST_ELEMENT: Removed {label}
-  MOVE_LIST_ELEMENT: Moved {label}
+  CLEARED_FIELD: Cleared '{label}'
+  MODIFY_FIELD: Modified '{label}'
+  MODIFY_FIELD_UNSTACKABLE: Modified '{label}'
+  TOGGLE_FIELD: Toggled '{label}'
+  TOGGLE_FIELD_ON: Toggled '{label}' On
+  TOGGLE_FIELD_OFF: Toggled '{label}' Off
+  SET_LINK: Modified '{label}'
+  INSERT_LIST_ELEMENT: Added to list
+  REMOVE_LIST_ELEMENT: Removed from list
+  MOVE_LIST_ELEMENT: Moved list position
 

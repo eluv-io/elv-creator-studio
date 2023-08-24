@@ -28,6 +28,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.common.name}
+        subcategory={l10n.categories.info}
         path="/public/asset_metadata/info/branding"
         field="name"
       />
@@ -35,6 +36,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.TextArea
         {...inputProps}
         {...l10n.common.description}
+        subcategory={l10n.categories.info}
         path="/public/asset_metadata/info/branding"
         field="description"
       />
@@ -42,6 +44,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.general.tenant_id}
+        subcategory={l10n.categories.info}
         disabled
         path="/public/asset_metadata/info"
         field="tenant_id"
@@ -51,6 +54,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.general.tenant_slug}
+        subcategory={l10n.categories.info}
         disabled
         path="/public/asset_metadata/info"
         field="tenant_slug"
@@ -60,6 +64,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.general.marketplace_slug}
+        subcategory={l10n.categories.info}
         disabled
         path="/public/asset_metadata"
         field="slug"
@@ -68,6 +73,7 @@ const MarketplaceGeneralSettings = observer(() => {
       <Inputs.Password
         {...inputProps}
         {...l10n.general.preview_password}
+        subcategory={l10n.categories.info}
         path="/public/asset_metadata/info"
         field="preview_password_digest"
       />

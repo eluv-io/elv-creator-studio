@@ -3,16 +3,18 @@ import {useParams} from "react-router-dom";
 import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
-import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceItemInput.jsx";
+import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "Components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Group, Title} from "@mantine/core";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {ListItemCategory} from "Components/common/Misc.jsx";
 
 import {
   MarketplaceStorefrontSectionSpec,
   MarketplaceStorefrontBannerSpec,
   MarketplaceFooterLinkSpec
 } from "Specs/MarketplaceSpecs.js";
+
 import {IconSettings, IconPhotoEdit} from "@tabler/icons-react";
 
 export const MarketplaceStorefrontSection = observer(() => {
@@ -33,11 +35,18 @@ export const MarketplaceStorefrontSection = observer(() => {
   }
 
   const l10n = rootStore.l10n.pages.marketplace.form;
+  const listPath = "/public/asset_metadata/info/storefront/sections";
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/storefront/sections", sectionIndex.toString()),
-    category: l10n.categories.storefront_item_section
+    path: UrlJoin(listPath, sectionIndex.toString()),
+    category: ListItemCategory({
+      store: marketplaceStore,
+      objectId: marketplaceId,
+      listPath,
+      id: sectionId,
+      l10n: l10n.categories.storefront_item_section_label
+    })
   };
 
   return (
@@ -102,7 +111,7 @@ export const MarketplaceStorefrontSection = observer(() => {
       <MarketplaceItemMultiselect
         {...inputProps}
         {...l10n.storefront_section.items}
-        subcategory={l10n.categories.storefront_item_section_settings}
+        subcategory={l10n.categories.storefront_item_section_items}
         field="items"
       />
 
@@ -193,6 +202,7 @@ const MarketplaceStorefront = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.storefront.sections}
+        categoryFnParams={{fields: ["name", "id"], l10n: l10n.categories.storefront_item_section_label}}
         path="/public/asset_metadata/info/storefront"
         field="sections"
         idField="id"

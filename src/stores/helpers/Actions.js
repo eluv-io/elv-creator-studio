@@ -47,12 +47,23 @@ const GetMetadata = function({objectId, path, field}) {
     this.DebugLog({message: "Get metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
 
-  const pathComponents = UrlJoin(path, field).replace(/^\//, "").replace(/\/$/, "").split("/");
+  const pathComponents = UrlJoin(path, field || "").replace(/^\//, "").replace(/\/$/, "").split("/");
 
   return Get(this[this.objectsMapKey][objectId].metadata, pathComponents);
 };
 
-const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, field, value, category, subcategory, label}) {
+const SetMetadata = function({
+  actionType="MODIFY_FIELD",
+  objectId,
+  page,
+  path,
+  field,
+  value,
+  category,
+  subcategory,
+  label,
+  inverted=false
+}) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
@@ -65,11 +76,15 @@ const SetMetadata = function({actionType="MODIFY_FIELD", objectId, page, path, f
   this.ApplyAction({
     objectId,
     page,
-    key: fullPath,
+    path: fullPath,
     actionType,
     category,
     subcategory,
     label,
+    info: {
+      cleared: !value,
+      inverted
+    },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -150,12 +165,15 @@ const SetLink = flow(function * ({
   this.ApplyAction({
     objectId,
     page,
-    key: fullPath,
+    path: fullPath,
     target: writeValue ? writeValue["/"] : "",
     actionType,
     category,
     subcategory,
     label,
+    info: {
+      cleared: !writeValue
+    },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -199,6 +217,17 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
         throw Error("Remove list element: Index not specified or out of range: " + index);
       }
 
+      // If category is a function, resolve it now before item is removed
+      if(typeof category === "function") {
+        category = category({
+          actionType,
+          info: {
+            index,
+            newIndex
+          },
+        });
+      }
+
       newList = originalList.filter((_, i) => i !== index);
       break;
     case "MOVE_LIST_ELEMENT":
@@ -216,14 +245,19 @@ const ListAction = function({actionType, objectId, page, path, field, index, new
   }
 
   this.ApplyAction({
+    actionType,
     objectId,
     page,
-    key: fullPath,
+    path: UrlJoin(fullPath, (typeof newIndex !== "undefined" ? newIndex : index).toString()),
+    basePath: fullPath,
     listIndex: index || originalList.length,
-    actionType,
     category,
     subcategory,
     label,
+    info: {
+      index,
+      newIndex
+    },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, newList),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalList),
     Write: async (objectParams) => await this.client.ReplaceMetadata({
@@ -254,11 +288,13 @@ const ApplyAction = flow(function * ({
   actionType,
   objectId,
   page,
-  key,
+  path,
+  basePath,
   category,
   subcategory,
   label,
   description,
+  info={},
   Apply,
   Undo,
   Write
@@ -274,14 +310,13 @@ const ApplyAction = flow(function * ({
   if(stackable) {
     let stackableActions = [];
 
-
     for(let i = actionStack.length - 1; i >= 0; i--) {
       const action = actionStack[i];
       if(
         action.objectId !== objectId ||
         action.actionType !== actionType ||
         action.page !== page ||
-        action.key !== key
+        action.path !== path
       ) {
         break;
       }
@@ -306,11 +341,13 @@ const ApplyAction = flow(function * ({
     actionType,
     objectId,
     page,
-    key,
+    basePath,
+    path,
     category,
     subcategory,
     label,
     description,
+    info,
     Apply,
     Undo,
     Write

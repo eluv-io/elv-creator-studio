@@ -5,7 +5,7 @@ import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {Group, Box, Title, Tooltip} from "@mantine/core";
-import {ItemImage, LocalizeString} from "Components/common/Misc";
+import {ItemImage, ListItemCategory, LocalizeString} from "Components/common/Misc";
 import {FormatDate, FormatUSD, ParseDate} from "Helpers/Misc.js";
 
 import {MarketplaceItemSpec} from "Specs/MarketplaceSpecs.js";
@@ -30,11 +30,19 @@ export const MarketplaceItem = observer(() => {
   }
 
   const l10n = rootStore.l10n.pages.marketplace.form;
+  const listPath = "/public/asset_metadata/info/items";
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/items", itemIndex.toString()),
-    category: l10n.categories.item
+    path: UrlJoin(listPath, itemIndex.toString()),
+    category: ListItemCategory({
+      store: marketplaceStore,
+      objectId: marketplaceId,
+      listPath,
+      idField: "sku",
+      id: sku,
+      l10n: l10n.categories.item_label
+    })
   };
 
   return (
@@ -368,7 +376,7 @@ const MarketplaceItems = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.items.items}
-        category={l10n.categories.item}
+        categoryFnParams={{fields: ["name", "sku"], l10n: l10n.categories.item_label}}
         path="/public/asset_metadata/info"
         field="items"
         idField="sku"

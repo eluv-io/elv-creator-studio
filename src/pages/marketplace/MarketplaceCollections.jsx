@@ -11,6 +11,7 @@ import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
 
 import {MarketplaceCollectionSpec} from "Specs/MarketplaceSpecs.js";
 import {IconSettings} from "@tabler/icons-react";
+import {ListItemCategory} from "../../components/common/Misc.jsx";
 
 export const MarketplaceCollection = observer(() => {
   const { marketplaceId, collectionId } = useParams();
@@ -30,11 +31,19 @@ export const MarketplaceCollection = observer(() => {
   }
 
   const l10n = rootStore.l10n.pages.marketplace.form;
+  const listPath = "/public/asset_metadata/info/collections";
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/collections", collectionIndex.toString()),
-    category: l10n.categories.collection
+    path: UrlJoin(listPath, collectionIndex.toString()),
+    category: ListItemCategory({
+      store: marketplaceStore,
+      objectId: marketplaceId,
+      listPath,
+      idField: "sku",
+      id: collectionId,
+      l10n: l10n.categories.collection_label
+    })
   };
 
   return (
@@ -207,7 +216,7 @@ const MarketplaceCollections = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.collections.collections}
-        category={l10n.categories.collection}
+        categoryFnParams={{fields: ["name", "sku"], l10n: l10n.categories.collection_label}}
         path="/public/asset_metadata/info"
         field="collections"
         idField="sku"

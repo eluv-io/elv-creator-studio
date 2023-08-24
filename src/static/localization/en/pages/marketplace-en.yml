@@ -1,3 +1,16 @@
+nav:
+  list: Marketplaces
+  overview: Overview
+  general: General
+  images: Images
+  theme: Theme
+  login: Login
+  items: Items
+  storefront: Storefront
+  collections: Collections
+  voting_events: Voting Events
+  analytics: Analytics
+
 form:
   categories:
     general: General
@@ -11,6 +24,7 @@ form:
     login_theme: Login Theme
     terms_and_consent: Terms and User Consent
     item: Marketplace Item
+    item_label: Item '{label}'
     item_info: Item Info
     item_display_options: Display Options
     item_purchase_details: Purchase Details
@@ -30,14 +44,19 @@ form:
     storefront_footer_link_info: Storefront Footer Link Info
     storefront_footer_link_content: Storefront Footer Link Content
     storefront_item_section: Storefront Item Section
+    storefront_item_section_label: Storefront Section '{label}'
     storefront_item_section_info: Storefront Section Info
     storefront_item_section_settings: Storefront Section Settings
+    storefront_item_section_items: Storefront Section Items
     collections_page: Collections Page
     default_collection_redemption: Default Collection Redemption
     collection: Collection
+    collection_label: Collection '{label}'
     collection_info: Collection Info
     collection_redemption: Collection Redemption
     voting_event: Voting Event
+    voting_event_label: Voting Event '{label}'
+    voting_event_details: Event Details
     analytics: Analytics
     general_analytics: General Analytics
     storefront_analytics: Storefront Analytics

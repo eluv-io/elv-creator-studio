@@ -41,3 +41,13 @@ export const LocalizeString = (text="", variables={}, options={reactNode: false}
     </>
   );
 };
+
+export const ListItemCategory = ({store, objectId, listPath, idField="id", id, labelField="name", l10n}) => {
+  return () => {
+    const item = (store.GetMetadata({objectId, path: listPath}) || []).find(item => item[idField] === id);
+
+    if(!item) { return ""; }
+
+    return LocalizeString(l10n, {label: item[labelField || id]});
+  };
+};

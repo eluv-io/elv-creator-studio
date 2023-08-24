@@ -7,6 +7,7 @@ import {MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceIte
 import UrlJoin from "url-join";
 
 import {MarketplaceVotingEventSpec} from "Specs/MarketplaceSpecs.js";
+import {ListItemCategory} from "../../components/common/Misc.jsx";
 
 export const MarketplaceVotingEvent = observer(() => {
   const { marketplaceId, votingEventId } = useParams();
@@ -26,11 +27,20 @@ export const MarketplaceVotingEvent = observer(() => {
   }
 
   const l10n = rootStore.l10n.pages.marketplace.form;
+  const listPath = "/public/asset_metadata/info/voting_events";
   const inputProps = {
     store: marketplaceStore,
     objectId: marketplaceId,
-    path: UrlJoin("/public/asset_metadata/info/voting_events", votingEventIndex.toString()),
-    category: l10n.categories.voting_event
+    path: UrlJoin(listPath, votingEventIndex.toString()),
+    category: ListItemCategory({
+      store: marketplaceStore,
+      objectId: marketplaceId,
+      listPath,
+      id: votingEventId,
+      labelField: "title",
+      l10n: l10n.categories.voting_event_label
+    }),
+    subcategory: l10n.categories.voting_event_details
   };
 
   return (
@@ -114,6 +124,7 @@ const MarketplaceVotingEvents = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.voting_events.voting_events}
+        categoryFnParams={{fields: ["title", "id"], l10n: l10n.categories.voting_event_label}}
         path="/public/asset_metadata/info"
         field="voting_events"
         idField="id"
