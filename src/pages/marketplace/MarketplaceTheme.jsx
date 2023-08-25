@@ -31,17 +31,14 @@ const MarketplaceTheme = observer(() => {
         field="use_tenant_styling"
       />
 
-      {
-        info.branding.use_tenant_styling ? null :
-          <Inputs.ImageInput
-            {...inputProps}
-            {...l10n.theme.app_background}
-            fields={[
-              { field: "background", ...l10n.theme.background_desktop },
-              { field: "background_mobile", ...l10n.theme.background_mobile }
-            ]}
-          />
-      }
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.theme.app_background}
+        fields={[
+          { field: "background", ...l10n.theme.background_desktop },
+          { field: "background_mobile", ...l10n.theme.background_mobile }
+        ]}
+      />
 
       <Inputs.Select
         {...inputProps}

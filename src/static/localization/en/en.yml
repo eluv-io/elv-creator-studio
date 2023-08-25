@@ -41,6 +41,7 @@ components:
       hint: Alt text is included with images to enable screen readers to provide information about the image for those who are visually impaired or otherwise unable to view the image. The alt text should include a description of the image as well as any information the image is intended to convey.
     validation:
       invalid_url: Invalid URL
+      invalid_address: Invalid Address
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory

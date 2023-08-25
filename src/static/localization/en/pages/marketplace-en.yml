@@ -133,8 +133,8 @@ form:
 
   theme:
     use_tenant_styling:
-      label: Use Tenant Styling
-      description: Override marketplace styling with tenant styling on pages outside of the store
+      label: Use Global Theme
+      description: Allow overriding of this marketplace's styling with global styling on pages outside of the storefront, item pages and collections. See 'Global Media Wallet Theme' section in tenant settings to set the global theme.
     app_background:
       label: App Background
     background_desktop:

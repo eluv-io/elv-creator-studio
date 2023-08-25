@@ -1,12 +1,21 @@
 import {flow, makeAutoObservable} from "mobx";
 import {ExtractHashFromLink} from "Helpers/Fabric.js";
+import {AddActions} from "./helpers/Actions.js";
 
 class TenantStore {
+  tenant = {};
   tenantInfo;
 
-  tenantLatest;
   tenantProduction;
   tenantStaging;
+
+  get tenantObjectId() {
+    return this.tenantInfo.objectId;
+  }
+
+  get tenantLatest() {
+    return this.tenant[this.tenantObjectId];
+  }
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -27,7 +36,7 @@ class TenantStore {
   RetrieveTenant = flow(function * ({environment="latest"}={}) {
     let tenantHash;
     if(!environment || environment === "latest") {
-      tenantHash = yield this.client.LatestVersionHash({objectId: this.tenantInfo.objectId});
+      tenantHash = yield this.client.LatestVersionHash({objectId: this.tenantObjectId});
     } else {
       tenantHash = ExtractHashFromLink(
         yield this.client.ContentObjectMetadata({
@@ -65,12 +74,19 @@ class TenantStore {
       };
     });
 
-    this[`tenant${environment.capitalize()}`] = {
+    const tenant = {
+      libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
       versionHash: tenantHash,
       metadata,
       marketplaces,
       sites
     };
+
+    if(environment === "latest") {
+      this.tenant[this.tenantObjectId] = tenant;
+    } else {
+      this[`tenant${environment.capitalize()}`] = tenant;
+    }
   });
 
   get client() {
@@ -93,5 +109,7 @@ class TenantStore {
     this.rootStore.DebugLog(...arguments);
   }
 }
+
+AddActions(TenantStore, "tenant");
 
 export default TenantStore;

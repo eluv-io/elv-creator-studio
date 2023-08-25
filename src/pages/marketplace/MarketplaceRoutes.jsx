@@ -14,8 +14,7 @@ import MarketplaceCollections, {MarketplaceCollection} from "./MarketplaceCollec
 import MarketplaceVotingEvents, {MarketplaceVotingEvent} from "./MarketplaceVotingEvents.jsx";
 import MarketplaceAnalytics from "./MarketplaceAnalytics";
 
-const MarketplaceRoutes = observer(() => {
-  const rootPath = "/marketplaces/";
+const MarketplaceRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.marketplace.nav.overview, path: "/marketplaces/:marketplaceId", Component: <MarketplaceOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.marketplace.nav.general, path: "/marketplaces/:marketplaceId/general", Component: <MarketplaceGeneralSettings /> },

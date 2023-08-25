@@ -15,6 +15,8 @@ const HintIcon = ({hint, componentProps={}}) => {
 
 // Field label - includes hint icon if hint is specified
 export const InputLabel = ({label, hint, centered}) => {
+  if(!label && !hint) { return null; }
+
   return (
     !hint ? label :
       <Group

@@ -29,29 +29,38 @@ class EditStore {
     });
   }
 
+  // Gather changelists from each relevant store
   ChangeLists() {
-    const marketplaceActions = Object.keys(this.rootStore.marketplaceStore.actionStack)
-      .map(marketplaceId => {
-        const actions = this.rootStore.marketplaceStore.actionStack[marketplaceId];
-        if(!actions || actions.length === 0) { return; }
+    const GetChangeList = ({type, storeKey, namePath="/public/asset_metadata/info/name"}) => {
+      const store = this.rootStore[storeKey];
 
-        const marketplace = this.rootStore.marketplaceStore.marketplaces[marketplaceId];
-        const name = marketplace?.metadata?.public?.asset_metadata?.info?.branding?.name || marketplaceId;
-        return {
-          type: "Marketplace",
-          store: "marketplaceStore",
-          name,
-          objectId: marketplaceId,
-          object: marketplace,
-          actions,
-          changeList: FormatChangeList(actions)
-        };
-      });
+      return Object.keys(store.actionStack)
+        .map(objectId => {
+          const actions = store.actionStack[objectId];
+
+          if(!actions || actions.length === 0) {
+            return;
+          }
+
+          const object = store[store.objectsMapKey][objectId];
+          const name = store.GetMetadata({objectId, path: namePath}) || objectId;
+          return {
+            type,
+            storeKey,
+            name,
+            objectId,
+            object,
+            actions,
+            changeList: FormatChangeList(actions)
+          };
+        })
+        .filter(a => a);
+    };
 
     return [
-      ...marketplaceActions
-    ]
-      .filter(actions => actions);
+      ...GetChangeList({type: "Tenant", storeKey: "tenantStore"}),
+      ...GetChangeList({type: "Marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"})
+    ];
   }
 
   ToggleSaveModal(show) {
@@ -63,7 +72,7 @@ class EditStore {
       if(!selectedObjectIds.includes(item.objectId)) {
         continue;
       }
-      const store = this.rootStore[item.store];
+      const store = this.rootStore[item.storeKey];
       const objectId = item.objectId;
 
       try {

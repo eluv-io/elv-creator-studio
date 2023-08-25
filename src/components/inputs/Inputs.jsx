@@ -297,7 +297,7 @@ const Input = observer(({
       {...componentProps}
       placeholder={placeholder}
       error={error}
-      label={<InputLabel label={label} hint={hint} />}
+      label={label || hint ? <InputLabel label={label} hint={hint} /> : ""}
       description={description}
       value={value}
       onChange={event => {
@@ -497,7 +497,7 @@ const CodeInput = observer(({
   const [editing, setEditing] = useState(false);
   const [validationResults, setValidationResults] = useState(undefined);
 
-  let value = store.GetMetadata({objectId, path, field});
+  let value = store.GetMetadata({objectId, path, field}) || "";
 
   useEffect(() => {
     if(language === "css") {
@@ -516,7 +516,7 @@ const CodeInput = observer(({
         title={rootStore.l10n.components.actions.edit}
         aria-label={rootStore.l10n.components.actions.edit}
         onClick={() => setEditing(!editing)}
-        style={{position: "absolute", top: 10, right: 10}}
+        style={{position: "absolute", top: 0, right: 0}}
       >
         { editing ? <IconEditOff /> : <IconEdit /> }
       </ActionIcon>
@@ -534,17 +534,18 @@ const CodeInput = observer(({
             defaultValue={defaultValue}
             componentProps={{...componentProps, maw: 800, mb:0, minRows: componentProps.minRows || 20}}
           /> :
-          <ScrollArea mah={500} style={{overflow: "hidden"}}>
-            <Prism
-              mt="xl"
-              language={language}
-              mah={450}
-              withLineNumbers
-              highlightLines={highlightedLines}
-            >
-              {value}
-            </Prism>
-          </ScrollArea>
+          value ?
+            <ScrollArea mah={500} style={{overflow: "hidden"}}>
+              <Prism
+                mt="xl"
+                language={language}
+                mah={450}
+                withLineNumbers
+                highlightLines={highlightedLines}
+              >
+                {value}
+              </Prism>
+            </ScrollArea> : null
       }
     </InputWrapper>
   );
@@ -930,12 +931,20 @@ const ImageInput = observer(({
   subcategory,
   label,
   description,
-  hint
+  hint,
+  componentProps={}
 }) => {
   const location = useLocation();
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} h="max-content" w="max-content">
+    <InputWrapper
+      label={label}
+      description={description}
+      hint={hint}
+      h="max-content"
+      w="max-content"
+      {...componentProps}
+    >
       <Group my="md">
         {
           fields.map((field) =>
@@ -991,7 +1000,8 @@ const ListInputs = observer(({
   fieldLabel,
   fields=[],
   index,
-  renderItem
+  renderItem,
+  inputProps={}
 }) => {
   if(renderItem) {
     const value = (store.GetMetadata({objectId, path: UrlJoin(path, field), field: index.toString()}) || []);
@@ -1019,9 +1029,9 @@ const ListInputs = observer(({
         field={index.toString()}
         category={category}
         subcategory={subcategory}
-        label={fieldLabel}
         actionLabel={actionLabel}
-        componentProps={{style: {flexGrow: "1"}}}
+        componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
+        {...inputProps}
       />
     );
   }
@@ -1084,7 +1094,8 @@ const List = observer(({
   fields=[],
   newEntrySpec={},
   renderItem,
-  showBottomAddButton
+  showBottomAddButton,
+  inputProps={}
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
@@ -1097,16 +1108,16 @@ const List = observer(({
       <Draggable key={`draggable-item-${id}`} index={index} draggableId={`item-${id}`}>
         {(provided, snapshot) => (
           <Paper
-            withBorder
+            withBorder={!simpleList}
             shadow={snapshot.isDragging ? "lg" : ""}
-            p="sm"
+            p={simpleList ? 0 : "sm"}
             maw={800}
             ref={provided.innerRef}
             key={`list-item-${id}`}
             {...provided.draggableProps}
           >
             <Group align="start" style={{position: "relative"}} px={40}>
-              <div style={{cursor: "grab", position: "absolute", top: 0, left: 0}} {...provided.dragHandleProps}>
+              <div style={{cursor: "grab", position: "absolute", top: simpleList ? 5 : 0, left: 0}} {...provided.dragHandleProps}>
                 <IconGripVertical/>
               </div>
               <Container p={0} m={0} fluid w="100%">
@@ -1123,10 +1134,11 @@ const List = observer(({
                   fields={fields}
                   index={index}
                   renderItem={renderItem}
+                  inputProps={inputProps}
                 />
               </Container>
               <ActionIcon
-                style={{position: "absolute", top: 0, right: 0}}
+                style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
                 title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
                 aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel.toLowerCase()})}
                 onClick={() => {
@@ -1192,7 +1204,7 @@ const List = observer(({
               newIndex: destination.index,
               category,
               subcategory,
-              label
+              label: actionLabel || fieldLabel
             })
           }
         >

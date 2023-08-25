@@ -5,7 +5,7 @@ import {
   IconArrowBackUp as IconUndo,
   IconArrowForwardUp as IconRedo
 } from "@tabler/icons-react";
-import {rootStore, marketplaceStore} from "Stores";
+import {rootStore, marketplaceStore, tenantStore} from "Stores";
 
 const HistoryButtons = observer(({section}) => {
   const params = useParams();
@@ -14,6 +14,10 @@ const HistoryButtons = observer(({section}) => {
 
   let store, objectId;
   switch(section) {
+    case "tenant":
+      store = tenantStore;
+      objectId = tenantStore.tenantObjectId;
+      break;
     case "marketplace":
       store = marketplaceStore;
       objectId = params.marketplaceId;

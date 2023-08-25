@@ -11,7 +11,17 @@ export const ValidateUrl = url => {
   }
 };
 
+export const ValidateAddress = address => {
+  try {
+    if(!address) { return; }
 
+    if(!rootStore.utils.ValidAddress(address)) {
+      throw "Invalid Address";
+    }
+  } catch(error) {
+    return rootStore.l10n.components.inputs.validation.invalid_address;
+  }
+};
 
 // Note - Unlike other validation functions, ValidateCSS returns additional results, not just the error message
 export const ValidateCSS = css => {

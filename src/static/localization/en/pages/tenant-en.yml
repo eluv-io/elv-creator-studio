@@ -1,0 +1,61 @@
+nav:
+  overview: Overview
+  general: General
+  theme: Global Theme
+form:
+  categories:
+    general: Settings
+    info: Info
+    global_theme: Global Theme
+    global_wallet_theme: Global Media Wallet Theme
+    sales: Item Sales Settings
+    advanced: Advanced Settings
+    owners: Owners
+    leaderboard_excludes: Leaderboard Excluded Addresses
+  general:
+    name:
+      label: Name
+    tenant_id:
+      label: Tenant ID
+    owners:
+      label: Owners
+      fieldLabel: Owner
+    revenue_address:
+      label: Revenue Address
+    royalty_address:
+      label: Royalty Address
+    royalty_percentage:
+      label: Royalty Percentage
+      description: Default royalty percentage for secondary market sales. May be overridden on a per-item basis.
+    min_listing_price:
+      label: Minimum Listing Price (USD)
+      description: Minimum price that items from your marketplaces may be sold for on the secondary market.
+    leaderboard_excludes:
+      label: Leaderboard Excluded Addresses
+      description: Any addresses listed here will be excluded from the leaderboards in your marketplaces
+      fieldLabel: Address
+    openid:
+      label: Open ID Settings
+    use_custom_openid:
+      label: Use Custom OpenID Provider
+      description: Specify a custom OpenID provider for use with the Eluvio Custodial Wallet
+    issuer_id:
+      label: Issuer ID
+      description: "A short, unique ID used to namespace custodial wallet keys. Warning: If this ID changes, all private keys assigned to users previously will change."
+    issuer_url:
+      label: Issuer URL
+      description: The exact issuer URL.  This URL may change as long as the issuer unique ID remains unchanged.
+
+
+  global_theme:
+    enable_global_theme:
+      label: Enable Global Media Wallet Theme
+      description: Override settings for all marketplaces with 'Use Global Theme' enabled. Overrides marketplace theme on pages outside of the marketplace storefront, item pages and collections. This includes all secondary market pages as well as user profile and item pages.
+    app_background:
+      label: App Background
+    background_desktop:
+      label: Background (Desktop)
+    background_mobile:
+      label: Background (Mobile)
+    wallet_css:
+      label: Custom Media Wallet CSS
