@@ -152,84 +152,98 @@ export const FormatChangeList = changeList => {
     uncategorized: []
   };
 
-  changeList.forEach((action) => {
-    if(!rootStore.l10n.actions[action.actionType]) { return; }
+  changeList
+    .filter(action => action.actionType !== "SET_DEFAULT")
+    .forEach((action) => {
+      if(!rootStore.l10n.actions[action.actionType]) { return; }
 
-    if(!action.label) {
-      rootStore.DebugLog({message: "Unlabelled action", level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
-      rootStore.DebugLog({message: action, level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
-      return;
-    }
+      if(!action.label) {
+        rootStore.DebugLog({message: "Unlabelled action", level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
+        rootStore.DebugLog({message: action, level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});
+        return;
+      }
 
-    if(!action.category) {
-      formattedChangeList.uncategorized.push(action);
-      return;
-    }
+      if(!action.category) {
+        formattedChangeList.uncategorized.push(action);
+        return;
+      }
 
-    let category = action.category;
-    if(typeof category === "function") {
-      category = category(action);
-    }
+      let category = action.category;
+      if(typeof category === "function") {
+        category = category(action);
+      }
 
-    formattedChangeList[category] = formattedChangeList[category] || { uncategorized: [] };
+      formattedChangeList[category] = formattedChangeList[category] || { uncategorized: [] };
 
-    if(!action.subcategory) {
-      formattedChangeList[category].uncategorized.push(action);
-    } else {
-      formattedChangeList[category][action.subcategory] = formattedChangeList[category][action.subcategory] || [];
-      formattedChangeList[category][action.subcategory].push(action);
-    }
-  });
-
-  let changeListString = [];
-  let changeListElements = [];
-
-  const categories = [...new Set(Object.keys(formattedChangeList))].sort();
-  categories.forEach(category => {
-    if(category === "uncategorized") { return; }
-
-    changeListString.push(`${category}:`);
-    changeListElements.push({type: "category", value: category, level: 0});
-
-    const subcategories = [...new Set(Object.keys(formattedChangeList[category]))].sort();
-    subcategories.forEach(subcategory => {
-      if(subcategory === "uncategorized") { return; }
-
-      changeListString.push(`  ${subcategory}:`);
-      changeListElements.push({type: "subcategory", value: subcategory, level: 1});
-
-      const modifications = [
-        ...new Set(
-          formattedChangeList[category][subcategory]
-            .map(action => ActionToString(action))
-        )
-      ].sort();
-
-      modifications.forEach(modification => {
-        changeListString.push(`    ${modification}`);
-        changeListElements.push({type: "field", value: modification, level: 2});
-      });
+      if(!action.subcategory) {
+        formattedChangeList[category].uncategorized.push(action);
+      } else {
+        formattedChangeList[category][action.subcategory] = formattedChangeList[category][action.subcategory] || [];
+        formattedChangeList[category][action.subcategory].push(action);
+      }
     });
 
-    if(formattedChangeList[category].uncategorized.length > 0) {
-      formattedChangeList[category].uncategorized.forEach(action => {
-        const modification = ActionToString(action);
-        changeListString.push(`  ${modification}`);
-        changeListElements.push({type: "field", value: modification, level: 1});
+    let changeListString = [];
+    let changeListMarkdown = [];
+    let changeListElements = [];
+
+    const categories = [...new Set(Object.keys(formattedChangeList))].sort();
+    categories.forEach((category, index) => {
+      if(category === "uncategorized") { return; }
+
+      if(index > 0) {
+        changeListMarkdown.push(" --- ");
+      }
+
+      changeListMarkdown.push(`### ${category}`);
+      changeListString.push(`${category}:`);
+      changeListElements.push({type: "category", value: category, level: 0});
+
+      const subcategories = [...new Set(Object.keys(formattedChangeList[category]))].sort();
+      subcategories.forEach(subcategory => {
+        if(subcategory === "uncategorized") { return; }
+
+        changeListMarkdown.push(`#### ${subcategory}`);
+        changeListString.push(`  ${subcategory}:`);
+        changeListElements.push({type: "subcategory", value: subcategory, level: 1});
+
+        const modifications = [
+          ...new Set(
+            formattedChangeList[category][subcategory]
+              .map(action => ActionToString(action))
+          )
+        ].sort();
+
+        modifications.forEach(modification => {
+          changeListMarkdown.push(`- ${modification}`);
+          changeListString.push(`    ${modification}`);
+          changeListElements.push({type: "field", value: modification, level: 2});
+        });
       });
-    }
-  });
+
+      if(formattedChangeList[category].uncategorized.length > 0) {
+        formattedChangeList[category].uncategorized.forEach(action => {
+          const modification = ActionToString(action);
+          changeListMarkdown.push(`- ${modification}`);
+          changeListString.push(`  ${modification}`);
+          changeListElements.push({type: "field", value: modification, level: 1});
+        });
+      }
+    });
 
   if(formattedChangeList.uncategorized.length > 0) {
     formattedChangeList.uncategorized.forEach(action => {
       const modification = ActionToString(action);
+      changeListMarkdown.push(" --- ");
+      changeListMarkdown.push(`### ${modification}`);
       changeListString.push(`${modification}`);
       changeListElements.push({type: "field", value: modification, level: 0});
     });
   }
 
   return {
-    string: changeListString,
+    string: changeListString.join("\n"),
+    markdown: changeListMarkdown.join("\n"),
     elements: changeListElements
   };
 };

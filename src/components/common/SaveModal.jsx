@@ -4,26 +4,52 @@ import {observer} from "mobx-react-lite";
 import {
   Container,
   Modal,
-  Paper,
   Group,
   Stack,
   Text,
   Title,
   Button,
   Accordion,
-  Box
+  Box,
+  Textarea
 } from "@mantine/core";
-import CheckboxCard from "../inputs/CheckboxCard.jsx";
+import InputWrapper from "Components/inputs/InputWrapper";
+import CheckboxCard from "Components/inputs/CheckboxCard.jsx";
 import {IconEdit} from "@tabler/icons-react";
 
-const ModifiedItem = observer(({item, selected, setSelected}) => {
+const ModifiedItem = observer(({
+  item,
+  selected,
+  setSelected,
+  commitMessages,
+  setCommitMessages,
+  error
+}) => {
   const indentWidth = 25;
 
   return (
-    <Paper withBorder p="xl">
+    <InputWrapper
+      label={item.name}
+      description={item.objectId}
+      error={error?.toString()}
+      withBorder
+      p="xl"
+      pt="md"
+      wrapperProps={{
+        styles: theme => ({
+          label: {
+            fontSize: theme.fontSizes.lg,
+            fontWeight: 600
+          },
+          error: {
+            marginTop: theme.spacing.md
+          }
+        })
+      }}
+    >
       <CheckboxCard
-        label={item.name}
-        description={item.objectId}
+        mt="lg"
+        label="Save Changes"
         checked={selected.includes(item.objectId)}
         onChange={checked => {
           if(checked) {
@@ -66,12 +92,25 @@ const ModifiedItem = observer(({item, selected, setSelected}) => {
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
-    </Paper>
+
+      {
+        !selected.includes(item.objectId) ? null :
+          <Textarea
+            mt="xs"
+            minRows={1}
+            label="Commit Message"
+            value={commitMessages[item.objectId] || ""}
+            onChange={event => setCommitMessages({...commitMessages, [item.objectId]: event.target.value})}
+          />
+      }
+    </InputWrapper>
   );
 });
 
 const SaveModalContent = observer(() => {
   const [selected, setSelected] = useState(editStore.ChangeLists().map(item => item.objectId));
+  const [commitMessages, setCommitMessages] = useState({});
+  const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
   const modifiedItems = (
@@ -81,6 +120,9 @@ const SaveModalContent = observer(() => {
         item={item}
         selected={selected}
         setSelected={setSelected}
+        commitMessages={commitMessages}
+        setCommitMessages={setCommitMessages}
+        error={errors[item.objectId]}
       />
     )
   );
@@ -101,9 +143,21 @@ const SaveModalContent = observer(() => {
           onClick={async () => {
             setSaving(true);
             try {
-              await editStore.Save(selected);
-              editStore.ToggleSaveModal(false);
+              const errors = await editStore.Save({
+                selectedObjectIds: selected,
+                commitMessages
+              });
+
+              if(Object.keys(errors).length === 0) {
+                // Saved successfully
+                editStore.ToggleSaveModal(false);
+              } else {
+                // Errors
+                setErrors(errors);
+                setSaving(false);
+              }
             } catch(error) {
+              rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setSaving(false);
             }
           }}

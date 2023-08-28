@@ -6,8 +6,12 @@ import {rootStore, tenantStore} from "Stores";
 import TenantGeneralSettings from "./TenantGeneralSettings.jsx";
 import TenantTheme from "./TenantTheme.jsx";
 
+import Markdown from "Components/common/Markdown";
+
+const markdown = "# TEST\n## second\n### third\n#### fourth\n##### fifth\n\n Lorem Ipsum\n ---\n\nLorem Ipsum";
+
 const TenantOverview = () => {
-  return (<div>Overview</div>);
+  return (<Markdown content={markdown} style={{maxWidth: 600}} />);
 };
 
 const TenantRoutes = observer(({rootPath}) => {

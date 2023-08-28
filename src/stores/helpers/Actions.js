@@ -96,8 +96,8 @@ const SetMetadata = function({
 };
 
 // Set a default value of a field that will not be subject to the undo/redo flow
-const SetDefaultValue = function({objectId, path, field, value}) {
-  this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, value});
+const SetDefaultValue = function({objectId, path, field, category, subcategory, label, value}) {
+  this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, category, subcategory, label, value});
 };
 
 // Links

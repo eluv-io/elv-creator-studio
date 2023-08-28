@@ -7,9 +7,9 @@ const CheckboxCard = observer(({
   label,
   description,
   hint,
-  componentProps={},
   checked,
-  onChange
+  onChange,
+  ...componentProps
 }) => {
   return (
     <UnstyledButton
@@ -18,17 +18,19 @@ const CheckboxCard = observer(({
       w="100%"
       maw={600}
       onClick={() => onChange(!checked)}
+      {...componentProps}
     >
       <InputWrapper
         label={label}
         description={description}
         hint={hint}
         flex
-        wrapperProps={{pr: 50}}
+        wrapperProps={{
+          pr: 50,
+        }}
       >
         <Checkbox
           style={{position: "absolute", right: -25}}
-          {...componentProps}
           checked={INVERTED ? !checked : !!checked}
           onChange={() => {}}
           tabIndex={-1}

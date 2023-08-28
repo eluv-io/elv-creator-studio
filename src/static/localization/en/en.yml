@@ -94,6 +94,7 @@ stores:
       saving: Running Initial Setup - Saving
 
 actions:
+  SET_DEFAULT: Set Default Value for `{label}`
   CLEARED_FIELD: Cleared '{label}'
   MODIFY_FIELD: Modified '{label}'
   MODIFY_FIELD_UNSTACKABLE: Modified '{label}'

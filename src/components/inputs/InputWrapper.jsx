@@ -34,7 +34,7 @@ export const InputLabel = ({label, hint, centered}) => {
   );
 };
 
-const InputWrapper = observer(({label, description, hint, children, flex, wrapperProps={}, ...componentProps}) => {
+const InputWrapper = observer(({label, description, hint, error, children, flex, wrapperProps={}, ...componentProps}) => {
   wrapperProps.style = wrapperProps.style ||
     (!flex ? { position: "relative" } : { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "});
 
@@ -43,6 +43,7 @@ const InputWrapper = observer(({label, description, hint, children, flex, wrappe
       <MantineInput.Wrapper
         label={<InputLabel label={label} hint={hint} />}
         description={description}
+        error={error}
         style={{position: "relative"}}
         {...wrapperProps}
       >

@@ -38,6 +38,7 @@
     "firebase": "^10.1.0",
     "lodash": "^4.17.21",
     "mantine-datatable": "^2.9.7",
+    "markdown-it": "^13.0.1",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "pretty-bytes": "^6.1.1",

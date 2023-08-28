@@ -1,4 +1,4 @@
-import "Assets/stylesheets/rich-text.scss";
+import "Assets/stylesheets/wallet-rich-text.scss";
 
 import {
   Input as MantineInput,
@@ -210,7 +210,7 @@ const Input = observer(({
         value = GenerateUUID();
       }
 
-      store.SetDefaultValue({objectId, path, field, value});
+      store.SetDefaultValue({objectId, path, field, category, subcategory, label, value});
     }
   });
 
@@ -410,7 +410,7 @@ const CheckboxInput = observer(({
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
     if(typeof store.GetMetadata({objectId, path, field}) === "undefined") {
-      store.SetDefaultValue({objectId, path, field, value: defaultValue});
+      store.SetDefaultValue({objectId, path, field, category, subcategory, label, value: defaultValue});
     }
   });
 
@@ -435,7 +435,7 @@ const CheckboxInput = observer(({
         label,
         inverted: INVERTED
       })}
-      componentProps={componentProps}
+      {...componentProps}
     />
   );
 });
@@ -465,7 +465,7 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
           </Container> :
           value ?
             <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
-              <div className="rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
+              <div className="wallet-rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
             </Paper> : null
       }
       <ActionIcon

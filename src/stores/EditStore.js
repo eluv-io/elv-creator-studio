@@ -17,6 +17,10 @@ class EditStore {
     makeAutoObservable(this);
   }
 
+  get hasUnsavedChanges() {
+    return this.ChangeLists().length > 0;
+  }
+
   Initialize() {
     // Ensure saved write tokens are mapped to proper nodes in client
     Object.values(this.writeInfo).forEach(({writeToken, fabricNodeUrl}) => {
@@ -38,7 +42,7 @@ class EditStore {
         .map(objectId => {
           const actions = store.actionStack[objectId];
 
-          if(!actions || actions.length === 0) {
+          if(!actions || actions.length === 0 || !actions.find(action => action.actionType !== "SET_DEFAULT")) {
             return;
           }
 
@@ -67,7 +71,8 @@ class EditStore {
     this.showSaveModal = show;
   }
 
-  Save = flow(function * (selectedObjectIds) {
+  Save = flow(function * ({selectedObjectIds, commitMessages}) {
+    let errors = {};
     for(const item of this.ChangeLists()) {
       if(!selectedObjectIds.includes(item.objectId)) {
         continue;
@@ -84,17 +89,48 @@ class EditStore {
 
         yield store.Save({libraryId, objectId, writeToken});
 
+        yield this.client.ReplaceMetadata({
+          libraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: "changelist",
+          metadata: item.changeList.markdown
+        });
+
+        let commitHistory = (yield this.client.ContentObjectMetadata({
+          libraryId,
+          objectId,
+          metadataSubtree: "commit_history"
+        })) || [];
+
+        commitHistory.unshift({
+          message: commitMessages[objectId],
+          author: (yield this.client.userProfileClient.UserMetadata({metadataSubtree: "public/name"})) || this.rootStore.address,
+          author_address: this.rootStore.address,
+          timestamp: new Date().toISOString(),
+          changelist: item.changeList.markdown
+        });
+
+        yield this.client.ReplaceMetadata({
+          libraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: "commit_history",
+          metadata: commitHistory
+        });
+
         yield this.Finalize({objectId});
 
-        yield store.ClearActions({objectId});
+        yield store.ClearActions({objectId, commitMessage: commitMessages[objectId] || ""});
       } catch(error) {
         this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
-        // Draft may have partial writes, must discard
-        this.DiscardWriteToken({objectId});
+        errors[objectId] = error;
       }
     }
 
     this.rootStore.uiStore.SetLoading(false);
+
+    return errors;
   });
 
   WriteToken({objectId}) {
@@ -127,7 +163,7 @@ class EditStore {
     return writeToken;
   });
 
-  Finalize = flow(function * ({objectId}) {
+  Finalize = flow(function * ({objectId, commitMessage}) {
     const libraryId = yield this.rootStore.LibraryId({objectId});
 
     const writeInfo = this.writeInfo[objectId];
@@ -140,7 +176,7 @@ class EditStore {
       libraryId,
       objectId,
       writeToken: writeInfo.writeToken,
-      commitMessage: ""
+      commitMessage
     });
 
     delete this.writeInfo[objectId];

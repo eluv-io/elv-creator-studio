@@ -8,9 +8,12 @@ const AppHeader = observer(() => {
   return (
     <Header height={60}>
       <Flex justify="flex-end" align="center" h="100%" px="xl" gap={50}>
-        <Button onClick={() => editStore.ToggleSaveModal(true)}>
-          Save
-        </Button>
+        {
+          !editStore.hasUnsavedChanges ? null :
+            <Button onClick={() => editStore.ToggleSaveModal(true)}>
+              Save
+            </Button>
+        }
         <ActionIcon onClick={() => uiStore.SetTheme(uiStore.theme === "light" ? "dark" : "light")}>
           <IconBrightnessUpFilled />
         </ActionIcon>
