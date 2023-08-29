@@ -3,16 +3,9 @@ import {Route, Routes} from "react-router-dom";
 import SectionLayout from "Components/common/SectionLayout.jsx";
 import {rootStore, tenantStore} from "Stores";
 
+import TenantOverview from "./TenantOverview.jsx";
 import TenantGeneralSettings from "./TenantGeneralSettings.jsx";
 import TenantTheme from "./TenantTheme.jsx";
-
-import Markdown from "Components/common/Markdown";
-
-const markdown = "# TEST\n## second\n### third\n#### fourth\n##### fifth\n\n Lorem Ipsum\n ---\n\nLorem Ipsum";
-
-const TenantOverview = () => {
-  return (<Markdown content={markdown} style={{maxWidth: 600}} />);
-};
 
 const TenantRoutes = observer(({rootPath}) => {
   const routes = [
@@ -24,7 +17,7 @@ const TenantRoutes = observer(({rootPath}) => {
       ...route,
       route: route.path.replace(rootPath, ""),
       // Display the tenant name in the title
-      PageTitle: () => tenantStore.tenantLatest.metadata?.public?.asset_metadata?.info?.name
+      PageTitle: () => tenantStore.latestTenant.metadata?.public?.asset_metadata?.info?.name
     }));
 
   return (

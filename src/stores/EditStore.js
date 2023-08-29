@@ -18,7 +18,7 @@ class EditStore {
   }
 
   get hasUnsavedChanges() {
-    return this.ChangeLists().length > 0;
+    return this.ChangeLists().find(({changeList}) => !!changeList.string);
   }
 
   Initialize() {
@@ -119,9 +119,12 @@ class EditStore {
           metadata: commitHistory
         });
 
-        yield this.Finalize({objectId});
+        yield this.Finalize({objectId, commitMessage: commitMessages[objectId]});
 
         yield store.ClearActions({objectId, commitMessage: commitMessages[objectId] || ""});
+
+        // Force reload object after saving
+        yield store.Load({objectId});
       } catch(error) {
         this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
         errors[objectId] = error;

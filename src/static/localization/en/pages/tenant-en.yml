@@ -12,11 +12,36 @@ form:
     advanced: Advanced Settings
     owners: Owners
     leaderboard_excludes: Leaderboard Excluded Addresses
+  overview:
+    status: Status
+    production: Production
+    staging: Staging
+    deployed: Latest Deployed
+    not_deployed: Previous Version Deployed
+    not_linked: Not Linked
+    deploy: Deploy
+  marketplaces:
+    marketplaces: Marketplaces
+    marketplace: Marketplace
+    slug: Slug
+    link: Link
+    production: Production
+    staging: Staging
+    status: Status
+    update_link: Update Link
+    update_link_label: Update Link to {name}
+    update_link_confirm: Are you sure you want to update the link to {name}?
+    remove_link: Remove Link
+    remove_link_label: Remove Link to {name}
+    remove_link_confirm: Are you sure you want to remove the link to {name}?
+
   general:
     name:
       label: Name
     tenant_id:
       label: Tenant ID
+    tenant_slug:
+      label: Tenant Slug
     owners:
       label: Owners
       fieldLabel: Owner

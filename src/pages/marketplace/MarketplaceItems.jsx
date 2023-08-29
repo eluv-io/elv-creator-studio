@@ -4,13 +4,13 @@ import {rootStore, marketplaceStore} from "Stores";
 import PageContent from "Components/common/PageContent.jsx";
 import Inputs from "Components/inputs/Inputs";
 import UrlJoin from "url-join";
-import {Group, Box, Title, Tooltip} from "@mantine/core";
-import {ItemImage, ListItemCategory, LocalizeString} from "Components/common/Misc";
+import {Title} from "@mantine/core";
+import {ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "Components/common/Misc";
 import {FormatDate, FormatUSD, ParseDate} from "Helpers/Misc.js";
 
 import {MarketplaceItemSpec} from "Specs/MarketplaceSpecs.js";
 
-import {IconCheck, IconX, IconClock} from "@tabler/icons-react";
+import {IconCircleCheck, IconX, IconClock} from "@tabler/icons-react";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -393,7 +393,7 @@ const MarketplaceItems = observer(() => {
             width: "100px",
             render: item => {
               let status = l10n.items.status.available;
-              let Icon = IconCheck;
+              let Icon = IconCircleCheck;
               let color = "green";
 
               if(!item.for_sale) {
@@ -410,15 +410,7 @@ const MarketplaceItems = observer(() => {
                 Icon = IconClock;
               }
 
-              return (
-                <Group position="center">
-                  <Tooltip label={status} events={{ hover: true, focus: true, touch: true }}>
-                    <Box sx={theme => ({color: theme.colors[color][7] })}>
-                      <Icon alt={status} />
-                    </Box>
-                  </Tooltip>
-                </Group>
-              );
+              return <TooltipIcon label={status} Icon={Icon} color={color} />;
             }
           }
         ]}

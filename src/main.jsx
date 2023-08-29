@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 
+import "Assets/stylesheets/reset.scss";
+
 // Initialize localized format for dayjs
 import DayJS from "dayjs";
 import LocalizedFormat from "dayjs/plugin/localizedFormat";

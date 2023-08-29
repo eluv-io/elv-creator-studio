@@ -21,6 +21,8 @@ configure({
 });
 
 class RootStore {
+  config;
+
   loaded = false;
 
   libraryIds = {};

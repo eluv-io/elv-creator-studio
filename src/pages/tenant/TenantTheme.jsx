@@ -5,7 +5,7 @@ import {Title} from "@mantine/core";
 import Inputs from "Components/inputs/Inputs";
 
 const TenantTheme = observer(() => {
-  const tenant = tenantStore.tenantLatest;
+  const tenant = tenantStore.latestTenant;
 
   const info = tenant?.metadata?.public?.asset_metadata?.info || {};
 

@@ -106,7 +106,7 @@ const ProcessChangeList = changeList => {
 
       for(let p = 0; p < i; p++) {
         const previousAction = processedList[p];
-        if(previousAction.path !== action.path) { continue; }
+        if(previousAction.actionType !== "TOGGLE_FIELD" || previousAction.path !== action.path) { continue; }
 
         keep = !keep;
         processedList[p].prune = true;

@@ -66,6 +66,10 @@ class MarketplaceStore {
     this.marketplaces[marketplaceId] = marketplace;
   });
 
+  Load = flow(function * ({objectId}) {
+    yield this.LoadMarketplace({marketplaceId: objectId, force: true});
+  });
+
   DeployedHash({environment, marketplaceId}) {
     return this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId]?.versionHash;
   }

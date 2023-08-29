@@ -7,7 +7,7 @@ import {ValidateAddress} from "Components/common/Validation.jsx";
 import {IconSettings} from "@tabler/icons-react";
 
 const TenantGeneralSettings = observer(() => {
-  const tenant = tenantStore.tenantLatest;
+  const tenant = tenantStore.latestTenant;
 
   const info = tenant?.metadata?.public?.asset_metadata?.info || {};
 
@@ -41,6 +41,16 @@ const TenantGeneralSettings = observer(() => {
         disabled
         field="tenant_id"
         defaultValue={rootStore.tenantId}
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.tenant_slug}
+        subcategory={l10n.categories.info}
+        disabled
+        path="/public/asset_metadata"
+        field="slug"
+        defaultValue={tenantStore.tenantInfo?.tenantSlug}
       />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.sales }</Title>
