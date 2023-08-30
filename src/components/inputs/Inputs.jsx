@@ -102,7 +102,7 @@ const MultiSelect = observer(({
 
   if(clearable) {
     componentProps.rightSection = (
-      <Tooltip label={rootStore.l10n.components.inputs.clear} position="top-end" withArrow>
+      <Tooltip label={rootStore.l10n.components.inputs.clear} events={{ hover: true, focus: true, touch: true }}>
         <ActionIcon
           mr="xs"
           onClick={() =>{
@@ -270,7 +270,7 @@ const Input = observer(({
 
   if(clearable) {
     componentProps.rightSection = (
-      <Tooltip label={rootStore.l10n.components.inputs.clear} position="top-end" withArrow>
+      <Tooltip label={rootStore.l10n.components.inputs.clear} events={{ hover: true, focus: true, touch: true }}>
         <ActionIcon mr="xs" onClick={() => store.SetMetadata({
           objectId,
           page:
@@ -470,7 +470,6 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
       }
       <Tooltip label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]} events={{ hover: true, focus: true, touch: true }}>
         <ActionIcon
-          title={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
           aria-label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
           onClick={() => setShowEditor(!showEditor)}
           style={{position: "absolute", top: 0, right: 0}}
@@ -516,7 +515,6 @@ const CodeInput = observer(({
     <InputWrapper label={label} description={description} hint={hint} maw={800} wrapperProps={{error: validationResults?.errorMessage, styles: () => ({error: { marginTop: 30 }})}}>
       <Tooltip label={rootStore.l10n.components.actions.edit} events={{ hover: true, focus: true, touch: true }}>
         <ActionIcon
-          title={rootStore.l10n.components.actions.edit}
           aria-label={rootStore.l10n.components.actions.edit}
           onClick={() => setEditing(!editing)}
           style={{position: "absolute", top: 0, right: 0}}
@@ -738,7 +736,6 @@ export const FileInput = observer(({
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
           <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
             <ActionIcon
-              title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
               aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
               onClick={() => setShowBrowser(true)}
             >
@@ -755,7 +752,6 @@ export const FileInput = observer(({
                     component="a"
                     href={value.url}
                     target="_blank"
-                    title={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
                     aria-label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
                   >
                     <IconDownload size={15} />
@@ -763,7 +759,6 @@ export const FileInput = observer(({
                 </Tooltip>
                 <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})} events={{ hover: true, focus: true, touch: true }}>
                   <ActionIcon
-                    title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
                     aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
                     onClick={() => {
                       ConfirmDelete({
@@ -857,7 +852,6 @@ export const FabricBrowserInput = observer(({
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
           <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
             <ActionIcon
-              title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
               aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
               onClick={() => setShowBrowser(true)}
             >
@@ -873,7 +867,6 @@ export const FabricBrowserInput = observer(({
                   !previewable ? null :
                     <Tooltip label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]} events={{ hover: true, focus: true, touch: true }}>
                       <ActionIcon
-                        title={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
                         aria-label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
                         onClick={() => setShowPreview(!showPreview)}
                         color={showPreview ? "red.7" : "blue.5"}
@@ -884,7 +877,6 @@ export const FabricBrowserInput = observer(({
                 }
                 <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})} events={{ hover: true, focus: true, touch: true }}>
                   <ActionIcon
-                    title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
                     aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
                     onClick={() => {
                       ConfirmDelete({
@@ -1165,7 +1157,6 @@ const List = observer(({
               <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
                 <ActionIcon
                   style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
-                  title={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
                   aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
                   onClick={() => {
                     ConfirmDelete({
@@ -1197,7 +1188,6 @@ const List = observer(({
   const addButton = (
     <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
-        title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
         aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
         onClick={() =>
           store.InsertListElement({
@@ -1391,7 +1381,6 @@ const CollectionTable = observer(({
   const addButton = (
     <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
-        title={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
         aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
         onClick={() => {
           let id = values.length.toString();

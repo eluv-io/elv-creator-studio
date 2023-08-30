@@ -7,7 +7,7 @@ import {
   Group,
   Modal,
   Text,
-  TextInput,
+  TextInput, Tooltip,
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore, uiStore} from "@/stores";
@@ -98,22 +98,24 @@ const DirectSelectionForm = ({Submit}) => {
 
 const DirectSelectionButton = observer(({label, Submit}) => {
   return (
-    <ActionIcon
-      size={36}
-      onClick={() =>
-        modals.open({
-          title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
-          centered: true,
-          children:
-            <DirectSelectionForm Submit={Submit} />,
-          overlayProps: {
-            zIndex: 202
-          }
-        })
-      }
-    >
-      <IconSelect />
-    </ActionIcon>
+    <Tooltip position="bottom" label={LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label})} events={{ hover: true, focus: true, touch: true }}>
+      <ActionIcon
+        size={36}
+        onClick={() =>
+          modals.open({
+            title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
+            centered: true,
+            children:
+              <DirectSelectionForm Submit={Submit} />,
+            overlayProps: {
+              zIndex: 202
+            }
+          })
+        }
+      >
+        <IconSelect />
+      </ActionIcon>
+    </Tooltip>
   );
 });
 
@@ -142,9 +144,11 @@ const ObjectBrowser = observer(({label, libraryId, Back, Submit}) => {
   return (
     <Container p={0}>
       <Group mb="md" align="center">
-        <ActionIcon aria-label={rootStore.l10n.components.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
-          <IconArrowBackUp />
-        </ActionIcon>
+        <Tooltip label={rootStore.l10n.components.fabric_browser.back_to_library_selection} events={{ hover: true, focus: true, touch: true }}>
+          <ActionIcon aria-label={rootStore.l10n.components.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
+            <IconArrowBackUp />
+          </ActionIcon>
+        </Tooltip>
         <Text>{ library.name }</Text>
       </Group>
       <Group align="end" mb="md">

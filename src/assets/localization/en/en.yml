@@ -50,6 +50,7 @@ components:
     download: Download {filename}
     rename: Rename {filename}
     delete: Delete {filename}
+    remove_selection: Remove selection {filename}
     delete_confirm: Are you sure you want to delete this file?
     directory_name: Directory Name
     new_filename: New Filename

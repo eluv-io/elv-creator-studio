@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
-import {ActionIcon, Box, Text, Group, Paper, Stack} from "@mantine/core";
+import {ActionIcon, Box, Text, Group, Paper, Stack, Tooltip} from "@mantine/core";
 import Inputs, {ConfirmDelete} from "./Inputs.jsx";
-import {marketplaceStore} from "@/stores";
-import {ItemImage} from "@/components/common/Misc.jsx";
+import {rootStore, marketplaceStore} from "@/stores";
+import {ItemImage, LocalizeString} from "@/components/common/Misc.jsx";
 import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import {IconGripVertical, IconX} from "@tabler/icons-react";
@@ -57,23 +57,25 @@ const SelectedItem = observer(({
           <Text fz="sm">{item.name || item.sku}</Text>
           <Text fz="xs" color="dimmed">{item.sku}</Text>
         </div>
-        <ActionIcon
-          variant="transparent"
-          tabIndex={-1}
-          style={{position: "absolute", top: 5, right: 5}}
-          onClick={() => {
-            ConfirmDelete({
-              itemName: item.name || item.sku,
-              onConfirm: () => {
-                single ?
-                  store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
-                  store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
-              }
-            });
-          }}
-        >
-          <IconX size={15} />
-        </ActionIcon>
+        <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: item.name || item.sku})} events={{ hover: true, focus: true, touch: true }}>
+          <ActionIcon
+            variant="transparent"
+            tabIndex={-1}
+            style={{position: "absolute", top: 5, right: 5}}
+            onClick={() => {
+              ConfirmDelete({
+                itemName: item.name || item.sku,
+                onConfirm: () => {
+                  single ?
+                    store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
+                    store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
+                }
+              });
+            }}
+          >
+            <IconX size={15} />
+          </ActionIcon>
+        </Tooltip>
       </Group>
     </Paper>
   );
