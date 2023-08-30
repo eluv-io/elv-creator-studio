@@ -3,7 +3,7 @@ import {createStyles, Navbar, rem, Title, Tooltip} from "@mantine/core";
 import {NavLink, useLocation} from "react-router-dom";
 import {rootStore} from "@/stores";
 
-import {Icon123, IconHome, IconBomb, Icon3dCubeSphere, IconArrowBackUp} from "@tabler/icons-react";
+import {IconHome, IconBomb, Icon3dCubeSphere, IconArrowBackUp} from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -119,9 +119,7 @@ const SideNav = observer(({links, backLink}) => {
     <Navbar width={{ sm: links?.length > 0 ? 300 : 60 }}>
       <Navbar.Section grow className={classes.wrapper}>
         <div className={classes.aside}>
-          <div className={classes.logo}>
-            <Icon123 size={30} />
-          </div>
+          <div className={classes.logo}></div>
           {
             mainLinks.map(({label, icon, path}) =>
               <Tooltip

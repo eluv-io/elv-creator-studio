@@ -34,14 +34,13 @@ const DeployedIcon = ({deployed}) =>
 const UpdateLinkButton = ({type, record}) => {
   const [loading, setLoading] = useState(false);
 
-  const l10n = rootStore.l10n.pages.tenant.form[type === "marketplace" ? "marketplaces" : "sites"];
+  const l10n = rootStore.l10n.pages.tenant.form.overview;
   return (
     <Tooltip label={LocalizeString(l10n.update_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
         variant="transparent"
         disabled={record.latestDeployed}
         loading={loading}
-        title={LocalizeString(l10n.update_link_label, {name: record.name})}
         aria-label={LocalizeString(l10n.update_link_label, {name: record.name})}
         color="blue.5"
         onClick={() =>
@@ -57,7 +56,12 @@ const UpdateLinkButton = ({type, record}) => {
             onConfirm: async () => {
               setLoading(true);
               try {
-                await tenantStore.UpdateMarketplaceLink({versionHash: record.marketplaceHash, slug: record.slug});
+                await tenantStore.UpdateLink({
+                  type,
+                  name: record.name,
+                  slug: record.slug,
+                  versionHash: record[type === "site" ? "siteHash" : "marketplaceHash"]
+                });
               } catch(error) {
                 rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               } finally {
@@ -76,13 +80,12 @@ const UpdateLinkButton = ({type, record}) => {
 const UnlinkButton = ({type, record}) => {
   const [loading, setLoading] = useState(false);
 
-  const l10n = rootStore.l10n.pages.tenant.form[type === "marketplace" ? "marketplaces" : "sites"];
+  const l10n = rootStore.l10n.pages.tenant.form.overview;
   return (
     <Tooltip label={LocalizeString(l10n.remove_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
         variant="transparent"
         loading={loading}
-        title={LocalizeString(l10n.remove_link_label, {name: record.name})}
         aria-label={LocalizeString(l10n.remove_link_label, {name: record.name})}
         color="red.5"
         onClick={() =>
@@ -99,7 +102,7 @@ const UnlinkButton = ({type, record}) => {
             onConfirm: async () => {
               setLoading(true);
               try {
-                await tenantStore.RemoveMarketplaceLink({slug: record.slug});
+                await tenantStore.RemoveLink({type, name: record.name, slug: record.slug});
               } catch(error) {
                 rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               } finally {
@@ -154,6 +157,90 @@ const DeploymentStatus = observer(({mode}) => {
   );
 });
 
+const Sites = observer(() => {
+  const [sites, setSites] = useState(undefined);
+
+  useEffect(() => {
+    tenantStore.SiteStatus()
+      .then(sites => setSites(sites));
+  }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
+
+  const l10n = rootStore.l10n.pages.tenant.form;
+
+  return (
+    <Container p={0} m={0} maw={800}>
+      <DataTable
+        maw={800}
+        mih={100}
+        withBorder
+        withColumnBorders
+        fetching={!sites}
+        idAccessor="slug"
+        records={sites || []}
+        columns={[
+          {
+            accessor: "name",
+            title: l10n.sites.site,
+            render: record => (
+              <Link to={UrlJoin("/sites", record.siteId)}>
+                <Group spacing="lg">
+                  <Image py="sm" width={100} height={100} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
+                  <Container p={0} m={0}>
+                    <Text>{ record.name }</Text>
+                    <Text fz={11} color="dimmed">{ record.slug }</Text>
+                  </Container>
+                </Group>
+              </Link>
+            )
+          },
+          {
+            accessor: "status",
+            width: 175,
+            title: l10n.overview.status,
+            render: record => (
+              record.latestHash ?
+                // Linked
+                <Container p={0} m={0}>
+                  <Group align="center" h={25} position="apart">
+                    <Text fw={500}>{l10n.overview.link}:</Text>
+                    <DeployedIcon deployed={record.latestDeployed} />
+                  </Group>
+                  <Group align="center" h={25} position="apart">
+                    <Text fw={500}>{l10n.overview.production}:</Text>
+                    <DeployedIcon deployed={record.productionDeployed} />
+                  </Group>
+                  <Group align="center" h={25} position="apart">
+                    <Text fw={500}>{l10n.overview.staging}:</Text>
+                    <DeployedIcon deployed={record.stagingDeployed} />
+                  </Group>
+                </Container> :
+                <Group spacing="xs">
+                  <IconLinkOff size={20} color="red" />
+                  <Text fw={500}>{ l10n.overview.not_linked}</Text>
+                </Group>
+            )
+          },
+          {
+            accessor: "actions",
+            textAlignment: "center",
+            width: 120,
+            render: record => (
+              <Group position="center" align="center" spacing={5}>
+                <UpdateLinkButton type="site" record={record} />
+                {
+                  !record.latestHash ? null :
+                    <UnlinkButton type="site" record={record}/>
+                }
+              </Group>
+            )
+          }
+        ]}
+
+      />
+    </Container>
+  );
+});
+
 const Marketplaces = observer(() => {
   const [marketplaces, setMarketplaces] = useState(undefined);
 
@@ -168,7 +255,7 @@ const Marketplaces = observer(() => {
     <Container p={0} m={0} maw={800}>
       <DataTable
         maw={800}
-        mih={300}
+        mih={100}
         withBorder
         withColumnBorders
         fetching={!marketplaces}
@@ -193,21 +280,21 @@ const Marketplaces = observer(() => {
           {
             accessor: "status",
             width: 175,
-            title: l10n.marketplaces.status,
+            title: l10n.overview.status,
             render: record => (
               record.latestHash ?
                 // Linked
                 <Container p={0} m={0}>
                   <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.marketplaces.link}:</Text>
+                    <Text fw={500}>{l10n.overview.link}:</Text>
                     <DeployedIcon deployed={record.latestDeployed} />
                   </Group>
                   <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.marketplaces.production}:</Text>
+                    <Text fw={500}>{l10n.overview.production}:</Text>
                     <DeployedIcon deployed={record.productionDeployed} />
                   </Group>
                   <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.marketplaces.staging}:</Text>
+                    <Text fw={500}>{l10n.overview.staging}:</Text>
                     <DeployedIcon deployed={record.stagingDeployed} />
                   </Group>
                 </Container> :
@@ -255,13 +342,16 @@ const TenantOverview = observer(() => {
         <Text fz="xs" color="dimmed">{ metadata.info.tenant_id }</Text>
         <Text fz="xs" color="dimmed">{ tenantStore.tenantObjectId }</Text>
 
-        <Title order={5} mt={50} mb="md">{ l10n.overview.status }</Title>
+        <Title order={3} mt={50} mb="md">{ l10n.overview.status }</Title>
 
         <DeploymentStatus mode="production" />
         <DeploymentStatus mode="staging" />
       </Container>
 
-      <Title order={5} mt={50} mb="md">{ l10n.marketplaces.marketplaces }</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.sites.sites }</Title>
+      <Sites />
+
+      <Title order={3} mt={50} mb="md">{ l10n.marketplaces.marketplaces }</Title>
       <Marketplaces />
     </PageContent>
   );

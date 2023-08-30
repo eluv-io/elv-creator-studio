@@ -41,17 +41,10 @@ class TenantStore {
         // Prefer name from modified metadata, otherwise load directly
         let name = this.rootStore.marketplaceStore.marketplaces?.[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.branding?.name;
         if(!name) {
-          name = await this.client.ContentObjectMetadata({
+          name = (await this.client.ContentObjectMetadata({
             versionHash: marketplaceHash,
             metadataSubtree: "public/asset_metadata/info/branding/name",
-            select: [
-              "slug",
-              "info/branding/name"
-            ],
-            remove: [
-              "info/branding/custom_css"
-            ]
-          });
+          })) || marketplace.brandedName;
         }
 
         const latestHash = ExtractHashFromLink(tenantStore.latestTenant.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
@@ -64,7 +57,8 @@ class TenantStore {
           imageUrl: FabricUrl({
             libraryId: marketplace.libraryId,
             objectId: marketplace.objectId,
-            path: "/meta/public/asset_metadata/info/branding/card_banner_front"
+            path: "/meta/public/asset_metadata/info/branding/card_banner_front",
+            width: 400
           }),
           libraryId: marketplace.libraryId,
           marketplaceId: marketplace.objectId,
@@ -75,6 +69,49 @@ class TenantStore {
           productionDeployed: productionHash === marketplaceHash,
           stagingHash,
           stagingDeployed: stagingHash === marketplaceHash
+        };
+      })
+    );
+  }
+
+  async SiteStatus() {
+    await this.rootStore.siteStore.LoadSites();
+
+    return await Promise.all(
+      this.rootStore.siteStore.allSites.map(async site => {
+        const siteHash = await this.client.LatestVersionHash({objectId: site.objectId});
+
+        // Prefer name from modified metadata, otherwise load directly
+        let name = this.rootStore.siteStore.sites?.[site.objectId]?.metadata?.public?.asset_metadata?.info?.name;
+        if(!name) {
+          name = (await this.client.ContentObjectMetadata({
+            versionHash: siteHash,
+            metadataSubtree: "public/asset_metadata/info/name",
+          })) || site.name;
+        }
+
+        const latestHash = ExtractHashFromLink(tenantStore.latestTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
+        const productionHash = ExtractHashFromLink(tenantStore.productionTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
+        const stagingHash = ExtractHashFromLink(tenantStore.stagingTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
+
+        return {
+          name,
+          slug: site.siteSlug,
+          imageUrl: FabricUrl({
+            libraryId: site.libraryId,
+            objectId: site.objectId,
+            path: "/meta/public/asset_metadata/info/event_images/hero_background",
+            width: 600
+          }),
+          libraryId: site.libraryId,
+          siteId: site.objectId,
+          siteHash,
+          latestHash,
+          latestDeployed: latestHash === siteHash,
+          productionHash,
+          productionDeployed: productionHash === siteHash,
+          stagingHash,
+          stagingDeployed: stagingHash === siteHash
         };
       })
     );
@@ -158,16 +195,20 @@ class TenantStore {
     yield this.RetrieveTenant({environment: "staging"});
   });
 
-  UpdateMarketplaceLink = flow(function * ({name, slug, versionHash}) {
+  UpdateLink = flow(function * ({type, name, slug, versionHash}) {
     yield new Promise(resolve => setTimeout(resolve, 5000));
 
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId: this.tenantObjectId});
+
+    const path = type === "site" ?
+        UrlJoin("/public/asset_metadata/sites", slug) :
+        UrlJoin("/public/asset_metadata/marketplaces", slug);
 
     yield this.client.ReplaceMetadata({
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
       objectId: this.tenantObjectId,
       writeToken,
-      metadataSubtree: UrlJoin("/public/asset_metadata/marketplaces", slug),
+      metadataSubtree: path,
       metadata: {
         ".": {
           "auto_update": {
@@ -182,26 +223,30 @@ class TenantStore {
 
     yield new Promise(resolve => setTimeout(resolve, 2000));
 
-    yield this.Load();
+    yield this.Reload();
   });
 
-  RemoveMarketplaceLink = flow(function * ({name, slug}) {
+  RemoveLink = flow(function * ({type, name, slug}) {
     yield new Promise(resolve => setTimeout(resolve, 5000));
 
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId: this.tenantObjectId});
+
+    const path = type === "site" ?
+      UrlJoin("/public/asset_metadata/sites", slug) :
+      UrlJoin("/public/asset_metadata/marketplaces", slug);
 
     yield this.client.DeleteMetadata({
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
       objectId: this.tenantObjectId,
       writeToken,
-      metadataSubtree: UrlJoin("/public/asset_metadata/marketplaces", slug),
+      metadataSubtree: path
     });
 
-    yield this.rootStore.editStore.Finalize({objectId: this.tenantObjectId, commitMessage: `Update link to ${name || slug}`});
+    yield this.rootStore.editStore.Finalize({objectId: this.tenantObjectId, commitMessage: `Remove link to ${name || slug}`});
 
     yield new Promise(resolve => setTimeout(resolve, 2000));
 
-    yield this.Load();
+    yield this.Reload();
   });
 
   DeployTenant = flow(function * () {
@@ -218,7 +263,7 @@ class TenantStore {
 
     yield new Promise(resolve => setTimeout(resolve, 5000));
 
-    yield this.Load();
+    yield this.Reload();
   });
 
   get client() {
