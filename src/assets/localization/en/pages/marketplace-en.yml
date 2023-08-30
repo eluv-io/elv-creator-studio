@@ -72,6 +72,9 @@ form:
       label: Name
     description:
       label: Description
+  overview:
+    item: 1 Item
+    items: "{count} Items"
   general:
     tenant_id:
       label: Tenant ID

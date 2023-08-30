@@ -15,6 +15,10 @@ class TenantStore {
     return this.tenantInfo.objectId;
   }
 
+  get tenantSlug() {
+    return this.latestTenant.metadata?.public?.asset_metadata?.slug;
+  }
+
   get latestTenant() {
     return this.tenant[this.tenantObjectId];
   }
