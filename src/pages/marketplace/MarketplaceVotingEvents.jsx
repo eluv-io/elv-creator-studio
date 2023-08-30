@@ -134,7 +134,7 @@ const MarketplaceVotingEvents = observer(() => {
           { label: l10n.voting_events.voting_events.columns.type, field: "type", width: "80px", render: votingEvent => votingEvent.type?.capitalize() },
           { label: l10n.voting_events.voting_events.columns.items, field: "items", width: "80px", centered: true, render: votingEvent => votingEvent.type !== "specified" ? "N/A" : votingEvent?.items?.length || "0" },
         ]}
-        newEntrySpec={MarketplaceVotingEventSpec}
+        newItemSpec={MarketplaceVotingEventSpec}
       />
     </PageContent>
   );

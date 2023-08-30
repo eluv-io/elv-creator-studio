@@ -155,13 +155,13 @@ class DatabaseStore {
     let content = {
       tenant: undefined,
       marketplaces: {},
-      events: {},
+      sites: {},
       templates: {},
       media: {},
       types: {
         tenant: "",
         marketplace: "",
-        event: "",
+        site: "",
         template: "",
         mezzanine: ""
       }
@@ -195,13 +195,13 @@ class DatabaseStore {
           } else if(name.includes("event site")) {
             // Only use newer 'drop event site' type vs old 'event site' type
             if(name.includes("drop event site")) {
-              content.types.event = typeId;
+              content.types.site = typeId;
             }
 
             objects.forEach(object => {
               if(object.typeId !== typeId) { return; }
 
-              content.events[object.objectId] = object;
+              content.sites[object.objectId] = object;
             });
           } else if(name.includes("tenant")) {
             content.types.tenant = typeId;
@@ -230,21 +230,21 @@ class DatabaseStore {
       content.marketplaces[marketplaceId].marketplaceSlug = content.marketplaces[marketplaceId].metadata.public.asset_metadata.slug;
     });
 
-    Object.keys(content.events).forEach(eventId => {
-      content.events[eventId].tenantSlug = tenantSlug;
-      content.events[eventId].eventSlug = content.events[eventId].metadata.public.asset_metadata.slug;
+    Object.keys(content.sites).forEach(siteId => {
+      content.sites[siteId].tenantSlug = tenantSlug;
+      content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug;
 
       // Determine marketplaces
-      const marketplaceInfo = content.events[eventId].metadata.public?.asset_metadata?.info.marketplace_info || {};
-      const additionalMarketplaces = content.events[eventId].metadata.public?.asset_metadata?.info.additional_marketplaces || [];
+      const marketplaceInfo = content.sites[siteId].metadata.public?.asset_metadata?.info.marketplace_info || {};
+      const additionalMarketplaces = content.sites[siteId].metadata.public?.asset_metadata?.info.additional_marketplaces || [];
 
-      content.events[eventId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
+      content.sites[siteId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
         content.marketplaces[marketplaceId].marketplaceSlug === marketplaceInfo.marketplace_slug &&
         content.marketplaces[marketplaceId].tenantSlug === marketplaceInfo.tenant_slug
       ) || "";
 
-      content.events[eventId].additionalMarketplaces = additionalMarketplaces.map(additionalMarketplaceInfo =>
-        content.events[eventId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
+      content.sites[siteId].additionalMarketplaces = additionalMarketplaces.map(additionalMarketplaceInfo =>
+        content.sites[siteId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
           content.marketplaces[marketplaceId].marketplaceSlug === additionalMarketplaceInfo.marketplace_slug &&
           content.marketplaces[marketplaceId].tenantSlug === additionalMarketplaceInfo.tenant_slug
         ) || ""
@@ -434,11 +434,11 @@ class DatabaseStore {
     );
 
     yield Promise.all(
-      Object.values(content.events).map(async event => {
-        event = { ...event };
-        delete event.metadata;
+      Object.values(content.sites).map(async site => {
+        site = { ...site };
+        delete site.metadata;
 
-        await this.WriteDocument({batch, collection: "events", document: event.objectId, content: event});
+        await this.WriteDocument({batch, collection: "sites", document: site.objectId, content: site});
       })
     );
 

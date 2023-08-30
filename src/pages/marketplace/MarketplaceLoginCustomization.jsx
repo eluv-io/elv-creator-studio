@@ -5,6 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Group, Title} from "@mantine/core";
 import UrlJoin from "url-join";
+import {MarketplaceLoginConsentOption} from "@/specs/MarketplaceSpecs.js";
 
 const MarketplaceLoginCustomization = observer(() => {
   const { marketplaceId } = useParams();
@@ -200,6 +201,7 @@ const MarketplaceLoginCustomization = observer(() => {
               subcategory={l10n.categories.terms_and_consent}
               path={UrlJoin(inputProps.path, "custom_consent")}
               field="options"
+              newItemSpec={MarketplaceLoginConsentOption}
               fields={[
                 { InputComponent: Inputs.Text, field: "key", ...l10n.login.profile_metadata_key },
                 { InputComponent: Inputs.Checkbox, field: "required", ...l10n.login.required },

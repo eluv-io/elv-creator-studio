@@ -3,7 +3,7 @@ import {createStyles, Navbar, rem, Title, Tooltip} from "@mantine/core";
 import {NavLink, useLocation} from "react-router-dom";
 import {rootStore} from "@/stores";
 
-import {Icon123, IconHome, IconBomb, IconArrowBackUp} from "@tabler/icons-react";
+import {Icon123, IconHome, IconBomb, Icon3dCubeSphere, IconArrowBackUp} from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -107,6 +107,7 @@ const useStyles = createStyles((theme) => ({
 const mainLinks = [
   { label: rootStore.l10n.components.nav.home, icon: <IconHome />, path: "/"},
   { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBomb />, path: "/marketplaces"},
+  { label: rootStore.l10n.components.nav.sites, icon: <Icon3dCubeSphere />, path: "/sites"},
 ];
 
 const SideNav = observer(({links, backLink}) => {

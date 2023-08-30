@@ -12,6 +12,7 @@ import FileBrowserStore from "@/stores/FileBrowserStore.js";
 import FabricBrowserStore from "@/stores/FabricBrowserStore.js";
 import TenantStore from "@/stores/TenantStore.js";
 import MarketplaceStore from "@/stores/MarketplaceStore.js";
+import SiteStore from "@/stores/SiteStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 
@@ -57,6 +58,7 @@ class RootStore {
     this.editStore = new EditStore(this);
     this.tenantStore = new TenantStore(this);
     this.marketplaceStore = new MarketplaceStore(this);
+    this.siteStore = new SiteStore(this);
 
     this.Initialize();
   }
@@ -167,5 +169,6 @@ export const editStore = rootStore.editStore;
 export const databaseStore = rootStore.marketplaceStore;
 export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;
+export const siteStore = rootStore.siteStore;
 
 window.rootStore = rootStore;

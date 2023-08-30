@@ -63,7 +63,8 @@ class EditStore {
 
     return [
       ...GetChangeList({type: "Tenant", storeKey: "tenantStore"}),
-      ...GetChangeList({type: "Marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"})
+      ...GetChangeList({type: "Marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
+      ...GetChangeList({type: "Site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"})
     ];
   }
 
@@ -124,7 +125,7 @@ class EditStore {
         yield store.ClearActions({objectId, commitMessage: commitMessages[objectId] || ""});
 
         // Force reload object after saving
-        yield store.Load({objectId});
+        yield store.Reload({objectId});
       } catch(error) {
         this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
         errors[objectId] = error;

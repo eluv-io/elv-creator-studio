@@ -3,6 +3,7 @@ import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
 import {FabricUrl} from "@/helpers/Fabric.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
 
 export const ACTIONS = {
   MODIFY_FIELD: {
@@ -432,6 +433,28 @@ const ClearActions = function({objectId}) {
   this.redoStack[objectId] = [];
 };
 
+// Ensure ID fields are properly set in lists
+const SetListFieldIds = function({objectId, path, idField="id", category, label}) {
+  const list = this.GetMetadata({objectId, path});
+
+  if(!list) { return; }
+
+  list.forEach((item, index) => {
+    if(item[idField]) {
+      return;
+    }
+
+    this.SetDefaultValue({
+      objectId,
+      path: UrlJoin(path, index.toString()),
+      field: idField,
+      category,
+      label,
+      value: GenerateUUID()
+    });
+  });
+};
+
 export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.objectsMapKey = objectsMapKey;
   storeClass.prototype.actionStack = {};
@@ -454,4 +477,6 @@ export const AddActions = (storeClass, objectsMapKey) => {
 
   storeClass.prototype.Save = Save;
   storeClass.prototype.ClearActions = ClearActions;
+
+  storeClass.prototype.SetListFieldIds = SetListFieldIds;
 };

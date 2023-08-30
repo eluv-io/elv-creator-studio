@@ -229,7 +229,7 @@ const MarketplaceCollections = observer(() => {
           { label: l10n.collections.collections.columns.title, field: "name" },
           { label: l10n.collections.collections.columns.items, field: "items", width: "80px", centered: true, render: collection => collection?.items?.length || "0" },
         ]}
-        newEntrySpec={MarketplaceCollectionSpec}
+        newItemSpec={MarketplaceCollectionSpec}
       />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.collections_page }</Title>

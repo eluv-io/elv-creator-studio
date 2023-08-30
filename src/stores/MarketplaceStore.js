@@ -1,9 +1,8 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
-import {GenerateUUID} from "@/helpers/Misc.js";
 
 class MarketplaceStore {
-  allMarketplaces = [];
+  allMarketplaces;
   marketplaces = {};
 
   constructor(rootStore) {
@@ -13,7 +12,7 @@ class MarketplaceStore {
   }
 
   LoadMarketplaces = flow(function * () {
-    if(this.allMarketplaces.length > 0) { return; }
+    if(this.allMarketplaces) { return; }
 
     this.allMarketplaces = yield this.rootStore.databaseStore.GetCollection({collection: "marketplaces"});
   });
@@ -27,7 +26,7 @@ class MarketplaceStore {
 
     const libraryId = yield this.rootStore.LibraryId({objectId: marketplaceId});
 
-    const marketplace = {
+    this.marketplaces[marketplaceId] = {
       ...info,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
@@ -43,30 +42,29 @@ class MarketplaceStore {
       }
     };
 
-    // Ensure IDs are set for list fields
-    if(marketplace.metadata.public?.asset_metadata?.info?.storefront?.sections) {
-      marketplace.metadata.public.asset_metadata.info.storefront.sections =
-        marketplace.metadata.public.asset_metadata.info.storefront.sections.map(
-          section => ({ ...section, id: section.id || GenerateUUID() })
-        );
-    }
-    if(marketplace.metadata.public?.asset_metadata?.info?.banners) {
-      marketplace.metadata.public.asset_metadata.info.banners =
-        marketplace.metadata.public.asset_metadata.info.banners.map(
-          banner => ({ ...banner, id: banner.id || GenerateUUID() })
-        );
-    }
-    if(marketplace.metadata.public?.asset_metadata?.info?.footer_links) {
-      marketplace.metadata.public.asset_metadata.info.footer_links =
-        marketplace.metadata.public.asset_metadata.info.footer_links.map(
-          footerLink => ({ ...footerLink, id: footerLink.id || GenerateUUID() })
-        );
-    }
+    this.SetListFieldIds({
+      objectId: marketplaceId,
+      path: "/public/asset_metadata/info/storefront/sections",
+      category: this.rootStore.l10n.pages.marketplace.form.categories.storefront_item_section,
+      label: this.rootStore.l10n.pages.marketplace.form.common.id.label,
+    });
 
-    this.marketplaces[marketplaceId] = marketplace;
+    this.SetListFieldIds({
+      objectId: marketplaceId,
+      path: "/public/asset_metadata/info/banners",
+      category: this.rootStore.l10n.pages.marketplace.form.categories.storefront_banner,
+      label: this.rootStore.l10n.pages.marketplace.form.common.id.label,
+    });
+
+    this.SetListFieldIds({
+      objectId: marketplaceId,
+      path: "/public/asset_metadata/info/footer_links",
+      category: this.rootStore.l10n.pages.marketplace.form.categories.storefront_footer_link,
+      label: this.rootStore.l10n.pages.marketplace.form.common.id.label,
+    });
   });
 
-  Load = flow(function * ({objectId}) {
+  Reload = flow(function * ({objectId}) {
     yield this.LoadMarketplace({marketplaceId: objectId, force: true});
   });
 

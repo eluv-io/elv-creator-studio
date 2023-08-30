@@ -152,7 +152,7 @@ class TenantStore {
     }
   });
 
-  Load = flow(function * () {
+  Reload = flow(function * () {
     yield this.RetrieveTenant({environment: "latest"});
     yield this.RetrieveTenant({environment: "production"});
     yield this.RetrieveTenant({environment: "staging"});

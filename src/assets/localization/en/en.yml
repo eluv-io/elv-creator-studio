@@ -2,6 +2,7 @@ components:
   nav:
     home: Home
     marketplaces: Marketplaces
+    sites: Sites
   actions:
     back: Back
     back_to: Back to {target}

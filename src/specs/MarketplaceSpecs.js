@@ -1,3 +1,5 @@
+// NOTE: Default value only applies when field is undefined, not ""
+
 export const MarketplaceItemSpec = {
   sku: "",
   type: "nft",
@@ -66,7 +68,7 @@ export const MarketplaceCollectionSpec = {
 };
 
 export const MarketplaceVotingEventSpec = {
-  id: "",
+  id: undefined,
   title: "<New Voting Event>",
   description: "",
   exclusive: false,
@@ -77,7 +79,7 @@ export const MarketplaceVotingEventSpec = {
 };
 
 export const MarketplaceStorefrontSectionSpec = {
-  id: "",
+  id: undefined,
   name: "<New Storefront Section>",
   section_header: "",
   section_subheader: "",
@@ -95,16 +97,17 @@ export const MarketplaceStorefrontSectionSpec = {
 };
 
 export const MarketplaceStorefrontBannerSpec = {
+  sku: undefined,
   image: undefined,
   image_mobile: undefined,
   video: undefined,
   video_muted: true,
   modal_video: undefined,
-  link: "",
-  sku: ""
+  link: ""
 };
 
 export const MarketplaceFooterLinkSpec = {
+  id: undefined,
   text: "",
   url: "",
   image: "",
@@ -121,9 +124,8 @@ export const MarketplaceLoginConsentOption = {
 };
 
 export const MarketplaceSpec = {
-  tenant_id: "",
-  tenant_slug: "",
-  tenant_name: "",
+  tenant_id: undefined,
+  tenant_slug: undefined,
   preview_password_digest: "",
   branding: {
     name: "",

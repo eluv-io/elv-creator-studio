@@ -288,6 +288,10 @@ const Input = observer(({
     );
   }
 
+  if(type === "hidden") {
+    return null;
+  }
+
   return (
     <Component
       // Ensure uncontrolled -> controlled transition doesn't print a warning when default value isn't set
@@ -1020,10 +1024,10 @@ const ListInputs = observer(({
   inputProps={}
 }) => {
   if(renderItem) {
-    const value = (store.GetMetadata({objectId, path: UrlJoin(path, field), field: index.toString()}) || []);
+    const item = (store.GetMetadata({objectId, path: UrlJoin(path, field), field: index.toString()}) || []);
 
     return renderItem({
-      value,
+      item,
       store,
       objectId,
       path: UrlJoin(path, field, index.toString()),
@@ -1070,7 +1074,6 @@ const ListInputs = observer(({
               field: props.field,
               category,
               subcategory,
-              ...props
             });
           } else {
             return (
@@ -1108,7 +1111,7 @@ const List = observer(({
   idField="index",
   fieldLabel,
   fields=[],
-  newEntrySpec={},
+  newItemSpec={},
   renderItem,
   showBottomAddButton,
   inputProps={}
@@ -1195,7 +1198,7 @@ const List = observer(({
             page: location.pathname,
             path,
             field,
-            value: simpleList ? "" : newEntrySpec,
+            value: simpleList ? "" : newItemSpec,
             category,
             subcategory,
             label: actionLabel || fieldLabel
@@ -1347,7 +1350,7 @@ const CollectionTable = observer(({
   actionLabel,
   columns=[],
   fieldLabel,
-  newEntrySpec={},
+  newItemSpec={},
   idField="index",
   filterable,
   Filter
@@ -1384,7 +1387,7 @@ const CollectionTable = observer(({
         aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
         onClick={() => {
           let id = values.length.toString();
-          let newEntry = { ...newEntrySpec };
+          let newEntry = { ...newItemSpec };
 
           if(idField !== "index") {
             id = GenerateUUID();
@@ -1495,6 +1498,7 @@ const CollectionTable = observer(({
 });
 
 export default {
+  Hidden: props => <Input {...props} type="hidden" />,
   Text: props => <Input {...props} type="text" />,
   URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
   TextArea: props => <Input {...props} type="textarea" />,

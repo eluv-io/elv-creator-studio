@@ -1,0 +1,50 @@
+nav:
+  list: Sites
+  overview: Overview
+  general: General
+  hero: Hero
+  banners: Banners
+  theme: Theme
+  offers: Offers
+  faq: FAQ
+  analytics: Search & Analytics
+form:
+  categories:
+    general: General
+    info: Site Info
+    marketplace: Marketplace
+    additional_marketplaces: Additional Marketplaces
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+  general:
+    tenant_id:
+      label: Tenant ID
+    tenant_slug:
+      label: Tenant Slug
+    slug:
+      label: Slug
+      description: Identifier for your site. Will be present in the URL.
+    marketplace:
+      label: Marketplace
+    default_store_page:
+      label: Default Marketplace Page
+      description: Which page shows by default when the marketplace is opened
+    marketplace_only:
+      label: Marketplace Only
+      description: If enabled, only the marketplace will be shown. The rest of the site will be inaccessible.
+    disable_marketplace:
+      label: Disable Marketplace
+      description: If enabled, navigation buttons to the marketplace will be hidden. Useful if you only want your marketplace to be accessible via offer redemption.
+    additional_marketplaces:
+      label: Additional Marketplaces
+      description: Add additional marketplaces associated with this site.
+    additional_marketplace:
+      label: Additional Marketplace
+    marketplace_hidden:
+      label: Hidden
+      description: If checked, this marketplace will not be shown in navigation.

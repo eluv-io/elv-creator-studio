@@ -213,7 +213,7 @@ const MarketplaceStorefront = observer(() => {
           { label: l10n.storefront.sections.columns.type, field: "type", centered: true },
           { label: l10n.storefront.sections.columns.items, field: "items", width: "80px", centered: true, render: section => section?.items?.length || "0" },
         ]}
-        newEntrySpec={MarketplaceStorefrontSectionSpec}
+        newItemSpec={MarketplaceStorefrontSectionSpec}
       />
 
       <Title order={3} mb="md" mt={50}>{ l10n.categories.storefront_item_settings }</Title>
@@ -344,8 +344,8 @@ const MarketplaceStorefront = observer(() => {
         field="banners"
         idField="id"
         showBottomAddButton
-        newEntrySpec={MarketplaceStorefrontBannerSpec}
-        renderItem={({value, ...props}) => {
+        newItemSpec={MarketplaceStorefrontBannerSpec}
+        renderItem={({item, ...props}) => {
           return (
             <>
               <Inputs.UUID
@@ -361,7 +361,7 @@ const MarketplaceStorefront = observer(() => {
                 field="name"
               />
               {
-                value.sku || value.modal_video ? null :
+                item.sku || item.modal_video ? null :
                   <Inputs.URL
                     {...props}
                     {...l10n.storefront_banners.link_url}
@@ -370,7 +370,7 @@ const MarketplaceStorefront = observer(() => {
                   />
               }
               {
-                value.link || value.modal_video ? null :
+                item.link || item.modal_video ? null :
                   <MarketplaceItemSelect
                     {...props}
                     {...l10n.storefront_banners.sku}
@@ -379,7 +379,7 @@ const MarketplaceStorefront = observer(() => {
                   />
               }
               {
-                value.link || value.sku ? null :
+                item.link || item.sku ? null :
                   <Inputs.FabricBrowser
                     {...props}
                     {...l10n.storefront_banners.modal_video}
@@ -412,11 +412,11 @@ const MarketplaceStorefront = observer(() => {
                       subcategory={l10n.categories.storefront_banner_media}
                       field="video"
                       previewable
-                      previewIsAnimation={value.video_muted}
+                      previewIsAnimation={item.video_muted}
                     />
 
                     {
-                      !value.video ? null :
+                      !item.video ? null :
                         <Inputs.Checkbox
                           {...props}
                           {...l10n.storefront_banners.video_muted}
@@ -441,16 +441,16 @@ const MarketplaceStorefront = observer(() => {
         field="footer_links"
         idField="id"
         showBottomAddButton
-        newEntrySpec={MarketplaceFooterLinkSpec}
-        renderItem={({value, ...props}) => {
+        newItemSpec={MarketplaceFooterLinkSpec}
+        renderItem={({item, ...props}) => {
           let type;
-          if(value.image) {
+          if(item.image) {
             type = l10n.storefront_footer_links.types.image;
-          } else if(value.link) {
+          } else if(item.link) {
             type = l10n.storefront_footer_links.types.link;
-          } else if(value.content_rich_text) {
+          } else if(item.content_rich_text) {
             type = l10n.storefront_footer_links.types.rich_text;
-          } else if(value.content_html) {
+          } else if(item.content_html) {
             type = l10n.storefront_footer_links.types.html;
           }
 
@@ -494,7 +494,7 @@ const MarketplaceStorefront = observer(() => {
                   </Accordion.Control>
                   <Accordion.Panel>
                     {
-                      value.image || value.content_rich_text || value.content_html ? null :
+                      item.image || item.content_rich_text || item.content_html ? null :
                         <Inputs.URL
                           {...props}
                           {...l10n.storefront_footer_links.link_url}
@@ -504,7 +504,7 @@ const MarketplaceStorefront = observer(() => {
                     }
 
                     {
-                      value.link || value.content_rich_text || value.content_html ? null :
+                      item.link || item.content_rich_text || item.content_html ? null :
                         <Inputs.ImageInput
                           {...props}
                           {...l10n.storefront_footer_links.image}
@@ -517,7 +517,7 @@ const MarketplaceStorefront = observer(() => {
                     }
 
                     {
-                      value.image || value.link || value.content_html ? null :
+                      item.image || item.link || item.content_html ? null :
                         <Inputs.RichText
                           {...props}
                           {...l10n.storefront_footer_links.content_rich_text}
@@ -527,7 +527,7 @@ const MarketplaceStorefront = observer(() => {
                     }
 
                     {
-                      value.image || value.link || value.content_rich_text ? null :
+                      item.image || item.link || item.content_rich_text ? null :
                         <Inputs.File
                           {...props}
                           {...l10n.storefront_footer_links.content_html}

@@ -414,7 +414,7 @@ const MarketplaceItems = observer(() => {
             }
           }
         ]}
-        newEntrySpec={MarketplaceItemSpec}
+        newItemSpec={MarketplaceItemSpec}
       />
     </PageContent>
   );
