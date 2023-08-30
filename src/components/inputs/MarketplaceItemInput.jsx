@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
 import {ActionIcon, Box, Text, Group, Paper, Stack} from "@mantine/core";
 import Inputs, {ConfirmDelete} from "./Inputs.jsx";
-import {marketplaceStore} from "Stores";
-import {ItemImage} from "Components/common/Misc.jsx";
+import {marketplaceStore} from "@/stores";
+import {ItemImage} from "@/components/common/Misc.jsx";
 import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import {IconGripVertical, IconX} from "@tabler/icons-react";

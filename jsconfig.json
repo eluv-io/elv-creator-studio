@@ -3,12 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "Assets": ["./src/static"],
-      "Components": ["./src/components"],
-      "Helpers": ["./src/helpers"],
-      "Pages": ["./src/pages"],
-      "Specs": ["./src/stores"],
-      "Stores": ["./src/stores"]
+      "@/*": ["./src/*"]
     }
   }
 }

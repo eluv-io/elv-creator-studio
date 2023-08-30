@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
-import {marketplaceStore} from "Stores";
+import {marketplaceStore} from "@/stores";
 import {useParams} from "react-router-dom";
-import PageContent from "Components/common/PageContent.jsx";
+import PageContent from "@/components/common/PageContent.jsx";
 
 const MarketplaceOverview = observer(() => {
   const { marketplaceId } = useParams();

@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {Container, Title, ActionIcon, Group} from "@mantine/core";
 import HistoryButtons from "./HistoryButtons.jsx";
 import {Link} from "react-router-dom";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 
 import {IconArrowBackUp} from "@tabler/icons-react";
 

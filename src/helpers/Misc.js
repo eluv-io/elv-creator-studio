@@ -1,5 +1,5 @@
 import {Utils} from "@eluvio/elv-client-js";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 import {v4 as UUID, parse as UUIDParse} from "uuid";
 import DayJS from "dayjs";
 

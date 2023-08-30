@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {rootStore, editStore} from "Stores";
+import {rootStore, editStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {
   Container,
@@ -13,8 +13,8 @@ import {
   Box,
   Textarea
 } from "@mantine/core";
-import InputWrapper from "Components/inputs/InputWrapper";
-import CheckboxCard from "Components/inputs/CheckboxCard.jsx";
+import InputWrapper from "@/components/inputs/InputWrapper";
+import CheckboxCard from "@/components/inputs/CheckboxCard.jsx";
 import {IconEdit} from "@tabler/icons-react";
 
 const ModifiedItem = observer(({

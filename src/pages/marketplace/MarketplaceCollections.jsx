@@ -1,17 +1,17 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/inputs/Inputs";
-import MarketplaceItemMultiselect from "../../components/inputs/MarketplaceItemInput.jsx";
+import {rootStore, marketplaceStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
+import Inputs from "@/components/inputs/Inputs";
+import MarketplaceItemMultiselect from "@/components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Group, Image, Title} from "@mantine/core";
-import {ScaleImage} from "Helpers/Fabric.js";
+import {ScaleImage} from "@/helpers/Fabric.js";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
 
-import {MarketplaceCollectionSpec} from "Specs/MarketplaceSpecs.js";
+import {MarketplaceCollectionSpec} from "@/specs/MarketplaceSpecs.js";
 import {IconSettings} from "@tabler/icons-react";
-import {ListItemCategory} from "../../components/common/Misc.jsx";
+import {ListItemCategory} from "@/components/common/Misc.jsx";
 
 export const MarketplaceCollection = observer(() => {
   const { marketplaceId, collectionId } = useParams();

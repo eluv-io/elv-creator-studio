@@ -2,7 +2,7 @@ import {flow} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
-import {FabricUrl} from "../../helpers/Fabric.js";
+import {FabricUrl} from "@/helpers/Fabric.js";
 
 export const ACTIONS = {
   MODIFY_FIELD: {

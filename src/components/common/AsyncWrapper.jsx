@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useEffect, useState} from "react";
-import {uiStore} from "Stores";
+import {uiStore} from "@/stores";
 
 const AsyncWrapper = observer(({children, loadingMessage, Load}) => {
   const [loaded, setLoaded] = useState(false);

@@ -18,15 +18,15 @@ import {Dropzone} from "@mantine/dropzone";
 import { modals } from "@mantine/modals";
 import {useForm} from "@mantine/form";
 import {useEffect, useState} from "react";
-import {rootStore, fileBrowserStore, uiStore} from "Stores";
+import {rootStore, fileBrowserStore, uiStore} from "@/stores";
 import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
-import {LocalizeString} from "Components/common/Misc";
-import {SortTable} from "Helpers/Misc";
+import {LocalizeString} from "@/components/common/Misc";
+import {SortTable} from "@/helpers/Misc";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
 import {ConfirmDelete} from "./Inputs.jsx";
-import {ScaleImage} from "Helpers/Fabric.js";
+import {ScaleImage} from "@/helpers/Fabric.js";
 
 import {
   IconArrowBackUp as IconBackArrow,

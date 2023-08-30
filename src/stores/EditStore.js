@@ -1,6 +1,6 @@
 import {flow, makeAutoObservable} from "mobx";
-import {StorageHandler} from "Helpers/Misc.js";
-import {FormatChangeList} from "./helpers/Changelist.js";
+import {StorageHandler} from "@/helpers/Misc.js";
+import {FormatChangeList} from "@/stores/helpers/Changelist.js";
 
 // TODO: Move write token saving to database, load metadata from write token if present
 

@@ -1,6 +1,6 @@
 import {useLocation} from "react-router-dom";
 import {useEffect} from "react";
-import {ScrollTo} from "Helpers/Misc.js";
+import {ScrollTo} from "@/helpers/Misc.js";
 
 const ScrollToTop = () => {
   const location = useLocation();

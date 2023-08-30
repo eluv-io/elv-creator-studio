@@ -1,6 +1,6 @@
 import {Box, Button, Group, Image, Tooltip} from "@mantine/core";
 import {Link} from "react-router-dom";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 
 export const LinkButton = (props) => {
   return <Button component={Link} {...props} />;
@@ -54,8 +54,8 @@ export const ListItemCategory = ({store, objectId, listPath, idField="id", id, l
 
 export const TooltipIcon = ({label, Icon, size, alt, color}) => {
   return (
-    <Group position="center">
-      <Tooltip label={label} events={{ hover: true, focus: true, touch: true }}>
+    <Group h={size} position="center" align="center">
+      <Tooltip height={2} label={label} events={{ hover: true, focus: true, touch: true }}>
         <Box h={size} sx={theme => ({color: theme.colors[color][5] })}>
           <Icon size={size} alt={alt || label} />
         </Box>

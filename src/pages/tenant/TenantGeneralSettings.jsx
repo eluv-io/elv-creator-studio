@@ -1,9 +1,9 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
+import {rootStore, tenantStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
-import Inputs from "Components/inputs/Inputs";
-import {ValidateAddress} from "Components/common/Validation.jsx";
+import Inputs from "@/components/inputs/Inputs";
+import {ValidateAddress} from "@/components/common/Validation.jsx";
 import {IconSettings} from "@tabler/icons-react";
 
 const TenantGeneralSettings = observer(() => {

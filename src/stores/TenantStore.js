@@ -1,7 +1,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import UrlJoin from "url-join";
-import {ExtractHashFromLink, FabricUrl} from "Helpers/Fabric.js";
-import {AddActions} from "./helpers/Actions.js";
+import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
+import {AddActions} from "@/stores/helpers/Actions.js";
 import {tenantStore} from "./index.js";
 
 class TenantStore {

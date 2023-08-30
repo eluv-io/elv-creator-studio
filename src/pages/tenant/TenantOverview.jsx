@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
+import {rootStore, tenantStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
 import {
   Title,
   Text,
@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {modals} from "@mantine/modals";
-import {LocalizeString, TooltipIcon} from "Components/common/Misc.jsx";
+import {LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
 
@@ -38,6 +38,8 @@ const UpdateLinkButton = ({type, record}) => {
   return (
     <Tooltip label={LocalizeString(l10n.update_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
+        variant="transparent"
+        disabled={record.latestDeployed}
         loading={loading}
         title={LocalizeString(l10n.update_link_label, {name: record.name})}
         aria-label={LocalizeString(l10n.update_link_label, {name: record.name})}
@@ -78,6 +80,7 @@ const UnlinkButton = ({type, record}) => {
   return (
     <Tooltip label={LocalizeString(l10n.remove_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
       <ActionIcon
+        variant="transparent"
         loading={loading}
         title={LocalizeString(l10n.remove_link_label, {name: record.name})}
         aria-label={LocalizeString(l10n.remove_link_label, {name: record.name})}

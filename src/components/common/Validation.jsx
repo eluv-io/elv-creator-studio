@@ -1,4 +1,4 @@
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 import { validate as validateCSS } from "csstree-validator";
 
 export const ValidateUrl = url => {

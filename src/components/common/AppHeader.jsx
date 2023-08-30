@@ -1,6 +1,6 @@
 import {Button, Flex, Header, ActionIcon} from "@mantine/core";
 import {observer} from "mobx-react-lite";
-import {editStore, uiStore} from "Stores";
+import {editStore, uiStore} from "@/stores";
 
 import {IconBrightnessUpFilled} from "@tabler/icons-react";
 

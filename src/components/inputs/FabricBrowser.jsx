@@ -10,10 +10,10 @@ import {
   TextInput,
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
-import {rootStore, fabricBrowserStore, uiStore} from "Stores";
-import {SortTable} from "Helpers/Misc.js";
+import {rootStore, fabricBrowserStore, uiStore} from "@/stores";
+import {SortTable} from "@/helpers/Misc.js";
 import {useDebouncedValue} from "@mantine/hooks";
-import {LocalizeString} from "Components/common/Misc.jsx";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 

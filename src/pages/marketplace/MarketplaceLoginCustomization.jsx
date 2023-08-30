@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/inputs/Inputs";
+import {rootStore, marketplaceStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
+import Inputs from "@/components/inputs/Inputs";
 import {Group, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 

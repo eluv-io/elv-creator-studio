@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {createStyles, Navbar, rem, Title, Tooltip} from "@mantine/core";
 import {NavLink, useLocation} from "react-router-dom";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 
 import {Icon123, IconHome, IconBomb, IconArrowBackUp} from "@tabler/icons-react";
 

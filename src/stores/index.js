@@ -3,17 +3,17 @@ import {Utils} from "@eluvio/elv-client-js";
 import {ElvClient} from "@eluvio/elv-client-js";
 import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
 import LiveConfig from "@eluvio/elv-client-js/src/walletClient/Configuration";
-import {StorageHandler} from "Helpers/Misc.js";
+import {StorageHandler} from "@/helpers/Misc.js";
 
-import UIStore from "Stores/UIStore.js";
-import DatabaseStore from "Stores/DatabaseStore.js";
-import EditStore from "Stores/EditStore";
-import FileBrowserStore from "Stores/FileBrowserStore.js";
-import FabricBrowserStore from "Stores/FabricBrowserStore.js";
-import TenantStore from "Stores/TenantStore.js";
-import MarketplaceStore from "Stores/MarketplaceStore.js";
+import UIStore from "@/stores/UIStore.js";
+import DatabaseStore from "@/stores/DatabaseStore.js";
+import EditStore from "@/stores/EditStore";
+import FileBrowserStore from "@/stores/FileBrowserStore.js";
+import FabricBrowserStore from "@/stores/FabricBrowserStore.js";
+import TenantStore from "@/stores/TenantStore.js";
+import MarketplaceStore from "@/stores/MarketplaceStore.js";
 
-import LocalizationEN from "Assets/localization/en/en.js";
+import LocalizationEN from "@/assets/localization/en/en.js";
 
 configure({
   enforceActions: "always",

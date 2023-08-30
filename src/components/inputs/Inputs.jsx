@@ -1,4 +1,4 @@
-import "Assets/stylesheets/wallet-rich-text.scss";
+import "@/assets/stylesheets/wallet-rich-text.scss";
 
 import {
   Input as MantineInput,
@@ -29,21 +29,21 @@ import {observer} from "mobx-react-lite";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
-import {rootStore} from "Stores";
-import {LocalizeString} from "Components/common/Misc.jsx";
-import {FabricUrl, ScaleImage} from "Helpers/Fabric";
+import {rootStore} from "@/stores";
+import {LocalizeString} from "@/components/common/Misc.jsx";
+import {FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {GenerateUUID, ParseDate} from "Helpers/Misc";
+import {GenerateUUID, ParseDate} from "@/helpers/Misc";
 import {Prism} from "@mantine/prism";
-import {ValidateUrl, ValidateCSS} from "Components/common/Validation.jsx";
+import {ValidateUrl, ValidateCSS} from "@/components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
 import {useDebouncedValue} from "@mantine/hooks";
 import FabricBrowser from "./FabricBrowser.jsx";
 import CheckboxCard from "./CheckboxCard.jsx";
 import InputWrapper, {InputLabel} from "./InputWrapper.jsx";
-import Video from "Components/common/Video.jsx";
+import Video from "@/components/common/Video.jsx";
 
 import {
   IconX,

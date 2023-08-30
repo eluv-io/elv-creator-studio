@@ -1,4 +1,4 @@
-import {editStore, rootStore} from "Stores";
+import {editStore, rootStore} from "@/stores";
 import UrlJoin from "url-join";
 
 export const ExtractHashFromLink = link => {

@@ -1,9 +1,9 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore, tenantStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
+import {rootStore, marketplaceStore, tenantStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
-import Inputs from "Components/inputs/Inputs";
+import Inputs from "@/components/inputs/Inputs";
 
 import {IconSettings} from "@tabler/icons-react";
 
@@ -190,8 +190,8 @@ const MarketplaceGeneralSettings = observer(() => {
                     {...l10n.general.page_tab_stores}
                     subcategory={l10n.categories.page_tabs}
                     path="/public/asset_metadata/info/branding/tabs"
-                    field="stores"
-                    placeholder="Stores"
+                    field="@/stores"
+                    placeholder="@/stores"
                   />
               }
 

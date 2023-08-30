@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
+import {rootStore, tenantStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
-import Inputs from "Components/inputs/Inputs";
+import Inputs from "@/components/inputs/Inputs";
 
 const TenantTheme = observer(() => {
   const tenant = tenantStore.latestTenant;

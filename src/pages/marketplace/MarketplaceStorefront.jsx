@@ -1,19 +1,19 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/inputs/Inputs";
-import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "Components/inputs/MarketplaceItemInput.jsx";
+import {rootStore, marketplaceStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
+import Inputs from "@/components/inputs/Inputs";
+import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Group, Title} from "@mantine/core";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
-import {ListItemCategory} from "Components/common/Misc.jsx";
+import {ListItemCategory} from "@/components/common/Misc.jsx";
 
 import {
   MarketplaceStorefrontSectionSpec,
   MarketplaceStorefrontBannerSpec,
   MarketplaceFooterLinkSpec
-} from "Specs/MarketplaceSpecs.js";
+} from "@/specs/MarketplaceSpecs.js";
 
 import {IconSettings, IconPhotoEdit} from "@tabler/icons-react";
 

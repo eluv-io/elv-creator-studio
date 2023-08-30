@@ -1,14 +1,14 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/inputs/Inputs";
+import {rootStore, marketplaceStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
+import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {Title} from "@mantine/core";
-import {ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "Components/common/Misc";
-import {FormatDate, FormatUSD, ParseDate} from "Helpers/Misc.js";
+import {ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
+import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
 
-import {MarketplaceItemSpec} from "Specs/MarketplaceSpecs.js";
+import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
 import {IconCircleCheck, IconX, IconClock} from "@tabler/icons-react";
 
@@ -390,7 +390,7 @@ const MarketplaceItems = observer(() => {
             label: l10n.items.items.columns.status,
             centered: true,
             field: "for_sale",
-            width: "100px",
+            width: "120px",
             render: item => {
               let status = l10n.items.status.available;
               let Icon = IconCircleCheck;
@@ -410,7 +410,7 @@ const MarketplaceItems = observer(() => {
                 Icon = IconClock;
               }
 
-              return <TooltipIcon label={status} Icon={Icon} color={color} />;
+              return <TooltipIcon size={25} label={status} Icon={Icon} color={color} />;
             }
           }
         ]}

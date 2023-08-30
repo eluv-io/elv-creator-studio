@@ -1,6 +1,6 @@
 import UrlJoin from "url-join";
-import {rootStore} from "Stores/index.js";
-import {LocalizeString} from "Components/common/Misc.jsx";
+import {rootStore} from "@/stores/index.js";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 // Update paths when list actions are performed to keep action paths in sync for pruning
 const ModifyPathIndex = ({path, basePath, originalIndex, newIndex}) => {

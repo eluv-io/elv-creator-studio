@@ -2,7 +2,7 @@ import {flow, makeAutoObservable} from "mobx";
 import {initializeApp} from "firebase/app";
 import * as FS from "firebase/firestore/lite";
 import UrlJoin from "url-join";
-import {ExtractHashFromLink} from "Helpers/Fabric.js";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 class DatabaseStore {
   firebase;

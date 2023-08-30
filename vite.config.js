@@ -25,12 +25,12 @@ export default defineConfig({
   resolve: {
     // Synchronize with jsonconfig.json
     alias: [
-      { find: "Assets", replacement: fileURLToPath(new URL("./src/static", import.meta.url)) },
-      { find: "Components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
-      { find: "Helpers", replacement: fileURLToPath(new URL("./src/helpers", import.meta.url)) },
-      { find: "Pages", replacement: fileURLToPath(new URL("./src/pages", import.meta.url)) },
-      { find: "Specs", replacement: fileURLToPath(new URL("./src/specs", import.meta.url)) },
-      { find: "Stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
+      { find: "@/assets", replacement: fileURLToPath(new URL("./src/assets", import.meta.url)) },
+      { find: "@/components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
+      { find: "@/helpers", replacement: fileURLToPath(new URL("./src/helpers", import.meta.url)) },
+      { find: "@/pages", replacement: fileURLToPath(new URL("./src/pages", import.meta.url)) },
+      { find: "@/specs", replacement: fileURLToPath(new URL("./src/specs", import.meta.url)) },
+      { find: "@/stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
     ]
   },
   build: {

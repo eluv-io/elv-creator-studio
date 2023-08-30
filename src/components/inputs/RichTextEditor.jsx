@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import {observer} from "mobx-react-lite";
 import {useEffect} from "react";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 
 import {
   IconArrowBackUp as IconUndo,

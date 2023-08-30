@@ -1,8 +1,8 @@
 import EluvioPlayer, {EluvioPlayerParameters} from "@eluvio/elv-player-js";
 import {useRef, useEffect} from "react";
-import {rootStore} from "Stores";
+import {rootStore} from "@/stores";
 import {observer} from "mobx-react-lite";
-import {ExtractHashFromLink} from "Helpers/Fabric.js";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 const Video = observer(({videoLink, videoHash, animation, playerOptions={}, className=""}) => {
   const targetRef = useRef();

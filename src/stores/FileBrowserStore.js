@@ -1,7 +1,7 @@
 import {flow, makeAutoObservable, runInAction} from "mobx";
-import {FabricUrl} from "../helpers/Fabric.js";
+import {FabricUrl} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
-import {DownloadFromUrl} from "../helpers/Misc";
+import {DownloadFromUrl} from "@/helpers/Misc";
 
 class FileBrowserStore {
   files = {};

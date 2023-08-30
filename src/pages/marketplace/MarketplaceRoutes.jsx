@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Route, Routes} from "react-router-dom";
-import SectionLayout from "Components/common/SectionLayout.jsx";
-import {rootStore, marketplaceStore} from "Stores";
+import SectionLayout from "@/components/common/SectionLayout.jsx";
+import {rootStore, marketplaceStore} from "@/stores";
 
 import MarketplaceList from "./MarketplaceList.jsx";
 import MarketplaceGeneralSettings from "./MarketplaceGeneralSettings.jsx";

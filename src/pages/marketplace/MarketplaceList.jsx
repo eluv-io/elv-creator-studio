@@ -10,11 +10,11 @@ import {
   Code
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
-import AsyncWrapper from "Components/common/AsyncWrapper.jsx";
-import {marketplaceStore} from "Stores";
-import {FabricUrl} from "Helpers/Fabric.js";
+import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
+import {marketplaceStore} from "@/stores";
+import {FabricUrl} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
-import {LinkButton} from "Components/common/Misc";
+import {LinkButton} from "@/components/common/Misc";
 
 const MarketplaceCard = observer(({marketplace, fullMarketplace}) => {
   const name = fullMarketplace?.brandedName || marketplace.brandedName || marketplace.name;

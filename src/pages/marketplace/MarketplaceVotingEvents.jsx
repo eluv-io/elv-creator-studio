@@ -1,13 +1,13 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "Stores";
-import PageContent from "Components/common/PageContent.jsx";
-import Inputs from "Components/inputs/Inputs";
-import {MarketplaceItemMultiselect} from "../../components/inputs/MarketplaceItemInput.jsx";
+import {rootStore, marketplaceStore} from "@/stores";
+import PageContent from "@/components/common/PageContent.jsx";
+import Inputs from "@/components/inputs/Inputs";
+import {MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 
-import {MarketplaceVotingEventSpec} from "Specs/MarketplaceSpecs.js";
-import {ListItemCategory} from "../../components/common/Misc.jsx";
+import {MarketplaceVotingEventSpec} from "@/specs/MarketplaceSpecs.js";
+import {ListItemCategory} from "@/components/common/Misc.jsx";
 
 export const MarketplaceVotingEvent = observer(() => {
   const { marketplaceId, votingEventId } = useParams();

@@ -1,6 +1,6 @@
 import {flow, makeAutoObservable} from "mobx";
-import {AddActions} from "./helpers/Actions.js";
-import {GenerateUUID} from "../helpers/Misc.js";
+import {AddActions} from "@/stores/helpers/Actions.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
 
 class MarketplaceStore {
   allMarketplaces = [];

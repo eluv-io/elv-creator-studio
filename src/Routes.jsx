@@ -1,8 +1,8 @@
 import {observer} from "mobx-react-lite";
 import {BrowserRouter} from "react-router-dom";
-import TenantRoutes from "Pages/tenant/TenantRoutes.jsx";
-import MarketplaceRoutes from "Pages/marketplace/MarketplaceRoutes.jsx";
-import ScrollToTop from "Components/common/ScrollToTop.jsx";
+import TenantRoutes from "@/pages/tenant/TenantRoutes.jsx";
+import MarketplaceRoutes from "@/pages/marketplace/MarketplaceRoutes.jsx";
+import ScrollToTop from "@/components/common/ScrollToTop.jsx";
 
 const AppRoutes = observer(() => {
   return (

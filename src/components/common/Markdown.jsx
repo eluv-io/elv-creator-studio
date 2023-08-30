@@ -1,4 +1,4 @@
-import "Assets/stylesheets/markdown.scss";
+import "@/assets/stylesheets/markdown.scss";
 
 import MarkdownItImport from "markdown-it";
 const MarkdownIt = MarkdownItImport();

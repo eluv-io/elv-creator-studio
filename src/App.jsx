@@ -2,9 +2,9 @@ import {observer} from "mobx-react-lite";
 
 import {Text,  Loader, Modal, Flex,  MantineProvider} from "@mantine/core";
 import {ModalsProvider} from "@mantine/modals";
-import MantineTheme from "Assets/MantineTheme";
+import MantineTheme from "@/assets/MantineTheme";
 
-import {rootStore, uiStore} from "Stores";
+import {rootStore, uiStore} from "@/stores";
 
 import AppRoutes from "./Routes.jsx";
 import SaveModal from "./components/common/SaveModal.jsx";

@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Route, Routes} from "react-router-dom";
-import SectionLayout from "Components/common/SectionLayout.jsx";
-import {rootStore, tenantStore} from "Stores";
+import SectionLayout from "@/components/common/SectionLayout.jsx";
+import {rootStore, tenantStore} from "@/stores";
 
 import TenantOverview from "./TenantOverview.jsx";
 import TenantGeneralSettings from "./TenantGeneralSettings.jsx";
