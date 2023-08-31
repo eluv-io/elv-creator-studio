@@ -10,7 +10,7 @@ import SiteHero from "./SiteHero.jsx";
 import SiteActions from "./SiteActions.jsx";
 import SiteBanners from "./SiteBanners.jsx";
 import SiteTheme from "./SiteTheme.jsx";
-import SiteOffers from "./SiteOffers.jsx";
+import SiteOffers, {SiteOffer} from "./SiteOffers.jsx";
 import SiteFAQ from "./SiteFAQ.jsx";
 import SiteSearch from "./SiteSearch.jsx";
 
@@ -23,6 +23,7 @@ const SiteRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.site.nav.banners, path: "/sites/:siteId/banners", Component: <SiteBanners /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.theme, path: "/sites/:siteId/theme", Component: <SiteTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.offers, path: "/sites/:siteId/offers", Component: <SiteOffers /> },
+    { label: rootStore.l10n.pages.site.nav.offers, path: "/sites/:siteId/offers/:offerId", Component: <SiteOffer /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.faq, path: "/sites/:siteId/faq", Component: <SiteFAQ /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.analytics, path: "/sites/:siteId/analytics", Component: <SiteSearch /> }
   ]

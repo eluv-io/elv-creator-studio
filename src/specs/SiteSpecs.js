@@ -6,3 +6,13 @@ export const SiteAdditionalMarketplaceSpec = {
   "default_store_page": "Storefront",
   "hidden": false
 };
+
+export const SiteOfferSpec = {
+  id: undefined,
+  tenant_id: undefined,
+  title: "<New Offer>",
+  description: "",
+  ntp_id: "",
+  marketplace: undefined,
+  sku: undefined
+};

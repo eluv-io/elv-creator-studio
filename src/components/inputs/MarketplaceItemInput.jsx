@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {ActionIcon, Box, Text, Group, Paper, Stack, Tooltip} from "@mantine/core";
 import Inputs, {ConfirmDelete} from "./Inputs.jsx";
@@ -9,7 +9,7 @@ import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import {IconGripVertical, IconX} from "@tabler/icons-react";
 
 // eslint-disable-next-line react/display-name
-const ItemSelectComponent = React.forwardRef(({image, label, value, ...others}) => {
+const ItemSelectComponent = React.forwardRef(({image, label, value, selected, ...others}) => {
   return (
     <Paper {...others} p={5}>
       <Group>
@@ -18,7 +18,7 @@ const ItemSelectComponent = React.forwardRef(({image, label, value, ...others}) 
         </Box>
         <div>
           <Text fz="sm">{label}</Text>
-          <Text color="dimmed" fz="xs">{value}</Text>
+          <Text color={!selected ? "dimmed" : undefined} fz="xs">{value}</Text>
         </div>
       </Group>
     </Paper>
@@ -83,23 +83,24 @@ const SelectedItem = observer(({
   );
 });
 
-// A component for selecting a single marketplace item - a select with the current value displayed below
-export const MarketplaceItemSelect = observer(({
-  store,
-  objectId,
-  marketplaceId,
-  path,
-  field,
-  category,
-  subcategory,
-  label,
-  description,
-  hint
-}) => {
-  marketplaceId = marketplaceId || objectId;
+const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, Component, ...props}) => {
+  const [marketplaceId, setMarketplaceId] = useState(marketplaceSlug ? undefined : objectId);
+
+  useEffect(() => {
+    marketplaceStore.LoadMarketplaces()
+      .then(() => {
+        const selectedMarketplace = marketplaceStore.allMarketplaces?.find(marketplace => marketplace.marketplaceSlug === marketplaceSlug);
+
+        if(!selectedMarketplace) {
+          return;
+        }
+
+        setMarketplaceId(selectedMarketplace.objectId);
+        marketplaceStore.LoadMarketplace({marketplaceId: selectedMarketplace.objectId});
+      });
+  }, [marketplaceSlug]);
+
   const items = marketplaceStore.marketplaces[marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
-  const selectedSKU = store.GetMetadata({objectId, path, field}) || "";
-  const selectedItem = items.find(item => item.sku === selectedSKU);
 
   const options = items
     .map(item =>
@@ -111,6 +112,32 @@ export const MarketplaceItemSelect = observer(({
     )
     .sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1);
 
+  return (
+    <Component
+      {...props}
+      objectId={objectId}
+      items={items}
+      options={options}
+    />
+  );
+});
+
+// A component for selecting a single marketplace item - a select with the current value displayed below
+const MarketplaceItemSelectComponent = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  description,
+  hint,
+  items,
+  options
+}) => {
+  const selectedSKU = store.GetMetadata({objectId, path, field}) || "";
+  const selectedItem = items.find(item => item.sku === selectedSKU);
 
   return (
     <Paper withBorder p="xl" pt="sm" mb="md" maw={600}>
@@ -155,7 +182,7 @@ export const MarketplaceItemSelect = observer(({
 });
 
 // A component for selecting a list of marketplace items - a multiselect with the current value displayed below
-export const MarketplaceItemMultiselect = observer(({
+const MarketplaceItemMultiselectComponent = observer(({
   store,
   objectId,
   path,
@@ -164,22 +191,12 @@ export const MarketplaceItemMultiselect = observer(({
   subcategory,
   label,
   description,
-  hint
+  hint,
+  items,
+  options
 }) => {
   const location = useLocation();
   const selectedSKUs = store.GetMetadata({objectId, path, field}) || [];
-  const items = marketplaceStore.marketplaces[objectId]?.metadata?.public?.asset_metadata?.info?.items || [];
-
-  const options = items
-    .map(item =>
-      ({
-        image: <ItemImage item={item} scale={200} width={40} height={40} />,
-        label: item.name || item.sku,
-        value: item.sku
-      })
-    )
-    .sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1);
-
 
   const itemList = selectedSKUs.map((sku, index) => {
     const item = items.find(item => item.sku === sku);
@@ -230,6 +247,7 @@ export const MarketplaceItemMultiselect = observer(({
         componentProps={{
           mb: "xs",
           itemComponent: ItemSelectComponent,
+          valueComponent: () => null,
           // Allow filtering by name or sku
           filter: (filter, selected, item) =>
             !selected &&
@@ -266,6 +284,14 @@ export const MarketplaceItemMultiselect = observer(({
       </DragDropContext>
     </Paper>
   );
+});
+
+export const MarketplaceItemSelect = observer(function (props, ref) {
+  return <MarketplaceItemSelectWrapper {...props} Component={MarketplaceItemSelectComponent} ref={ref}/>;
+});
+
+export const MarketplaceItemMultiselect = observer(function (props, ref) {
+  return <MarketplaceItemSelectWrapper {...props} Component={MarketplaceItemMultiselectComponent} ref={ref}/>;
 });
 
 export default MarketplaceItemMultiselect;

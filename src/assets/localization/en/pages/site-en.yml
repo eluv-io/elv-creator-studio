@@ -27,6 +27,9 @@ form:
     hero_promos: Promo Videos
     logo: Logo
     theme: Theme
+    offers: Offers
+    offer_label: Offer '{label}'
+    offer_details: Offer Details
     faq: FAQ
     faq_label: FAQ Question {label}
   common:
@@ -175,6 +178,28 @@ form:
       label: Use Custom CSS
     custom_css:
       label: Custom CSS
+  offers:
+    offers:
+      label: Offers
+      columns:
+        title: Title
+        marketplace: Marketplace
+        item: Item
+    id:
+      label: ID
+    title:
+      label: Title
+    description:
+      label: Description
+    ntp_id:
+      label: NTP ID
+    marketplace:
+      label: Marketplace
+      description: The marketplace that will be shown after this offer is redeemed
+    marketplace_item:
+      label: Marketplace Item
+      description: The marketplace item that will be shown after this offer is redeemed
+
   faq:
     show_faq:
       label: Show FAQ

@@ -1,12 +1,11 @@
 import {useEffect} from "react";
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {marketplaceStore, rootStore, siteStore, tenantStore} from "@/stores";
+import {marketplaceStore, rootStore, siteStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Accordion, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 
-import {IconSettings} from "@tabler/icons-react";
 import {MarketplaceItemSelect} from "@/components/inputs/MarketplaceItemInput";
 
 const SiteActions = observer(() => {
@@ -24,19 +23,10 @@ const SiteActions = observer(() => {
     path: "/public/asset_metadata/info/event_info"
   };
 
-  const selectedMarketplaceSlug = info?.event_info?.event_button_marketplace;
-  const selectedMarketplace = marketplaceStore.allMarketplaces?.find(marketplace => marketplace.marketplaceSlug === selectedMarketplaceSlug);
-
   useEffect(() => {
     // Marketplaces need to be loaded for marketplace selection
     marketplaceStore.LoadMarketplaces();
   }, []);
-
-  useEffect(() => {
-    if(!selectedMarketplace) { return; }
-
-    marketplaceStore.LoadMarketplace({marketplaceId: selectedMarketplace.objectId});
-  }, [selectedMarketplace]);
 
   const marketplaceOptions = (marketplaceStore.allMarketplaces || [])
     .map(marketplace => ({
@@ -110,18 +100,14 @@ const SiteActions = observer(() => {
               defaultOnBlankString
               options={marketplaceOptions}
             />
-
-            {
-              !selectedMarketplace ? null :
-                <MarketplaceItemSelect
-                  {...inputProps}
-                  {...l10n.actions.main_button_marketplace_item}
-                  clearable
-                  marketplaceId={selectedMarketplace?.objectId}
-                  subcategory={l10n.categories.main_button_behavior}
-                  field="event_button_marketplace_sku"
-                />
-            }
+            <MarketplaceItemSelect
+              {...inputProps}
+              {...l10n.actions.main_button_marketplace_item}
+              clearable
+              marketplaceSlug={info?.event_info?.event_button_marketplace}
+              subcategory={l10n.categories.main_button_behavior}
+              field="event_button_marketplace_sku"
+            />
             {
               !info?.event_info?.event_button_marketplace_sku ? null :
                 <Inputs.Checkbox

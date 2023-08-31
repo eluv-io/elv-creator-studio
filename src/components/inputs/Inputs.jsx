@@ -1299,9 +1299,9 @@ const CollectionTableRows = observer(({
                 </div>
               </td>
               {columns.map(({field, width, render, centered}, index) =>
-                <td key={`td-${id}-${field}`} style={{width: width || "100%"}}>
+                <td key={`td-${id}-${field}`} style={{width}}>
                   <Group position={centered ? "center" : "left"}>
-                    {render ? render(value, index) : (value[field] || "")}
+                    { render ? render(value, index) : <Text sx={{wordWrap: "anywhere"}}>{value[field] || ""}</Text> }
                   </Group>
                 </td>
               )}

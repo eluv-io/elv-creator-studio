@@ -4,10 +4,8 @@ import {rootStore, siteStore, marketplaceStore, tenantStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
-
-import {useEffect} from "react";
-
 import {SiteAdditionalMarketplaceSpec} from "@/specs/SiteSpecs.js";
+import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
 
 const SiteGeneralSettings = observer(() => {
   const { siteId } = useParams();
@@ -22,11 +20,6 @@ const SiteGeneralSettings = observer(() => {
     objectId: siteId,
     category: l10n.categories.general
   };
-
-  useEffect(() => {
-    // Marketplaces need to be loaded for marketplace selection
-    marketplaceStore.LoadMarketplaces();
-  }, []);
 
   return (
     <PageContent
@@ -106,18 +99,12 @@ const SiteGeneralSettings = observer(() => {
         field="tenant_slug"
         defaultValue={tenantStore.tenantSlug}
       />
-      <Inputs.Select
+      <MarketplaceSelect
         {...inputProps}
         {...l10n.general.marketplace}
         subcategory={l10n.categories.marketplace}
         path="/public/asset_metadata/info/marketplace_info"
         field="marketplace_slug"
-        options={
-          (marketplaceStore.allMarketplaces || []).map(marketplace => ({
-            label: marketplaceStore.marketplaces[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.name || marketplace.brandedName,
-            value: marketplace.marketplaceSlug
-          }))
-        }
       />
       <Inputs.Select
         {...inputProps}
@@ -158,45 +145,36 @@ const SiteGeneralSettings = observer(() => {
               field="additional_marketplaces"
               fieldLabel={l10n.general.additional_marketplace.label}
               newItemSpec={SiteAdditionalMarketplaceSpec}
-              renderItem={props => {
-                const marketplaceOptions = (marketplaceStore.allMarketplaces || [])
-                  .map(marketplace => ({
-                    label: marketplaceStore.marketplaces[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.name || marketplace.brandedName,
-                    value: marketplace.marketplaceSlug
-                  }))
-                  .filter(({value}) => value !== info?.marketplace_info?.marketplace_slug);
-
-                return (
-                  <>
-                    <Inputs.Hidden
-                      {...props}
-                      {...l10n.general.tenant_slug}
-                      field="tenant_slug"
-                      defaultValue={tenantStore.tenantSlug}
-                    />
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.general.marketplace}
-                      field="marketplace_slug"
-                      options={marketplaceOptions}
-                      defaultValue={marketplaceOptions[0]?.value}
-                    />
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.general.default_store_page}
-                      field="default_store_page"
-                      defaultValue="Storefront"
-                      options={["Storefront", "Listings"]}
-                    />
-                    <Inputs.Checkbox
-                      {...props}
-                      {...l10n.general.marketplace_hidden}
-                      field="hidden"
-                      defaultValue={false}
-                    />
-                  </>
-                );
-              }}
+              renderItem={props => (
+                <>
+                  <Inputs.Hidden
+                    {...props}
+                    {...l10n.general.tenant_slug}
+                    field="tenant_slug"
+                    defaultValue={tenantStore.tenantSlug}
+                  />
+                  <MarketplaceSelect
+                    {...props}
+                    {...l10n.general.marketplace}
+                    field="marketplace_slug"
+                    excludedSlugs={[info?.marketplace_info?.marketplace_slug]}
+                    defaultFirst
+                  />
+                  <Inputs.Select
+                    {...props}
+                    {...l10n.general.default_store_page}
+                    field="default_store_page"
+                    defaultValue="Storefront"
+                    options={["Storefront", "Listings"]}
+                  />
+                  <Inputs.Checkbox
+                    {...props}
+                    {...l10n.general.marketplace_hidden}
+                    field="hidden"
+                    defaultValue={false}
+                  />
+                </>
+              )}
             />
           </>
       }
