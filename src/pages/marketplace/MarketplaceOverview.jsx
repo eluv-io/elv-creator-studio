@@ -26,7 +26,7 @@ const MarketplaceOverview = observer(() => {
             <Container p={0} m={0} maw={400}>
               <Title order={3}>{ metadata.info?.branding?.name }</Title>
               <Title order={6} color="dimmed">{ tenantStore.tenantSlug } / { metadata.slug }</Title>
-              <Text fz="xs" color="dimmed">{ tenantStore.tenantObjectId }</Text>
+              <Text fz="xs" color="dimmed">{ marketplace.objectId }</Text>
               <Text fz="sm" mt="md">{metadata?.info?.branding?.description}</Text>
               <Text mt="xl" fw={600}>
                 {LocalizeString(rootStore.l10n.pages.marketplace.form.overview[itemCount === 1 ? "item" : "items"], {count: itemCount})}

@@ -27,6 +27,7 @@ export const InputLabel = ({label, hint, centered}) => {
         pl={centered ? 15 : 0}
         style={{position: "relative"}}
         w="max-content"
+        maw="100%"
       >
         <Text>{ label }</Text>
         <HintIcon hint={hint} componentProps={{style: {position: "absolute", right: 0}}} />
@@ -41,11 +42,18 @@ const InputWrapper = observer(({label, description, hint, error, children, flex,
   return (
     <Paper withBorder p="xl" py="md" mb="md" maw={600} {...componentProps}>
       <MantineInput.Wrapper
+        {...wrapperProps}
         label={<InputLabel label={label} hint={hint} />}
         description={description}
         error={error}
-        style={{position: "relative"}}
-        {...wrapperProps}
+        style={{
+          ...(wrapperProps.style || {}),
+          ...(
+            !flex ?
+              { position: "relative" } :
+              { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "}
+          )
+        }}
       >
         { children }
       </MantineInput.Wrapper>

@@ -25,11 +25,10 @@ const MarketplaceLoginCustomization = observer(() => {
   return (
     <PageContent
       title={`${info.branding?.name || "Marketplace"} - Login Customization`}
+      subtitle={l10n.login.note}
       section="marketplace"
       useHistory
     >
-      <Title order={6} color="dimmed">{ l10n.login.note }</Title>
-
       <Title order={3} mt="xl" mb="xl">{ l10n.categories.login_theme }</Title>
 
       <Group align="top">

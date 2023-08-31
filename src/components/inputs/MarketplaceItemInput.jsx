@@ -1,3 +1,4 @@
+import React from "react";
 import {observer} from "mobx-react-lite";
 import {ActionIcon, Box, Text, Group, Paper, Stack, Tooltip} from "@mantine/core";
 import Inputs, {ConfirmDelete} from "./Inputs.jsx";
@@ -7,7 +8,8 @@ import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import {IconGripVertical, IconX} from "@tabler/icons-react";
 
-const ItemSelectComponent = ({image, label, value, ...others}) => {
+// eslint-disable-next-line react/display-name
+const ItemSelectComponent = React.forwardRef(({image, label, value, ...others}) => {
   return (
     <Paper {...others} p={5}>
       <Group>
@@ -21,7 +23,7 @@ const ItemSelectComponent = ({image, label, value, ...others}) => {
       </Group>
     </Paper>
   );
-};
+});
 
 const SelectedItem = observer(({
   single,
@@ -85,6 +87,7 @@ const SelectedItem = observer(({
 export const MarketplaceItemSelect = observer(({
   store,
   objectId,
+  marketplaceId,
   path,
   field,
   category,
@@ -93,7 +96,8 @@ export const MarketplaceItemSelect = observer(({
   description,
   hint
 }) => {
-  const items = marketplaceStore.marketplaces[objectId]?.metadata?.public?.asset_metadata?.info?.items || [];
+  marketplaceId = marketplaceId || objectId;
+  const items = marketplaceStore.marketplaces[marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
   const selectedSKU = store.GetMetadata({objectId, path, field}) || "";
   const selectedItem = items.find(item => item.sku === selectedSKU);
 
@@ -109,7 +113,7 @@ export const MarketplaceItemSelect = observer(({
 
 
   return (
-    <Paper withBorder p="xl" pt="md" mb="md" maw={600}>
+    <Paper withBorder p="xl" pt="sm" mb="md" maw={600}>
       <Inputs.Select
         store={store}
         objectId={objectId}
@@ -124,6 +128,7 @@ export const MarketplaceItemSelect = observer(({
         itemComponent={ItemSelectComponent}
         options={options}
         componentProps={{
+          mb: "xs",
           itemComponent: ItemSelectComponent,
           // Allow filtering by name or sku
           filter: (filter, item) =>
@@ -223,8 +228,8 @@ export const MarketplaceItemMultiselect = observer(({
         itemComponent={ItemSelectComponent}
         options={options}
         componentProps={{
+          mb: "xs",
           itemComponent: ItemSelectComponent,
-          valueComponent: () => null,
           // Allow filtering by name or sku
           filter: (filter, selected, item) =>
             !selected &&

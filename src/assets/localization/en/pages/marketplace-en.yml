@@ -154,7 +154,7 @@ form:
       label: Custom CSS
 
   login:
-    note: "Note: Login customization does not apply when your marketplace is accessed via the global marketplace"
+    note: "Note: Login customization only applies when your marketplace is accessed from one of your sites or in an embedded frame"
     subheaders:
       user_data_sharing: User Data Sharing
       custom_consent_options: Custom Consent Options

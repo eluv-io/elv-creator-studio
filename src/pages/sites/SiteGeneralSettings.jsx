@@ -81,6 +81,21 @@ const SiteGeneralSettings = observer(() => {
         field="slug"
       />
 
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.title}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info/event_info"
+        field="event_title"
+      />
+
+      <Inputs.Hidden
+        {...inputProps}
+        path="/public/asset_metadata/info"
+        field="state"
+        defaultValue="Available"
+      />
+
       <Title order={3} mt={50} mb="md">{ l10n.categories.marketplace }</Title>
 
       <Inputs.Hidden
@@ -185,6 +200,58 @@ const SiteGeneralSettings = observer(() => {
             />
           </>
       }
+
+      <Title order={3} mt={50}>{ l10n.categories.featured }</Title>
+      <Title order={6} mb="md" color="dimmed">{ l10n.general.featured_note }</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.feature_location}
+        subcategory={l10n.categories.featured}
+        path="/public/asset_metadata/info/event_info"
+        field="feature_location"
+        defaultValue="Event Site"
+        options={[
+          { label: "Site", value: "Event Site"},
+          { label: "Marketplace", value: "Marketplace" },
+          { label: "Link", value: "External Link" }
+        ]}
+      />
+
+      {
+        info?.event_info?.feature_location !== "External Link" ? null :
+          <Inputs.URL
+            {...inputProps}
+            {...l10n.general.external_url}
+            subcategory={l10n.categories.featured}
+            path="/public/asset_metadata/info/event_info"
+            field="external_url"
+          />
+      }
+
+      <Inputs.InputWrapper {...l10n.general.featured_button}>
+        <Inputs.Color
+          {...inputProps}
+          {...l10n.common.text}
+          subcategory={l10n.categories.featured}
+          path="/public/asset_metadata/info/event_info/feature_button"
+          field="text"
+        />
+        <Inputs.Color
+          {...inputProps}
+          {...l10n.common.text_color}
+          subcategory={l10n.categories.featured}
+          path="/public/asset_metadata/info/event_info/feature_button/text_color"
+          field="color"
+        />
+        <Inputs.Color
+          {...inputProps}
+          {...l10n.common.background_color}
+          subcategory={l10n.categories.featured}
+          path="/public/asset_metadata/info/event_info/feature_button/background_color"
+          field="color"
+        />
+      </Inputs.InputWrapper>
     </PageContent>
   );
 });

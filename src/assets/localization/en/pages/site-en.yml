@@ -3,6 +3,7 @@ nav:
   overview: Overview
   general: General
   hero: Hero
+  actions: Actions
   banners: Banners
   theme: Theme
   offers: Offers
@@ -14,6 +15,20 @@ form:
     info: Site Info
     marketplace: Marketplace
     additional_marketplaces: Additional Marketplaces
+    featured: Featured Site Settings
+    hero: Hero Settings
+    hero_background: Hero Background
+    hero_banner: Hero Banner
+    hero_text: Hero Text
+    actions: Actions
+    main_button_behavior: Main Button Behavior
+    get_started_modal: Get Started Modal
+    post_login_modal: After Login Modal
+    hero_promos: Promo Videos
+    logo: Logo
+    theme: Theme
+    faq: FAQ
+    faq_label: FAQ Question {label}
   common:
     name:
       label: Name
@@ -21,6 +36,12 @@ form:
       label: Description
     id:
       label: ID
+    text:
+      label: Text
+    text_color:
+      label: Text Color
+    background_color:
+      label: Background Color
   general:
     tenant_id:
       label: Tenant ID
@@ -29,6 +50,9 @@ form:
     slug:
       label: Slug
       description: Identifier for your site. Will be present in the URL.
+    title:
+      label: Site Title
+      description: The title of the page in the browser
     marketplace:
       label: Marketplace
     default_store_page:
@@ -48,3 +72,125 @@ form:
     marketplace_hidden:
       label: Hidden
       description: If checked, this marketplace will not be shown in navigation.
+    featured_note: These settings apply if your site is featured on the main page of eluv.io
+    feature_location:
+      label: Featured Location
+      description: Whether the featured link should direct to the site, the marketplace or an external link
+    external_url:
+      label: Featured URL
+    featured_button:
+      label: Featured Button Settings
+  hero:
+    logo:
+      label: Logo
+    logo_link:
+      label: Logo Link
+      description: Specify a custom URL for the logo image to link to.
+    hero_background:
+      label: Hero Background
+      description: These are the main images displayed at the top of your site
+    hero_background_landscape:
+      label: Hero Background (Landscape)
+    hero_background_portrait:
+      label: Hero Background (Portrait)
+      hint: This image will be used on mobile devices as well as on the main page of eluv.io if the site is featured.
+    use_video_hero:
+      label: Use Video Hero Background
+      description: Allows specifying video animations for the hero backgrounds
+    hero_video_landscape:
+      label: Hero Video (Landscape)
+    hero_video_portrait:
+      label: Hero Video (Portrait)
+      hint: This video will be used on mobile devices as well as on the main page of eluv.io if the site is featured.
+    hero_banner:
+      label: Hero Banner
+      description: This banner image will be displayed across the top of the hero
+    hero_banner_desktop:
+      label: Hero Banner (Desktop)
+    hero_banner_mobile:
+      label: Hero Banner (Mobile)
+    hero_banner_link:
+      label: Hero Banner Link
+      description: Specify a link for the hero banner to go to
+    show_text_over_hero:
+      label: Show Text Over Hero
+      description: Enables additional text fields that can be displayed over the main hero
+    header_image:
+      label: Header Image
+    header:
+      label: Header
+    subheader_1:
+      label: Subheader 1
+    subheader_2:
+      label: Subheader 2
+    promo_videos:
+      label: Promo Videos
+    promo_video:
+      label: Promo Video
+  actions:
+    actions_subtitle: Configure behavior for the buttons on the main hero
+    main_button_behavior:
+      label: Main Button Behavior (Before Login)
+    main_button_behavior_post_login:
+      label: Main Button Behavior (After Login)
+      description: The behavior of the main button can be different after the user has logged in
+    main_button_link:
+      label: Main Button Link
+      description: The main button will link to the specified URL
+    main_button_marketplace:
+      label: Main Button Marketplace
+      description: The main button will show the specified marketplace
+    main_button_marketplace_item:
+      label: Main Button Marketplace Item
+      description: Open the marketplace to the specified item
+    main_button_marketplace_redirect_to_owned_item:
+      label: Redirect to Owned Item
+      description: If the user is logged in and already owns the item, redirect to their item instead of the store page
+    post_login_show_marketplace:
+      label: Open Marketplace After Login
+      description: If specified, the marketplace will automatically be shown with the options above after users log in
+  event_modals:
+    image:
+      label: Image
+    message:
+      label: Message
+    button_text:
+      label: Button Text
+    button_image:
+      label: Button Image
+      description: Use a custom image for the button
+    button_link:
+      label: Button Link
+      description: If specified, the button will link to this URL
+    show_marketplace:
+      label: Show Marketplace
+      description: If specified, the modal button will open the marketplace instead of just closing the modal
+  theme:
+    favicon:
+      label: Favicon
+      hint: Small 16x16 pixel icon displayed in the browser tab next to the page title
+    theme:
+      label: Theme
+    use_custom_css:
+      label: Use Custom CSS
+    custom_css:
+      label: Custom CSS
+  faq:
+    show_faq:
+      label: Show FAQ
+    faq_title:
+      label: FAQ Title
+    faq:
+      label: FAQ
+    key:
+      label: Key
+      description: Identifier for this question. Can be used in the url to go directly to the question, e.g. live.eluv.io/tenant-slug/site-slug/faq#key
+    type:
+      label: Type
+      description: An FAQ entry can either be a question/answer or a section title
+    header:
+      label: Header
+    question:
+      label: Question
+    answer:
+      label: Answer

@@ -18,17 +18,62 @@ const SiteTheme = observer(() => {
   const inputProps = {
     store: siteStore,
     objectId: siteId,
-    category: l10n.categories.general
+    category: l10n.categories.theme,
+    path: "/public/asset_metadata/info"
   };
 
   return (
     <PageContent
-      title={`${info.name || site.name || "Site"} - General`}
+      title={`${info.name || site.name || "Site"} - ${l10n.categories.theme}`}
       section="site"
       useHistory
     >
-      <Title order={3} my="md">{ l10n.categories.info }</Title>
+      <Title order={3} my="md">{ l10n.categories.theme }</Title>
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.theme.favicon}
+        field="favicon"
+      />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.theme.theme}
+        field="theme"
+        defaultValue="light"
+        options={[
+          { label: "Light", value: "light" },
+          { label: "Dark", value: "dark" }
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.theme.theme}
+        field="font"
+        defaultValue="Helvetica Neue"
+        options={[
+          "Inter",
+          "Albertus",
+          "Compacta",
+          "Selawik"
+        ]}
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.theme.use_custom_css}
+        field="use_custom_css"
+      />
+
+      {
+        !info?.use_custom_css ? null :
+          <Inputs.Code
+            {...inputProps}
+            {...l10n.theme.custom_css}
+            field="custom_css"
+            language="css"
+          />
+      }
     </PageContent>
   );
 });

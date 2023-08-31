@@ -31,7 +31,7 @@ import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
 import {rootStore} from "@/stores";
 import {LocalizeString} from "@/components/common/Misc.jsx";
-import {FabricUrl, ScaleImage} from "@/helpers/Fabric";
+import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
@@ -189,9 +189,11 @@ const Input = observer(({
   options,
   placeholder,
   defaultValue,
+  defaultOnBlankString,
   clearable,
   searchable,
   disabled,
+  hidden,
   Validate,
   validateOnLoad=true,
   componentProps={}
@@ -204,7 +206,14 @@ const Input = observer(({
 
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
-    if((type === "uuid" || typeof defaultValue !== "undefined") && typeof store.GetMetadata({objectId, path, field}) === "undefined") {
+    if((type === "uuid" || typeof defaultValue !== "undefined")) {
+      const currentValue = store.GetMetadata({objectId, path, field});
+
+      // Only set default value on blank string if explicitly specified - otherwise, only set on undefined
+      if(!(typeof currentValue === "undefined" || (currentValue === "" && defaultOnBlankString))) {
+        return;
+      }
+
       let value = defaultValue;
       if(type === "uuid") {
         value = GenerateUUID();
@@ -288,7 +297,7 @@ const Input = observer(({
     );
   }
 
-  if(type === "hidden") {
+  if(hidden) {
     return null;
   }
 
@@ -592,8 +601,8 @@ const SingleImageInput = observer(({
     <>
       <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
         <HoverCard shadow="xl" openDelay={imageUrl ? 500 : 100000}>
-          <HoverCard.Target>
-            <UnstyledButton onClick={() => setShowFileBrowser(true)}>
+          <UnstyledButton onClick={() => setShowFileBrowser(true)}>
+            <HoverCard.Target>
               <Image
                 mb="xs"
                 withPlaceholder
@@ -605,6 +614,7 @@ const SingleImageInput = observer(({
                 placeholder={<IconPhotoX size={35} />}
                 styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
               />
+              </HoverCard.Target>
               <MantineInput.Wrapper
                 maw={150}
                 label={<InputLabel centered label={label} hint={hint} />}
@@ -612,8 +622,7 @@ const SingleImageInput = observer(({
                 labelProps={{style: { width: "100%", textAlign: "center "}}}
                 descriptionProps={{style: { width: "100%", textAlign: "center "}}}
               />
-            </UnstyledButton>
-          </HoverCard.Target>
+          </UnstyledButton>
           <HoverCard.Dropdown bg="gray.1" p="xl" >
             <Image
               mb="xs"
@@ -831,6 +840,9 @@ export const FabricBrowserInput = observer(({
     setShowPreview(false);
   }, [value, previewable, previewIsAnimation]);
 
+  const targetHash = ExtractHashFromLink(value);
+  const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
+
   return (
     <>
       {
@@ -852,7 +864,7 @@ export const FabricBrowserInput = observer(({
             }}
           />
       }
-      <InputWrapper label={label} description={description} hint={hint} flex>
+      <InputWrapper label={label} description={description} hint={hint} flex mb={0}>
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
           <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
             <ActionIcon
@@ -865,8 +877,8 @@ export const FabricBrowserInput = observer(({
         </Group>
         {
           !value ? null :
-            <Paper withBorder p="xl" mt="md" style={{position: "relative"}}>
-              <Group spacing={0} style={{position: "absolute", top: 5, right: 5}}>
+            <Paper mt="md" style={{position: "relative"}}>
+              <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
                 {
                   !previewable ? null :
                     <Tooltip label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]} events={{ hover: true, focus: true, touch: true }}>
@@ -902,12 +914,12 @@ export const FabricBrowserInput = observer(({
                   </ActionIcon>
                 </Tooltip>
               </Group>
-              <Container p={0} pr={70}>
+              <Container p={0}>
                 {
                   !imageUrl ? null :
                     <Image
                       mb="xs"
-                      height={125}
+                      height={200}
                       fit="contain"
                       alt={name}
                       src={imageUrl}
@@ -920,10 +932,10 @@ export const FabricBrowserInput = observer(({
                   { name }
                 </Text>
                 <Text fz={11} color="dimmed">
-                  {rootStore.utils.DecodeVersionHash(value["."]?.source)?.objectId}
+                  { targetId }
                 </Text>
                 <Text fz={8} color="dimmed">
-                  {value["."]?.source}
+                  { targetHash }
                 </Text>
               </Container>
 
@@ -962,10 +974,11 @@ const ImageInput = observer(({
       description={description}
       hint={hint}
       h="max-content"
-      w="max-content"
+      w="100%"
+      maw={600}
       {...componentProps}
     >
-      <Group my="md">
+      <Group my="md" pt="sm" position="center">
         {
           fields.map((field) =>
             <SingleImageInput
@@ -1028,6 +1041,7 @@ const ListInputs = observer(({
 
     return renderItem({
       item,
+      index,
       store,
       objectId,
       path: UrlJoin(path, field, index.toString()),
@@ -1498,7 +1512,7 @@ const CollectionTable = observer(({
 });
 
 export default {
-  Hidden: props => <Input {...props} type="hidden" />,
+  Hidden: props => <Input {...props} type="text" hidden />,
   Text: props => <Input {...props} type="text" />,
   URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,
   TextArea: props => <Input {...props} type="textarea" />,

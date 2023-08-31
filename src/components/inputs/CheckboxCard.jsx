@@ -17,6 +17,7 @@ const CheckboxCard = observer(({
       width="100%"
       w="100%"
       maw={600}
+      mb="md"
       onClick={() => onChange(!checked)}
       {...componentProps}
     >
@@ -25,8 +26,17 @@ const CheckboxCard = observer(({
         description={description}
         hint={hint}
         flex
+        mb={0}
         wrapperProps={{
           pr: 50,
+          style: {
+            cursor: "pointer"
+          },
+          labelProps: {
+            style: {
+              cursor: "pointer"
+            }
+          }
         }}
       >
         <Checkbox

@@ -25,7 +25,7 @@ const SiteOverview = observer(() => {
             <Container p={0} m={0} maw={400}>
               <Title order={4}>{ metadata?.info?.name || site?.name }</Title>
               <Title order={6} color="dimmed">{ tenantStore.tenantSlug } / { metadata.slug }</Title>
-              <Text fz="xs" color="dimmed">{ tenantStore.tenantObjectId }</Text>
+              <Text fz="xs" color="dimmed">{ site.objectId }</Text>
               <Text fz="sm" mt="md">{metadata?.info?.description}</Text>
             </Container>
           </Group>
