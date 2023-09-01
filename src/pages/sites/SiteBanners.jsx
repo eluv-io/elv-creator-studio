@@ -85,7 +85,6 @@ export const SiteBanner = observer(() => {
           { label: "None", value: "image"},
           { label: "Open Marketplace", value: "marketplace"},
           { label: "Show Video", value: "video"},
-          { label: "Go to Drop", value: "drop"},
           { label: "Open External Link", value: "link"}
         ]}
       />
@@ -118,14 +117,6 @@ export const SiteBanner = observer(() => {
             {...l10n.banner.video}
             field="video"
             previewable
-          />
-      }
-      {
-        banner.type !== "drop" ? null :
-          <Inputs.Text
-            {...inputProps}
-            {...l10n.banner.drop}
-            field="drop_uuid"
           />
       }
       {

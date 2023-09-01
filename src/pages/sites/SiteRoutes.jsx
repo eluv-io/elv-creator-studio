@@ -13,7 +13,6 @@ import SiteTheme from "./SiteTheme.jsx";
 import SiteOffers, {SiteOffer} from "./SiteOffers.jsx";
 import SiteFAQ from "./SiteFAQ.jsx";
 import SiteSearch from "./SiteSearch.jsx";
-import SiteDrops from "@/pages/sites/SiteDrops.jsx";
 
 const SiteRoutes = observer(({rootPath}) => {
   const routes = [
@@ -23,7 +22,6 @@ const SiteRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.site.nav.actions, path: "/sites/:siteId/actions", Component: <SiteActions /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.banners, path: "/sites/:siteId/banners", Component: <SiteBanners /> },
     { label: rootStore.l10n.pages.site.nav.banners, path: "/sites/:siteId/banners/:bannerId", Component: <SiteBanner /> },
-    { navRoute: true, label: rootStore.l10n.pages.site.nav.drops, path: "/sites/:siteId/drops", Component: <SiteDrops /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.theme, path: "/sites/:siteId/theme", Component: <SiteTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.site.nav.offers, path: "/sites/:siteId/offers", Component: <SiteOffers /> },
     { label: rootStore.l10n.pages.site.nav.offers, path: "/sites/:siteId/offers/:offerId", Component: <SiteOffer /> },

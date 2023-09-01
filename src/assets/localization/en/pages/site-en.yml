@@ -5,7 +5,6 @@ nav:
   hero: Hero
   actions: Actions
   banners: Banners
-  drops: Drops
   theme: Theme
   offers: Offers
   faq: FAQ
@@ -184,7 +183,7 @@ form:
       label: Show Marketplace
       description: If specified, the modal button will open the marketplace instead of just closing the modal
   banners:
-    banners_description: Banner images shown below the hero. These banners may link to drops, open the marketplace, show a video, or link to an external URL
+    banners_description: Banner images shown below the hero. These banners may open the marketplace, show a video, or link to an external URL
     banner_cards_description: Banner cards are shown in a row below the main hero. Banner cards are shown at a maximum width of 400px. The banner card section may have its own background image and header text.
     banner_description: Banner images are shown below the banner cards section. Banner images span the full width of the page, up to 1600px.
     banner_cards_header:
@@ -212,7 +211,7 @@ form:
       label: Name
     type:
       label: Action
-      description: A banner image may act as a link to the marketplace, a drop, a video, or an external URL
+      description: A banner image may act as a link to the marketplace, an external URL, or show a video
     banner_image:
       label: Banner Image
     image:
@@ -229,8 +228,6 @@ form:
       description: Open the marketplace to the specified item
     link:
       label: External URL
-    drop:
-      label: Drop
 
 
 
