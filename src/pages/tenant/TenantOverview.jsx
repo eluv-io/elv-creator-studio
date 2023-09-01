@@ -163,6 +163,7 @@ const Sites = observer(() => {
   useEffect(() => {
     tenantStore.SiteStatus()
       .then(sites => setSites(sites));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
 
   const l10n = rootStore.l10n.pages.tenant.form;
@@ -247,6 +248,7 @@ const Marketplaces = observer(() => {
   useEffect(() => {
     tenantStore.MarketplaceStatus()
       .then(marketplaces => setMarketplaces(marketplaces));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
 
   const l10n = rootStore.l10n.pages.tenant.form;

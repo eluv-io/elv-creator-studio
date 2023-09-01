@@ -47,7 +47,7 @@ export const SiteOffer = observer(() => {
 
   return (
     <PageContent
-      title={`${info.branding?.name || "Site"} - ${l10n.categories.offers} - ${offer.title}`}
+      title={`${info?.name || "Site"} - ${l10n.categories.offers} - ${offer.title}`}
       section="site"
       backLink={UrlJoin("/sites", siteId, "offers")}
       useHistory
@@ -113,7 +113,7 @@ const SiteOffers = observer(() => {
 
   return (
     <PageContent
-      title={`${info.branding?.name || "Site"} - ${l10n.categories.offers}`}
+      title={`${info?.name || "Site"} - ${l10n.categories.offers}`}
       section="site"
       useHistory
     >

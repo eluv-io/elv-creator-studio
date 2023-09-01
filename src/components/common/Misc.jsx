@@ -49,7 +49,7 @@ export const ListItemCategory = ({store, objectId, listPath, idField="id", id, l
 
     if(itemIndex < 0) { return ""; }
 
-    const label = (labelField === "index" ? itemIndex.toString() : list[itemIndex]) || id;
+    const label = (labelField === "index" ? itemIndex.toString() : list[itemIndex]?.[labelField]) || id;
     return LocalizeString(l10n, {label});
   };
 };

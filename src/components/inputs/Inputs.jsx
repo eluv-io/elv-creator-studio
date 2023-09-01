@@ -584,7 +584,7 @@ const SingleImageInput = observer(({
   actionLabel,
   path,
   field,
-  componentProps={}
+  ...componentProps
 }) => {
   const location = useLocation();
 
@@ -823,7 +823,8 @@ export const FabricBrowserInput = observer(({
   previewOptions={},
   GetName,
   GetImage,
-  fabricBrowserProps={}
+  fabricBrowserProps={},
+  ...componentProps
 }) => {
   const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
@@ -864,7 +865,7 @@ export const FabricBrowserInput = observer(({
             }}
           />
       }
-      <InputWrapper label={label} description={description} hint={hint} flex mb={0}>
+      <InputWrapper label={label} description={description} hint={hint} flex mb="md" {...componentProps}>
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
           <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
             <ActionIcon
@@ -993,9 +994,7 @@ const ImageInput = observer(({
               hint={field.hint}
               field={field.field}
               actionLabel={field.label || label}
-              componentProps={{
-                mb: 0
-              }}
+              mb={0}
             />
           )
         }
@@ -1023,6 +1022,7 @@ const ImageInput = observer(({
 
 const ListInputs = observer(({
   type="text",
+  Component,
   store,
   objectId,
   path,
@@ -1054,8 +1054,12 @@ const ListInputs = observer(({
 
   // Fields not specified - simple list
   if(!fields || fields.length === 0) {
+    if(!Component) {
+      Component = Input;
+    }
+
     return (
-      <Input
+      <Component
         type={type}
         store={store}
         objectId={objectId}
@@ -1063,6 +1067,7 @@ const ListInputs = observer(({
         field={index.toString()}
         category={category}
         subcategory={subcategory}
+        label={fieldLabel}
         actionLabel={actionLabel}
         componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
         {...inputProps}
@@ -1112,6 +1117,7 @@ const ListInputs = observer(({
 // List of inputs
 const List = observer(({
   type="text",
+  Component,
   store,
   objectId,
   path,
@@ -1128,7 +1134,8 @@ const List = observer(({
   newItemSpec={},
   renderItem,
   showBottomAddButton,
-  inputProps={}
+  inputProps={},
+  ...componentProps
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
@@ -1156,6 +1163,7 @@ const List = observer(({
               <Container p={0} m={0} fluid w="100%">
                 <ListInputs
                   type={type}
+                  Component={Component}
                   store={store}
                   objectId={objectId}
                   path={path}
@@ -1227,7 +1235,7 @@ const List = observer(({
   showBottomAddButton = showBottomAddButton || items.length >= 5;
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} maw={simpleList ? 600 : 800}>
+    <InputWrapper label={label} description={description} hint={hint} maw={simpleList ? 600 : 800} {...componentProps}>
       <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
         <DragDropContext
           onDragEnd={({source, destination}) =>
@@ -1431,7 +1439,7 @@ const CollectionTable = observer(({
   const showDragHandle = !debouncedFilter;
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={800}>
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={800} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
         {
           !filterable ? null :

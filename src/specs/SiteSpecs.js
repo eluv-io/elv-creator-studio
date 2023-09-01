@@ -16,3 +16,16 @@ export const SiteOfferSpec = {
   marketplace: undefined,
   sku: undefined
 };
+
+export const SiteBannerSpec = {
+  id: undefined,
+  name: "<New Banner>",
+  image: undefined,
+  image_mobile: undefined,
+  type: "image",
+  video: undefined,
+  marketplace: undefined,
+  sku: undefined,
+  link: undefined,
+  drop_uuid: undefined
+};

@@ -1,13 +1,9 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, siteStore, tenantStore} from "@/stores";
+import {rootStore, siteStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Accordion, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
-
-import {IconSettings} from "@tabler/icons-react";
-
-// NOTE: Header image goes in hero text
 
 const SiteHero = observer(() => {
   const { siteId } = useParams();
@@ -178,6 +174,7 @@ const SiteHero = observer(() => {
             subcategory={l10n.categories.hero_promos}
             field="video"
             previewable
+            mb={0}
           />
         )}
       />

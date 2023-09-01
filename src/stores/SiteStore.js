@@ -44,6 +44,20 @@ class SiteStore {
     };
 
     this.sites[siteId] = site;
+
+    this.SetListFieldIds({
+      objectId: siteId,
+      path: "/public/asset_metadata/info/main_page_banner_cards/cards",
+      category: this.rootStore.l10n.pages.site.form.categories.banner_cards,
+      label: this.rootStore.l10n.pages.site.form.common.id.label,
+    });
+
+    this.SetListFieldIds({
+      objectId: siteId,
+      path: "/public/asset_metadata/info/main_page_banners",
+      category: this.rootStore.l10n.pages.site.form.categories.banner_cards,
+      label: this.rootStore.l10n.pages.site.form.common.id.label,
+    });
   });
 
   Reload = flow(function * ({objectId}) {

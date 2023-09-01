@@ -5,6 +5,7 @@ nav:
   hero: Hero
   actions: Actions
   banners: Banners
+  drops: Drops
   theme: Theme
   offers: Offers
   faq: FAQ
@@ -26,12 +27,26 @@ form:
     post_login_modal: After Login Modal
     hero_promos: Promo Videos
     logo: Logo
+    banners: Banners
+    banner_settings: Banner Settings
+    banner_cards: Banner Cards
+    baner_card_section_settings: Banner Card Section Settings
+    banner_card_label: Banner Card '{label}'
+    banner_images: Banner Images
+    banner_image_label: Banner Image '{label}'
     theme: Theme
     offers: Offers
     offer_label: Offer '{label}'
     offer_details: Offer Details
     faq: FAQ
     faq_label: FAQ Question {label}
+    search_and_analytics: Search & Analytics
+    search: Search
+    organizations: Associated Organizations & Sponsors
+    analytics: Analytics
+    general_analytics: General Analytics
+    site_analytics: Site Page View Analytics
+    marketplace_analytics: Marketplace Page View Analytics
   common:
     name:
       label: Name
@@ -168,6 +183,57 @@ form:
     show_marketplace:
       label: Show Marketplace
       description: If specified, the modal button will open the marketplace instead of just closing the modal
+  banners:
+    banners_description: Banner images shown below the hero. These banners may link to drops, open the marketplace, show a video, or link to an external URL
+    banner_cards_description: Banner cards are shown in a row below the main hero. Banner cards are shown at a maximum width of 400px. The banner card section may have its own background image and header text.
+    banner_description: Banner images are shown below the banner cards section. Banner images span the full width of the page, up to 1600px.
+    banner_cards_header:
+      label: Banner Card Section Header
+    banner_cards_background:
+      label: Banner Card Section Background Image
+    background_image_desktop:
+      label: Background Image (Desktop)
+    background_image_mobile:
+      label: Background Image (Mobile)
+    banner_cards:
+      label: Banner Cards
+      fieldLabel: Banner Card
+    banners:
+      label: Banners
+      description: Banners are full width images. They are shown below Banner Cards.
+      fieldLabel: Banner
+      columns:
+        name: Name
+        type: Type
+  banner:
+    id:
+      label: ID
+    name:
+      label: Name
+    type:
+      label: Action
+      description: A banner image may act as a link to the marketplace, a drop, a video, or an external URL
+    banner_image:
+      label: Banner Image
+    image:
+      label: Image (Desktop)
+    image_mobile:
+      label: Image (Mobile)
+    video:
+      label: Video
+    marketplace:
+      label: Marketplace
+      description: Clicking on the banner opens the specified marketplace
+    marketplace_item:
+      label: Marketplace Item
+      description: Open the marketplace to the specified item
+    link:
+      label: External URL
+    drop:
+      label: Drop
+
+
+
   theme:
     favicon:
       label: Favicon
@@ -199,7 +265,6 @@ form:
     marketplace_item:
       label: Marketplace Item
       description: The marketplace item that will be shown after this offer is redeemed
-
   faq:
     show_faq:
       label: Show FAQ
@@ -219,3 +284,43 @@ form:
       label: Question
     answer:
       label: Answer
+  search:
+    search_description: This information will be used to populate search results and social media link previews for your site
+    name:
+      label: Title
+    description:
+      label: Description
+    images:
+      label: Images
+      fieldLabel: Image
+    organizations:
+      label: Associated Organizations & Sponsors
+      description: Include information about any organizations and/or sponsors associated with this site
+      fieldLabel: Organization
+    organization_name:
+      label: Name
+    organization_url:
+      label: URL
+    organization_image:
+      label: Image
+  analytics:
+    analytics_collections:
+      label: Analytics Collections
+      fieldLabel: Analytics Collection
+    collection_label:
+      label: Collection Label
+    analytics_ids:
+      label: Analytics IDs
+      fieldLabel: Analytics ID
+    analytics_type:
+      label: Analytics Type
+    id:
+      label: ID
+    google_conversion_label:
+      label: Google Conversion Label
+    google_conversion_id:
+      label: Google Conversion ID
+    facebook_event_id:
+      label: Facebook Event Id
+    twitter_event_id:
+      label: Twitter Event ID
