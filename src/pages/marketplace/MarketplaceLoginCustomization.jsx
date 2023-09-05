@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {Group, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import {MarketplaceLoginConsentOption} from "@/specs/MarketplaceSpecs.js";
 
@@ -31,27 +31,25 @@ const MarketplaceLoginCustomization = observer(() => {
     >
       <Title order={3} mt="xl" mb="xl">{ l10n.categories.login_theme }</Title>
 
-      <Group align="top">
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.login.logo}
-          subcategory={l10n.categories.login_theme}
-          altTextField="logo_alt"
-          fields={[
-            { field: "logo", label: "Logo" },
-          ]}
-        />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.login.logo}
+        subcategory={l10n.categories.login_theme}
+        altTextField="logo_alt"
+        fields={[
+          { field: "logo", label: "Logo" },
+        ]}
+      />
 
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.login.background}
-          subcategory={l10n.categories.login_theme}
-          fields={[
-            { field: "background", ...l10n.login.background_desktop },
-            { field: "background_mobile", ...l10n.login.background_mobile },
-          ]}
-        />
-      </Group>
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.login.background}
+        subcategory={l10n.categories.login_theme}
+        fields={[
+          { field: "background", ...l10n.login.background_desktop },
+          { field: "background_mobile", ...l10n.login.background_mobile },
+        ]}
+      />
 
       <Inputs.Checkbox
         {...inputProps}
@@ -126,7 +124,7 @@ const MarketplaceLoginCustomization = observer(() => {
 
 
 
-      <Title order={3} mt="xl" mb="md">{l10n.categories.terms_and_consent}</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.terms_and_consent}</Title>
       <Title order={5} mb="xl">{l10n.login.subheaders.user_data_sharing}</Title>
 
       <Inputs.Checkbox

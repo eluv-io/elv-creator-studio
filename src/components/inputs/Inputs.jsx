@@ -3,7 +3,6 @@ import "@/assets/stylesheets/wallet-rich-text.scss";
 import {
   Input as MantineInput,
   Paper,
-  ActionIcon,
   Group,
   UnstyledButton,
   Text,
@@ -12,7 +11,6 @@ import {
   Textarea,
   Container,
   Image,
-  Tooltip,
   NumberInput,
   Stack,
   MultiSelect as MantineMultiSelect,
@@ -30,7 +28,7 @@ import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
 import {rootStore} from "@/stores";
-import {LocalizeString} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
@@ -102,27 +100,25 @@ const MultiSelect = observer(({
 
   if(clearable) {
     componentProps.rightSection = (
-      <Tooltip label={rootStore.l10n.components.inputs.clear} events={{ hover: true, focus: true, touch: true }}>
-        <ActionIcon
-          mr="xs"
-          onClick={() =>{
-            for(let i = values.length - 1; i >= 0; i--) {
-              store.RemoveListElement({
-                objectId,
-                page: location.pathname,
-                path,
-                field,
-                index: i,
-                category,
-                subcategory,
-                label: values[i]
-              });
-            }
-          }}
-        >
-          <IconX size={15} />
-        </ActionIcon>
-      </Tooltip>
+      <IconButton
+        label={rootStore.l10n.components.inputs.clear}
+        mr="xs"
+        icon={<IconX size={15} />}
+        onClick={() =>{
+          for(let i = values.length - 1; i >= 0; i--) {
+            store.RemoveListElement({
+              objectId,
+              page: location.pathname,
+              path,
+              field,
+              index: i,
+              category,
+              subcategory,
+              label: values[i]
+            });
+          }
+        }}
+      />
     );
   }
 
@@ -279,8 +275,11 @@ const Input = observer(({
 
   if(clearable) {
     componentProps.rightSection = (
-      <Tooltip label={rootStore.l10n.components.inputs.clear} events={{ hover: true, focus: true, touch: true }}>
-        <ActionIcon mr="xs" onClick={() => store.SetMetadata({
+      <IconButton
+        label={rootStore.l10n.components.inputs.clear}
+        mr="xs"
+        icon={<IconX size={15} />}
+        onClick={() => store.SetMetadata({
           objectId,
           page:
           location.pathname,
@@ -290,10 +289,8 @@ const Input = observer(({
           category,
           subcategory,
           label: actionLabel || label
-        })}>
-          <IconX size={15} />
-        </ActionIcon>
-      </Tooltip>
+        })}
+      />
     );
   }
 
@@ -481,15 +478,12 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
               <div className="wallet-rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
             </Paper> : null
       }
-      <Tooltip label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]} events={{ hover: true, focus: true, touch: true }}>
-        <ActionIcon
-          aria-label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
-          onClick={() => setShowEditor(!showEditor)}
-          style={{position: "absolute", top: 0, right: 0}}
-        >
-          { showEditor ? <IconEditOff /> : <IconEdit /> }
-        </ActionIcon>
-      </Tooltip>
+      <IconButton
+        label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
+        Icon={showEditor ? IconEditOff : IconEdit}
+        onClick={() => setShowEditor(!showEditor)}
+        style={{position: "absolute", top: 0, right: 0}}
+      />
     </InputWrapper>
   );
 });
@@ -526,15 +520,12 @@ const CodeInput = observer(({
 
   return (
     <InputWrapper label={label} description={description} hint={hint} maw={800} wrapperProps={{error: validationResults?.errorMessage, styles: () => ({error: { marginTop: 30 }})}}>
-      <Tooltip label={rootStore.l10n.components.actions.edit} events={{ hover: true, focus: true, touch: true }}>
-        <ActionIcon
-          aria-label={rootStore.l10n.components.actions.edit}
-          onClick={() => setEditing(!editing)}
-          style={{position: "absolute", top: 0, right: 0}}
-        >
-          { editing ? <IconEditOff /> : <IconEdit /> }
-        </ActionIcon>
-      </Tooltip>
+      <IconButton
+        label={rootStore.l10n.components.actions.edit}
+        Icon={editing ? IconEditOff : IconEdit}
+        onClick={() => setEditing(!editing)}
+        style={{position: "absolute", top: 0, right: 0}}
+      />
       {
         editing ?
           <Input
@@ -639,30 +630,28 @@ const SingleImageInput = observer(({
         </HoverCard>
         {
           !imageMetadata ? null :
-            <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: actionLabel || label})} events={{ hover: true, focus: true, touch: true }}>
-              <ActionIcon
-                radius="100%"
-                style={{position: "absolute", top: "3px", right: "3px"}}
-                onClick={event => {
-                  event.stopPropagation();
-                  ConfirmDelete({
-                    itemName: label || "this image",
-                    onConfirm: () => store.SetMetadata({
-                      page: location.pathname,
-                      objectId,
-                      path,
-                      field,
-                      value: null,
-                      category,
-                      subcategory,
-                      label: actionLabel || label
-                    })
-                  });
-                }}
-              >
-                <IconX size={20}/>
-              </ActionIcon>
-            </Tooltip>
+            <IconButton
+              label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: actionLabel || label})}
+              radius="100%"
+              Icon={IconX}
+              style={{position: "absolute", top: "3px", right: "3px"}}
+              onClick={event => {
+                event.stopPropagation();
+                ConfirmDelete({
+                  itemName: label || "this image",
+                  onConfirm: () => store.SetMetadata({
+                    page: location.pathname,
+                    objectId,
+                    path,
+                    field,
+                    value: null,
+                    category,
+                    subcategory,
+                    label: actionLabel || label
+                  })
+                });
+              }}
+            />
         }
       </Paper>
       <FileBrowser
@@ -747,51 +736,43 @@ export const FileInput = observer(({
         flex
       >
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
-          <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
-            <ActionIcon
-              aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
-              onClick={() => setShowBrowser(true)}
-            >
-              <IconSelect />
-            </ActionIcon>
-          </Tooltip>
+          <IconButton
+            label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            Icon={IconSelect}
+            onClick={() => setShowBrowser(true)}
+          />
         </Group>
         {
           !value ? null :
             <Paper withBorder p="xl" mt="md" style={{position: "relative"}}>
               <Group spacing={0} style={{position: "absolute", top: 5, right: 5}}>
-                <Tooltip label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})} events={{ hover: true, focus: true, touch: true }}>
-                  <ActionIcon
-                    component="a"
-                    href={value.url}
-                    target="_blank"
-                    aria-label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
-                  >
-                    <IconDownload size={15} />
-                  </ActionIcon>
-                </Tooltip>
-                <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})} events={{ hover: true, focus: true, touch: true }}>
-                  <ActionIcon
-                    aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
-                    onClick={() => {
-                      ConfirmDelete({
-                        itemName: name,
-                        onConfirm: () => store.SetLink({
-                          objectId,
-                          page: location.pathname,
-                          path,
-                          field,
-                          linkObjectId: undefined,
-                          category,
-                          subcategory,
-                          label
-                        })
-                      });
-                    }}
-                  >
-                    <IconX size={15} />
-                  </ActionIcon>
-                </Tooltip>
+                <IconButton
+                  label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
+                  component="a"
+                  href={value.url}
+                  target="_blank"
+                  icon={<IconDownload size={15} />}
+                />
+
+                <IconButton
+                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  icon={<IconX size={15} />}
+                  onClick={() => {
+                    ConfirmDelete({
+                      itemName: name,
+                      onConfirm: () => store.SetLink({
+                        objectId,
+                        page: location.pathname,
+                        path,
+                        field,
+                        linkObjectId: undefined,
+                        category,
+                        subcategory,
+                        label
+                      })
+                    });
+                  }}
+                />
               </Group>
               <Group align="center">
                 <IconFile />
@@ -867,53 +848,44 @@ export const FabricBrowserInput = observer(({
       }
       <InputWrapper label={label} description={description} hint={hint} flex mb="md" {...componentProps}>
         <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
-          <Tooltip label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})} events={{ hover: true, focus: true, touch: true }}>
-            <ActionIcon
-              aria-label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
-              onClick={() => setShowBrowser(true)}
-            >
-              <IconSelect />
-            </ActionIcon>
-          </Tooltip>
+          <IconButton
+            label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
+            onClick={() => setShowBrowser(true)}
+            Icon={IconSelect}
+          />
         </Group>
         {
           !value ? null :
             <Paper mt="md" style={{position: "relative"}}>
-              <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
+              <Group spacing={0} style={{position: "absolute", top: 0, right: 0, zIndex: 1}}>
                 {
                   !previewable ? null :
-                    <Tooltip label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]} events={{ hover: true, focus: true, touch: true }}>
-                      <ActionIcon
-                        aria-label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
-                        onClick={() => setShowPreview(!showPreview)}
-                        color={showPreview ? "red.7" : "blue.5"}
-                      >
-                        {showPreview ? <IconPlayerPause size={15}/> : <IconPlayerPlay size={15}/>}
-                      </ActionIcon>
-                    </Tooltip>
+                    <IconButton
+                      label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
+                      icon={showPreview ? <IconPlayerPause size={15}/> : <IconPlayerPlay size={15}/>}
+                      onClick={() => setShowPreview(!showPreview)}
+                      color={showPreview ? "red.7" : "blue.5"}
+                    />
                 }
-                <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})} events={{ hover: true, focus: true, touch: true }}>
-                  <ActionIcon
-                    aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
-                    onClick={() => {
-                      ConfirmDelete({
-                        itemName: name,
-                        onConfirm: () => store.SetLink({
-                          objectId,
-                          page: location.pathname,
-                          path,
-                          field,
-                          linkObjectId: undefined,
-                          category,
-                          subcategory,
-                          label
-                        })
-                      });
-                    }}
-                  >
-                    <IconX size={15} />
-                  </ActionIcon>
-                </Tooltip>
+                <IconButton
+                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  icon={<IconX size={15} />}
+                  onClick={() => {
+                    ConfirmDelete({
+                      itemName: name,
+                      onConfirm: () => store.SetLink({
+                        objectId,
+                        page: location.pathname,
+                        path,
+                        field,
+                        linkObjectId: undefined,
+                        category,
+                        subcategory,
+                        label
+                      })
+                    });
+                  }}
+                />
               </Group>
               <Container p={0}>
                 {
@@ -1179,30 +1151,27 @@ const List = observer(({
                 />
               </Container>
 
-              <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
-                <ActionIcon
-                  style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
-                  aria-label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
-                  onClick={() => {
-                    ConfirmDelete({
-                      listItem: true,
-                      itemName: fieldLabel?.toLowerCase(),
-                      onConfirm: () => store.RemoveListElement({
-                        objectId,
-                        page: location.pathname,
-                        path,
-                        field,
-                        index,
-                        category,
-                        subcategory,
-                        label: actionLabel || fieldLabel
-                      })
-                    });
-                  }}
-                >
-                  <IconX/>
-                </ActionIcon>
-              </Tooltip>
+              <IconButton
+                label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
+                style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
+                Icon={IconX}
+                onClick={() => {
+                  ConfirmDelete({
+                    listItem: true,
+                    itemName: fieldLabel?.toLowerCase(),
+                    onConfirm: () => store.RemoveListElement({
+                      objectId,
+                      page: location.pathname,
+                      path,
+                      field,
+                      index,
+                      category,
+                      subcategory,
+                      label: actionLabel || fieldLabel
+                    })
+                  });
+                }}
+              />
             </Group>
           </Paper>
         )}
@@ -1211,25 +1180,22 @@ const List = observer(({
   });
 
   const addButton = (
-    <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
-        onClick={() =>
-          store.InsertListElement({
-            objectId,
-            page: location.pathname,
-            path,
-            field,
-            value: simpleList ? "" : newItemSpec,
-            category,
-            subcategory,
-            label: actionLabel || fieldLabel
-          })
+    <IconButton
+      label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+      Icon={IconPlus}
+      onClick={() =>
+        store.InsertListElement({
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          value: simpleList ? "" : newItemSpec,
+          category,
+          subcategory,
+          label: actionLabel || fieldLabel
+        })
       }
-      >
-        <IconPlus />
-      </ActionIcon>
-    </Tooltip>
+    />
   );
 
   showBottomAddButton = showBottomAddButton || items.length >= 5;
@@ -1315,39 +1281,35 @@ const CollectionTableRows = observer(({
               )}
               <td style={{width: "100px"}}>
                 <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
-                  <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
-                    <ActionIcon
-                      component={Link}
-                      to={UrlJoin(location.pathname, id)}
-                      color="blue.5"
-                    >
-                      <IconEdit/>
-                    </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
-                    <ActionIcon
-                      color="red.5"
-                      onClick={() => {
-                        ConfirmDelete({
-                          listItem: true,
-                          itemName: fieldLabel?.toLowerCase(),
-                          onConfirm: () => store.RemoveListElement({
-                            objectId,
-                            page: location.pathname,
-                            path,
-                            field,
-                            index,
-                            category,
-                            subcategory,
-                            label: actionLabel || fieldLabel,
-                            useLabel: false
-                          })
-                        });
-                      }}
-                    >
-                      <IconTrashX/>
-                    </ActionIcon>
-                  </Tooltip>
+                  <IconButton
+                    label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
+                    component={Link}
+                    to={UrlJoin(location.pathname, id)}
+                    color="blue.5"
+                    Icon={IconEdit}
+                  />
+                  <IconButton
+                    label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
+                    color="red.5"
+                    Icon={IconTrashX}
+                    onClick={() => {
+                      ConfirmDelete({
+                        listItem: true,
+                        itemName: fieldLabel?.toLowerCase(),
+                        onConfirm: () => store.RemoveListElement({
+                          objectId,
+                          page: location.pathname,
+                          path,
+                          field,
+                          index,
+                          category,
+                          subcategory,
+                          label: actionLabel || fieldLabel,
+                          useLabel: false
+                        })
+                      });
+                    }}
+                  />
                 </Group>
               </td>
             </tr>
@@ -1404,36 +1366,33 @@ const CollectionTable = observer(({
   // Only show bottom add button if there are a lot of entries
   const showBottomAddButton = values.length >= 10;
   const addButton = (
-    <Tooltip label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        aria-label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
-        onClick={() => {
-          let id = values.length.toString();
-          let newEntry = { ...newItemSpec };
+    <IconButton
+      label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+      Icon={IconPlus}
+      onClick={() => {
+        let id = values.length.toString();
+        let newEntry = { ...newItemSpec };
 
-          if(idField !== "index") {
-            id = GenerateUUID();
-            newEntry[idField] = id;
-          }
+        if(idField !== "index") {
+          id = GenerateUUID();
+          newEntry[idField] = id;
+        }
 
-          store.InsertListElement({
-            objectId,
-            page: location.pathname,
-            path,
-            field,
-            value: newEntry,
-            category,
-            subcategory,
-            label: actionLabel || fieldLabel,
-            useLabel: false
-          });
+        store.InsertListElement({
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          value: newEntry,
+          category,
+          subcategory,
+          label: actionLabel || fieldLabel,
+          useLabel: false
+        });
 
-          navigate(UrlJoin(location.pathname, id));
-        }}
-      >
-        <IconPlus />
-      </ActionIcon>
-    </Tooltip>
+        navigate(UrlJoin(location.pathname, id));
+      }}
+    />
   );
 
   const showDragHandle = !debouncedFilter;

@@ -5,7 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import MarketplaceItemMultiselect from "@/components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
-import {Accordion, Group, Image, Title} from "@mantine/core";
+import {Accordion, Image, Title} from "@mantine/core";
 import {ScaleImage} from "@/helpers/Fabric.js";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
 
@@ -85,27 +85,24 @@ export const MarketplaceCollection = observer(() => {
         field="items"
       />
 
-      <Group align="top">
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.collection.icon}
-          subcategory={l10n.categories.collection_info}
-          altTextField="collection_icon_alt"
-          fields={[
-            { field: "collection_icon" },
-          ]}
-        />
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.collection.banner}
-          subcategory={l10n.categories.collection_info}
-          altTextField="collection_banner_alt"
-          fields={[
-            { field: "collection_banner" },
-          ]}
-        />
-      </Group>
-
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.collection.icon}
+        subcategory={l10n.categories.collection_info}
+        altTextField="collection_icon_alt"
+        fields={[
+          { field: "collection_icon" },
+        ]}
+      />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.collection.banner}
+        subcategory={l10n.categories.collection_info}
+        altTextField="collection_banner_alt"
+        fields={[
+          { field: "collection_banner" },
+        ]}
+      />
       <Title order={3} mt={50} mb="md">{ l10n.categories.collection_redemption }</Title>
 
       <Inputs.Checkbox
@@ -251,24 +248,22 @@ const MarketplaceCollections = observer(() => {
         field="show_on_storefront"
       />
 
-      <Group align="top">
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.collections.icon}
-          altTextField="icon_alt"
-          fields={[
-            { field: "icon" },
-          ]}
-        />
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.collections.banner}
-          altTextField="banner_alt"
-          fields={[
-            { field: "banner" },
-          ]}
-        />
-      </Group>
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.collections.icon}
+        altTextField="icon_alt"
+        fields={[
+          { field: "icon" },
+        ]}
+      />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.collections.banner}
+        altTextField="banner_alt"
+        fields={[
+          { field: "banner" },
+        ]}
+      />
 
       <Accordion mt="xs" maw={600} variant="contained">
         <Accordion.Item value="default">

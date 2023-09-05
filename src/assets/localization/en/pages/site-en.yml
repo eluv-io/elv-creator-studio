@@ -100,6 +100,7 @@ form:
   hero:
     logo:
       label: Logo
+      description: Shown in the top left header bar when scrolled past the hero
     logo_link:
       label: Logo Link
       description: Specify a custom URL for the logo image to link to.
@@ -128,7 +129,7 @@ form:
       label: Hero Banner (Mobile)
     hero_banner_link:
       label: Hero Banner Link
-      description: Specify a link for the hero banner to go to
+      description: Specify a URL for the hero banner to link to
     show_text_over_hero:
       label: Show Text Over Hero
       description: Enables additional text fields that can be displayed over the main hero

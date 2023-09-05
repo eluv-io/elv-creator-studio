@@ -1,6 +1,5 @@
 import {observer} from "mobx-react-lite";
 import {
-  ActionIcon,
   Button,
   Code,
   Container,
@@ -11,7 +10,7 @@ import {
   Progress,
   RingProgress,
   Text,
-  TextInput, Tooltip,
+  TextInput,
   UnstyledButton
 } from "@mantine/core";
 import {Dropzone} from "@mantine/dropzone";
@@ -21,7 +20,7 @@ import {useEffect, useState} from "react";
 import {rootStore, fileBrowserStore, uiStore} from "@/stores";
 import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
-import {LocalizeString} from "@/components/common/Misc";
+import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {SortTable} from "@/helpers/Misc";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
@@ -282,54 +281,48 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
 
   const commonProps = {
     color: "blue.5",
-    "aria-label": LocalizeString(rootStore.l10n.components.file_browser.download, {filename})
+    label: LocalizeString(rootStore.l10n.components.file_browser.download, {filename})
   };
 
   if(encrypted) {
     return (
-      <Tooltip label={commonProps["aria-label"]} events={{ hover: true, focus: true, touch: true }}>
-        <ActionIcon
-          {...commonProps}
-          sx={{"&[data-loading]::before": { backgroundColor: "rgba(0,0,0,0)"}}}
-          onClick={async () => {
-            try {
-              if(downloading) { return; }
+      <IconButton
+        {...commonProps}
+        icon={
+          !downloading ? <IconFileDownload /> :
+            progress >= 100 ?
+              <IconDownloadCompleted /> :
+              <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "blue.5"}]}/>
+        }
+        sx={{"&[data-loading]::before": { backgroundColor: "rgba(0,0,0,0)"}}}
+        onClick={async () => {
+          try {
+            if(downloading) { return; }
 
-              setDownloading(true);
+            setDownloading(true);
 
-              await fileBrowserStore.DownloadEncryptedFile({
-                objectId,
-                path,
-                filename,
-                callback: ({bytesFinished, bytesTotal}) => setProgress((bytesFinished || 0) / (bytesTotal || 1) * 100)
-              });
-            } catch(error) {
-              rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-            }
-          }}
-        >
-          {
-            !downloading ? <IconFileDownload /> :
-              progress >= 100 ?
-                <IconDownloadCompleted /> :
-                <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "blue.5"}]}/>
+            await fileBrowserStore.DownloadEncryptedFile({
+              objectId,
+              path,
+              filename,
+              callback: ({bytesFinished, bytesTotal}) => setProgress((bytesFinished || 0) / (bytesTotal || 1) * 100)
+            });
+          } catch(error) {
+            rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
           }
-        </ActionIcon>
-      </Tooltip>
+        }}
+      />
     );
   }
 
   return (
-    <Tooltip label={commonProps["aria-label"]} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        {...commonProps}
-        component="a"
-        href={url}
-        target="_blank"
-      >
-        <IconFileDownload/>
-      </ActionIcon>
-    </Tooltip>
+    <IconButton
+      {...commonProps}
+      Icon={IconFileDownload}
+      component="a"
+      href={url}
+      target="_blank"
+    />
   );
 };
 
@@ -337,31 +330,28 @@ const DeleteFileButton = ({filename, Delete}) => {
   const [deleting, setDeleting] = useState(false);
 
   return (
-    <Tooltip label={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        aria-label={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})}
-        color="red.5"
-        loading={deleting}
-        onClick={() => {
-          ConfirmDelete({
-            title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
-            itemName: filename,
-            modalProps: {
-              overlayProps: {
-                zIndex: 202
-              }
-            },
-            onConfirm: () => {
-              setDeleting(true);
-              Delete()
-                .finally(() => setDeleting(false));
+    <IconButton
+      label={LocalizeString(rootStore.l10n.components.file_browser.delete, {filename})}
+      color="red.5"
+      loading={deleting}
+      Icon={IconDelete}
+      onClick={() => {
+        ConfirmDelete({
+          title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
+          itemName: filename,
+          modalProps: {
+            overlayProps: {
+              zIndex: 202
             }
-          });
-        }}
-      >
-        <IconDelete/>
-      </ActionIcon>
-    </Tooltip>
+          },
+          onConfirm: () => {
+            setDeleting(true);
+            Delete()
+              .finally(() => setDeleting(false));
+          }
+        });
+      }}
+    />
   );
 };
 
@@ -484,33 +474,30 @@ const FileBrowserTable = observer(({
               <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
                 {
                   type === "directory" ? null :
-                    <Tooltip label={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})} events={{ hover: true, focus: true, touch: true }}>
-                      <ActionIcon
-                        aria-label={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})}
-                        color="green.5"
-                        onClick={() =>
-                          modals.open({
-                            title: LocalizeString(rootStore.l10n.components.file_browser.rename, {filename}),
-                            centered: true,
-                            children:
-                              <RenameFileForm
-                                filename={filename}
-                                Rename={async ({newFilename}) => {
-                                  await fileBrowserStore.RenameFile({objectId, path, filename, newFilename});
+                    <IconButton
+                      label={LocalizeString(rootStore.l10n.components.file_browser.rename, {filename})}
+                      color="green.5"
+                      Icon={IconEditCircle}
+                      onClick={() =>
+                        modals.open({
+                          title: LocalizeString(rootStore.l10n.components.file_browser.rename, {filename}),
+                          centered: true,
+                          children:
+                            <RenameFileForm
+                              filename={filename}
+                              Rename={async ({newFilename}) => {
+                                await fileBrowserStore.RenameFile({objectId, path, filename, newFilename});
 
-                                  // If record was selected, remove from selection
-                                  setSelectedRecords(selectedRecords.filter(selectedRecord => selectedRecord.fullPath !== fullPath));
-                                }}
-                              />,
-                            overlayProps: {
-                              zIndex: 202
-                            }
-                          })
-                        }
-                      >
-                        <IconEditCircle/>
-                      </ActionIcon>
-                    </Tooltip>
+                                // If record was selected, remove from selection
+                                setSelectedRecords(selectedRecords.filter(selectedRecord => selectedRecord.fullPath !== fullPath));
+                              }}
+                            />,
+                          overlayProps: {
+                            zIndex: 202
+                          }
+                        })
+                      }
+                    />
                 }
                 {
                   type === "directory" ? null :
@@ -558,11 +545,14 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
       { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
       <Container px={0}>
         <Group mb="xs" align="center" spacing="xs">
-          <Tooltip label={rootStore.l10n.components.file_browser.directory_back} events={{ hover: true, focus: true, touch: true }}>
-            <ActionIcon aria-label={rootStore.l10n.components.file_browser.directory_back} disabled={path === "/"} variant="transparent" onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}>
-              <IconBackArrow />
-            </ActionIcon>
-          </Tooltip>
+          <IconButton
+            label={rootStore.l10n.components.file_browser.directory_back}
+            disabled={path === "/"}
+            variant="transparent"
+            Icon={IconBackArrow}
+            tooltipProps={{position: "bottom"}}
+            onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}
+          />
           {
             pathTokens.map((token, index) =>
               <Group spacing="xs" key={`path-token-${token}-${index}`}>
@@ -596,12 +586,12 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
               <Container p={0}>
                 {
                   selectedRecords.map(({fullPath}) =>
-                    <Group key={`selected-file-${fullPath}`}>
-                      <Tooltip label={LocalizeString(rootStore.l10n.components.file_browser.remove_selection, {filename: fullPath})} events={{ hover: true, focus: true, touch: true }}>
-                        <ActionIcon onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}>
-                          <IconX size={15} />
-                        </ActionIcon>
-                      </Tooltip>
+                    <Group key={`selected-file-${fullPath}`} spacing="xs">
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.file_browser.remove_selection, {filename: fullPath})}
+                        Icon={IconX}
+                        onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}
+                      />
                       <Code bg="transparent" >{ fullPath }</Code>
                     </Group>
                   )

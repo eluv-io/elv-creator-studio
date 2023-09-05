@@ -1,10 +1,11 @@
 import {observer} from "mobx-react-lite";
-import {Container, Title, ActionIcon, Group} from "@mantine/core";
+import {Container, Title, Group} from "@mantine/core";
 import HistoryButtons from "./HistoryButtons.jsx";
 import {Link} from "react-router-dom";
 import {rootStore} from "@/stores";
 
 import {IconArrowBackUp} from "@tabler/icons-react";
+import {IconButton} from "@/components/common/Misc";
 
 const PageContent = observer(({title, subtitle, section, useHistory, backLink, children}) => {
   return (
@@ -12,17 +13,15 @@ const PageContent = observer(({title, subtitle, section, useHistory, backLink, c
       {
         !title ? null :
           <Title order={2} mb={subtitle ? 0 : "xl"}>
-            <Group align="top">
+            <Group align="center">
               {
                 !backLink ? null :
-                  <ActionIcon
-                    aria-label={rootStore.l10n.components.actions.back}
-                    title={rootStore.l10n.components.actions.back}
+                  <IconButton
+                    label={rootStore.l10n.components.actions.back}
                     component={Link}
                     to={backLink}
-                  >
-                    <IconArrowBackUp size={30}/>
-                  </ActionIcon>
+                    icon={<IconArrowBackUp size={30} />}
+                  />
               }
               {title}
             </Group>

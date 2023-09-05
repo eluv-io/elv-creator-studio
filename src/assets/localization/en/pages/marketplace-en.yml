@@ -267,10 +267,13 @@ form:
       label: Price (USD)
     max_per_checkout:
       label: Maximum Quantity Purchasable per Checkout
+      description: Leave blank for no limit
     max_per_user:
       label: Maximum Quantity Purchasable per User
+      description: Leave blank for no limit
     min_secondary_price:
       label: Minimum Secondary Market Price (USD)
+      description: Leave blank for no minimum
     available_at:
       label: Release Date
       description: If specified, the item will not be available for purchase until this date

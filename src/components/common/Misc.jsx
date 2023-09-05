@@ -1,9 +1,31 @@
-import {Box, Button, Group, Image, Tooltip} from "@mantine/core";
+import {Box, Button, Group, Image, Tooltip, ActionIcon} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {rootStore} from "@/stores";
 
 export const LinkButton = (props) => {
   return <Button component={Link} {...props} />;
+};
+
+export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
+  return (
+    <Tooltip {...tooltipProps} label={label}>
+      <ActionIcon {...props} aria-label={label}>
+        { icon ? icon : <Icon /> }
+      </ActionIcon>
+    </Tooltip>
+  );
+};
+
+export const TooltipIcon = ({label, Icon, size, alt, color, tooltipProps={}}) => {
+  return (
+    <Group h={size} position="center" align="center">
+      <Tooltip {...tooltipProps} height={2} label={label}>
+        <Box h={size} sx={theme => ({color: theme.colors[color][5] })}>
+          <Icon size={size} alt={alt || label} />
+        </Box>
+      </Tooltip>
+    </Group>
+  );
 };
 
 export const ItemImage = ({item, scale, ...props}) => {
@@ -52,16 +74,4 @@ export const ListItemCategory = ({store, objectId, listPath, idField="id", id, l
     const label = (labelField === "index" ? itemIndex.toString() : list[itemIndex]?.[labelField]) || id;
     return LocalizeString(l10n, {label});
   };
-};
-
-export const TooltipIcon = ({label, Icon, size, alt, color}) => {
-  return (
-    <Group h={size} position="center" align="center">
-      <Tooltip height={2} label={label} events={{ hover: true, focus: true, touch: true }}>
-        <Box h={size} sx={theme => ({color: theme.colors[color][5] })}>
-          <Icon size={size} alt={alt || label} />
-        </Box>
-      </Tooltip>
-    </Group>
-  );
 };

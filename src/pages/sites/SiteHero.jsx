@@ -97,7 +97,7 @@ const SiteHero = observer(() => {
         subcategory={l10n.categories.logo}
         altTextField="logo_alt"
         fields={[
-          { field: "logo", ...l10n.hero.logo }
+          { field: "logo" }
         ]}
       />
       {
@@ -131,7 +131,7 @@ const SiteHero = observer(() => {
               altTextField="header_image_alt"
               path="/public/asset_metadata/info/event_images"
               fields={[
-                { field: "header_image", ...l10n.hero.header_image }
+                { field: "header_image" }
               ]}
             />
             <Inputs.Text

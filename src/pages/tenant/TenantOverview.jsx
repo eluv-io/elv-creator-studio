@@ -7,15 +7,13 @@ import {
   Text,
   Paper,
   Group,
-  Tooltip,
   Container,
   Button,
-  Image,
-  ActionIcon
+  Image
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {modals} from "@mantine/modals";
-import {LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
 
@@ -36,44 +34,41 @@ const UpdateLinkButton = ({type, record}) => {
 
   const l10n = rootStore.l10n.pages.tenant.form.overview;
   return (
-    <Tooltip label={LocalizeString(l10n.update_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        variant="transparent"
-        disabled={record.latestDeployed}
-        loading={loading}
-        aria-label={LocalizeString(l10n.update_link_label, {name: record.name})}
-        color="blue.5"
-        onClick={() =>
-          modals.openConfirmModal({
-            title: l10n.update_link,
-            children: (
-              <Text size="sm">
-                { LocalizeString(l10n.update_link_confirm, {name: record.name}) }
-              </Text>
-            ),
-            centered: true,
-            labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
-            onConfirm: async () => {
-              setLoading(true);
-              try {
-                await tenantStore.UpdateLink({
-                  type,
-                  name: record.name,
-                  slug: record.slug,
-                  versionHash: record[type === "site" ? "siteHash" : "marketplaceHash"]
-                });
-              } catch(error) {
-                rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-              } finally {
-                setLoading(false);
-              }
+    <IconButton
+      label={LocalizeString(l10n.update_link_label, {name: record.name})}
+      variant="transparent"
+      disabled={record.latestDeployed}
+      loading={loading}
+      color="blue.5"
+      Icon={IconUnlink}
+      onClick={() =>
+        modals.openConfirmModal({
+          title: l10n.update_link,
+          children: (
+            <Text size="sm">
+              { LocalizeString(l10n.update_link_confirm, {name: record.name}) }
+            </Text>
+          ),
+          centered: true,
+          labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
+          onConfirm: async () => {
+            setLoading(true);
+            try {
+              await tenantStore.UpdateLink({
+                type,
+                name: record.name,
+                slug: record.slug,
+                versionHash: record[type === "site" ? "siteHash" : "marketplaceHash"]
+              });
+            } catch(error) {
+              rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+            } finally {
+              setLoading(false);
             }
-          })
-        }
-      >
-        <IconUnlink size={20} />
-      </ActionIcon>
-    </Tooltip>
+          }
+        })
+      }
+    />
   );
 };
 
@@ -82,39 +77,36 @@ const UnlinkButton = ({type, record}) => {
 
   const l10n = rootStore.l10n.pages.tenant.form.overview;
   return (
-    <Tooltip label={LocalizeString(l10n.remove_link_label, {name: record.name})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        variant="transparent"
-        loading={loading}
-        aria-label={LocalizeString(l10n.remove_link_label, {name: record.name})}
-        color="red.5"
-        onClick={() =>
-          modals.openConfirmModal({
-            title: l10n.remove_link,
-            children: (
-              <Text size="sm">
-                { LocalizeString(l10n.remove_link_confirm, {name: record.name}) }
-              </Text>
-            ),
-            centered: true,
-            labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
-            confirmProps: { color: "red.6" },
-            onConfirm: async () => {
-              setLoading(true);
-              try {
-                await tenantStore.RemoveLink({type, name: record.name, slug: record.slug});
-              } catch(error) {
-                rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-              } finally {
-                setLoading(false);
-              }
+    <IconButton
+      label={LocalizeString(l10n.remove_link_label, {name: record.name})}
+      variant="transparent"
+      loading={loading}
+      color="red.5"
+      Icon={IconUnlink}
+      onClick={() =>
+        modals.openConfirmModal({
+          title: l10n.remove_link,
+          children: (
+            <Text size="sm">
+              { LocalizeString(l10n.remove_link_confirm, {name: record.name}) }
+            </Text>
+          ),
+          centered: true,
+          labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
+          confirmProps: { color: "red.6" },
+          onConfirm: async () => {
+            setLoading(true);
+            try {
+              await tenantStore.RemoveLink({type, name: record.name, slug: record.slug});
+            } catch(error) {
+              rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+            } finally {
+              setLoading(false);
             }
-          })
-        }
-      >
-        <IconLinkOff size={20} />
-      </ActionIcon>
-    </Tooltip>
+          }
+        })
+      }
+    />
   );
 };
 
@@ -171,8 +163,7 @@ const Sites = observer(() => {
   return (
     <Container p={0} m={0} maw={800}>
       <DataTable
-        maw={800}
-        mih={100}
+        minHeight={150}
         withBorder
         withColumnBorders
         fetching={!sites}
@@ -256,8 +247,7 @@ const Marketplaces = observer(() => {
   return (
     <Container p={0} m={0} maw={800}>
       <DataTable
-        maw={800}
-        mih={100}
+        minHeight={150}
         withBorder
         withColumnBorders
         fetching={!marketplaces}

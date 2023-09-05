@@ -1,19 +1,18 @@
 import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {
-  ActionIcon,
   Button,
   Container,
   Group,
   Modal,
   Text,
-  TextInput, Tooltip,
+  TextInput
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore, uiStore} from "@/stores";
 import {SortTable} from "@/helpers/Misc.js";
 import {useDebouncedValue} from "@mantine/hooks";
-import {LocalizeString} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 
@@ -98,24 +97,23 @@ const DirectSelectionForm = ({Submit}) => {
 
 const DirectSelectionButton = observer(({label, Submit}) => {
   return (
-    <Tooltip position="bottom" label={LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label})} events={{ hover: true, focus: true, touch: true }}>
-      <ActionIcon
-        size={36}
-        onClick={() =>
-          modals.open({
-            title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
-            centered: true,
-            children:
-              <DirectSelectionForm Submit={Submit} />,
-            overlayProps: {
-              zIndex: 202
-            }
-          })
-        }
-      >
-        <IconSelect />
-      </ActionIcon>
-    </Tooltip>
+    <IconButton
+      label={LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label})}
+      size={36}
+      Icon={IconSelect}
+      tooltipProps={{position: "bottom"}}
+      onClick={() =>
+        modals.open({
+          title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
+          centered: true,
+          children:
+            <DirectSelectionForm Submit={Submit} />,
+          overlayProps: {
+            zIndex: 202
+          }
+        })
+      }
+    />
   );
 });
 
@@ -144,11 +142,13 @@ const ObjectBrowser = observer(({label, libraryId, Back, Submit}) => {
   return (
     <Container p={0}>
       <Group mb="md" align="center">
-        <Tooltip label={rootStore.l10n.components.fabric_browser.back_to_library_selection} events={{ hover: true, focus: true, touch: true }}>
-          <ActionIcon aria-label={rootStore.l10n.components.fabric_browser.back_to_library_selection} variant="transparent" onClick={Back}>
-            <IconArrowBackUp />
-          </ActionIcon>
-        </Tooltip>
+        <IconButton
+          label={rootStore.l10n.components.fabric_browser.back_to_library_selection}
+          Icon={IconArrowBackUp}
+          variant="transparent"
+          onClick={Back}
+          tooltipProps={{position: "bottom"}}
+        />
         <Text>{ library.name }</Text>
       </Group>
       <Group align="end" mb="md">

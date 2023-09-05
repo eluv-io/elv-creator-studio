@@ -115,23 +115,29 @@ const SiteGeneralSettings = observer(() => {
         defaultValue="Storefront"
         options={["Storefront", "Listings"]}
       />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.marketplace_only}
-        subcategory={l10n.categories.marketplace}
-        path="/public/asset_metadata/info/marketplace_info"
-        field="marketplace_only"
-        defaultValue={false}
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.disable_marketplace}
-        subcategory={l10n.categories.marketplace}
-        path="/public/asset_metadata/info/marketplace_info"
-        field="disable_marketplace"
-        defaultValue={false}
-      />
 
+      {
+        info?.marketplace_info?.disable_marketplace ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.general.marketplace_only}
+            subcategory={l10n.categories.marketplace}
+            path="/public/asset_metadata/info/marketplace_info"
+            field="marketplace_only"
+            defaultValue={false}
+          />
+      }
+      {
+        info?.marketplace_info?.marketplace_only ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.general.disable_marketplace}
+            subcategory={l10n.categories.marketplace}
+            path="/public/asset_metadata/info/marketplace_info"
+            field="disable_marketplace"
+            defaultValue={false}
+          />
+      }
       {
         (marketplaceStore.allMarketplaces || []).length <= 1 ? null :
           <>
