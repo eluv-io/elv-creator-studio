@@ -54,10 +54,10 @@ const SelectedItem = observer(({
               <IconGripVertical size={15}/>
             </div>
         }
-        <ItemImage item={item} scale={200} width={40} height={40} radius="sm" />
+        { item.image }
         <div>
-          <Text fz="sm">{item.name || item.sku}</Text>
-          <Text fz="xs" color="dimmed">{item.sku}</Text>
+          <Text fz="sm">{item.label || item.value}</Text>
+          <Text fz="xs" color="dimmed">{item.value}</Text>
         </div>
         <IconButton
           label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: item.name || item.sku})}
@@ -67,7 +67,7 @@ const SelectedItem = observer(({
           icon={<IconX size={15} />}
           onClick={() => {
             ConfirmDelete({
-              itemName: item.name || item.sku,
+              itemName: item.label || item.value,
               onConfirm: () => {
                 single ?
                   store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
@@ -103,7 +103,7 @@ const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, Compo
   const options = items
     .map(item =>
       ({
-        image: <ItemImage item={item} scale={200} width={40} height={40} />,
+        image: <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={40} height={40} />,
         label: item.name || item.sku,
         value: item.sku
       })
@@ -131,11 +131,10 @@ const MarketplaceItemSelectComponent = observer(({
   label,
   description,
   hint,
-  items,
   options
 }) => {
   const selectedSKU = store.GetMetadata({objectId, path, field}) || "";
-  const selectedItem = items.find(item => item.sku === selectedSKU);
+  const selectedItem = options.find(item => item.value === selectedSKU);
 
   return (
     <Paper withBorder p="xl" pt="sm" mb="md" maw={600}>
@@ -197,7 +196,7 @@ const MarketplaceItemMultiselectComponent = observer(({
   const selectedSKUs = store.GetMetadata({objectId, path, field}) || [];
 
   const itemList = selectedSKUs.map((sku, index) => {
-    const item = items.find(item => item.sku === sku);
+    const item = options.find(item => item.value === sku);
 
     if(!item) { return null; }
 

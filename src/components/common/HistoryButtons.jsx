@@ -1,4 +1,4 @@
-import {Affix, Button, Group} from "@mantine/core";
+import {Affix, Group} from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import {useLocation, useParams} from "react-router-dom";
 import {
@@ -6,6 +6,8 @@ import {
   IconArrowForwardUp as IconRedo
 } from "@tabler/icons-react";
 import {rootStore, marketplaceStore, tenantStore, siteStore} from "@/stores";
+import {IconButton, LocalizeString} from "@/components/common/Misc";
+import {ActionToString} from "@/stores/helpers/Changelist.js";
 
 const HistoryButtons = observer(({section}) => {
   const params = useParams();
@@ -36,12 +38,28 @@ const HistoryButtons = observer(({section}) => {
   return (
     <Affix position={{bottom: 20, right: 20}}>
       <Group>
-        <Button compact variant="light" disabled={undoActions.length === 0} onClick={() => store.UndoAction({objectId, page})}>
-          <IconUndo />
-        </Button>
-        <Button compact variant="light" disabled={redoActions.length === 0} onClick={() => store.RedoAction({objectId, page})}>
-          <IconRedo />
-        </Button>
+        <IconButton
+          label={
+            undoActions.length === 0 ? undefined :
+              LocalizeString(rootStore.l10n.components.actions.undo_action, { action: ActionToString(undoActions[0]) })
+          }
+          Icon={IconUndo}
+          variant="filled"
+          color="blue.5"
+          disabled={undoActions.length === 0}
+          onClick={() => store.UndoAction({objectId, page})}
+        />
+        <IconButton
+          label={
+            redoActions.length === 0 ? undefined :
+              LocalizeString(rootStore.l10n.components.actions.redo_action, { action: ActionToString(redoActions[0]) })
+          }
+          Icon={IconRedo}
+          variant="filled"
+          color="blue.5"
+          disabled={redoActions.length === 0}
+          onClick={() => store.RedoAction({objectId, page})}
+        />
       </Group>
     </Affix>
   );

@@ -13,7 +13,7 @@ export default {
             opacity: 1,
             pointerEvents: "unset"
           }
-        },
+        }
       })
     }
   }

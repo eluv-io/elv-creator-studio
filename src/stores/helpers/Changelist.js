@@ -133,7 +133,9 @@ const ProcessChangeList = changeList => {
   return processedList.filter(action => !action.prune);
 };
 
-const ActionToString = action => {
+export const ActionToString = action => {
+  if(!action) { return ""; }
+
   let string = rootStore.l10n.actions[action.useLabel ? action.actionType : `${action.actionType}_UNLABELLED`];
   if(action.actionType === "TOGGLE_FIELD") {
     const unchecked = action.info.inverted ? !action.info.cleared : action.info.cleared;

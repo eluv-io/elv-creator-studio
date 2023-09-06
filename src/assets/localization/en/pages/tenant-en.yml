@@ -8,7 +8,7 @@ form:
     info: Info
     global_theme: Global Theme
     global_wallet_theme: Global Media Wallet Theme
-    sales: Item Sales Settings
+    sales: Payment Settings
     advanced: Advanced Settings
     owners: Owners
     leaderboard_excludes: Leaderboard Excluded Addresses

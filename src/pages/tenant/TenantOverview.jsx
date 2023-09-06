@@ -19,8 +19,6 @@ import {Link} from "react-router-dom";
 import {IconUnlink, IconLinkOff, IconEqual, IconEqualNot} from "@tabler/icons-react";
 import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 
-
-
 const DeployedIcon = ({deployed}) =>
   <TooltipIcon
     label={rootStore.l10n.pages.tenant.form.overview[deployed ? "deployed" : "not_deployed"]}
@@ -163,8 +161,8 @@ const Sites = observer(() => {
             title: l10n.sites.site,
             render: record => (
               <Link to={UrlJoin("/sites", record.siteId)}>
-                <Group spacing="lg">
-                  <Image py="sm" width={100} height={100} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
+                <Group spacing="lg" pl="xs">
+                  <Image py="sm" width={150} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
                   <Container p={0} m={0}>
                     <Text>{ record.name }</Text>
                     <Text fz={11} color="dimmed">{ record.slug }</Text>
@@ -248,7 +246,7 @@ const Marketplaces = observer(() => {
             render: record => (
               <Link to={UrlJoin("/marketplaces", record.marketplaceId)}>
                 <Group spacing="lg">
-                  <Image py="sm" width={60} height={60} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
+                  <Image py="sm" width={100} height={100} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
                   <Container p={0} m={0}>
                     <Text>{ record.name }</Text>
                     <Text fz={11} color="dimmed">{ record.slug }</Text>

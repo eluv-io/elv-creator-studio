@@ -39,7 +39,8 @@ const ModifiedItem = observer(({
         styles: theme => ({
           label: {
             fontSize: theme.fontSizes.lg,
-            fontWeight: 600
+            fontWeight: 600,
+            opacity: selected.includes(item.objectId) ? 1 : 0.5,
           },
           error: {
             marginTop: theme.spacing.md

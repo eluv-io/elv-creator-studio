@@ -17,13 +17,14 @@ form:
     info: Marketplace Info
     global_settings: Global Marketplace Settings
     tags: Marketplace Tags
-    notification: Notification
+    notification: Notification Banner
     advanced_settings: Advanced Settings
     page_tabs: Page Names
     theme: Theme
     login_customization: Login Customization
     login_theme: Login Theme
     terms_and_consent: Terms and User Consent
+    custom_consent_options: Custom Consent Options
     item: Marketplace Item
     item_label: Item '{label}'
     item_info: Item Info
@@ -253,7 +254,7 @@ form:
       label: Video has Audio
     play_on_storefront:
       label: Play on Storefront
-      description: If checked, the video for this item will play on the storefront, instead of just the item details page.
+      description: If checked, the video for this item will play on the storefront
     show_available_stock:
       label: Show Available Stock
       description: Show the quantity of this item still available for purchase
@@ -497,6 +498,11 @@ form:
         title: Title
         type: Type
         items: Items
+        status: Status
+    status:
+      available: Open
+      unreleased: Opens {date}
+      expired: Ended {date}
     id:
       label: ID
     title:

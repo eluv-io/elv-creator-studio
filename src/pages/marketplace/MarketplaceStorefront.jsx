@@ -5,7 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
-import {Accordion, Group, Title} from "@mantine/core";
+import {Accordion, Title} from "@mantine/core";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 
@@ -313,28 +313,26 @@ const MarketplaceStorefront = observer(() => {
         ]}
       />
 
-      <Group align="top">
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.storefront.header_logo}
-          subcategory={l10n.categories.storefront_media}
-          path="/public/asset_metadata/info/branding"
-          altTextField="header_logo_alt"
-          fields={[
-            { field: "header_logo" },
-          ]}
-        />
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.storefront.header_image}
-          subcategory={l10n.categories.storefront_media}
-          path="/public/asset_metadata/info/branding"
-          altTextField="header_image_alt"
-          fields={[
-            { field: "header_image" },
-          ]}
-        />
-      </Group>
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.storefront.header_logo}
+        subcategory={l10n.categories.storefront_media}
+        path="/public/asset_metadata/info/branding"
+        altTextField="header_logo_alt"
+        fields={[
+          { field: "header_logo" },
+        ]}
+      />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.storefront.header_image}
+        subcategory={l10n.categories.storefront_media}
+        path="/public/asset_metadata/info/branding"
+        altTextField="header_image_alt"
+        fields={[
+          { field: "header_image" },
+        ]}
+      />
 
       <Inputs.List
         {...inputProps}

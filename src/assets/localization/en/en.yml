@@ -103,19 +103,19 @@ stores:
 
 actions:
   SET_DEFAULT: Set Default Value for `{label}`
-  CLEARED_FIELD: Cleared '{label}'
-  MODIFY_FIELD: Modified '{label}'
-  MODIFY_FIELD_UNSTACKABLE: Modified '{label}'
-  TOGGLE_FIELD: Toggled '{label}'
-  TOGGLE_FIELD_ON: Toggled '{label}' On
-  TOGGLE_FIELD_OFF: Toggled '{label}' Off
-  SET_LINK: Modified '{label}' link
-  UPDATE_LINK: Updated '{label}' link
-  REMOVE_LINK: Removed '{label}' link
-  INSERT_LIST_ELEMENT: Added '{label}'
-  INSERT_LIST_ELEMENT_UNLABELLED: Added to list
-  REMOVE_LIST_ELEMENT: Removed '{label}'
-  REMOVE_LIST_ELEMENT_UNLABELLED: Removed from list
-  MOVE_LIST_ELEMENT: Moved '{label}'
-  MOVE_LIST_ELEMENT_UNLABELLED: Moved list position
+  CLEARED_FIELD: Clear '{label}'
+  MODIFY_FIELD: Modify '{label}'
+  MODIFY_FIELD_UNSTACKABLE: Modify '{label}'
+  TOGGLE_FIELD: Toggle '{label}'
+  TOGGLE_FIELD_ON: Toggle '{label}' On
+  TOGGLE_FIELD_OFF: Toggle '{label}' Off
+  SET_LINK: Modify '{label}' link
+  UPDATE_LINK: Update '{label}' link
+  REMOVE_LINK: Remove '{label}' link
+  INSERT_LIST_ELEMENT: Add '{label}' to list
+  INSERT_LIST_ELEMENT_UNLABELLED: Add to list
+  REMOVE_LIST_ELEMENT: Remove '{label}' from list
+  REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list
+  MOVE_LIST_ELEMENT: Move '{label}' list position
+  MOVE_LIST_ELEMENT_UNLABELLED: Move list position
 

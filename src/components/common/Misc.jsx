@@ -1,6 +1,7 @@
 import {Box, Button, Group, Image, Tooltip, ActionIcon} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {rootStore} from "@/stores";
+import {FabricUrl} from "@/helpers/Fabric.js";
 
 export const LinkButton = (props) => {
   return <Button component={Link} {...props} />;
@@ -12,6 +13,10 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
       { icon ? icon : <Icon /> }
     </ActionIcon>
   );
+
+  if(!label) {
+    return button;
+  }
 
   return (
     <Tooltip
@@ -42,11 +47,13 @@ export const TooltipIcon = ({label, Icon, size, alt, color, tooltipProps={}}) =>
   );
 };
 
-export const ItemImage = ({item, scale, ...props}) => {
+export const ItemImage = ({marketplaceId, item, scale, ...props}) => {
   let url;
   try {
     if(item?.image?.url) {
       url = new URL(item.image.url);
+    } else if(item.image?.["/"]) {
+      url = FabricUrl({objectId: marketplaceId, path: item.image["/"], width: 200});
     } else if(item?.nft_template?.nft?.image) {
       url = new URL(item.nft_template.nft.image);
     }

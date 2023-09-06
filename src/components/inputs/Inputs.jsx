@@ -518,8 +518,8 @@ const CodeInput = observer(({
   hint,
   defaultValue,
   language="css",
-  componentProps={}}
-) => {
+  componentProps={}
+}) => {
   const [editing, setEditing] = useState(false);
   const [validationResults, setValidationResults] = useState(undefined);
 
@@ -537,7 +537,14 @@ const CodeInput = observer(({
   );
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} maw={800} wrapperProps={{error: validationResults?.errorMessage, styles: () => ({error: { marginTop: 30 }})}}>
+    <InputWrapper
+      label={label}
+      description={description}
+      hint={hint}
+      maw={800}
+      error={validationResults?.errorMessage}
+      wrapperProps={{styles: () => ({error: { marginTop: 30 }})}}
+    >
       <IconButton
         label={rootStore.l10n.components.actions.edit}
         Icon={editing ? IconEditOff : IconEdit}
@@ -877,32 +884,35 @@ export const FabricBrowserInput = observer(({
       }
       <InputWrapper label={label} description={description} hint={hint} flex mb="md" {...componentProps}>
         <Group spacing="xs" style={{position: "absolute", top: 0, right: 0}}>
-          <IconButton
-            variant="transparent"
-            disabled={!updatable}
-            label={
-              updatable ?
-                LocalizeString(rootStore.l10n.components.fabric_browser.update_link, {item: name || label}) :
-                rootStore.l10n.components.fabric_browser.link_at_latest
-            }
-            Icon={updatable ? IconUnlink : IconLink}
-            color="blue.5"
-            onClick={() => {
-              Confirm({
-                text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
-                onConfirm: () => store.SetLink({
-                  objectId,
-                  page: location.pathname,
-                  path,
-                  field,
-                  linkObjectId: targetId,
-                  category,
-                  subcategory,
-                  label
-                })
-              });
-            }}
-          />
+          {
+            !value ? null :
+              <IconButton
+                variant="transparent"
+                disabled={!updatable}
+                label={
+                  updatable ?
+                    LocalizeString(rootStore.l10n.components.fabric_browser.update_link, {item: name || label}) :
+                    rootStore.l10n.components.fabric_browser.link_at_latest
+                }
+                Icon={updatable ? IconUnlink : IconLink}
+                color="blue.5"
+                onClick={() => {
+                  Confirm({
+                    text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
+                    onConfirm: () => store.SetLink({
+                      objectId,
+                      page: location.pathname,
+                      path,
+                      field,
+                      linkObjectId: targetId,
+                      category,
+                      subcategory,
+                      label
+                    })
+                  });
+                }}
+              />
+          }
           <IconButton
             label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             onClick={() => setShowBrowser(true)}

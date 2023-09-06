@@ -195,7 +195,7 @@ const MarketplaceLoginCustomization = observer(() => {
             <Inputs.List
               {...inputProps}
               {...l10n.login.consent_options}
-              subcategory={l10n.categories.terms_and_consent}
+              subcategory={l10n.categories.custom_consent_options}
               path={UrlJoin(inputProps.path, "custom_consent")}
               field="options"
               newItemSpec={MarketplaceLoginConsentOption}

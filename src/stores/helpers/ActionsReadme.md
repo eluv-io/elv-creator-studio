@@ -36,9 +36,6 @@ A more specific category describing the action
 A specific description of the action
 
 
-## Stackable and Collapsible
-Actions can be stackable and/or collapsible
-
 ### Stackable
 Stackable actions are those that can be collapsed with adjacent actions of the same type operating on the same field. 
 
@@ -47,10 +44,3 @@ For example, when modifying a text field, actions may be applied character by ch
 A stackable field will replace each adjacent modification with only the latest, resulting in only one action for the above sequence. 
 
 Stacking is applied immediately, and is used to facilitate the undo/redo functionality
-
-### Collapsible
-Collapsible actions are those that can be collapsed to only the latest action across the whole action list. This applies to actions for which only the last one matters.
-
-For example, when modifying the `name` field, it is initially set to `Steve`, and then is changed to `John`. Later, after other unrelated actions have been performed, it is modified to `Jon`. The only write action that ultimately needs to take place is changing `name` to `Jon`, so all other actions on that field are ignored.
-
-Collapsing is only applied on write, and is used to write data to the fabric and to generate the changelog. Collapsing prevents making multiple writes on the same field, which would be wasteful, and making multiple entries in the changelog for the same field, which would be confusing and unnecessary. 

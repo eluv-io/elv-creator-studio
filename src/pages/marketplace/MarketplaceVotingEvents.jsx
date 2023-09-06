@@ -7,7 +7,9 @@ import {MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInp
 import UrlJoin from "url-join";
 
 import {MarketplaceVotingEventSpec} from "@/specs/MarketplaceSpecs.js";
-import {ListItemCategory} from "@/components/common/Misc.jsx";
+import {ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
+import {IconCircleCheck, IconClock} from "@tabler/icons-react";
+import {FormatDate, ParseDate} from "@/helpers/Misc.js";
 
 export const MarketplaceVotingEvent = observer(() => {
   const { marketplaceId, votingEventId } = useParams();
@@ -133,6 +135,29 @@ const MarketplaceVotingEvents = observer(() => {
           { label: l10n.voting_events.voting_events.columns.title, field: "title" },
           { label: l10n.voting_events.voting_events.columns.type, field: "type", width: "80px", render: votingEvent => votingEvent.type?.capitalize() },
           { label: l10n.voting_events.voting_events.columns.items, field: "items", width: "80px", centered: true, render: votingEvent => votingEvent.type !== "specified" ? "N/A" : votingEvent?.items?.length || "0" },
+          {
+            label: l10n.voting_events.voting_events.columns.status,
+            centered: true,
+            field: "status",
+            width: "120px",
+            render: voting_event => {
+              let status = l10n.voting_events.status.available;
+              let Icon = IconCircleCheck;
+              let color = "green";
+
+              if(voting_event.start_date && ParseDate(voting_event.start_date) > new Date()) {
+                status = LocalizeString(l10n.voting_events.status.unreleased, { date: FormatDate(voting_event.start_date)});
+                color = "yellow";
+                Icon = IconClock;
+              } else if(voting_event.end_date && ParseDate(voting_event.end_date) < new Date()) {
+                status = LocalizeString(l10n.voting_events.status.expired, { date: FormatDate(voting_event.end_date)});
+                color = "red";
+                Icon = IconClock;
+              }
+
+              return <TooltipIcon size={25} label={status} Icon={Icon} color={color} />;
+            }
+          }
         ]}
         newItemSpec={MarketplaceVotingEventSpec}
       />

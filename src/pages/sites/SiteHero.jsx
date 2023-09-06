@@ -63,7 +63,6 @@ const SiteHero = observer(() => {
               field="hero_video_mobile"
               previewable
               previewIsAnimation
-              hint={"asd"}
             />
           </>
       }
