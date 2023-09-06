@@ -2,42 +2,40 @@ import {flow} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
-import {FabricUrl} from "@/helpers/Fabric.js";
+import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 
 export const ACTIONS = {
   MODIFY_FIELD: {
-    stackable: true,
-    collapsible: true
+    stackable: true
   },
   MODIFY_FIELD_UNSTACKABLE: {
-    stackable: false,
-    collapsible: true
+    stackable: false
   },
   TOGGLE_FIELD: {
-    stackable: false,
-    collapsible: true
+    stackable: false
   },
   SET_DEFAULT: {
     invisible: true,
-    stackable: false,
-    collapsible: true
+    stackable: false
   },
   SET_LINK: {
-    stackable: false,
-    collapsible: true
+    stackable: false
+  },
+  UPDATE_LINK: {
+    stackable: false
+  },
+  REMOVE_LINK: {
+    stackable: false
   },
   INSERT_LIST_ELEMENT: {
-    stackable: false,
-    collapsible: false
+    stackable: false
   },
   MOVE_LIST_ELEMENT: {
-    stackable: false,
-    collapsible: false
+    stackable: false
   },
   REMOVE_LIST_ELEMENT: {
-    stackable: false,
-    collapsible: false
+    stackable: false
   }
 };
 
@@ -128,6 +126,11 @@ const SetLink = flow(function * ({
   let metadataValue, writeValue;
   if(linkObjectId) {
     const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
+    const originalHash = ExtractHashFromLink(originalValue);
+
+    if(originalHash && this.utils.DecodeVersionHash(originalHash)?.objectId === linkObjectId) {
+      actionType = "UPDATE_LINK";
+    }
 
     writeValue = {
       ".": {
@@ -161,6 +164,8 @@ const SetLink = flow(function * ({
         })
       };
     }
+  } else if(originalValue) {
+    actionType = "REMOVE_LINK";
   }
 
   this.ApplyAction({

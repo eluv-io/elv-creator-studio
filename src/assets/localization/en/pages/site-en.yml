@@ -23,7 +23,7 @@ form:
     actions: Actions
     main_button_behavior: Main Button Behavior
     get_started_modal: Get Started Modal
-    post_login_modal: After Login Modal
+    post_login_modal: Post Login Modal
     hero_promos: Promo Videos
     logo: Logo
     banners: Banners
@@ -164,10 +164,10 @@ form:
     main_button_marketplace_redirect_to_owned_item:
       label: Redirect to Owned Item
       description: If the user is logged in and already owns the item, redirect to their item instead of the store page
-    post_login_show_marketplace:
-      label: Open Marketplace After Login
-      description: If specified, the marketplace will automatically be shown with the options above after users log in
   event_modals:
+    show_post_login:
+      label: Show Post Login Modal
+      description: If enabled, this modal will show after the user has logged in via the 'Get Started' modal
     image:
       label: Image
     message:

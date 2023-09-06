@@ -12,12 +12,12 @@ import {
   Image
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
-import {modals} from "@mantine/modals";
 import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
 
 import {IconUnlink, IconLinkOff, IconEqual, IconEqualNot} from "@tabler/icons-react";
+import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 
 
 
@@ -33,24 +33,19 @@ const UpdateLinkButton = ({type, record}) => {
   const [loading, setLoading] = useState(false);
 
   const l10n = rootStore.l10n.pages.tenant.form.overview;
+  const linked = !!record.latestHash;
   return (
     <IconButton
-      label={LocalizeString(l10n.update_link_label, {name: record.name})}
+      label={LocalizeString(linked ? l10n.update_link_label : l10n.add_link_label, {name: record.name})}
       variant="transparent"
       disabled={record.latestDeployed}
       loading={loading}
       color="blue.5"
       Icon={IconUnlink}
       onClick={() =>
-        modals.openConfirmModal({
-          title: l10n.update_link,
-          children: (
-            <Text size="sm">
-              { LocalizeString(l10n.update_link_confirm, {name: record.name}) }
-            </Text>
-          ),
-          centered: true,
-          labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
+        Confirm({
+          title: linked ? l10n.update_link : l10n.add_link,
+          text: LocalizeString(linked ? l10n.update_link_confirm : l10n.add_link_label_confirm, {name: record.name}),
           onConfirm: async () => {
             setLoading(true);
             try {
@@ -84,16 +79,9 @@ const UnlinkButton = ({type, record}) => {
       color="red.5"
       Icon={IconUnlink}
       onClick={() =>
-        modals.openConfirmModal({
+        ConfirmDelete({
           title: l10n.remove_link,
-          children: (
-            <Text size="sm">
-              { LocalizeString(l10n.remove_link_confirm, {name: record.name}) }
-            </Text>
-          ),
-          centered: true,
-          labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
-          confirmProps: { color: "red.6" },
+          itemName: record.name,
           onConfirm: async () => {
             setLoading(true);
             try {

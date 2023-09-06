@@ -53,12 +53,31 @@ import {
   IconTrashX,
   IconSelect,
   IconFile,
-  IconDownload, IconPlayerPause, IconPlayerPlay
+  IconDownload,
+  IconPlayerPause,
+  IconPlayerPlay,
+  IconLink,
+  IconUnlink
 } from "@tabler/icons-react";
 
-
-export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfirm}) => {
+export const Confirm = ({title, text, onConfirm, ...modalProps}) => {
   modals.openConfirmModal({
+    ...modalProps,
+    title: title || rootStore.l10n.components.inputs.confirm,
+    centered: true,
+    children: (
+      <Text size="sm">
+        { text }
+      </Text>
+    ),
+    labels: { confirm: rootStore.l10n.components.actions.confirm, cancel: rootStore.l10n.components.actions.cancel },
+    onConfirm
+  });
+};
+
+export const ConfirmDelete = ({title, itemName, listItem, onConfirm, ...modalProps}) => {
+  modals.openConfirmModal({
+    ...modalProps,
     title: title || LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName}),
     centered: true,
     children: (
@@ -68,8 +87,7 @@ export const ConfirmDelete = ({title, itemName, modalProps={}, listItem, onConfi
     ),
     labels: { confirm: rootStore.l10n.components.actions.remove, cancel: rootStore.l10n.components.actions.cancel },
     confirmProps: { color: "red.6" },
-    onConfirm,
-    ...modalProps
+    onConfirm
   });
 };
 
@@ -810,10 +828,14 @@ export const FabricBrowserInput = observer(({
   const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
+  const [updatable, setUpdatable] = useState(false);
 
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
   let value = store.GetMetadata({objectId, path, field});
+  const targetHash = ExtractHashFromLink(value);
+  const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
+
   const name = value ? GetName(value) : "";
   const imageUrl = GetImage?.(value);
 
@@ -822,8 +844,15 @@ export const FabricBrowserInput = observer(({
     setShowPreview(false);
   }, [value, previewable, previewIsAnimation]);
 
-  const targetHash = ExtractHashFromLink(value);
-  const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
+  useEffect(() => {
+    if(!targetHash) {
+      setUpdatable(false);
+      return;
+    }
+
+    rootStore.client.LatestVersionHash({versionHash: targetHash})
+      .then(latestHash => setUpdatable(targetHash !== latestHash));
+  }, [targetHash]);
 
   return (
     <>
@@ -847,7 +876,33 @@ export const FabricBrowserInput = observer(({
           />
       }
       <InputWrapper label={label} description={description} hint={hint} flex mb="md" {...componentProps}>
-        <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
+        <Group spacing="xs" style={{position: "absolute", top: 0, right: 0}}>
+          <IconButton
+            variant="transparent"
+            disabled={!updatable}
+            label={
+              updatable ?
+                LocalizeString(rootStore.l10n.components.fabric_browser.update_link, {item: name || label}) :
+                rootStore.l10n.components.fabric_browser.link_at_latest
+            }
+            Icon={updatable ? IconUnlink : IconLink}
+            color="blue.5"
+            onClick={() => {
+              Confirm({
+                text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
+                onConfirm: () => store.SetLink({
+                  objectId,
+                  page: location.pathname,
+                  path,
+                  field,
+                  linkObjectId: targetId,
+                  category,
+                  subcategory,
+                  label
+                })
+              });
+            }}
+          />
           <IconButton
             label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             onClick={() => setShowBrowser(true)}
@@ -868,11 +923,11 @@ export const FabricBrowserInput = observer(({
                     />
                 }
                 <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label})}
                   icon={<IconX size={15} />}
                   onClick={() => {
                     ConfirmDelete({
-                      itemName: name,
+                      itemName: name || label,
                       onConfirm: () => store.SetLink({
                         objectId,
                         page: location.pathname,
@@ -894,7 +949,7 @@ export const FabricBrowserInput = observer(({
                       mb="xs"
                       height={200}
                       fit="contain"
-                      alt={name}
+                      alt={name || label}
                       src={imageUrl}
                       withPlaceholder
                       bg="gray.1"
@@ -902,7 +957,7 @@ export const FabricBrowserInput = observer(({
                     />
                 }
                 <Text fz="sm">
-                  { name }
+                  { name || label }
                 </Text>
                 <Text fz={11} color="dimmed">
                   { targetId }

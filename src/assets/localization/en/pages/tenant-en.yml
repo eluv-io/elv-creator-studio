@@ -22,6 +22,9 @@ form:
     not_deployed: Previous Version Deployed
     not_linked: Not Linked
     deploy: Deploy
+    add_link: Add Link
+    add_link_label: Add Link to {name}
+    add_link_label_confirm: Are you sure you want to link {name}?
     update_link: Update Link
     update_link_label: Update Link to {name}
     update_link_confirm: Are you sure you want to update the link to {name}?

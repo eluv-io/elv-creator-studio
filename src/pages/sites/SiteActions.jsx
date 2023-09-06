@@ -66,7 +66,6 @@ const SiteActions = observer(() => {
         options={[
           { label: "Default", value: ""},
           { label: "Open Marketplace", value: "marketplace"},
-          { label: "Show 'After Login' Modal", value: "modal"},
           { label: "Link", value: "link"},
           { label: "Hidden", value: "hidden"},
         ]}
@@ -118,13 +117,6 @@ const SiteActions = observer(() => {
                   defaultValue={false}
                 />
             }
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.actions.post_login_show_marketplace}
-              subcategory={l10n.categories.main_button_behavior}
-              field="post_login_show_marketplace"
-              defaultValue={false}
-            />
           </>
       }
 
@@ -178,69 +170,71 @@ const SiteActions = observer(() => {
               path="/public/asset_metadata/info/event_info/modal_message_get_started"
               field="button_image"
             />
-          </>
-      }
-      {
-        info?.event_info?.event_button_action_post_login !== "modal" ? null :
-          <>
-            <Title order={3} mb="md" mt={50}>{ l10n.categories.post_login_modal }</Title>
 
-            <Inputs.Hidden
+            <Title order={3} mb="md" mt={50}>{ l10n.categories.post_login_modal }</Title>
+            <Inputs.Checkbox
               {...inputProps}
+              {...l10n.event_modals.show_post_login}
               subcategory={l10n.categories.post_login_modal}
               path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
               field="show"
-              defaultValue={true}
+              defaultValue={false}
             />
-            <Inputs.ImageInput
-              {...inputProps}
-              {...l10n.event_modals.image}
-              subcategory={l10n.categories.post_login_modal}
-              path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-              altTextField="image_alt"
-              fields={[
-                { field: "image" },
-              ]}
-            />
-            <Inputs.RichText
-              {...inputProps}
-              {...l10n.event_modals.message}
-              subcategory={l10n.categories.post_login_modal}
-              path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-              field="message"
-            />
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.event_modals.button_text}
-              subcategory={l10n.categories.post_login_modal}
-              path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-              field="button_text"
-            />
-            <Inputs.URL
-              {...inputProps}
-              {...l10n.event_modals.button_link}
-              subcategory={l10n.categories.post_login_modal}
-              path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-              field="button_link"
-            />
+
             {
-              info?.event_info?.modal_message_get_started?.post_login?.button_link ? null :
-                <Inputs.Checkbox
-                  {...inputProps}
-                  {...l10n.event_modals.show_marketplace}
-                  subcategory={l10n.categories.post_login_modal}
-                  path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-                  field="show_marketplace"
-                  defaultValue={false}
-                />
+              !info?.event_info?.modal_message_get_started?.post_login?.show ? null :
+                <>
+                  <Inputs.ImageInput
+                    {...inputProps}
+                    {...l10n.event_modals.image}
+                    subcategory={l10n.categories.post_login_modal}
+                    path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                    altTextField="image_alt"
+                    fields={[
+                      {field: "image"},
+                    ]}
+                  />
+                  <Inputs.RichText
+                    {...inputProps}
+                    {...l10n.event_modals.message}
+                    subcategory={l10n.categories.post_login_modal}
+                    path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                    field="message"
+                  />
+                  <Inputs.Text
+                    {...inputProps}
+                    {...l10n.event_modals.button_text}
+                    subcategory={l10n.categories.post_login_modal}
+                    path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                    field="button_text"
+                  />
+                  <Inputs.URL
+                    {...inputProps}
+                    {...l10n.event_modals.button_link}
+                    subcategory={l10n.categories.post_login_modal}
+                    path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                    field="button_link"
+                  />
+                  {
+                    info?.event_info?.modal_message_get_started?.post_login?.button_link ? null :
+                      <Inputs.Checkbox
+                        {...inputProps}
+                        {...l10n.event_modals.show_marketplace}
+                        subcategory={l10n.categories.post_login_modal}
+                        path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                        field="show_marketplace"
+                        defaultValue={false}
+                      />
+                  }
+                  <Inputs.SingleImageInput
+                    {...inputProps}
+                    {...l10n.event_modals.button_image}
+                    subcategory={l10n.categories.get_started_modal}
+                    path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
+                    field="button_image"
+                  />
+                </>
             }
-            <Inputs.SingleImageInput
-              {...inputProps}
-              {...l10n.event_modals.button_image}
-              subcategory={l10n.categories.get_started_modal}
-              path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
-              field="button_image"
-            />
           </>
       }
     </PageContent>

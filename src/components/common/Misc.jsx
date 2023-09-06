@@ -7,11 +7,25 @@ export const LinkButton = (props) => {
 };
 
 export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
+  const button = (
+    <ActionIcon {...props} aria-label={label}>
+      { icon ? icon : <Icon /> }
+    </ActionIcon>
+  );
+
   return (
-    <Tooltip {...tooltipProps} label={label}>
-      <ActionIcon {...props} aria-label={label}>
-        { icon ? icon : <Icon /> }
-      </ActionIcon>
+    <Tooltip
+      {...tooltipProps}
+      label={label}
+      events={{ hover: true, focus: true, touch: false }}
+    >
+      {
+        !props.disabled ?
+          button :
+          <Group>
+            {button}
+          </Group>
+      }
     </Tooltip>
   );
 };

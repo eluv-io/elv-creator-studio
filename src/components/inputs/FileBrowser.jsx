@@ -339,10 +339,8 @@ const DeleteFileButton = ({filename, Delete}) => {
         ConfirmDelete({
           title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
           itemName: filename,
-          modalProps: {
-            overlayProps: {
-              zIndex: 202
-            }
+          overlayProps: {
+            zIndex: 202
           },
           onConfirm: () => {
             setDeleting(true);

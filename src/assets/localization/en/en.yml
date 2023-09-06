@@ -25,6 +25,7 @@ components:
     add: Add {item}
     select_file: Select file for {item}
     edit: Edit {item}
+    confirm: Confirm
     remove: Remove {item}
     remove_confirm: Are you sure you want to remove {item}?
     remove_confirm_list_item: Are you sure you want to remove this {item}?
@@ -76,6 +77,9 @@ components:
     filter: Filter
     select: Select {item}
     content_id: Content ID
+    link_at_latest: Link is at latest version
+    update_link: Update Link to {item}
+    update_link_confirm: Are you sure you want to update the link to {item}?
     direct_selection_placeholder: Object ID, version hash or contract address
     back_to_library_selection: Back to library selection
     columns:
@@ -105,7 +109,9 @@ actions:
   TOGGLE_FIELD: Toggled '{label}'
   TOGGLE_FIELD_ON: Toggled '{label}' On
   TOGGLE_FIELD_OFF: Toggled '{label}' Off
-  SET_LINK: Modified '{label}'
+  SET_LINK: Modified '{label}' link
+  UPDATE_LINK: Updated '{label}' link
+  REMOVE_LINK: Removed '{label}' link
   INSERT_LIST_ELEMENT: Added '{label}'
   INSERT_LIST_ELEMENT_UNLABELLED: Added to list
   REMOVE_LIST_ELEMENT: Removed '{label}'
