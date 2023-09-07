@@ -13,6 +13,7 @@ import FabricBrowserStore from "@/stores/FabricBrowserStore.js";
 import TenantStore from "@/stores/TenantStore.js";
 import MarketplaceStore from "@/stores/MarketplaceStore.js";
 import SiteStore from "@/stores/SiteStore.js";
+import ItemTemplateStore from "@/stores/ItemTemplateStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 
@@ -59,6 +60,7 @@ class RootStore {
     this.tenantStore = new TenantStore(this);
     this.marketplaceStore = new MarketplaceStore(this);
     this.siteStore = new SiteStore(this);
+    this.itemTemplateStore = new ItemTemplateStore(this);
 
     this.Initialize();
   }
@@ -170,5 +172,6 @@ export const databaseStore = rootStore.marketplaceStore;
 export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;
 export const siteStore = rootStore.siteStore;
+export const itemTemplateStore = rootStore.itemTemplateStore;
 
 window.rootStore = rootStore;

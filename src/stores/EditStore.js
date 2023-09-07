@@ -64,7 +64,8 @@ class EditStore {
     return [
       ...GetChangeList({type: "Tenant", storeKey: "tenantStore"}),
       ...GetChangeList({type: "Marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
-      ...GetChangeList({type: "Site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"})
+      ...GetChangeList({type: "Site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"}),
+      ...GetChangeList({type: "Item Template", storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"})
     ];
   }
 

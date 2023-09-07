@@ -27,7 +27,7 @@ class SiteStore {
 
     const libraryId = yield this.rootStore.LibraryId({objectId: siteId});
 
-    const site = {
+    this.sites[siteId] = {
       ...info,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
@@ -42,8 +42,6 @@ class SiteStore {
         }))
       }
     };
-
-    this.sites[siteId] = site;
 
     this.SetListFieldIds({
       objectId: siteId,

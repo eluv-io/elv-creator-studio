@@ -1,6 +1,4 @@
 import {
-  Container,
-  Title,
   Group,
   Text,
   Card,
@@ -11,15 +9,16 @@ import {
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
-import {marketplaceStore, tenantStore} from "@/stores";
+import {rootStore, marketplaceStore, tenantStore} from "@/stores";
 import {FabricUrl} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton} from "@/components/common/Misc";
+import PageContent from "@/components/common/PageContent.jsx";
 
 const MarketplaceCard = observer(({marketplace, fullMarketplace}) => {
   const fullMarketplaceMetadata = fullMarketplace?.metadata?.public?.asset_metadata || {};
   const name = fullMarketplaceMetadata?.info?.branding?.name || marketplace.brandedName || marketplace.name;
-  const image = FabricUrl({...marketplace, path: "/meta/public/asset_metadata/info/branding/card_banner_front"});
+  const image = FabricUrl({...marketplace, path: "/meta/public/asset_metadata/info/branding/card_banner_front", width: 400});
 
   return (
     <Card withBorder radius="md" p="md" style={{display: "flex", flexDirection: "column"}}>
@@ -55,8 +54,7 @@ const MarketplaceList = observer(() => {
       loadingMessage="Loading Marketplaces"
       Load={async () => await marketplaceStore.LoadMarketplaces()}
     >
-      <Container p="xl" fluid>
-        <Title>Marketplaces</Title>
+      <PageContent title={rootStore.l10n.pages.marketplace.form.categories.marketplaces}>
         <SimpleGrid
           spacing="xl"
           my="xl"
@@ -73,7 +71,7 @@ const MarketplaceList = observer(() => {
             )
           }
         </SimpleGrid>
-      </Container>
+      </PageContent>
     </AsyncWrapper>
   );
 });

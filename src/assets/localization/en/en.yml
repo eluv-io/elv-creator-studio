@@ -3,6 +3,7 @@ components:
     home: Home
     marketplaces: Marketplaces
     sites: Sites
+    item_templates: Item Templates
   actions:
     back: Back
     back_to: Back to {target}

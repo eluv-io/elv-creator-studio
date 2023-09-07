@@ -300,6 +300,7 @@ class DatabaseStore {
               objectId: templateId,
               name: metadata.public?.name || "",
               brandedName: metadata.public?.asset_metadata?.nft?.name || "",
+              image: metadata.public?.asset_metadata?.nft?.image || "",
               marketplaces: [marketplace.objectId],
               metadata
             };

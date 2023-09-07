@@ -4,6 +4,7 @@ import TenantRoutes from "@/pages/tenant/TenantRoutes.jsx";
 import MarketplaceRoutes from "@/pages/marketplace/MarketplaceRoutes.jsx";
 import ScrollToTop from "@/components/common/ScrollToTop.jsx";
 import SiteRoutes from "@/pages/sites/SiteRoutes.jsx";
+import ItemTemplateRoutes from "@/pages/item_templates/ItemTemplateRoutes.jsx";
 
 const AppRoutes = observer(() => {
   return (
@@ -12,6 +13,7 @@ const AppRoutes = observer(() => {
       <TenantRoutes rootPath="/" />
       <MarketplaceRoutes rootPath="/marketplaces/" />
       <SiteRoutes rootPath="/sites/" />
+      <ItemTemplateRoutes rootPath="/item-templates/" />
     </BrowserRouter>
   );
 });

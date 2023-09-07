@@ -4,7 +4,7 @@ import {rootStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import {Title} from "@mantine/core";
+import {Group, Title, Text} from "@mantine/core";
 import {ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
 
@@ -384,8 +384,16 @@ const MarketplaceItems = observer(() => {
         Filter={({value, filter}) => value.name?.toLowerCase().includes(filter)}
         newItemSpec={MarketplaceItemSpec}
         columns={[
-          { field: "image", width: "80px", render: item => <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={60} height={60} radius="xs" /> },
-          { label: l10n.items.items.columns.name, field: "name", render: item => item.name || item.nft_template?.nft?.name },
+          {
+            label: l10n.items.items.columns.name,
+            field: "name",
+            render: item => (
+              <Group>
+                <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={60} height={60} radius="xs" />
+                <Text>{item.name || item.nft_template?.nft?.name}</Text>
+              </Group>
+            )
+          },
           { label: l10n.items.items.columns.price, field: "price", width: "100px", render: item => item.free ? "Free" : FormatUSD(item.price.USD) },
           {
             label: l10n.items.items.columns.status,

@@ -1,0 +1,12 @@
+nav:
+  list: Item Templates
+  overview: Overview
+form:
+  categories:
+    item_templates: Item Templates
+    general: General
+  list:
+    columns:
+      name: Name
+
+

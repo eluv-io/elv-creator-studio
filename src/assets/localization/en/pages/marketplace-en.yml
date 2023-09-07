@@ -13,6 +13,7 @@ nav:
 
 form:
   categories:
+    marketplaces: Marketplaces
     general: General
     info: Marketplace Info
     global_settings: Global Marketplace Settings
