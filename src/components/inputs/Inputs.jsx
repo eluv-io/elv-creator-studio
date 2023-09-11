@@ -19,7 +19,7 @@ import {
   ScrollArea,
   Table,
   HoverCard,
-  ColorInput
+  ColorInput, Code
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -269,6 +269,7 @@ const Input = observer(({
     case "json":
       Component = JsonInput;
       componentProps.formatOnBlur = true;
+      value = typeof value !== "string" ? JSON.stringify(value) : value;
       break;
     case "select":
       Component = Select;
@@ -475,7 +476,20 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
 
   const value = store.GetMetadata({objectId, path, field});
   return (
-    <InputWrapper label={label} description={description} hint={hint} maw={!value && !showEditor ? 600 : 800} w="100%">
+    <InputWrapper
+      label={label}
+      description={description}
+      hint={hint}
+      maw={600}
+      w="100%"
+      wrapperProps={{
+        styles: {
+          description: {
+            paddingRight: "50px"
+          }
+        }
+      }}
+    >
       {
         showEditor ?
           <Container p={0} m={0} my="xl">
@@ -492,7 +506,13 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
             />
           </Container> :
           value ?
-            <Paper withBorder shadow="sm" p="xl" py="md" m={0} my="xl">
+            <Paper
+              py="md"
+              m={0}
+              mt="xl"
+              radius={0}
+              sx={theme => ({borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]}`})}
+            >
               <div className="wallet-rich-text-document" dangerouslySetInnerHTML={{__html: SanitizeHTML(value)}} />
             </Paper> : null
       }
@@ -600,6 +620,7 @@ const SingleImageInput = observer(({
   actionLabel,
   path,
   field,
+  url=false,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -609,7 +630,9 @@ const SingleImageInput = observer(({
   const imageMetadata = store.GetMetadata({objectId, path, field});
 
   let imageUrl;
-  if(imageMetadata) {
+  if(url) {
+    imageUrl = imageMetadata;
+  } else if(imageMetadata) {
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: 200});
   }
 
@@ -680,20 +703,23 @@ const SingleImageInput = observer(({
         }
       </Paper>
       <FileBrowser
+        url={url}
         title={LocalizeString(rootStore.l10n.components.inputs.select_file, { item: label })}
         objectId={objectId}
         extensions="image"
         opened={showFileBrowser}
-        Submit={({fullPath}) => {
+        Submit={({publicUrl, fullPath}) => {
           store.SetMetadata({
             page: location.pathname,
             objectId,
             path,
             field,
-            value: {
-              auto_update: { tag: "latest" },
-              "/": UrlJoin("./files", fullPath)
-            },
+            value: url ?
+              publicUrl :
+              {
+                auto_update: { tag: "latest" },
+                "/": UrlJoin("./files", fullPath)
+              },
             category,
             subcategory,
             label: actionLabel || label
@@ -716,6 +742,7 @@ export const FileInput = observer(({
   description,
   hint,
   extensions,
+  url=false,
   fileBrowserProps={}
 }) => {
   const location = useLocation();
@@ -733,20 +760,33 @@ export const FileInput = observer(({
             {...fileBrowserProps}
             objectId={objectId}
             extensions={extensions}
-            label={label}
+            title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             Close={() => setShowBrowser(false)}
-            Submit={async (filePath) => {
-              await store.SetLink({
-                objectId,
-                path,
-                field,
-                linkObjectId: objectId,
-                linkType: "file",
-                filePath,
-                category,
-                subcategory,
-                label
-              });
+            Submit={async ({publicUrl, fullPath}) => {
+              if(url) {
+                await store.SetMetadata({
+                  objectId,
+                  path,
+                  field,
+                  value: publicUrl,
+                  category,
+                  subcategory,
+                  label
+                });
+              } else {
+                await store.SetLink({
+                  objectId,
+                  path,
+                  field,
+                  linkObjectId: objectId,
+                  linkType: "files",
+                  linkPath: fullPath,
+                  category,
+                  subcategory,
+                  label
+                });
+              }
+
             }}
           />
       }
@@ -759,9 +799,17 @@ export const FileInput = observer(({
         pb="lg"
         mb="md"
         flex
+        wrapperProps={{
+          styles: {
+            description: {
+              paddingRight: "50px"
+            }
+          }
+        }}
       >
-        <Group spacing={0} style={{position: "absolute", top: 0, right: 0}}>
+        <Group spacing={0} style={{position: "absolute", top: -3, right: 0}}>
           <IconButton
+            p={0}
             label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             Icon={IconSelect}
             onClick={() => setShowBrowser(true)}
@@ -771,16 +819,18 @@ export const FileInput = observer(({
           !value ? null :
             <Paper withBorder p="xl" mt="md" style={{position: "relative"}}>
               <Group spacing={0} style={{position: "absolute", top: 5, right: 5}}>
+                {
+                  !value || url ? null :
+                    <IconButton
+                      label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
+                      component="a"
+                      href={value.url}
+                      target="_blank"
+                      icon={<IconDownload size={15}/>}
+                    />
+                }
                 <IconButton
-                  label={LocalizeString(rootStore.l10n.components.file_browser.download, {filename})}
-                  component="a"
-                  href={value.url}
-                  target="_blank"
-                  icon={<IconDownload size={15} />}
-                />
-
-                <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label.toLowerCase()})}
+                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label})}
                   icon={<IconX size={15} />}
                   onClick={() => {
                     ConfirmDelete({
@@ -799,10 +849,27 @@ export const FileInput = observer(({
                   }}
                 />
               </Group>
-              <Group align="center">
-                <IconFile />
+              <Group align="center" noWrap pr={50}>
+                <IconFile style={{minWidth: 24}}/>
                 <Text fz="sm">
-                  { filename }
+                  {
+                    !value ? null :
+                      url ?
+                        <Text
+                          fz="xs"
+                          color="blue.5"
+                          component="a"
+                          target="_blank"
+                          rel="noreferrer"
+                          href={value}
+                          style={{whiteSpace: "pre-wrap", wordBreak: "break-all"}}
+                        >
+                          { value }
+                        </Text> :
+                        <Code p={0} bg="transparent" style={{whiteSpace: "pre-wrap", wordBreak: "break-all"}}>
+                          {filename}
+                        </Code>
+                  }
                 </Text>
               </Group>
             </Paper>
@@ -1032,6 +1099,7 @@ const ImageInput = observer(({
               field={field.field}
               actionLabel={field.label || label}
               mb={0}
+              url={field.url}
             />
           )
         }
@@ -1182,7 +1250,7 @@ const List = observer(({
     const id = (idField === "index" ? index.toString() : value[idField]) || "";
 
     return (
-      <Draggable key={`draggable-item-${id}`} index={index} draggableId={`item-${id}`}>
+      <Draggable key={`draggable-item-${id || index}`} index={index} draggableId={`item-${id}`}>
         {(provided, snapshot) => (
           <Paper
             withBorder={!simpleList}
@@ -1223,7 +1291,7 @@ const List = observer(({
                 onClick={() => {
                   ConfirmDelete({
                     listItem: true,
-                    itemName: fieldLabel?.toLowerCase(),
+                    itemName: fieldLabel,
                     onConfirm: () => store.RemoveListElement({
                       objectId,
                       page: location.pathname,
@@ -1325,7 +1393,7 @@ const CollectionTableRows = observer(({
       const id = (idField === "index" ? index.toString() : value[idField]) || "";
 
       return (
-        <Draggable key={`draggable-item-${id}}`} index={index} draggableId={`item-${id}`}>
+        <Draggable key={`draggable-item-${id || index}}`} index={index} draggableId={`item-${id}`}>
           {(rowProvided) => (
             <tr
               ref={rowProvided.innerRef}
@@ -1360,7 +1428,7 @@ const CollectionTableRows = observer(({
                     onClick={() => {
                       ConfirmDelete({
                         listItem: true,
-                        itemName: fieldLabel?.toLowerCase(),
+                        itemName: fieldLabel,
                         onConfirm: () => store.RemoveListElement({
                           objectId,
                           page: location.pathname,
@@ -1544,6 +1612,7 @@ const CollectionTable = observer(({
 });
 
 export default {
+  Input,
   Hidden: props => <Input {...props} type="text" hidden />,
   Text: props => <Input {...props} type="text" />,
   URL: props => <Input {...props} type="text" Validate={ValidateUrl} />,

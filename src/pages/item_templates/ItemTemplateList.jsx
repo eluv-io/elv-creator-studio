@@ -21,32 +21,37 @@ import {IconEdit} from "@tabler/icons-react";
 
 const ItemTemplateList = observer(() => {
   const l10n = rootStore.l10n.pages.item_template.form;
-  const [sortStatus, setSortStatus] = useState({columnAccessor: "brandedName", direction: "asc"});
+  const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
   const itemTemplates =
     (itemTemplateStore.allItemTemplates || [])
-      .filter(template =>
-        !debouncedFilter ||
-        template.brandedName?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
-        template.name?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
-        template.objectId?.includes(debouncedFilter)
-      )
-      .sort(SortTable({sortStatus}))
       .map(template => {
         const fullTemplateMetadata = itemTemplateStore.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft;
 
         if(!fullTemplateMetadata) {
-          return template;
+          return {
+            ...template,
+            name: template.brandedName || template.name
+          };
         }
 
         return {
           ...template,
           image: fullTemplateMetadata.image,
-          brandedName: fullTemplateMetadata.name
+          name: fullTemplateMetadata.name || template.name,
+          address: fullTemplateMetadata.address
         };
-      });
+      })
+      .filter(template =>
+        !debouncedFilter ||
+        template.name?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
+        template.objectId?.includes(debouncedFilter) ||
+        template.contractId.includes(debouncedFilter) ||
+        template.address.includes(debouncedFilter)
+      )
+      .sort(SortTable({sortStatus}));
 
   return (
     <AsyncWrapper
@@ -57,7 +62,7 @@ const ItemTemplateList = observer(() => {
         <Paper maw={800}>
           <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
           <DataTable
-            minHeight={125}
+            minHeight={itemTemplates.length === 0 ? 200 : 0}
             withBorder
             highlightOnHover
             idAccessor="objectId"
@@ -66,17 +71,28 @@ const ItemTemplateList = observer(() => {
             onSortStatusChange={setSortStatus}
             columns={[
               {
-                accessor: "brandedName",
+                accessor: "name",
                 sortable: true,
                 title: l10n.list.columns.name,
                 render: itemTemplate => (
                   <Group>
-                    <Image width={60} height={60} fit="contain" src={itemTemplate.image} alt={itemTemplate.brandedName} withPlaceholder />
+                    <Image width={60} height={60} fit="contain" src={itemTemplate.image} alt={itemTemplate.name} withPlaceholder />
                     <Stack spacing={0}>
-                      <Text>{itemTemplate.brandedName || itemTemplate.name}</Text>
+                      <Text>{itemTemplate.name}</Text>
                       <Text fz="xs" color="dimmed">{itemTemplate.objectId}</Text>
                     </Stack>
                   </Group>
+                )
+              },
+              {
+                accessor: "address",
+                title: l10n.list.columns.address,
+                render: itemTemplate => (
+                  !itemTemplate.address ? null :
+                    <Stack spacing={0}>
+                      <Text fz="xs">{itemTemplate.address}</Text>
+                      <Text fz="xs" color="dimmed">{itemTemplate.contractId}</Text>
+                    </Stack>
                 )
               },
               {
@@ -84,7 +100,7 @@ const ItemTemplateList = observer(() => {
                 title: "",
                 render: itemTemplate => (
                   <IconButton
-                    label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemTemplate.brandedName || itemTemplate.name})}
+                    label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemTemplate.name})}
                     component={Link}
                     to={UrlJoin(location.pathname, itemTemplate.objectId)}
                     color="blue.5"

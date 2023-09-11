@@ -18,7 +18,7 @@ export const ScaleImage = (url, width) => {
   return url.toString();
 };
 
-export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path="", auth, resolve=true, width}) => {
+export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWriteToken=false, path="", auth, resolve=true, width}) => {
   if(versionHash) {
     objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
   } else {
@@ -33,7 +33,7 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, path=""
       "https://demov3.net955210.contentfabric.io"
   );
 
-  if(editStore.writeInfo[objectId]) {
+  if(!noWriteToken && editStore.writeInfo[objectId]) {
     writeToken = editStore.writeInfo[objectId].writeToken || writeToken;
     const fabricNodeUrl = editStore.writeInfo[objectId]?.fabricNodeUrl;
 

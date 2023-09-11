@@ -61,6 +61,7 @@ components:
     upload_instructions_drag: Drag files here
     upload_instructions_click: or click to select files
     directory_back: Back to previous directory
+    allowed_extensions: "Allowed Extensions: {extensions}"
     columns:
       actions: Actions
       filename: Filename
@@ -92,6 +93,11 @@ components:
   save_modal:
     title: Save Changes
     changelist: Change List
+    types:
+      tenant: Tenant
+      site: Site
+      marketplace: Marketplace
+      item_template: Item Template
 
 stores:
   initialization:

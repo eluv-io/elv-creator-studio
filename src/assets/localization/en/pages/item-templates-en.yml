@@ -1,12 +1,137 @@
 nav:
   list: Item Templates
   overview: Overview
+  general: General
+  settings: Settings
+  primary_media: Primary Media
 form:
   categories:
     item_templates: Item Templates
     general: General
+    settings: Settings
+    contract: Contract Settings
+    resale: Resale Settings
+    info: Item Template Info
+    item_details: Details
+    item_attributes: Attributes
+    display: Display Settings
+    primary_media: Primary Media
   list:
     columns:
       name: Name
+      address: Contract Address
+  common:
+    name:
+      label: Name
+    id:
+      label: ID
+  general:
+    image:
+      label: Image
+    tenant_id:
+      label: Tenant ID
+    template_id:
+      label: Template ID
+    subtitle:
+      label: Subtitle
+    subtitle_2:
+      label: Subtitle 2
+    id_format:
+      label: ID Display Format
+    style_variant:
+      label: Style Variant
+      description: "If specified, this will be added to the HTML container class when this NFT is displayed (e.g. 'card-container--variant-(style)', 'featured-item__icon-container--variant-(style)' 'feature-gallery__icon-container--variant-(style)'). These classes can be used for defining custom CSS for this item when displayed in your marketplace."
+    description:
+      label: Description (Plain Text)
+    description_rich_text:
+      label: Description (Rich Text)
+      description: A rich text description allows for text formatting and links, but is only visible on the item details page, and on featured storefront items on desktop only. Make sure the plain text description (above) is filled out as well.
+    tags:
+      label: Tags
+      fieldLabel: Tag
+    creator:
+      label: Creator
+    copyright:
+      label: Copyright
+    created_at:
+      label: Creation Date
+    additional_info:
+      label: Additional Info
+      description: Additional information about this item to be displayed in the 'details' dropdown on the item details page.
+    terms_document:
+      label: Terms Document
+      description: If present, a link to this document will be available in the 'details' dropdown on the item details page.
+    terms_document_link_text:
+      label: Terms Document Link Text
+      description: The text of the link to the document above.
+    attributes:
+      label: Attributes
+      fieldLabel: Attribute
+    attribute_type:
+      label: Type
+    attribute_value:
+      label: Value
+  settings:
+    permissioned:
+      label: Permissioned
+    secondary_available_at:
+      label: Secondary Resale Available Date
+      description: If specified, these items will not be listable for sale on the secondary marketplace until the specified date.
+    secondary_expires_at:
+      label: Secondary Resale End Date
+      description: If specified, these items will no longer be listable for sale on the secondary marketplace after the specified date.
+    test:
+      label: Test Item
+      description: If enabled, this will be marked as a test item. Test items may never be listed for sale on the secondary marketplace or transferred to another user. Test items have a special indicator in the UI.
+    contract_address:
+      label: Contract Address
+    total_supply:
+      label: Total Supply
+      description: Maximum number of items that can be generated for this NFT contract
+    merge_meta:
+      label: Merge Metadata
+    mint_key_id:
+      label: Mint Key ID
+    fabric_key_id:
+      label: Fabric Key ID
+    use_mint_ordinal:
+      label: Use Mint Ordinal in Token ID
+      description: Generate numeric token IDs
+    shuffle_token_id:
+      label: Shuffle Token ID
+      description: Randomize order of ordinal token ID
+    token_template:
+      label: Token ID Template
+      description: Create vanity token IDs based on this template
+  media:
+    generative:
+      label: Generative
+      description: A generative item may have a different image per item, determined by the item's token ID.
+    playable:
+      label: Playable
+      description: Check this box if the item template itself is a playable video
+    has_audio:
+      label: Has Audio
+      description: By default, item template videos are muted, looping animations. Check this box if your video is intended to include audio. Note that item template videos with audio will not autoplay.
+    media_type:
+      label: Media Type
+    media:
+      label: Media
+    media_file:
+      label: Media File
+    media_parameters:
+      label: Media URL Parameters
+      description: These URL parameters will be added when loading the HTML file
+      fieldLabel: Media URL Parameter
+    parameter:
+      label: Parameter
+    value:
+      label: Value
+    embed_url:
+      label: Embed URL
+
+
+
+
 
 

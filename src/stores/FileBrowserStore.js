@@ -50,7 +50,7 @@ class FileBrowserStore {
             ext,
             url: FabricUrl({libraryId, objectId, writeToken, path: UrlJoin("files", path, filename), auth: "private"}),
             size: file["."].size,
-            encrypted: file["."].encryption?.scheme !== "none"
+            encrypted: file["."].encryption?.scheme === "cgck"
           };
         }
       })

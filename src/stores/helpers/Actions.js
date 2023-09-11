@@ -139,7 +139,7 @@ const SetLink = flow(function * ({
         }
       },
       "/": objectId === linkObjectId ?
-        UrlJoin("./meta", linkPath) :
+        UrlJoin("./", linkType, linkPath) :
         UrlJoin("/qfab", targetHash, linkType, linkPath)
     };
 
@@ -160,7 +160,7 @@ const SetLink = flow(function * ({
         ...writeValue,
         url: FabricUrl({
           objectId,
-          path: linkPath
+          path: writeValue["/"]
         })
       };
     }
@@ -428,8 +428,16 @@ const RedoAction = flow(function * ({objectId, page}) {
 });
 
 const Save = flow(function * ({libraryId, objectId, writeToken}) {
+  if(this.Preprocess) {
+    yield this.Preprocess({libraryId, objectId, writeToken});
+  }
+
   for(const action of this.actionStack[objectId]) {
     yield action.Write({libraryId, objectId, writeToken});
+  }
+
+  if(this.Postprocess) {
+    yield this.Postprocess({libraryId, objectId, writeToken});
   }
 });
 

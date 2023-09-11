@@ -62,10 +62,10 @@ class EditStore {
     };
 
     return [
-      ...GetChangeList({type: "Tenant", storeKey: "tenantStore"}),
-      ...GetChangeList({type: "Marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
-      ...GetChangeList({type: "Site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"}),
-      ...GetChangeList({type: "Item Template", storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"})
+      ...GetChangeList({type: "tenant", storeKey: "tenantStore"}),
+      ...GetChangeList({type: "marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
+      ...GetChangeList({type: "site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"}),
+      ...GetChangeList({type: "item_template", storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"})
     ];
   }
 
@@ -124,6 +124,10 @@ class EditStore {
         yield this.Finalize({objectId, commitMessage: commitMessages[objectId]});
 
         yield store.ClearActions({objectId, commitMessage: commitMessages[objectId] || ""});
+
+        if(store.PostSave) {
+          yield store.PostSave({libraryId, objectId});
+        }
 
         // Force reload object after saving
         yield store.Reload({objectId});

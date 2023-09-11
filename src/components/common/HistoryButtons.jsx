@@ -5,7 +5,7 @@ import {
   IconArrowBackUp as IconUndo,
   IconArrowForwardUp as IconRedo
 } from "@tabler/icons-react";
-import {rootStore, marketplaceStore, tenantStore, siteStore} from "@/stores";
+import {rootStore, marketplaceStore, tenantStore, siteStore, itemTemplateStore} from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {ActionToString} from "@/stores/helpers/Changelist.js";
 
@@ -27,6 +27,10 @@ const HistoryButtons = observer(({section}) => {
     case "site":
       store = siteStore;
       objectId = params.siteId;
+      break;
+    case "itemTemplate":
+      store = itemTemplateStore;
+      objectId = params.itemTemplateId;
       break;
     default:
       rootStore.DebugLog({message: `History Buttons: Unknown section type '${section}'`, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});

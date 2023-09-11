@@ -246,6 +246,7 @@ form:
       label: Description
     description_rich_text:
       label: Description (Rich Text)
+      description: A rich text description allows for text formatting and links, but is only visible on the item details page, and on featured storefront items on desktop only. Make sure the plain text description (above) is filled out as well.
     tags:
       label: Tags
       fieldLabel: Tag

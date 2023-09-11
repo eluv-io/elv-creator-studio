@@ -299,8 +299,9 @@ class DatabaseStore {
               libraryId: templateLibraryId,
               objectId: templateId,
               name: metadata.public?.name || "",
-              brandedName: metadata.public?.asset_metadata?.nft?.name || "",
+              brandedName: metadata.public?.asset_metadata?.nft?.display_name || "",
               image: metadata.public?.asset_metadata?.nft?.image || "",
+              address: metadata.public?.asset_metadata?.nft?.address || "",
               marketplaces: [marketplace.objectId],
               metadata
             };

@@ -29,7 +29,12 @@ const ModifiedItem = observer(({
 
   return (
     <InputWrapper
-      label={item.name}
+      label={
+        <Stack spacing={0}>
+          <Text fz="sm" fw={500}>{rootStore.l10n.components.save_modal.types[item.type]}</Text>
+          <Text>{item.name}</Text>
+        </Stack>
+      }
       description={item.objectId}
       error={error?.toString()}
       withBorder

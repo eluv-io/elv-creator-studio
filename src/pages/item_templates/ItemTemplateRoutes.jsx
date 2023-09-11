@@ -5,11 +5,16 @@ import {rootStore, itemTemplateStore} from "@/stores";
 
 import ItemTemplateList from "./ItemTemplateList.jsx";
 import ItemTemplateOverview from "./ItemTemplateOverview.jsx";
+import ItemTemplateGeneralSettings from "./ItemTemplateGeneralSettings.jsx";
+import ItemTemplateSettings from "@/pages/item_templates/ItemTemplateSettings.jsx";
+import ItemTemplatePrimaryMedia from "@/pages/item_templates/ItemTemplatePrimaryMedia.jsx";
 
 const ItemTemplateRoutes = observer(({rootPath}) => {
   const routes = [
-    { root: true, navRoute: true, label: rootStore.l10n.pages.tenant.nav.overview, path: "/item-templates/:itemTemplateId", Component: <ItemTemplateOverview /> },
-    //{ navRoute: true, label: rootStore.l10n.pages.tenant.nav.theme, path: "/theme", Component: <TenantTheme /> },
+    { root: true, navRoute: true, label: rootStore.l10n.pages.item_template.nav.overview, path: "/item-templates/:itemTemplateId", Component: <ItemTemplateOverview /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.general, path: "/item-templates/:itemTemplateId/general", Component: <ItemTemplateGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.settings, path: "/item-templates/:itemTemplateId/settings", Component: <ItemTemplateSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.primary_media, path: "/item-templates/:itemTemplateId/primary_media", Component: <ItemTemplatePrimaryMedia /> },
   ]
     .map(route => ({
       ...route,

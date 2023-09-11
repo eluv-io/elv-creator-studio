@@ -25,7 +25,7 @@ import {SortTable} from "@/helpers/Misc";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
 import {ConfirmDelete} from "./Inputs.jsx";
-import {ScaleImage} from "@/helpers/Fabric.js";
+import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
 
 import {
   IconArrowBackUp as IconBackArrow,
@@ -525,7 +525,7 @@ const FileBrowserTable = observer(({
   );
 });
 
-const FileBrowser = observer(({objectId, multiple, title, extensions, opened=true, Close, Submit}) => {
+const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
   const [path, setPath] = useState("/");
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -578,8 +578,16 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
           />
         </Container>
         {
-          selectedRecords.length === 0 ? null :
-            <Container my="xl" p={0}>
+          extensions.length === 0 ? null :
+            <Group position="right" mt="xs" pr="xs">
+              <Text color="dimmed" fz="xs" italic>
+                { LocalizeString(rootStore.l10n.components.file_browser.allowed_extensions, {extensions: extensions.join(", ")})}
+              </Text>
+            </Group>
+        }
+        {
+          !multiple || selectedRecords.length === 0 ? null :
+            <Container my="xs" p={0}>
               <Text mb="sm">Selected Files:</Text>
               <Container p={0}>
                 {
@@ -590,7 +598,9 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
                         Icon={IconX}
                         onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}
                       />
-                      <Code bg="transparent" >{ fullPath }</Code>
+                      <Code bg="transparent" style={{whiteSpace: "pre-wrap", wordBreak: "break-all"}} maw={800}>
+                        { fullPath }
+                      </Code>
                     </Group>
                   )
                 }
@@ -627,7 +637,12 @@ const FileBrowser = observer(({objectId, multiple, title, extensions, opened=tru
               w={200}
               disabled={selectedRecords.length === 0}
               onClick={() => {
-                Submit(multiple ? selectedRecords : selectedRecords[0]);
+                const records = selectedRecords.map(record => ({
+                  ...record,
+                  publicUrl: FabricUrl({objectId, path: UrlJoin("files", record.fullPath), noWriteToken: true})
+                }));
+
+                Submit(multiple ? records : records[0]);
                 Close();
               }}
             >
