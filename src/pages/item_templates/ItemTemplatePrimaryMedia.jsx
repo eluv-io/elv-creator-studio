@@ -98,7 +98,7 @@ const ItemTemplatePrimaryMedia = observer(() => {
           <Inputs.List
             {...inputProps}
             {...l10n.media.media_parameters}
-            maw={600}
+            narrow
             field="media_parameters"
             idField="id"
             fields={[

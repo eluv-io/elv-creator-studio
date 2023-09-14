@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, marketplaceStore, tenantStore} from "@/stores";
+import {rootStore, marketplaceStore, tenantStore, uiStore} from "@/stores";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Group, Paper, Text, Title, Container, Image} from "@mantine/core";
@@ -13,7 +13,7 @@ const MarketplaceOverview = observer(() => {
   const itemCount = metadata?.info?.items?.length || 0;
   return (
     <PageContent>
-      <Container p={0} m={0} maw={800}>
+      <Container p={0} m={0} maw={uiStore.inputWidthWide}>
         <Paper>
           <Group align="top" noWrap spacing="xl">
             <Image

@@ -27,7 +27,7 @@ import {observer} from "mobx-react-lite";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
-import {rootStore} from "@/stores";
+import {rootStore, uiStore} from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
@@ -114,7 +114,7 @@ const MultiSelect = observer(({
 
   const values = value || store.GetMetadata({objectId, path, field}) || [];
 
-  componentProps.maw = componentProps.maw || 600;
+  componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
   if(clearable) {
     componentProps.rightSection = (
@@ -290,7 +290,7 @@ const Input = observer(({
       break;
   }
 
-  componentProps.maw = componentProps.maw || 600;
+  componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
   if(clearable) {
     componentProps.rightSection = (
@@ -382,7 +382,7 @@ const Password = observer(({
   const [password, setPassword] = useState(value);
   const [changed, setChanged] = useState(false);
 
-  componentProps.maw = componentProps.maw || 600;
+  componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
   return (
     <PasswordInput
@@ -480,7 +480,7 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
       label={label}
       description={description}
       hint={hint}
-      maw={600}
+      maw={uiStore.inputWidth}
       w="100%"
       wrapperProps={{
         styles: {
@@ -561,7 +561,7 @@ const CodeInput = observer(({
       label={label}
       description={description}
       hint={hint}
-      maw={800}
+      maw={uiStore.inputWidthWide}
       error={validationResults?.errorMessage}
       wrapperProps={{styles: () => ({error: { marginTop: 30 }})}}
     >
@@ -585,7 +585,7 @@ const CodeInput = observer(({
             defaultValue={defaultValue}
             componentProps={{
               ...componentProps,
-              maw: 800,
+              maw: uiStore.inputWidthWide,
               mt: "xl",
               mb:0,
               minRows: componentProps.minRows || 20
@@ -1007,7 +1007,7 @@ export const FabricBrowserInput = observer(({
           !value ? null :
             <Paper
               mt="md"
-              pt={5}
+              pt={8}
               style={{position: "relative"}}
               sx={theme => ({
                 borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]}`}
@@ -1043,7 +1043,7 @@ export const FabricBrowserInput = observer(({
                   }}
                 />
               </Group>
-              <Container p={0}>
+              <Container p={0} pr={75}>
                 {
                   !imageUrl ? null :
                     <Image
@@ -1057,7 +1057,7 @@ export const FabricBrowserInput = observer(({
                       p="xs"
                     />
                 }
-                <Text fz="sm">
+                <Text fz="sm" fw={500}>
                   { name || label }
                 </Text>
                 <Text fz={11} color="dimmed">
@@ -1104,7 +1104,7 @@ const ImageInput = observer(({
       hint={hint}
       h="max-content"
       w="100%"
-      maw={600}
+      maw={uiStore.inputWidth}
       {...componentProps}
     >
       <Group my="md" pt="sm" position="center">
@@ -1264,6 +1264,7 @@ const List = observer(({
   renderItem,
   showBottomAddButton,
   inputProps={},
+  narrow,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -1280,7 +1281,7 @@ const List = observer(({
             withBorder={!simpleList}
             shadow={snapshot.isDragging ? "lg" : ""}
             p={simpleList ? 0 : "sm"}
-            maw={800}
+            maw={uiStore.inputWidthWide}
             ref={provided.innerRef}
             key={`list-item-${id}`}
             {...provided.draggableProps}
@@ -1289,7 +1290,7 @@ const List = observer(({
               <div style={{cursor: "grab", position: "absolute", top: simpleList ? 5 : 0, left: 0}} {...provided.dragHandleProps}>
                 <IconGripVertical/>
               </div>
-              <Container p={0} m={0} fluid w="100%">
+              <Container p={0} m={0} fluid w="100%" maw="unset">
                 <ListInputs
                   type={type}
                   Component={Component}
@@ -1358,8 +1359,16 @@ const List = observer(({
   showBottomAddButton = showBottomAddButton || items.length >= 5;
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} maw={simpleList ? 600 : 800} {...componentProps}>
-      <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0}>
+    <InputWrapper
+      label={label}
+      description={description}
+      hint={hint}
+      maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
+      {...componentProps}
+      w="max-content"
+      miw={uiStore.inputWidth}
+    >
+      <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
         <DragDropContext
           onDragEnd={({source, destination}) =>
             store.MoveListElement({
@@ -1555,7 +1564,7 @@ const CollectionTable = observer(({
   const showDragHandle = !debouncedFilter;
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={800} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
         {
           !filterable ? null :

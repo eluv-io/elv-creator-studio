@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "@/stores";
+import {rootStore, marketplaceStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInput.jsx";
@@ -232,7 +232,7 @@ const MarketplaceStorefront = observer(() => {
         field="show_card_cta"
       />
 
-      <Accordion maw={600} mb="md" variant="contained">
+      <Accordion maw={uiStore.inputWidth} mb="md" variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             { l10n.categories.storefront_purchase_status_settings }
@@ -387,7 +387,7 @@ const MarketplaceStorefront = observer(() => {
                   />
               }
 
-              <Accordion maw={600} mb="md" variant="contained">
+              <Accordion maw={uiStore.inputWidth} mb="md" variant="contained">
                 <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
                     { l10n.categories.storefront_banner_media }
@@ -485,7 +485,7 @@ const MarketplaceStorefront = observer(() => {
                   />
               }
 
-              <Accordion maw={600} mb="md" variant="contained">
+              <Accordion maw={uiStore.inputWidth} mb="md" variant="contained">
                 <Accordion.Item value="default">
                   <Accordion.Control icon={<IconPhotoEdit />}>
                     {l10n.categories.storefront_footer_link_content}

@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore, tenantStore} from "@/stores";
+import {rootStore, marketplaceStore, tenantStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
@@ -164,7 +164,7 @@ const MarketplaceGeneralSettings = observer(() => {
 
 
 
-      <Accordion mt={50} maw={800} variant="contained">
+      <Accordion mt={50} maw={uiStore.inputWidthWide} variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             { rootStore.l10n.components.forms.advanced_settings }

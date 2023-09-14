@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {Container, Title, Group} from "@mantine/core";
 import HistoryButtons from "./HistoryButtons.jsx";
 import {Link} from "react-router-dom";
-import {rootStore} from "@/stores";
+import {rootStore, uiStore} from "@/stores";
 
 import {IconArrowBackUp} from "@tabler/icons-react";
 import {IconButton} from "@/components/common/Misc";
@@ -12,8 +12,8 @@ const PageContent = observer(({title, subtitle, section, useHistory, backLink, c
     <Container p="md" pb={200} fluid>
       {
         !title ? null :
-          <Title order={2} mb={subtitle ? 0 : "xl"}>
-            <Group align="center">
+          <Title order={2} mb={subtitle ? 0 : "xl"} maw={uiStore.inputWidthWide}>
+            <Group align="center" noWrap>
               {
                 !backLink ? null :
                   <IconButton
@@ -27,7 +27,7 @@ const PageContent = observer(({title, subtitle, section, useHistory, backLink, c
             </Group>
           </Title>
       }
-      { !subtitle ? null : <Title order={6} color="dimmed" mb="xl">{ subtitle }</Title>}
+      { !subtitle ? null : <Title order={6} color="dimmed" mb="xl" maw={uiStore.inputWidthWide}>{ subtitle }</Title>}
       { section && useHistory ? <HistoryButtons section={section} /> : null }
       { children }
     </Container>

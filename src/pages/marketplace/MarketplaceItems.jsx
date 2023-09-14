@@ -388,7 +388,7 @@ const MarketplaceItems = observer(() => {
             label: l10n.items.items.columns.name,
             field: "name",
             render: item => (
-              <Group>
+              <Group noWrap>
                 <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={60} height={60} radius="xs" />
                 <Text>{item.name || item.nft_template?.nft?.name}</Text>
               </Group>

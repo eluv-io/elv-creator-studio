@@ -12,6 +12,9 @@ class UIStore {
 
   showSideNav = false;
 
+  inputWidth = 600;
+  inputWidthWide = 800;
+
   constructor(rootStore) {
     makeAutoObservable(this);
     this.rootStore = rootStore;

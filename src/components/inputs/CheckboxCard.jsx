@@ -1,6 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Checkbox, UnstyledButton} from "@mantine/core";
 import InputWrapper from "./InputWrapper.jsx";
+import {uiStore} from "@/stores/index.js";
 
 const CheckboxCard = observer(({
   INVERTED=false,
@@ -16,7 +17,7 @@ const CheckboxCard = observer(({
       style={{display: "block"}}
       width="100%"
       w="100%"
-      maw={600}
+      maw={uiStore.inputWidth}
       mb="md"
       onClick={() => onChange(!checked)}
       {...componentProps}

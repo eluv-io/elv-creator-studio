@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, siteStore} from "@/stores";
+import {rootStore, siteStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceItemSelect} from "@/components/inputs/MarketplaceItemInput.jsx";
@@ -158,7 +158,7 @@ const SiteBanners = observer(() => {
       useHistory
     >
       <Title order={3}>{l10n.categories.banner_cards}</Title>
-      <Title order={6} mb="md" color="dimmed" maw={600}>{l10n.banners.banner_cards_description}</Title>
+      <Title order={6} mb="md" color="dimmed" maw={uiStore.inputWidthWide}>{l10n.banners.banner_cards_description}</Title>
 
       <Inputs.Text
         {...inputProps}
@@ -214,7 +214,7 @@ const SiteBanners = observer(() => {
       />
 
       <Title order={3} mt={50}>{l10n.categories.banners}</Title>
-      <Title order={6} mb="md" color="dimmed" maw={600}>{l10n.banners.banner_description}</Title>
+      <Title order={6} mb="md" color="dimmed" maw={uiStore.inputWidthWide}>{l10n.banners.banner_description}</Title>
 
       <Inputs.CollectionTable
         {...inputProps}

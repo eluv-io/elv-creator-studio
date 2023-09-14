@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore} from "@/stores";
+import {rootStore, tenantStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {
   Title,
@@ -147,7 +147,7 @@ const Sites = observer(() => {
   const l10n = rootStore.l10n.pages.tenant.form;
 
   return (
-    <Container p={0} m={0} maw={800}>
+    <Container p={0} m={0} maw={uiStore.inputWidthWide}>
       <DataTable
         minHeight={150}
         withBorder
@@ -231,7 +231,7 @@ const Marketplaces = observer(() => {
   const l10n = rootStore.l10n.pages.tenant.form;
 
   return (
-    <Container p={0} m={0} maw={800}>
+    <Container p={0} m={0} maw={uiStore.inputWidthWide}>
       <DataTable
         minHeight={150}
         withBorder
@@ -312,7 +312,7 @@ const TenantOverview = observer(() => {
 
   return (
     <PageContent>
-      <Container p={0} m={0} maw={600}>
+      <Container p={0} m={0} maw={uiStore.inputWidth}>
         <Group w="100%" position="apart">
           <Title order={3}>{ metadata.info?.name }</Title>
           <Title order={6} color="dimmed">{ metadata.slug }</Title>

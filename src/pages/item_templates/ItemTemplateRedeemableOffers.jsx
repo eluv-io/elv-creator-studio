@@ -10,6 +10,7 @@ import {Group, Image, Text, Title} from "@mantine/core";
 import {ItemTemplateRedeemableOfferSpec} from "@/specs/ItemTemplateSpecs.js";
 import UrlJoin from "url-join";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {ScaleImage} from "@/helpers/Fabric";
 
 export const ItemTemplateRedeemableOffer = observer(() => {
   const { itemTemplateId, redeemableOfferId } = useParams();
@@ -107,7 +108,7 @@ export const ItemTemplateRedeemableOffer = observer(() => {
       <Inputs.List
         {...inputProps}
         {...l10n.redeemable_offers.tags}
-        maw={600}
+        narrow
         idField="id"
         field="tags"
         fields={[
@@ -228,13 +229,14 @@ const ItemTemplateRedeemableOffers = observer(() => {
             label: l10n.redeemable_offers.redeemable_offers.columns.name,
             field: "name",
             render: redeemableOffer => (
-              <Group>
+              <Group noWrap>
                 <Image
-                  width={50}
-                  height={50}
+                  width={60}
+                  height={60}
                   fit="contain"
-                  src={redeemableOffer.image?.url} withPlaceholder
+                  src={ScaleImage(redeemableOffer.image?.url, 400)}
                   alt={redeemableOffer.name}
+                  withPlaceholder
                 />
                 <Text>{redeemableOffer.name || redeemableOffer.id}</Text>
               </Group>

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {rootStore, editStore} from "@/stores";
+import {rootStore, editStore, uiStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {
   Container,
@@ -31,7 +31,7 @@ const ModifiedItem = observer(({
     <InputWrapper
       label={
         <Stack spacing={0}>
-          <Text fz="sm" fw={500}>{rootStore.l10n.components.save_modal.types[item.type]}</Text>
+          <Text fz="sm" fw={400} color="dimmed">{rootStore.l10n.components.save_modal.types[item.type]}</Text>
           <Text>{item.name}</Text>
         </Stack>
       }
@@ -134,7 +134,7 @@ const SaveModalContent = observer(() => {
   );
 
   return (
-    <Container p={0}>
+    <Container p={0} maw={uiStore.inputWidthWide}>
       <Stack>
         { modifiedItems }
       </Stack>
@@ -181,7 +181,7 @@ const SaveModal = observer(() => {
       opened={editStore.showSaveModal}
       onClose={() => editStore.ToggleSaveModal(false)}
       centered
-      size={600}
+      size={uiStore.inputWidth + 40}
       title={rootStore.l10n.components.save_modal.title}
       padding="xl"
     >

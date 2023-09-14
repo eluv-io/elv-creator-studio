@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
-import {itemTemplateStore, rootStore} from "@/stores";
+import {itemTemplateStore, rootStore, uiStore} from "@/stores";
 import UrlJoin from "url-join";
 import {IconButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
@@ -18,6 +18,7 @@ import {useDebouncedValue} from "@mantine/hooks";
 import {SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
 import {IconEdit} from "@tabler/icons-react";
+import {ScaleImage} from "@/helpers/Fabric";
 
 const ItemTemplateList = observer(() => {
   const l10n = rootStore.l10n.pages.item_template.form;
@@ -59,7 +60,7 @@ const ItemTemplateList = observer(() => {
       Load={async () => await itemTemplateStore.LoadItemTemplates()}
     >
       <PageContent title={l10n.categories.item_templates}>
-        <Paper maw={800}>
+        <Paper maw={uiStore.inputWidthWide}>
           <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
           <DataTable
             minHeight={itemTemplates.length === 0 ? 200 : 0}
@@ -76,7 +77,7 @@ const ItemTemplateList = observer(() => {
                 title: l10n.list.columns.name,
                 render: itemTemplate => (
                   <Group>
-                    <Image width={60} height={60} fit="contain" src={itemTemplate.image} alt={itemTemplate.name} withPlaceholder />
+                    <Image width={60} height={60} fit="contain" src={ScaleImage(itemTemplate.image, 400)} alt={itemTemplate.name} withPlaceholder />
                     <Stack spacing={0}>
                       <Text>{itemTemplate.name}</Text>
                       <Text fz="xs" color="dimmed">{itemTemplate.objectId}</Text>

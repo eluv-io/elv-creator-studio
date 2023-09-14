@@ -43,7 +43,7 @@ const SiteSearch = observer(() => {
       <Inputs.List
         {...inputProps}
         {...l10n.search.images}
-        maw={600}
+        narrow
         subcategory={l10n.categories.search}
         path="/public/asset_metadata/info/search_data"
         field="images"
@@ -54,7 +54,7 @@ const SiteSearch = observer(() => {
       <Inputs.List
         {...inputProps}
         {...l10n.search.organizations}
-        maw={600}
+        narrow
         subcategory={l10n.categories.organizations}
         path="/public/asset_metadata/info/search_data"
         field="organizers"

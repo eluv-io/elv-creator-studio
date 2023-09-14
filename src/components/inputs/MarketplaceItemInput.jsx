@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {Box, Text, Group, Paper, Stack} from "@mantine/core";
 import Inputs, {ConfirmDelete} from "./Inputs.jsx";
-import {rootStore, marketplaceStore} from "@/stores";
+import {rootStore, marketplaceStore, uiStore} from "@/stores";
 import {IconButton, ItemImage, LocalizeString} from "@/components/common/Misc.jsx";
 import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
@@ -137,7 +137,7 @@ const MarketplaceItemSelectComponent = observer(({
   const selectedItem = options.find(item => item.value === selectedSKU);
 
   return (
-    <Paper withBorder p="xl" pt="sm" mb="md" maw={600}>
+    <Paper withBorder p="xl" pt="sm" mb="md" maw={uiStore.inputWidth}>
       <Inputs.Select
         store={store}
         objectId={objectId}
@@ -227,7 +227,7 @@ const MarketplaceItemMultiselectComponent = observer(({
   });
 
   return (
-    <Paper withBorder p="xl" pt="md" mb="md" maw={600}>
+    <Paper withBorder p="xl" pt="md" mb="md" maw={uiStore.inputWidth}>
       <Inputs.MultiSelect
         store={store}
         objectId={objectId}

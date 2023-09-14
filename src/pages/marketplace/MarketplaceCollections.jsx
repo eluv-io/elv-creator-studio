@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "@/stores";
+import {rootStore, marketplaceStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import MarketplaceItemMultiselect from "@/components/inputs/MarketplaceItemInput.jsx";
@@ -122,7 +122,7 @@ export const MarketplaceCollection = observer(() => {
               field="redeem_items"
             />
 
-            <Accordion maw={600} variant="contained">
+            <Accordion maw={uiStore.inputWidth} variant="contained">
               <Accordion.Item value="default">
                 <Accordion.Control icon={<IconSettings />}>
                   {l10n.collection.redemption_settings.label}
@@ -265,7 +265,7 @@ const MarketplaceCollections = observer(() => {
         ]}
       />
 
-      <Accordion mt="xs" maw={600} variant="contained">
+      <Accordion mt="xs" maw={uiStore.inputWidth} variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             { l10n.collections.default_redemption_settings.label }

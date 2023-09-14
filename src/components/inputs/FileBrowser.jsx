@@ -113,7 +113,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
       <Container py="xl">
         <Dropzone
           multiple
-          maw={600}
+          maw={uiStore.inputWidth}
           py={50}
           mx="auto"
           onDrop={async (files) => {

@@ -1,6 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Input as MantineInput, Group, Paper, Text, Tooltip} from "@mantine/core";
 import {IconQuestionMark} from "@tabler/icons-react";
+import {uiStore} from "@/stores/index.js";
 
 // Icon with hint tooltip on hover
 const HintIcon = ({hint, componentProps={}}) => {
@@ -40,7 +41,7 @@ const InputWrapper = observer(({label, description, hint, error, children, flex,
     (!flex ? { position: "relative" } : { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "});
 
   return (
-    <Paper withBorder p="xl" py="md" mb="md" maw={600} {...componentProps}>
+    <Paper withBorder p="xl" py="md" mb="md" maw={uiStore.inputWidth} {...componentProps}>
       <MantineInput.Wrapper
         {...wrapperProps}
         label={<InputLabel label={label} hint={hint} />}
@@ -53,6 +54,11 @@ const InputWrapper = observer(({label, description, hint, error, children, flex,
               { position: "relative" } :
               { position: "relative", display: "flex", flexDirection: "column", justifyContent: "center "}
           )
+        }}
+        styles={{
+          description: {
+            paddingRight: "50px"
+          }
         }}
       >
         { children }

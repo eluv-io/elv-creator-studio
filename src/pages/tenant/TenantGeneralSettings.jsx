@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore} from "@/stores";
+import {rootStore, tenantStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
@@ -102,7 +102,7 @@ const TenantGeneralSettings = observer(() => {
         }}
       />
 
-      <Accordion mt={50} maw={600} variant="contained">
+      <Accordion mt={50} maw={uiStore.inputWidth} variant="contained">
         <Accordion.Item value="default">
           <Accordion.Control icon={<IconSettings />}>
             { rootStore.l10n.components.forms.advanced_settings }

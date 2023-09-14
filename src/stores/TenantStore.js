@@ -101,7 +101,7 @@ class TenantStore {
             libraryId: site.libraryId,
             objectId: site.objectId,
             path: "/meta/public/asset_metadata/info/event_images/hero_background",
-            width: 600
+            width: 400
           }),
           libraryId: site.libraryId,
           siteId: site.objectId,

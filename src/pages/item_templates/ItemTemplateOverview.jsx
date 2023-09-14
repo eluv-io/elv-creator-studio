@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {itemTemplateStore} from "@/stores";
+import {itemTemplateStore, uiStore} from "@/stores";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Group, Paper, Text, Title, Container, Image} from "@mantine/core";
@@ -13,7 +13,7 @@ const ItemTemplateOverview = observer(() => {
 
   return (
     <PageContent>
-      <Container p="xl" m={0} maw={800}>
+      <Container p="xl" m={0} maw={uiStore.inputWidthWide}>
         <Paper>
           <Group align="top" noWrap spacing="xl">
             <Image
