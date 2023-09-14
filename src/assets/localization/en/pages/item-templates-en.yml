@@ -5,6 +5,7 @@ nav:
   settings: Settings
   primary_media: Primary Media
   pack_settings: Pack Settings
+  redeemable_offers: Redeemable Offers
 form:
   categories:
     item_templates: Item Templates
@@ -20,6 +21,12 @@ form:
     pack_settings: Pack Settings
     pack_open_status_page: Pack Open Status Page
     pack_items: Pack Items
+    redeemable_offers: Redeemable Offers
+    redeemable_offer: Redeemable Offer
+    redeemable_offer_label: Redeemable Offer '{label}'
+    redeemable_offer_details: Offer Details
+    redeemable_offer_visibility: Offer Visibility
+    redeemable_offer_redemption_settings: Offer Redemption Settings
   list:
     columns:
       name: Name
@@ -44,7 +51,7 @@ form:
       label: ID Display Format
     style_variant:
       label: Style Variant
-      description: "If specified, this will be added to the HTML container class when this NFT is displayed (e.g. 'card-container--variant-(style)', 'featured-item__icon-container--variant-(style)' 'feature-gallery__icon-container--variant-(style)'). These classes can be used for defining custom CSS for this item when displayed in your marketplace."
+      description: "If specified, this will be added to the HTML container class when this item is displayed (e.g. 'card-container--variant-(variant)', 'featured-item__icon-container--variant-(variant)' 'feature-gallery__icon-container--variant-(variant)'). These classes can be used for defining custom CSS for this item when displayed in your marketplace."
     description:
       label: Description (Plain Text)
     description_rich_text:
@@ -91,7 +98,7 @@ form:
       label: Contract Address
     total_supply:
       label: Total Supply
-      description: Maximum number of items that can be generated for this NFT contract
+      description: Maximum number of items that can be generated for this item contract
     merge_meta:
       label: Merge Metadata
     mint_key_id:
@@ -186,7 +193,70 @@ form:
       label: Item Template
     probability:
       label: Probability
-
+  redeemable_offers:
+    redeemable_offers:
+      label: Redeemable Offers
+      fieldLabel: Redeemable Offer
+      columns:
+        name: Name
+        status: Status
+      status:
+        available: Available
+        unreleased: Available on {date}
+        expired: Expired on {date}
+    offer_id:
+      label: Offer ID
+    name:
+      label: Name
+    description_text:
+      label: Description (Plain Text)
+    description:
+      label: Description (Rich Text)
+    tags:
+      label: Tags
+      fieldLabel: Tag
+    key:
+      label: Key
+    value:
+      label: Value
+    image:
+      label: Image
+      description: Square
+    poster_image:
+      label: Poster Image
+      description: Portrait
+    animation:
+      label: Animation
+      description: Shows in place of Image when viewing the offer
+    redeem_animation:
+      label: Redeem Animation
+      description: Shows while waiting for the redemption process to complete
+    redeem_animation_loop:
+      label: Loop Redeem Animation
+    require_redeem_animation:
+      label: Require Viewing Full Redeem Animation
+      description: If checked, the redeem animation will play all the way through at least once before redemption results are revealed
+    release_date:
+      label: Release Date
+      description: If specified, this offer will not be redeemable until the specified time
+    expiration_date:
+      label: Expiration Date
+      description: If specified, this offer will no longer be redeemable after the specified time
+    style_variant:
+      label: Style Variant
+      description: "If specified, this will be added to the HTML container class when this offer is displayed (e.g. redeemable-offer--variant-(variant)'). These classes can be used for defining custom CSS for this offer when displayed in your marketplace."
+    featured:
+      label: Featured
+      description: If checked, this offer will be shown in the item's featured media
+    hidden:
+      label: Hidden
+      description: If checked, this offer will not be shown
+    hide_if_unreleased:
+      label: Hide if Unreleased
+      description: If checked, this offer will not be visible until the release date
+    hide_if_expired:
+      label: Hide if Expired
+      description: If checked, this offer will not be visible after the expiration date
 
 
 

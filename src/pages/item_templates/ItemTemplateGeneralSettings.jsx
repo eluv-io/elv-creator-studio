@@ -269,6 +269,7 @@ const ItemTemplateGeneralSettings = observer(() => {
       <Inputs.List
         {...inputProps}
         {...l10n.general.attributes}
+        maw={600}
         category={l10n.categories.general}
         field="attributes"
         idField="id"

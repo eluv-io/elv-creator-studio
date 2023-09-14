@@ -457,6 +457,7 @@ const SetListFieldIds = function({objectId, path, idField="id", category, label}
       return;
     }
 
+
     this.SetDefaultValue({
       objectId,
       path: UrlJoin(path, index.toString()),

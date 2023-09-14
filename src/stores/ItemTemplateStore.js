@@ -47,6 +47,13 @@ class ItemTemplateStore {
         }))
       }
     };
+
+    this.SetListFieldIds({
+      objectId: itemTemplateId,
+      path: "/public/asset_metadata/nft/redeemable_offers",
+      category: this.rootStore.l10n.pages.item_template.form.categories.redeemable_offer,
+      label: this.rootStore.l10n.pages.item_template.form.common.id.label,
+    });
   });
 
   Reload = flow(function * ({objectId}) {

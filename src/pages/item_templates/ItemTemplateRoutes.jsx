@@ -9,6 +9,9 @@ import ItemTemplateGeneralSettings from "./ItemTemplateGeneralSettings.jsx";
 import ItemTemplateSettings from "@/pages/item_templates/ItemTemplateSettings.jsx";
 import ItemTemplatePrimaryMedia from "@/pages/item_templates/ItemTemplatePrimaryMedia.jsx";
 import ItemTemplatePackSettings from "@/pages/item_templates/ItemTemplatePackSettings";
+import ItemTemplateRedeemableOffers, {
+  ItemTemplateRedeemableOffer
+} from "@/pages/item_templates/ItemTemplateRedeemableOffers.jsx";
 
 const ItemTemplateRoutes = observer(({rootPath}) => {
   const routes = [
@@ -17,6 +20,8 @@ const ItemTemplateRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.settings, path: "/item-templates/:itemTemplateId/settings", Component: <ItemTemplateSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.primary_media, path: "/item-templates/:itemTemplateId/primary_media", Component: <ItemTemplatePrimaryMedia /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.pack_settings, path: "/item-templates/:itemTemplateId/pack_settings", Component: <ItemTemplatePackSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers", Component: <ItemTemplateRedeemableOffers /> },
+    { label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers/:redeemableOfferId", Component: <ItemTemplateRedeemableOffer /> },
   ]
     .map(route => ({
       ...route,

@@ -709,21 +709,31 @@ const SingleImageInput = observer(({
         extensions="image"
         opened={showFileBrowser}
         Submit={({publicUrl, fullPath}) => {
-          store.SetMetadata({
-            page: location.pathname,
-            objectId,
-            path,
-            field,
-            value: url ?
-              publicUrl :
-              {
-                auto_update: { tag: "latest" },
-                "/": UrlJoin("./files", fullPath)
-              },
-            category,
-            subcategory,
-            label: actionLabel || label
-          });
+          if(url) {
+            store.SetMetadata({
+              page: location.pathname,
+              objectId,
+              path,
+              field,
+              value: publicUrl,
+              category,
+              subcategory,
+              label: actionLabel || label
+            });
+          } else {
+            store.SetLink({
+              page: location.pathname,
+              objectId,
+              path,
+              field,
+              linkObjectId: objectId,
+              linkType: "files",
+              linkPath: fullPath,
+              category,
+              subcategory,
+              label: actionLabel || label
+            });
+          }
         }}
         Close={() => setShowFileBrowser(false)}
       />
@@ -1574,17 +1584,17 @@ const CollectionTable = observer(({
           >
             <thead>
             <tr>
-              { showDragHandle ? <th></th> : null }
+              { showDragHandle ? <th style={{width: "50px"}}></th> : null }
               {
-                columns.map(({label, centered}) =>
-                  <th key={`th-${label}`}>
+                columns.map(({label, centered, width}) =>
+                  <th key={`th-${label}`} style={{width}}>
                     <Group position={centered ? "center" : "left"}>
                       {label}
                     </Group>
                   </th>
                 )
               }
-              <th></th>
+              <th style={{width: "120px"}}></th>
             </tr>
             </thead>
             <Droppable droppableId="collection-table" direction="vertical">
