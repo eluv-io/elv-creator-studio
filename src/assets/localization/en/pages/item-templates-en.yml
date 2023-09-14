@@ -4,6 +4,7 @@ nav:
   general: General
   settings: Settings
   primary_media: Primary Media
+  pack_settings: Pack Settings
 form:
   categories:
     item_templates: Item Templates
@@ -16,6 +17,9 @@ form:
     item_attributes: Attributes
     display: Display Settings
     primary_media: Primary Media
+    pack_settings: Pack Settings
+    pack_open_status_page: Pack Open Status Page
+    pack_items: Pack Items
   list:
     columns:
       name: Name
@@ -129,6 +133,60 @@ form:
       label: Value
     embed_url:
       label: Embed URL
+  pack_options:
+    is_openable:
+      label: Item is Pack
+      description: If selected, this item will be a 'pack'. Packs are items that can be 'opened' into other item(s). The pack item will be destroyed when opened.
+    generator:
+      label: Pack Generator
+      description: Choose the way pack content will be generated.  Use 'preset' if content supply is limited to the number of packs and distribution needs to be precise.
+    open_button_text:
+      label: Pack Open Button Text
+      description: Text on the button to open the pack
+      placeholder: "Open Pack"
+    hide_info:
+      label: Hide Default Text on Pack Open Status Page
+    use_custom_open_text:
+      label: Use Custom Text on Pack Open Status Page
+    minting_header:
+      label: Pack Opening Header
+      placeholder: Your pack is opening
+    minting_subheader1:
+      label: Pack Opening Subheader 1
+      placeholder: This may take several minutes
+    minting_subheader2:
+      label: Pack Opening Subheader 2
+      placeholder: You can navigate away from this page if you don't want to wait. Your items will be available in your wallet when the process is complete.
+    reveal_header:
+      label: Pack Results Reveal Header
+      placeholder: Congratulations!
+    reveal_subheader:
+      label: Pack Results Reveal Subheader
+      placeholder: "You've received the following items:"
+    open_animation:
+      label: Pack Open Animation
+      description: Animation shown while waiting for the pack to open
+    open_animation_mobile:
+      label: Pack Open Animation (Mobile)
+      description: Animation shown while waiting for the pack to open
+    reveal_animation:
+      label: Reveal Animation
+      description: Animation shown after pack open is complete before showing results
+    reveal_animation_mobile:
+      label: Reveal Animation (Mobile)
+      description: Animation shown after pack open is complete before showing results
+    item_slots:
+      label: Item Slots
+      description: You can define a number of item slots for the pack to produce. An item will be chosen for each slot from its item pool according to the specified probabilities
+      fieldLabel: Item Slot
+    items:
+      label: Items
+      fieldLabel: Item
+    item_template:
+      label: Item Template
+    probability:
+      label: Probability
+
 
 
 

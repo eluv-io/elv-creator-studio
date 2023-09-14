@@ -949,7 +949,14 @@ export const FabricBrowserInput = observer(({
             }}
           />
       }
-      <InputWrapper label={label} description={description} hint={hint} flex mb="md" {...componentProps}>
+      <InputWrapper
+        label={label}
+        description={description}
+        hint={hint}
+        flex
+        mb="md"
+        {...componentProps}
+      >
         <Group spacing="xs" style={{position: "absolute", top: 0, right: 0}}>
           {
             !value ? null :
@@ -988,8 +995,15 @@ export const FabricBrowserInput = observer(({
         </Group>
         {
           !value ? null :
-            <Paper mt="md" style={{position: "relative"}}>
-              <Group spacing={0} style={{position: "absolute", top: 0, right: 0, zIndex: 1}}>
+            <Paper
+              mt="md"
+              pt={5}
+              style={{position: "relative"}}
+              sx={theme => ({
+                borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]}`}
+              )}
+            >
+              <Group spacing={0} style={{position: "absolute", top: 5, right: 0, zIndex: 1}}>
                 {
                   !previewable ? null :
                     <IconButton

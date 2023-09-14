@@ -8,6 +8,7 @@ import ItemTemplateOverview from "./ItemTemplateOverview.jsx";
 import ItemTemplateGeneralSettings from "./ItemTemplateGeneralSettings.jsx";
 import ItemTemplateSettings from "@/pages/item_templates/ItemTemplateSettings.jsx";
 import ItemTemplatePrimaryMedia from "@/pages/item_templates/ItemTemplatePrimaryMedia.jsx";
+import ItemTemplatePackSettings from "@/pages/item_templates/ItemTemplatePackSettings";
 
 const ItemTemplateRoutes = observer(({rootPath}) => {
   const routes = [
@@ -15,6 +16,7 @@ const ItemTemplateRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.general, path: "/item-templates/:itemTemplateId/general", Component: <ItemTemplateGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.settings, path: "/item-templates/:itemTemplateId/settings", Component: <ItemTemplateSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.primary_media, path: "/item-templates/:itemTemplateId/primary_media", Component: <ItemTemplatePrimaryMedia /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.pack_settings, path: "/item-templates/:itemTemplateId/pack_settings", Component: <ItemTemplatePackSettings /> },
   ]
     .map(route => ({
       ...route,
