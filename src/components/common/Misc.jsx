@@ -88,9 +88,9 @@ export const LocalizeString = (text="", variables={}, options={reactNode: false}
 export const ListItemCategory = ({store, objectId, listPath, idField="id", id, labelField="name", l10n}) => {
   return () => {
     const list = store.GetMetadata({objectId, path: listPath}) || [];
-    const itemIndex = list.findIndex(item => item[idField] === id);
+    const itemIndex = list?.findIndex(item => item[idField] === id);
 
-    if(itemIndex < 0) { return ""; }
+    if(!list || itemIndex < 0) { return ""; }
 
     const label = (labelField === "index" ? itemIndex.toString() : list[itemIndex]?.[labelField]) || id;
     return LocalizeString(l10n, {label});

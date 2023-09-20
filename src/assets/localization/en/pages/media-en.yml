@@ -1,0 +1,160 @@
+form:
+  categories:
+    media: Media
+    media_item: Media Item
+    media_item_label: Media Item '{label}'
+    media_item_info: Media Info
+    media_reference: Media Reference
+    lock_settings: Lock Settings
+    lock_conditions: Lock Conditions
+    locked_state: Locked State
+    featured_media_settings: Featured Media Settings
+    gallery_settings: Gallery Settings
+    gallery_item: Gallery Item
+    gallery_item_label: Gallery Item '{label}'
+  common:
+    name:
+      label: Name
+    id:
+      label: ID
+  media:
+    container:
+      label: Container Type
+    media_id:
+      label: Media ID
+    subtitle_1:
+      label: Subtitle 1
+    subtitle_2:
+      label: Subtitle 2
+    description_text:
+      label: Description (Plain Text)
+    description:
+      label: Description (Rich Text)
+    image:
+      label: Image
+    image_tv:
+      label: Image (TV)
+    image_aspect_ratio:
+      label: Image Orientation
+      description: Specify how this image should be presented
+    requires_permissions:
+      label: Requires Permissions
+    media_type:
+      label: Media Type
+    tags:
+      label: Tags
+      fieldLabel: Tag
+    key:
+      label: Key
+    value:
+      label: Value
+    media_link:
+      label: Media Link
+      description: Select the playable media
+    offerings:
+      label: Offerings
+      description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
+      fieldLabel: Offering
+    start_time:
+      label: Start Time
+      description: Approximate start time of this live video
+    end_time:
+      label: End Time
+      description: Approximate end time of this live video
+    media_file:
+      label: Media File
+      description: Select the file to display. For media type 'Image', the default image for this media will be displayed if this file is not specified.
+    link:
+      label: External Link
+    authorized_link:
+      label: Authorized Link
+      description: If specified, user authentication will be added to the URL parameters of the external link
+    parameters:
+      label: Parameters
+      description: URL parameters to add when displaying the HTML file
+      fieldLabel: Parameter
+    media_reference:
+      label: Media Reference
+      description: This item will link to the specified section or collection
+    section_id:
+      label: Section ID
+      description: Reference the specified section
+    collection_id:
+      label: Collection ID
+      description: Reference the specified collection
+    gallery:
+      background_image:
+        label: Gallery Background Image
+      background_image_mobile:
+        label: Gallery Background Image (Mobile)
+      controls:
+        label: Gallery Controls
+    gallery_media:
+      label: Gallery Media
+      fieldLabel: Gallery Media Item
+    gallery_item:
+      columns:
+        name: Name
+        type: Type
+      name:
+        label: Name
+      description:
+        label: Description
+      image:
+        label: Image
+      image_aspect_ratio:
+        label: Image Orientation
+      video:
+        label: Video
+  featured_media:
+    animation:
+      label: Animation
+      description: Shown in place of the image
+    button_text:
+      label: Button Text
+    button_image:
+      label: Custom Button Image
+      description: Override the default button with an image
+    images:
+      label: Images
+    background_image:
+      label: Background Image
+    poster_image:
+      label: Poster Image (TV)
+    background_image_tv:
+      label: Background Image (TV)
+    background_image_logo_tv:
+      label: Background Image Logo (TV)
+  lock:
+    required:
+      label: Required
+      description: If checked, all other non-required media will be locked until this item is viewed.
+    locked:
+      label: Locked
+      description: If checked, this item will be locked until the lock conditions are met.
+    lock_conditions:
+      label: Lock Conditions
+      description: Define the conditions required to unlock this item
+    locked_state:
+      label: Locked State
+      description: Override the display of this item when it is locked
+    hide_when_locked:
+      label: Hidden When Locked
+      description: If checked, this item will not be visible until it is unlocked
+    lock_condition:
+      label: Lock Condition
+      description: Specify the condition that must be met before the item is unlocked.
+    required_attributes:
+      label: Required Attributes
+      description: The item must have these attributes for this media to be unlocked (typically used in generative items)
+      fieldLabel: Required Attribute
+    attribute:
+      label: Attribute
+    value:
+      label: Value
+    required_media:
+      label: Required Media
+      description: The following media must be viewed before this item will be unlocked
+      fieldLabel: Required Media ID
+
+

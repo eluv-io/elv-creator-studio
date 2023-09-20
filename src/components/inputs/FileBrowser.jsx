@@ -391,7 +391,7 @@ const FileBrowserTable = observer(({
     .map(file => ({...file, actions: ""}));
 
   const isRecordSelectable = ({encrypted, type, ext}) =>
-    !encrypted && type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext));
+    !encrypted && type !== "directory" && (!extensions || extensions.length === 0 || extensions.includes(ext?.toLowerCase()));
 
   return (
     <DataTable
@@ -534,6 +534,8 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
 
   if(extensions === "image") {
     extensions = fileBrowserStore.imageTypes;
+  } else {
+    extensions = extensions.map(ext => ext?.toLowerCase());
   }
 
   const pathTokens = path.replace(/^\//, "").split("/");

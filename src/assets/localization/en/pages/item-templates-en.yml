@@ -4,6 +4,7 @@ nav:
   general: General
   settings: Settings
   primary_media: Primary Media
+  additional_media: Additional Media
   pack_settings: Pack Settings
   redeemable_offers: Redeemable Offers
 form:
@@ -18,6 +19,15 @@ form:
     item_attributes: Attributes
     display: Display Settings
     primary_media: Primary Media
+    additional_media: Additional Media
+    additional_media_settings: Additional Media Settings
+    additional_media_label: Media Item '{label}'
+    additional_media_sections: Media Sections
+    additional_media_section_label: Media Section '{label}'
+    additional_media_collections: Media Collections
+    additional_media_collection_label: Media Collection '{label}'
+    featured_media: Featured Media
+    media_item: Media Item
     pack_settings: Pack Settings
     pack_open_status_page: Pack Open Status Page
     pack_items: Pack Items
@@ -117,12 +127,12 @@ form:
   media:
     generative:
       label: Generative
-      description: A generative item may have a different image per item, determined by the item's token ID.
+      description: A generative item may have a different image and attributes per item, determined by the item's token ID.
     playable:
       label: Playable
       description: Check this box if the item template itself is a playable video
     has_audio:
-      label: Has Audio
+      label: Video Has Audio
       description: By default, item template videos are muted, looping animations. Check this box if your video is intended to include audio. Note that item template videos with audio will not autoplay.
     media_type:
       label: Media Type
@@ -257,6 +267,49 @@ form:
     hide_if_expired:
       label: Hide if Expired
       description: If checked, this offer will not be visible after the expiration date
+  additional_media:
+    additional_media_type:
+      label: Additional Media Type
+      description: "Additional media may be organized in two ways: a simple list of items, or a list of 'sections', each containing a list of collections of media items, along with the option of 'featured' media"
+    additional_media_display:
+      label: Media Display
+      description: Media lists may be displayed in a special 'album' view, suitable for audio collections
+    show_autoplay:
+      label: Show Play All
+      description: Show a 'play all' button on this collection, allowing for autoplaying through the whole list.
+    custom_gallery_css:
+      label: Custom Gallery CSS
+      description: Specify custom CSS to use for all 'gallery' media in this item
+    additional_media:
+      label: Media
+      fieldLabel: Media Item
+      columns:
+        name: Name
+        type: Type
+    featured_media:
+      label: Featured Media
+      description: Featured media will be displayed at the top of the media view
+    sections:
+      label: Media Sections
+      fieldLabel: Media Section
+      columns:
+        name: Name
+        collections: Collections
+        media_items: Media Items
+    section_id:
+      label: Section ID
+    collections:
+      label: Media Collections
+      fieldLabel: Media Collection
+      columns:
+        name: Name
+        media_items: Media Items
+    collection_id:
+      label: Collection ID
+    media:
+      label: Media
+    media_id:
+      label: Media ID
 
 
 

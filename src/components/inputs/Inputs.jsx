@@ -538,7 +538,8 @@ const CodeInput = observer(({
   hint,
   defaultValue,
   language="css",
-  componentProps={}
+  inputProps={},
+  ...componentProps
 }) => {
   const [editing, setEditing] = useState(false);
   const [validationResults, setValidationResults] = useState(undefined);
@@ -564,6 +565,7 @@ const CodeInput = observer(({
       maw={uiStore.inputWidthWide}
       error={validationResults?.errorMessage}
       wrapperProps={{styles: () => ({error: { marginTop: 30 }})}}
+      {...componentProps}
     >
       <IconButton
         label={rootStore.l10n.components.actions.edit}
@@ -584,11 +586,11 @@ const CodeInput = observer(({
             actionLabel={label}
             defaultValue={defaultValue}
             componentProps={{
-              ...componentProps,
+              ...inputProps,
               maw: uiStore.inputWidthWide,
               mt: "xl",
               mb:0,
-              minRows: componentProps.minRows || 20
+              minRows: inputProps.minRows || 20
             }}
           /> :
           value ?
@@ -967,7 +969,7 @@ export const FabricBrowserInput = observer(({
         mb="md"
         {...componentProps}
       >
-        <Group spacing="xs" style={{position: "absolute", top: 0, right: 0}}>
+        <Group spacing="xs" style={{position: "absolute", top: -4, right: 0}}>
           {
             !value ? null :
               <IconButton
@@ -1419,7 +1421,8 @@ const CollectionTableRows = observer(({
   columns=[],
   fieldLabel,
   idField="index",
-  values
+  values,
+  routePath=""
 }) => {
   return (
     values.map((value, index) => {
@@ -1450,7 +1453,7 @@ const CollectionTableRows = observer(({
                   <IconButton
                     label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
                     component={Link}
-                    to={UrlJoin(location.pathname, id)}
+                    to={UrlJoin(location.pathname, routePath || "", id)}
                     color="blue.5"
                     Icon={IconEdit}
                   />
@@ -1502,6 +1505,7 @@ const CollectionTable = observer(({
   fieldLabel,
   newItemSpec={},
   idField="index",
+  routePath="",
   filterable,
   Filter
 }) => {
@@ -1556,7 +1560,7 @@ const CollectionTable = observer(({
           useLabel: false
         });
 
-        navigate(UrlJoin(location.pathname, id));
+        navigate(UrlJoin(location.pathname, routePath || "", id));
       }}
     />
   );
@@ -1623,6 +1627,7 @@ const CollectionTable = observer(({
                     values={filteredValues}
                     idField={idField}
                     fieldLabel={fieldLabel}
+                    routePath={routePath}
                   />
                   {containerProvided.placeholder}
                 </tbody>

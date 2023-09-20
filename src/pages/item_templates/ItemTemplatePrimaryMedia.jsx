@@ -34,13 +34,6 @@ const ItemTemplatePrimaryMedia = observer(() => {
         url
       />
 
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.media.generative}
-        field="generative"
-        defaultValue={false}
-      />
-
       <Inputs.Select
         {...inputProps}
         {...l10n.media.media_type}
@@ -108,6 +101,12 @@ const ItemTemplatePrimaryMedia = observer(() => {
             ]}
           />
       }
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.media.generative}
+        field="generative"
+        defaultValue={false}
+      />
     </PageContent>
   );
 });

@@ -28,3 +28,17 @@ export const ItemTemplateRedeemableOfferSpec = {
     hide_if_expired: false
   }
 };
+
+export const ItemTemplateMediaSectionSpec = {
+  id: undefined,
+  name: "<New Media Section>",
+  collections: []
+};
+
+export const ItemTemplateMediaCollectionSpec = {
+  id: undefined,
+  name: "<New Media Collection>",
+  display: "Media",
+  show_autoplay: false,
+  media: []
+};

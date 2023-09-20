@@ -12,6 +12,11 @@ import ItemTemplatePackSettings from "@/pages/item_templates/ItemTemplatePackSet
 import ItemTemplateRedeemableOffers, {
   ItemTemplateRedeemableOffer
 } from "@/pages/item_templates/ItemTemplateRedeemableOffers.jsx";
+import ItemTemplateAdditionalMedia, {
+  ItemTemplateAdditionalMediaCollection,
+  ItemTemplateAdditionalMediaSection
+} from "@/pages/item_templates/ItemTemplateAdditionalMedia.jsx";
+import ItemTemplateMediaItem from "@/pages/item_templates/ItemTemplateMediaItem.jsx";
 
 const ItemTemplateRoutes = observer(({rootPath}) => {
   const routes = [
@@ -19,6 +24,15 @@ const ItemTemplateRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.general, path: "/item-templates/:itemTemplateId/general", Component: <ItemTemplateGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.settings, path: "/item-templates/:itemTemplateId/settings", Component: <ItemTemplateSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.primary_media, path: "/item-templates/:itemTemplateId/primary_media", Component: <ItemTemplatePrimaryMedia /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media", Component: <ItemTemplateAdditionalMedia /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/list/:mediaId", Component: <ItemTemplateMediaItem containerType="list" /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/list/:mediaId/gallery/:galleryItemId", Component: <ItemTemplateMediaItem containerType="list" galleryItem /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/featured/:mediaId", Component: <ItemTemplateMediaItem containerType="featured" /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/featured/:mediaId/gallery/:galleryItemId", Component: <ItemTemplateMediaItem containerType="featured" galleryItem /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId", Component: <ItemTemplateAdditionalMediaSection /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId", Component: <ItemTemplateAdditionalMediaCollection /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId/:mediaId", Component: <ItemTemplateMediaItem containerType="collection" /> },
+    { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId/:mediaId/gallery/:galleryItemId", Component: <ItemTemplateMediaItem containerType="collection" galleryItem /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.pack_settings, path: "/item-templates/:itemTemplateId/pack_settings", Component: <ItemTemplatePackSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers", Component: <ItemTemplateRedeemableOffers /> },
     { label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers/:redeemableOfferId", Component: <ItemTemplateRedeemableOffer /> },
