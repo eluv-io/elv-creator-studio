@@ -1,16 +1,16 @@
 import {observer} from "mobx-react-lite";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {rootStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {Group, Title, Text} from "@mantine/core";
-import {ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
+import {IconButton, ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
 
 import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
-import {IconCircleCheck, IconX, IconClock} from "@tabler/icons-react";
+import {IconCircleCheck, IconX, IconClock, IconTemplate} from "@tabler/icons-react";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -45,6 +45,9 @@ export const MarketplaceItem = observer(() => {
     })
   };
 
+  const itemTemplateId = !item.nft_template ? null :
+    rootStore.utils.DecodeVersionHash(item.nft_template["."].source)?.objectId;
+
   return (
     <PageContent
       title={`${info.branding?.name || "Marketplace"} - Items - ${item.name}`}
@@ -74,6 +77,19 @@ export const MarketplaceItem = observer(() => {
       <Inputs.FabricBrowser
         {...inputProps}
         {...l10n.item.item_template}
+        customLabel={
+          !itemTemplateId ? null :
+            <Group align="center" spacing="xs">
+              <IconButton
+                label={l10n.item.item_template.view_template}
+                color="blue.5"
+                component={Link}
+                to={UrlJoin("/item-templates", itemTemplateId)}
+                Icon={IconTemplate}
+              />
+              { l10n.item.item_template.label }
+            </Group>
+        }
         subcategory={l10n.categories.item_info}
         field="nft_template"
         previewable={item.nft_template?.nft?.playable}

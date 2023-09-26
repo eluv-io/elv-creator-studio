@@ -5,7 +5,23 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 
-import {IconSettings} from "@tabler/icons-react";
+import {IconReportMoney, IconSettings} from "@tabler/icons-react";
+
+const ebanxSupportedCountries = [
+  {"label":"Argentina","value":"AR"},
+  {"label":"Bolivia","value":"BO"},
+  {"label":"Brazil","value":"BR"},
+  {"label":"Chile","value":"CL"},
+  {"label":"Colombia","value":"CO"},
+  {"label":"Ecuador","value":"EC"},
+  {"label":"El Salvador","value":"SV"},
+  {"label":"Guatemala","value":"GT"},
+  {"label":"Mexico","value":"MX"},
+  {"label":"Panama","value":"PA"},
+  {"label":"Paraguay","value":"PY"},
+  {"label":"Peru","value":"PE"},
+  {"label":"Uruguay","value":"UY"}
+];
 
 const MarketplaceGeneralSettings = observer(() => {
   const { marketplaceId } = useParams();
@@ -161,13 +177,79 @@ const MarketplaceGeneralSettings = observer(() => {
           </>
       }
 
-
-
-
-      <Accordion mt={50} maw={uiStore.inputWidthWide} variant="contained">
-        <Accordion.Item value="default">
+      <Accordion mt={50} maw={uiStore.inputWidth} variant="contained">
+        <Accordion.Item value="payment_options">
+          <Accordion.Control icon={<IconReportMoney />}>
+            { l10n.categories.payment_options }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.stripe}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/stripe"
+              field="enabled"
+              defaultValue={true}
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.coinbase}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/coinbase"
+              field="enabled"
+              defaultValue={true}
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.circle}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/circle"
+              field="enabled"
+              defaultValue={false}
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.ebanx}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/ebanx"
+              field="enabled"
+              defaultValue={false}
+            />
+            {
+              !info.payment_options?.ebanx?.enabled ? null :
+                <>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.general.ebanx_preferred}
+                    subcategory={l10n.categories.payment_options}
+                    path="/public/asset_metadata/info/payment_options/ebanx"
+                    field="preferred"
+                    defaultValue={false}
+                  />
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.general.ebanx_pix_enabled}
+                    subcategory={l10n.categories.payment_options}
+                    path="/public/asset_metadata/info/payment_options/ebanx"
+                    field="pix_enabled"
+                    defaultValue={false}
+                  />
+                  <Inputs.MultiSelect
+                    {...inputProps}
+                    {...l10n.general.ebanx_allowed_countries}
+                    subcategory={l10n.categories.payment_options}
+                    path="/public/asset_metadata/info/payment_options/ebanx"
+                    field="allowed_countries"
+                    options={ebanxSupportedCountries}
+                    searchable
+                  />
+                </>
+            }
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="advanced_settings">
           <Accordion.Control icon={<IconSettings />}>
-            { rootStore.l10n.components.forms.advanced_settings }
+            { l10n.categories.advanced_settings }
           </Accordion.Control>
           <Accordion.Panel>
             <Inputs.InputWrapper

@@ -19,6 +19,7 @@ form:
     global_settings: Global Marketplace Settings
     tags: Marketplace Tags
     notification: Notification Banner
+    payment_options: Payment Options
     advanced_settings: Advanced Settings
     page_tabs: Page Names
     theme: Theme
@@ -135,6 +136,27 @@ form:
       label: Show Secondary Sales Stats on Store Product Page
     allow_usdc:
       label: Allow USDC
+    stripe:
+      label: Stripe
+      description: Allow purchases with this payment type
+    coinbase:
+      label: Coinbase
+      description: Allow purchases with this payment type
+    circle:
+      label: Circle
+      description: Allow purchases with this payment type
+    ebanx:
+      label: EBANX
+      description: Allow purchases with this payment type
+    ebanx_preferred:
+      label: EBANX Preferred
+      description: If checked, this payment method will be the default
+    ebanx_allowed_countries:
+      label: EBANX Allowed Countries
+      description: Select the countries for which EBANX is allowed
+    ebanx_pix_enabled:
+      label: Allow Pix
+
 
   theme:
     use_tenant_styling:
@@ -238,6 +260,7 @@ form:
       label: SKU
     item_template:
       label: Item Template
+      view_template: View Item Template
     subtitle:
       label: Subtitle
     subtitle_2:

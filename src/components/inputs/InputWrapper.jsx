@@ -58,6 +58,9 @@ const InputWrapper = observer(({label, description, hint, error, children, flex,
         styles={{
           description: {
             paddingRight: "50px"
+          },
+          error: {
+            marginTop: "10px"
           }
         }}
       >

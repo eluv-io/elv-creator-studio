@@ -159,6 +159,20 @@ export const ItemTemplateRedeemableOffer = observer(() => {
 
       <Title order={3} mt={50} mb="md">{l10n.categories.redeemable_offer_redemption_settings}</Title>
 
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.redeemable_offers.results_header}
+        subcategory={l10n.categories.redeemable_offer_redemption_settings}
+        field="results_header"
+      />
+
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.redeemable_offers.results_message}
+        subcategory={l10n.categories.redeemable_offer_redemption_settings}
+        field="results_message"
+      />
+
       <Inputs.FabricBrowser
         {...inputProps}
         {...l10n.redeemable_offers.redeem_animation}

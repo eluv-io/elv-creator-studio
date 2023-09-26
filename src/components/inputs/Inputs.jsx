@@ -901,6 +901,7 @@ export const FabricBrowserInput = observer(({
   category,
   subcategory,
   label,
+  customLabel,
   description,
   hint,
   previewable,
@@ -962,7 +963,7 @@ export const FabricBrowserInput = observer(({
           />
       }
       <InputWrapper
-        label={label}
+        label={customLabel || label}
         description={description}
         hint={hint}
         flex
@@ -1368,7 +1369,7 @@ const List = observer(({
       maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
       {...componentProps}
       w="max-content"
-      miw={uiStore.inputWidth}
+      miw={`min(100%, ${uiStore.inputWidth}px)`}
     >
       <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
         <DragDropContext

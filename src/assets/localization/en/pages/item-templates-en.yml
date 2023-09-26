@@ -267,6 +267,14 @@ form:
     hide_if_expired:
       label: Hide if Expired
       description: If checked, this offer will not be visible after the expiration date
+    results_header:
+      label: Results Header
+      description: Displayed on the redemption results page
+      placeholder: Successfully Redeemed
+    results_message:
+      label: Results Message
+      description: Displayed on the redemption results page
+      placeholder: To access your reward, scan the QR code below or visit the URL and enter the code.
   additional_media:
     additional_media_type:
       label: Additional Media Type
