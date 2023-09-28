@@ -31,7 +31,6 @@ form:
     remove_link: Remove Link
     remove_link_label: Remove Link to {name}
     remove_link_confirm: Are you sure you want to remove the link to {name}?
-
   sites:
     sites: Sites
     site: Site

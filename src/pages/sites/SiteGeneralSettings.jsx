@@ -91,20 +91,14 @@ const SiteGeneralSettings = observer(() => {
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.marketplace }</Title>
 
-      <Inputs.Hidden
-        {...inputProps}
-        {...l10n.general.tenant_slug}
-        subcategory={l10n.categories.marketplace}
-        path="/public/asset_metadata/info/marketplace_info"
-        field="tenant_slug"
-        defaultValue={tenantStore.tenantSlug}
-      />
       <MarketplaceSelect
         {...inputProps}
         {...l10n.general.marketplace}
         subcategory={l10n.categories.marketplace}
         path="/public/asset_metadata/info/marketplace_info"
         field="marketplace_slug"
+        tenantSlugField="tenant_slug"
+        marketplaceIdField="marketplace_id"
       />
       <Inputs.Select
         {...inputProps}
@@ -153,16 +147,12 @@ const SiteGeneralSettings = observer(() => {
               newItemSpec={SiteAdditionalMarketplaceSpec}
               renderItem={props => (
                 <>
-                  <Inputs.Hidden
-                    {...props}
-                    {...l10n.general.tenant_slug}
-                    field="tenant_slug"
-                    defaultValue={tenantStore.tenantSlug}
-                  />
                   <MarketplaceSelect
                     {...props}
                     {...l10n.general.marketplace}
                     field="marketplace_slug"
+                    tenantSlugField="tenant_slug"
+                    marketplaceIdField="marketplace_id"
                     excludedSlugs={[info?.marketplace_info?.marketplace_slug]}
                     defaultFirst
                   />

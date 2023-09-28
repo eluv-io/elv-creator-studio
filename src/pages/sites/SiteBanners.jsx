@@ -95,6 +95,8 @@ export const SiteBanner = observer(() => {
               {...inputProps}
               {...l10n.banner.marketplace}
               field="marketplace"
+              tenantSlugField="marketplace_tenant_slug"
+              marketplaceIdField="marketplace_id"
               defaultFirst
             />
             {

@@ -3,7 +3,14 @@ import {useEffect} from "react";
 import {marketplaceStore} from "@/stores/index.js";
 import Inputs from "./Inputs.jsx";
 
-export const MarketplaceSelect = observer(({excludedSlugs=[], defaultFirst, allowNone, ...props}) => {
+export const MarketplaceSelect = observer(({
+  excludedSlugs=[],
+  defaultFirst,
+  allowNone,
+  tenantSlugField="tenant_slug",
+  marketplaceIdField="marketplace_id",
+  ...props
+}) => {
   useEffect(() => {
     // Marketplaces need to be loaded for marketplace selection
     marketplaceStore.LoadMarketplaces();
@@ -13,11 +20,22 @@ export const MarketplaceSelect = observer(({excludedSlugs=[], defaultFirst, allo
     .filter(marketplace => !excludedSlugs.includes(marketplace.marketplaceSlug))
     .map(marketplace => ({
       label: marketplaceStore.marketplaces[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.name || marketplace.brandedName,
-      value: marketplace.marketplaceSlug
+      value: marketplace.marketplaceSlug,
+      additionalValues: [
+        { field: tenantSlugField, value: marketplace.tenantSlug },
+        { field: marketplaceIdField, value: marketplace.objectId }
+      ]
     }));
 
   if(allowNone) {
-    marketplaces.unshift({ label: "None", value: ""});
+    marketplaces.unshift({
+      label: "None",
+      value: "",
+      additionalValues: [
+        { field: tenantSlugField, value: "" },
+        { field: marketplaceIdField, value: "" }
+      ]
+    });
   }
 
   return (

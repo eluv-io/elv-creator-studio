@@ -58,6 +58,10 @@ class SiteStore {
     });
   });
 
+  UpdateDatabaseRecord = flow(function * ({objectId}) {
+    yield this.rootStore.databaseStore.SaveSite({siteId: objectId});
+  });
+
   Reload = flow(function * ({objectId}) {
     yield this.LoadSite({siteId: objectId, force: true});
   });

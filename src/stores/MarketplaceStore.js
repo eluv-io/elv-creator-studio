@@ -68,6 +68,10 @@ class MarketplaceStore {
     yield this.LoadMarketplace({marketplaceId: objectId, force: true});
   });
 
+  UpdateDatabaseRecord = flow(function * ({objectId}) {
+    yield this.rootStore.databaseStore.SaveMarketplace({marketplaceId: objectId});
+  });
+
   DeployedHash({environment, marketplaceId}) {
     return this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId]?.versionHash;
   }

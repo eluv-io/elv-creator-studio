@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore, uiStore} from "@/stores";
+import {rootStore, tenantStore, uiStore, databaseStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {
   Title,
@@ -15,9 +15,9 @@ import {DataTable} from "mantine-datatable";
 import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
-
-import {IconUnlink, IconLinkOff, IconEqual, IconEqualNot} from "@tabler/icons-react";
 import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
+
+import {IconUnlink, IconLinkOff, IconEqual, IconEqualNot, IconInputSearch} from "@tabler/icons-react";
 
 const DeployedIcon = ({deployed}) =>
   <TooltipIcon
@@ -315,7 +315,28 @@ const TenantOverview = observer(() => {
       <Container p={0} m={0} maw={uiStore.inputWidth}>
         <Group w="100%" position="apart">
           <Title order={3}>{ metadata.info?.name }</Title>
-          <Title order={6} color="dimmed">{ metadata.slug }</Title>
+          <Group spacing="xl">
+            <Title order={6} color="dimmed">{ metadata.slug }</Title>
+            <IconButton
+              label={rootStore.l10n.components.actions.scan_content}
+              color="blue.5"
+              Icon={IconInputSearch}
+              onClick={async () => {
+                uiStore.SetLoading(true);
+                try {
+                  await databaseStore.ScanContent({force: true});
+                } catch(error) {
+                  rootStore.DebugLog({
+                    message: "Failed to scan for content:",
+                    error,
+                    level: rootStore.logLevels.DEBUG_LEVEL_ERROR
+                  });
+                } finally {
+                  uiStore.SetLoading(false);
+                }
+              }}
+            />
+          </Group>
         </Group>
         <Text fz="xs" color="dimmed">{ metadata.info.tenant_id }</Text>
         <Text fz="xs" color="dimmed">{ tenantStore.tenantObjectId }</Text>

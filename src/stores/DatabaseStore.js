@@ -63,7 +63,7 @@ class DatabaseStore {
         }
       }
 
-      yield this.InitialSetup();
+      yield this.ScanContent();
     } catch(error) {
       this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_ERROR});
     } finally {
@@ -71,7 +71,7 @@ class DatabaseStore {
     }
   });
 
-  InitialSetup = flow(function * () {
+  ScanContent = flow(function * ({force}) {
     this.rootStore.DebugLog({message: "Initializing database setup", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 
     this.rootStore.DebugLog({message: "Finding properties library", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
@@ -108,7 +108,9 @@ class DatabaseStore {
         tenantId
       });
 
-      return;
+      if(!force) {
+        return;
+      }
     }
 
     this.rootStore.DebugLog({message: "Loading content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
@@ -201,6 +203,7 @@ class DatabaseStore {
             objects.forEach(object => {
               if(object.typeId !== typeId) { return; }
 
+              object.brandedName = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
               content.sites[object.objectId] = object;
             });
           } else if(name.includes("tenant")) {
@@ -230,26 +233,23 @@ class DatabaseStore {
       content.marketplaces[marketplaceId].marketplaceSlug = content.marketplaces[marketplaceId].metadata.public.asset_metadata.slug;
     });
 
-    Object.keys(content.sites).forEach(siteId => {
-      content.sites[siteId].tenantSlug = tenantSlug;
-      content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug;
+    yield Promise.all(
+      Object.keys(content.sites).map(async siteId => {
+        content.sites[siteId].tenantSlug = tenantSlug;
+        content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug;
 
-      // Determine marketplaces
-      const marketplaceInfo = content.sites[siteId].metadata.public?.asset_metadata?.info.marketplace_info || {};
-      const additionalMarketplaces = content.sites[siteId].metadata.public?.asset_metadata?.info.additional_marketplaces || [];
+        // Determine marketplaces
+        content.sites[siteId].primaryMarketplace = await this.MarketplaceInfo(
+          content.sites[siteId].metadata.public?.asset_metadata?.info.marketplace_info || {}
+        );
 
-      content.sites[siteId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
-        content.marketplaces[marketplaceId].marketplaceSlug === marketplaceInfo.marketplace_slug &&
-        content.marketplaces[marketplaceId].tenantSlug === marketplaceInfo.tenant_slug
-      ) || "";
-
-      content.sites[siteId].additionalMarketplaces = additionalMarketplaces.map(additionalMarketplaceInfo =>
-        content.sites[siteId].primaryMarketplace = Object.keys(content.marketplaces).find(marketplaceId =>
-          content.marketplaces[marketplaceId].marketplaceSlug === additionalMarketplaceInfo.marketplace_slug &&
-          content.marketplaces[marketplaceId].tenantSlug === additionalMarketplaceInfo.tenant_slug
-        ) || ""
-      ).filter(marketplaceId => marketplaceId);
-    });
+        content.sites[siteId].additionalMarketplaces = await Promise.all(
+          (content.sites[siteId].metadata.public?.asset_metadata?.info.additional_marketplaces || []).map(async marketplaceInfo =>
+            await this.MarketplaceInfo(marketplaceInfo)
+          )
+        );
+      })
+    );
 
     this.rootStore.DebugLog({message: "Loading templates", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.templates);
@@ -264,7 +264,7 @@ class DatabaseStore {
           try {
             const templateHash = ExtractHashFromLink(item.nft_template);
 
-            if(!templateHash) { return;}
+            if(!templateHash) { return; }
 
             const templateId = this.utils.DecodeVersionHash(templateHash).objectId;
             const templateLibraryId = await this.rootStore.LibraryId({objectId: templateId});
@@ -274,11 +274,12 @@ class DatabaseStore {
               content.types.template = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
             }
 
-            // Template referenced in another marketplace, add to referenced marketplace list and stop
+            // Template referenced and loaded already, add to referenced marketplace list and stop
             if(content.templates[templateId]) {
-              if(!content.templates[templateId].marketplaces.includes(marketplace.objectId)) {
-                content.templates.marketplaces.push(marketplace.objectId);
-              }
+              content.templates[templateId].associatedSKUs[marketplace.objectId] =
+                content.templates[templateId].associatedSKUs[marketplace.objectId] || [];
+
+              content.templates[templateId].associatedSKUs[marketplace.objectId].push(item.sku);
 
               return;
             }
@@ -302,7 +303,11 @@ class DatabaseStore {
               brandedName: metadata.public?.asset_metadata?.nft?.display_name || "",
               image: metadata.public?.asset_metadata?.nft?.image || "",
               address: metadata.public?.asset_metadata?.nft?.address || "",
-              marketplaces: [marketplace.objectId],
+              associatedSKUs: {
+                [marketplace.objectId]: [
+                  item.sku
+                ]
+              },
               metadata
             };
           } catch(error) {
@@ -467,6 +472,172 @@ class DatabaseStore {
       })
     );
     yield batch.commit();
+  });
+
+  // Retrieve marketplace ID by resolving link, if necessary
+  async MarketplaceInfo(marketplaceInfo) {
+    let info = {
+      marketplace_id: marketplaceInfo.marketplace_id || marketplaceInfo.objectId || "",
+      tenant_slug: marketplaceInfo.tenant_slug || marketplaceInfo.tenantSlug || "",
+      marketplace_slug: marketplaceInfo.marketplace_slug || marketplaceInfo.marketplaceSlug || ""
+    };
+
+    // Marketplace ID not present in metadata, try finding from all marketplaces in database, or from the marketplace link
+    if(marketplaceInfo.marketplace_slug && !marketplaceInfo.marketplace_id) {
+      await this.rootStore.marketplaceStore.LoadMarketplaces();
+
+      info.marketplace_id = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace =>
+        marketplace.marketplaceSlug === marketplaceInfo.marketplace_slug
+      )?.objectId;
+
+      if(!info.marketplace_id) {
+        const marketplaceLink = await this.client.ContentObjectMetadata({
+          libraryId: this.rootStore.liveConfig.staging.siteLibraryId,
+          objectId: this.rootStore.liveConfig.staging.siteId,
+          metadataSubtree: UrlJoin("public/asset_metadata/tenants", marketplaceInfo.tenant_slug, "marketplaces", marketplaceInfo.marketplace_slug)
+        });
+
+        info.marketplace_id = !marketplaceLink ? undefined : this.utils.DecodeVersionHash(ExtractHashFromLink(marketplaceLink)).objectId;
+      }
+    }
+
+    return info;
+  }
+
+  SaveMarketplace = flow(function * ({batch, marketplaceId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: marketplaceId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: marketplaceId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    const templateIds = metadata.public?.asset_metadata?.info?.items
+      ?.map(item =>
+        item.nft_template ? this.utils.DecodeVersionHash(ExtractHashFromLink(item.nft_template)).objectId : undefined
+      )
+      ?.filter(t => t)
+      ?.filter((v, i, a) => a.indexOf(v) === i);
+
+    let object = {
+      libraryId,
+      objectId: marketplaceId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
+      marketplaceSlug: metadata.public?.asset_metadata?.slug,
+      name: metadata.public?.name,
+      brandedName:
+        metadata.public?.asset_metadata?.info?.branding?.name ||
+        metadata.public?.name,
+      description: metadata.public?.asset_metadata?.info?.branding?.description || "",
+      templateIds
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "marketplaces",
+      document: marketplaceId,
+      content: object
+    });
+  });
+
+  SaveSite = flow(function * ({batch, siteId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: siteId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: siteId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    const marketplaceInfo = metadata.public?.asset_metadata?.info.marketplace_info || {};
+    const additionalMarketplaces = metadata.public?.asset_metadata?.info.additional_marketplaces || [];
+
+    let object = {
+      libraryId,
+      objectId: siteId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
+      siteSlug: metadata.public?.asset_metadata?.slug,
+      name: metadata.public?.name,
+      brandedName:
+        metadata.public?.asset_metadata?.info?.name ||
+        metadata.public?.name,
+      description: metadata.public?.asset_metadata?.info?.branding?.description || "",
+      primaryMarketplace: yield this.MarketplaceInfo(marketplaceInfo),
+      additionalMarketplaces: yield Promise.all(
+        additionalMarketplaces.map(async marketplaceInfo => await this.MarketplaceInfo(marketplaceInfo))
+      )
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "sites",
+      document: siteId,
+      content: object
+    });
+  });
+
+  // TODO: Update media records as well
+  SaveItemTemplate = flow(function * ({batch, itemTemplateId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: itemTemplateId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: itemTemplateId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    yield this.rootStore.marketplaceStore.LoadMarketplaces();
+    let associatedSKUs = {};
+    yield Promise.all(
+      this.rootStore.marketplaceStore.allMarketplaces.map(async marketplace => {
+        const metadata =
+          this.rootStore.marketplaceStore.marketplaces[marketplace.objectId]?.metadata ||
+          {
+            public: await this.client.ContentObjectMetadata({
+              versionHash: await this.client.LatestVersionHash({objectId: marketplace.objectId}),
+              metadataSubtree: "public",
+              select: [
+                "asset_metadata/info/items/*/sku",
+                "asset_metadata/info/items/*/nft_template"
+              ]
+            })
+          };
+
+        (metadata.public?.asset_metadata?.info?.items || []).forEach(item => {
+          const itemHash = ExtractHashFromLink(item.nft_template);
+
+          if(!itemHash || this.utils.DecodeVersionHash(itemHash).objectId !== itemTemplateId) {
+            return;
+          }
+
+          associatedSKUs[marketplace.objectId] =
+            associatedSKUs[marketplace.objectId] || [];
+
+          associatedSKUs[marketplace.objectId].push(item.sku);
+        });
+      })
+    );
+
+    let object = {
+      libraryId,
+      objectId: itemTemplateId,
+      name: metadata.public?.name || "",
+      brandedName: metadata.public?.asset_metadata?.nft?.display_name || "",
+      image: metadata.public?.asset_metadata?.nft?.image || "",
+      address: metadata.public?.asset_metadata?.nft?.address || "",
+      associatedSKUs
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "templates",
+      document: itemTemplateId,
+      content: object
+    });
   });
 
   GetCollection = flow(function * ({collection, conditions}) {

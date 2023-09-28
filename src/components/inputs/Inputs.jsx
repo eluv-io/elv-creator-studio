@@ -234,6 +234,14 @@ const Input = observer(({
       }
 
       store.SetDefaultValue({objectId, path, field, category, subcategory, label, value});
+
+      if(type === "select") {
+        // Apply any additional fields from selected option
+        const selectedOption = options.find(option => option === value || option.value === value);
+        (selectedOption?.additionalValues || []).forEach(({field, value}) =>
+          store.SetDefaultValue({objectId, path, field, category, subcategory, label, value})
+        );
+      }
     }
   });
 
@@ -274,7 +282,7 @@ const Input = observer(({
     case "select":
       Component = Select;
       componentProps.searchable = searchable;
-      componentProps.data = options;
+      componentProps.data = [...options];
       break;
     case "date":
       Component = DatePickerInput;
@@ -339,17 +347,37 @@ const Input = observer(({
           value = value ? value.toISOString() : undefined;
         }
 
-        store.SetMetadata({
-          actionType: type === "select" ? "MODIFY_FIELD_UNSTACKABLE" : "MODIFY_FIELD",
-          objectId,
-          page: location.pathname,
-          path,
-          field,
-          value,
-          category,
-          subcategory,
-          label: actionLabel || label
-        });
+        if(type === "select") {
+          const selectedOption = options.find(option => option === value || option.value === value);
+
+          // Allow select to change multiple values at once - e.g. marketplace select sets marketplace slug, tenant slug and object ID
+          store.SetBatchMetadata({
+            actionType: "MODIFY_FIELD_BATCH_UNSTACKABLE",
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            values: [
+              { field, value },
+              ...(selectedOption.additionalValues || [])
+            ],
+            category,
+            subcategory,
+            label: actionLabel || label
+          });
+        } else {
+          store.SetMetadata({
+            actionType: "MODIFY_FIELD",
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            value,
+            category,
+            subcategory,
+            label: actionLabel || label
+          });
+        }
 
         setChanged(true);
       }}

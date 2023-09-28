@@ -12,6 +12,12 @@ export const ACTIONS = {
   MODIFY_FIELD_UNSTACKABLE: {
     stackable: false
   },
+  MODIFY_FIELD_BATCH: {
+    stackable: true
+  },
+  MODIFY_FIELD_BATCH_UNSTACKABLE: {
+    stackable: false
+  },
   TOGGLE_FIELD: {
     stackable: false
   },
@@ -91,6 +97,64 @@ const SetMetadata = function({
       metadataSubtree: fullPath,
       metadata: value
     })
+  });
+};
+
+const SetBatchMetadata = function({
+  actionType="MODIFY_FIELD_BATCH",
+  objectId,
+  page,
+  path,
+  values,
+  category,
+  subcategory,
+  label,
+  inverted=false
+}) {
+  if(!objectId) {
+    this.DebugLog({message: "Set batch metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  const originalValues = values.map(({field}) => ({
+    field,
+    value: this.GetMetadata({objectId, path: UrlJoin(path, field)})
+  }));
+
+  this.ApplyAction({
+    objectId,
+    page,
+    path,
+    actionType,
+    category,
+    subcategory,
+    label,
+    info: {
+      cleared: values.length === 0 || !values.find(({value}) => !!value),
+      inverted
+    },
+    Apply: () => {
+      values.forEach(({field, value}) =>
+        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value)
+      );
+    },
+    Undo: () => {
+      originalValues.forEach(({field, value}) => {
+        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value);
+      });
+    },
+    Write: async (objectParams) => {
+      await Promise.all(
+        values.map(async ({field, value}) => {
+          await this.client.ReplaceMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin(path, field),
+            metadata: value
+          });
+        })
+      );
+    }
   });
 };
 
@@ -457,7 +521,6 @@ const SetListFieldIds = function({objectId, path, idField="id", category, label}
       return;
     }
 
-
     this.SetDefaultValue({
       objectId,
       path: UrlJoin(path, index.toString()),
@@ -476,6 +539,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
 
   storeClass.prototype.GetMetadata = GetMetadata;
   storeClass.prototype.SetMetadata = SetMetadata;
+  storeClass.prototype.SetBatchMetadata = SetBatchMetadata;
   storeClass.prototype.SetDefaultValue = SetDefaultValue;
   storeClass.prototype.SetLink = SetLink;
   storeClass.prototype.ListAction = ListAction;

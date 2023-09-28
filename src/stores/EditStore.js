@@ -129,6 +129,10 @@ class EditStore {
           yield store.PostSave({libraryId, objectId});
         }
 
+        if(store.UpdateDatabaseRecord) {
+          yield store.UpdateDatabaseRecord({objectId});
+        }
+
         // Force reload object after saving
         yield store.Reload({objectId});
       } catch(error) {

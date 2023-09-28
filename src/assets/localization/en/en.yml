@@ -20,6 +20,7 @@ components:
     undo_action: Undo {action}
     redo: Redo
     redo_action: Redo {action}
+    scan_content: Scan for Content
   forms:
     advanced_settings: Advanced Settings
   inputs:
@@ -113,6 +114,8 @@ actions:
   CLEARED_FIELD: Clear '{label}'
   MODIFY_FIELD: Modify '{label}'
   MODIFY_FIELD_UNSTACKABLE: Modify '{label}'
+  MODIFY_FIELD_BATCH: Modify '{label}'
+  MODIFY_FIELD_BATCH_UNSTACKABLE: Modify '{label}'
   TOGGLE_FIELD: Toggle '{label}'
   TOGGLE_FIELD_ON: Toggle '{label}' On
   TOGGLE_FIELD_OFF: Toggle '{label}' Off

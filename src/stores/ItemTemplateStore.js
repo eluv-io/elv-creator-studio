@@ -140,6 +140,10 @@ class ItemTemplateStore {
     });
   });
 
+  UpdateDatabaseRecord = flow(function * ({objectId}) {
+    yield this.rootStore.databaseStore.SaveItemTemplate({itemTemplateId: objectId});
+  });
+
   get client() {
     return this.rootStore.client;
   }
