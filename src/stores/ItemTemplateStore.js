@@ -60,19 +60,11 @@ class ItemTemplateStore {
     yield this.LoadItemTemplate({itemTemplateId: objectId, force: true});
   });
 
+  /*
   Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
-    const itemTemplate = this.itemTemplates[objectId];
-    if(typeof itemTemplate.metadata?.public?.asset_metadata?.mint?.merge_meta === "string") {
-      const parsedMeta = JSON.parse(itemTemplate.metadata?.public?.asset_metadata?.mint?.merge_meta);
-      yield this.client.ReplaceMetadata({
-        libraryId,
-        objectId,
-        writeToken,
-        metadataSubtree: "/public/asset_metadata/mint/merge_meta",
-        metadata: parsedMeta
-      });
-    }
+
   });
+  */
 
   async SelfEmbedUrl({objectId}) {
     const latestHash = await this.client.LatestVersionHash({objectId});

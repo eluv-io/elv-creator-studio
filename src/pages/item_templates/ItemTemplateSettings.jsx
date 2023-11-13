@@ -36,7 +36,43 @@ const ItemTemplateSettings = observer(() => {
         defaultValue="permissioned"
       />
 
-      <Title order={3} my="md">{ l10n.categories.resale }</Title>
+      <Title order={3} mb="md">{ l10n.categories.contract }</Title>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.settings.contract_address}
+        disabled
+        subcategory={l10n.categories.contract}
+        field="address"
+      />
+      <Inputs.Integer
+        {...inputProps}
+        {...l10n.settings.total_supply}
+        disabled
+        subcategory={l10n.categories.contract}
+        field="total_supply"
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.settings.use_mint_ordinal}
+        subcategory={l10n.categories.contract}
+        path="/public/asset_metadata/mint"
+        field="use_mint_ordinal_in_token_id"
+      />
+
+      {
+        !info?.use_mint_ordinal_in_token_id ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.settings.shuffle_token_id}
+            subcategory={l10n.categories.contract}
+            path="/public/asset_metadata/mint"
+            field="shuffle_token_id"
+          />
+      }
+
+      <Title order={3} mt={50} mb="md">{ l10n.categories.resale }</Title>
 
       <Inputs.Checkbox
         {...inputProps}
@@ -59,71 +95,6 @@ const ItemTemplateSettings = observer(() => {
         field="secondary_resale_expires_at"
       />
 
-      <Title order={3} mt={50} mb="md">{ l10n.categories.contract }</Title>
-
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.settings.contract_address}
-        disabled
-        subcategory={l10n.categories.contract}
-        field="address"
-      />
-      <Inputs.Integer
-        {...inputProps}
-        {...l10n.settings.total_supply}
-        disabled
-        subcategory={l10n.categories.contract}
-        field="total_supply"
-      />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.settings.mint_key_id}
-        subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
-        field="cauth_id"
-      />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.settings.fabric_key_id}
-        subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
-        field="fauth_id"
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.settings.use_mint_ordinal}
-        subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
-        field="use_mint_ordinal_in_token_id"
-      />
-
-      {
-        info?.use_mint_ordinal_in_token_id ?
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.settings.shuffle_token_id}
-            subcategory={l10n.categories.contract}
-            path="/public/asset_metadata/mint"
-            field="shuffle_token_id"
-          /> :
-          <Inputs.Text
-            {...inputProps}
-            {...l10n.settings.token_template}
-            subcategory={l10n.categories.contract}
-            path="/public/asset_metadata/mint"
-            field="token_template"
-          />
-
-      }
-
-      <Inputs.JSON
-        {...inputProps}
-        {...l10n.settings.merge_meta}
-        subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
-        field="merge_meta"
-      />
     </PageContent>
   );
 });

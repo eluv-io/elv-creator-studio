@@ -67,7 +67,8 @@ const SetMetadata = function({
   category,
   subcategory,
   label,
-  inverted=false
+  inverted=false,
+  json=false
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -77,6 +78,16 @@ const SetMetadata = function({
   const pathComponents = fullPath.replace(/^\//, "").replace(/\/$/, "").split("/");
 
   const originalValue = this.GetMetadata({objectId, path, field});
+
+  // Save JSON fields as objects, not strings
+  let parsedValue;
+  if(json) {
+    try {
+      parsedValue = JSON.parse(value);
+    } catch(error) {
+      // TODO: Fatal error - prevent saving
+    }
+  }
 
   this.ApplyAction({
     objectId,
@@ -95,7 +106,7 @@ const SetMetadata = function({
     Write: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
-      metadata: value
+      metadata: parsedValue || value
     })
   });
 };
@@ -159,8 +170,8 @@ const SetBatchMetadata = function({
 };
 
 // Set a default value of a field that will not be subject to the undo/redo flow
-const SetDefaultValue = function({objectId, path, field, category, subcategory, label, value}) {
-  this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, category, subcategory, label, value});
+const SetDefaultValue = function({objectId, path, field, category, subcategory, label, value, json=false}) {
+  this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, category, subcategory, label, value, json});
 };
 
 // Links

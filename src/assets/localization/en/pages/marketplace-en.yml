@@ -98,6 +98,15 @@ form:
       label: Card Image (Front)
     card_back:
       label: Card Image (Back)
+    tv_images:
+      label: Marketplace TV Images
+      description: These images will be used in the TV apps
+    tv_logo:
+      label: Logo
+    tv_image:
+      label: Image
+    tv_header_image:
+      label: Header Image
     external_link:
       label: External Link
       description: If specified, the link for this marketplace in the global marketplace view will redirect to this URL instead

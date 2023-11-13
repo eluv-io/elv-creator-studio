@@ -25,13 +25,13 @@ const ItemTemplatePrimaryMedia = observer(() => {
       section="itemTemplate"
       useHistory
     >
-      <Inputs.SingleImageInput
+      <Inputs.ImageInput
         {...inputProps}
-        {...l10n.general.image}
-        category={l10n.categories.general}
-        subcategory={l10n.categories.info}
-        field="image"
-        url
+        {...l10n.media.images}
+        fields={[
+          { field: "image", ...l10n.general.image, url: true },
+          { field: "background_image_tv", ...l10n.media.background_image_tv }
+        ]}
       />
 
       <Inputs.Select

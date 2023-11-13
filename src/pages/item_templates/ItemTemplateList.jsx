@@ -10,14 +10,14 @@ import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import {itemTemplateStore, rootStore, uiStore} from "@/stores";
 import UrlJoin from "url-join";
-import {IconButton, LocalizeString} from "@/components/common/Misc";
+import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
 import {DataTable} from "mantine-datatable";
 import {useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 import {SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
-import {IconEdit} from "@tabler/icons-react";
+import {IconEdit, IconGauge} from "@tabler/icons-react";
 import {ScaleImage} from "@/helpers/Fabric";
 
 const ItemTemplateList = observer(() => {
@@ -79,7 +79,15 @@ const ItemTemplateList = observer(() => {
                   <Group>
                     <Image width={60} height={60} fit="contain" src={ScaleImage(itemTemplate.image, 400)} alt={itemTemplate.name} withPlaceholder />
                     <Stack spacing={0}>
-                      <Text>{itemTemplate.name}</Text>
+                      <Text>
+                        <Group spacing={5} align="top">
+                          {itemTemplate.name}
+                          {
+                            !itemTemplate.test ? null :
+                              <TooltipIcon size={15} label={l10n.settings.test.label} Icon={IconGauge} color="red"/>
+                          }
+                        </Group>
+                      </Text>
                       <Text fz="xs" color="dimmed">{itemTemplate.objectId}</Text>
                     </Stack>
                   </Group>

@@ -71,7 +71,7 @@ class DatabaseStore {
     }
   });
 
-  ScanContent = flow(function * ({force}) {
+  ScanContent = flow(function * ({force}={}) {
     this.rootStore.DebugLog({message: "Initializing database setup", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 
     this.rootStore.DebugLog({message: "Finding properties library", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
@@ -303,6 +303,7 @@ class DatabaseStore {
               brandedName: metadata.public?.asset_metadata?.nft?.display_name || "",
               image: metadata.public?.asset_metadata?.nft?.image || "",
               address: metadata.public?.asset_metadata?.nft?.address || "",
+              test: metadata.public?.asset_metadata?.nft?.test || false,
               associatedSKUs: {
                 [marketplace.objectId]: [
                   item.sku

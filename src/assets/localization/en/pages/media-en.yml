@@ -39,6 +39,9 @@ form:
       description: Specify how this image should be presented
     requires_permissions:
       label: Requires Permissions
+    hide_share:
+      label: Hide Share Options
+      description: If checked, social media sharing options for this media will be hidden.
     media_type:
       label: Media Type
     tags:
@@ -55,6 +58,9 @@ form:
       label: Offerings
       description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
       fieldLabel: Offering
+    embed_url_parameters:
+      label: Embed URL Parameters
+      description: Custom URL parameters for the embed URL for this media
     start_time:
       label: Start Time
       description: Approximate start time of this live video

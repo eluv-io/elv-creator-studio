@@ -117,6 +117,18 @@ const MarketplaceGeneralSettings = observer(() => {
         ]}
       />
 
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.tv_images}
+        subcategory={l10n.categories.global_settings}
+        path="/public/asset_metadata/info/branding/tv"
+        fields={[
+          { field: "logo", ...l10n.general.tv_logo },
+          { field: "image", ...l10n.general.tv_image },
+          { field: "header_image", ...l10n.general.tv_header_image },
+        ]}
+      />
+
       {
         !info?.branding?.show ? null :
           <Inputs.URL

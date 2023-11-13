@@ -465,6 +465,15 @@ export const ItemTemplateMediaItem = observer(({containerType, galleryItem}) => 
           />
       }
       {
+        mediaItem.requires_permissions ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.media.hide_share}
+            subcategory={l10n.categories.media}
+            field="hide_share"
+          />
+      }
+      {
         !["Live Video"].includes(mediaItem.media_type) ? null :
           <>
             <Inputs.DateTime
@@ -491,12 +500,20 @@ export const ItemTemplateMediaItem = observer(({containerType, galleryItem}) => 
               field="media_link"
               previewable
             />
-            <Inputs.List
-              {...inputProps}
-              {...l10n.media.offerings}
-              subcategory={l10n.categories.media}
-              field="offerings"
-            />
+            <>
+              <Inputs.List
+                {...inputProps}
+                {...l10n.media.offerings}
+                subcategory={l10n.categories.media}
+                field="offerings"
+              />
+              <Inputs.JSON
+                {...inputProps}
+                {...l10n.media.embed_url_parameters}
+                subcategory={l10n.categories.media}
+                field="embed_url_parameters"
+              />
+            </>
           </>
       }
       {

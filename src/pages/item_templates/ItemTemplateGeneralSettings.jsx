@@ -214,6 +214,22 @@ const ItemTemplateGeneralSettings = observer(() => {
         subcategory={l10n.categories.item_info}
         field="tags"
       />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.hide_share}
+        subcategory={l10n.categories.item_info}
+        field="hide_share"
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.minting_results_page}
+        subcategory={l10n.categories.item_info}
+        field="minting_results_page"
+        options={[
+          { label: "Item Details", value: "item_details" },
+          { label: "Media", value: "media" }
+        ]}
+      />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.item_details }</Title>
 

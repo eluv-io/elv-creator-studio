@@ -70,6 +70,9 @@ form:
     tags:
       label: Tags
       fieldLabel: Tag
+    hide_share:
+      label: Hide Share Options
+      description: If checked, social media sharing options will be hidden for this item and all of the media it contains
     creator:
       label: Creator
     copyright:
@@ -92,6 +95,9 @@ form:
       label: Type
     attribute_value:
       label: Value
+    minting_results_page:
+      label: Minting Results Page
+      description: Specify which page the user should be directed to after receiving their item.
   settings:
     permissioned:
       label: Permissioned
@@ -125,6 +131,10 @@ form:
       label: Token ID Template
       description: Create vanity token IDs based on this template
   media:
+    images:
+      label: Images
+    background_image_tv:
+      label: Background Image (TV)
     generative:
       label: Generative
       description: A generative item may have a different image and attributes per item, determined by the item's token ID.

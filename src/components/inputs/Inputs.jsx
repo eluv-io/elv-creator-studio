@@ -243,6 +243,10 @@ const Input = observer(({
         );
       }
     }
+
+    if(type === "json" && !value) {
+      store.SetDefaultValue({objectId, path, field, category, subcategory, label, value: "{}", json: true});
+    }
   });
 
   useEffect(() => {
@@ -276,8 +280,9 @@ const Input = observer(({
       break;
     case "json":
       Component = JsonInput;
+      componentProps.minRows = componentProps.minRows || 5;
       componentProps.formatOnBlur = true;
-      value = typeof value !== "string" ? JSON.stringify(value) : value;
+      value = typeof value !== "string" ? JSON.stringify(value, null, 2) : value;
       break;
     case "select":
       Component = Select;
@@ -337,6 +342,18 @@ const Input = observer(({
       label={label || hint ? <InputLabel label={label} hint={hint} /> : ""}
       description={description}
       value={value}
+      onBlur={() => {
+        if(type === "json") {
+          value = (value && value.trim?.()) || "{}";
+
+          try {
+            setError(undefined);
+            JSON.parse(value);
+          } catch(error) {
+            setError("Invalid JSON: " + error.toString());
+          }
+        }
+      }}
       onChange={event => {
         let value = event?.target ? event.target.value : event;
 
@@ -375,7 +392,8 @@ const Input = observer(({
             value,
             category,
             subcategory,
-            label: actionLabel || label
+            label: actionLabel || label,
+            json: type === "json"
           });
         }
 
@@ -685,7 +703,7 @@ const SingleImageInput = observer(({
               />
               </HoverCard.Target>
               <MantineInput.Wrapper
-                maw={150}
+                maw={180}
                 label={<InputLabel centered label={label} hint={hint} />}
                 description={description}
                 labelProps={{style: { width: "100%", textAlign: "center "}}}
@@ -711,7 +729,7 @@ const SingleImageInput = observer(({
             <IconButton
               label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: actionLabel || label})}
               radius="100%"
-              Icon={IconX}
+              icon={<IconX size={15} />}
               style={{position: "absolute", top: "3px", right: "3px"}}
               onClick={event => {
                 event.stopPropagation();
