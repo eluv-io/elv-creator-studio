@@ -1,4 +1,5 @@
 import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { fileURLToPath, URL } from "url";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import react from "@vitejs/plugin-react-swc";
@@ -9,6 +10,12 @@ export default defineConfig({
     react(),
     splitVendorChunkPlugin(),
     ViteYaml(),
+    nodePolyfills({
+      overrides: {
+        // Since `fs` is not supported in browsers, we can use the `memfs` package to polyfill it.
+        fs: "memfs",
+      },
+    }),
     viteStaticCopy({
       targets: [
         {
@@ -24,14 +31,14 @@ export default defineConfig({
   },
   resolve: {
     // Synchronize with jsonconfig.json
-    alias: [
-      { find: "@/assets", replacement: fileURLToPath(new URL("./src/assets", import.meta.url)) },
-      { find: "@/components", replacement: fileURLToPath(new URL("./src/components", import.meta.url)) },
-      { find: "@/helpers", replacement: fileURLToPath(new URL("./src/helpers", import.meta.url)) },
-      { find: "@/pages", replacement: fileURLToPath(new URL("./src/pages", import.meta.url)) },
-      { find: "@/specs", replacement: fileURLToPath(new URL("./src/specs", import.meta.url)) },
-      { find: "@/stores", replacement: fileURLToPath(new URL("./src/stores", import.meta.url)) },
-    ]
+    alias: {
+      "@/assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
+      "@/components": fileURLToPath(new URL("./src/components", import.meta.url)),
+      "@/helpers": fileURLToPath(new URL("./src/helpers", import.meta.url)),
+      "@/pages": fileURLToPath(new URL("./src/pages", import.meta.url)),
+      "@/specs": fileURLToPath(new URL("./src/specs", import.meta.url)),
+      "@/stores": fileURLToPath(new URL("./src/stores", import.meta.url)),
+    }
   },
   build: {
     manifest: true

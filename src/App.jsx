@@ -18,7 +18,6 @@ const LoaderModal = observer(() => {
       withCloseButton={false}
       onClose={() => {}}
       size="lg"
-      overlayProps={{zIndex: 201}}
     >
       <Flex direction="column" align="center" justify="center" gap={30} p="xl">
         <Loader />
