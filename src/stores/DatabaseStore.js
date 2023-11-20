@@ -487,7 +487,7 @@ class DatabaseStore {
     if(marketplaceInfo.marketplace_slug && !marketplaceInfo.marketplace_id) {
       await this.rootStore.marketplaceStore.LoadMarketplaces();
 
-      info.marketplace_id = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace =>
+      info.marketplace_id = this.rootStore.marketplaceStore.allMarketplaces?.find(marketplace =>
         marketplace.marketplaceSlug === marketplaceInfo.marketplace_slug
       )?.objectId;
 

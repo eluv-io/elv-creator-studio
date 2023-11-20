@@ -544,12 +544,20 @@ export const ItemTemplateMediaItem = observer(({containerType, galleryItem}) => 
 
       {
         !["Link", "Embedded Webpage"].includes(mediaItem.media_type) ? null :
-          <Inputs.URL
-            {...inputProps}
-            {...l10n.media.link}
-            subcategory={l10n.categories.media}
-            field="link"
-          />
+          <>
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.media.link}
+              subcategory={l10n.categories.media}
+              field="link"
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.media.authorized_link}
+              subcategory={l10n.categories.media}
+              field="authorized_link"
+            />
+          </>
       }
       {
         !["Media Reference"].includes(mediaItem.media_type) ? null :

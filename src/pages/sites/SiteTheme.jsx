@@ -46,7 +46,7 @@ const SiteTheme = observer(() => {
 
       <Inputs.Select
         {...inputProps}
-        {...l10n.theme.theme}
+        {...l10n.theme.font}
         field="font"
         defaultValue="Helvetica Neue"
         options={[

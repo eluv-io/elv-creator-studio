@@ -6,6 +6,7 @@ import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 
 import {IconReportMoney, IconSettings} from "@tabler/icons-react";
+import {MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
 
 const ebanxSupportedCountries = [
   {"label":"Argentina","value":"AR"},
@@ -105,30 +106,6 @@ const MarketplaceGeneralSettings = observer(() => {
         defaultValue={false}
       />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.card_images}
-        subcategory={l10n.categories.global_settings}
-        path="/public/asset_metadata/info/branding"
-        altTextField="card_banner_alt"
-        fields={[
-          { field: "card_banner_front", ...l10n.general.card_front },
-          { field: "card_banner_back", ...l10n.general.card_back },
-        ]}
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.tv_images}
-        subcategory={l10n.categories.global_settings}
-        path="/public/asset_metadata/info/branding/tv"
-        fields={[
-          { field: "logo", ...l10n.general.tv_logo },
-          { field: "image", ...l10n.general.tv_image },
-          { field: "header_image", ...l10n.general.tv_header_image },
-        ]}
-      />
-
       {
         !info?.branding?.show ? null :
           <Inputs.URL
@@ -154,6 +131,30 @@ const MarketplaceGeneralSettings = observer(() => {
           "TV",
           "Music",
           "Software"
+        ]}
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.card_images}
+        subcategory={l10n.categories.global_settings}
+        path="/public/asset_metadata/info/branding"
+        altTextField="card_banner_alt"
+        fields={[
+          { field: "card_banner_front", ...l10n.general.card_front },
+          { field: "card_banner_back", ...l10n.general.card_back },
+        ]}
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.tv_images}
+        subcategory={l10n.categories.global_settings}
+        path="/public/asset_metadata/info/branding/tv"
+        fields={[
+          { field: "logo", ...l10n.general.tv_logo },
+          { field: "image", ...l10n.general.tv_image },
+          { field: "header_image", ...l10n.general.tv_header_image },
         ]}
       />
 
@@ -264,6 +265,26 @@ const MarketplaceGeneralSettings = observer(() => {
             { l10n.categories.advanced_settings }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.additional_marketplaces}
+              subcategory={l10n.categories.advanced_settings}
+              path="/public/asset_metadata/info/branding"
+              field="additional_marketplaces"
+              maw="100%"
+              renderItem={props => (
+                <MarketplaceSelect
+                  {...props}
+                  {...l10n.general.additional_marketplace}
+                  field="marketplace_slug"
+                  tenantSlugField="tenant_slug"
+                  marketplaceIdField="marketplace_id"
+                  excludedSlugs={[marketplace.metadata.public.asset_metadata.slug]}
+                  defaultFirst
+                />
+              )}
+            />
+
             <Inputs.InputWrapper
               {...l10n.general.page_tabs}
               mt="md"
@@ -275,6 +296,7 @@ const MarketplaceGeneralSettings = observer(() => {
                 path="/public/asset_metadata/info/branding/tabs"
                 field="store"
                 placeholder="Store"
+                componentProps={{mt: "md"}}
               />
 
               {
@@ -284,8 +306,8 @@ const MarketplaceGeneralSettings = observer(() => {
                     {...l10n.general.page_tab_stores}
                     subcategory={l10n.categories.page_tabs}
                     path="/public/asset_metadata/info/branding/tabs"
-                    field="@/stores"
-                    placeholder="@/stores"
+                    field="stores"
+                    placeholder="Stores"
                   />
               }
 

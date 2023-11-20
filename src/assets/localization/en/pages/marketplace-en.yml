@@ -78,6 +78,7 @@ form:
   overview:
     item: 1 Item
     items: "{count} Items"
+    preview: Preview Marketplace
   general:
     tenant_id:
       label: Tenant ID
@@ -119,6 +120,12 @@ form:
       label: Notification Header
     notification_text:
       label: Notification Text
+    additional_marketplaces:
+      label: Associated Marketplaces
+      description: If you have other marketplaces associated with this marketplace, specify them here to allow users to navigate between them.
+      fieldLabel: Associated Marketplace
+    additional_marketplace:
+      label: Associated Marketplace
     page_tabs:
       label: Page Names
       description: Override the default names of the pages in your marketplace
@@ -313,7 +320,7 @@ form:
       label: Release Date
       description: If specified, the item will not be available for purchase until this date
     expires_at:
-      label: Available Util
+      label: Available Until
       description: If specified, the item will not be available for purchase after this date
     show_if_unreleased:
       label: Viewable on Storefront Before Release

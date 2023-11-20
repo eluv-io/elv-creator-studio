@@ -526,7 +526,7 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
       label={label}
       description={description}
       hint={hint}
-      maw={uiStore.inputWidth}
+      maw={showEditor ? uiStore.inputWidthWide : uiStore.inputWidth}
       w="100%"
       wrapperProps={{
         styles: {
@@ -548,7 +548,7 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
               category={category}
               subcategory={subcategory}
               label={label}
-              componentProps={{mih: 200}}
+              componentProps={{mih: 250}}
             />
           </Container> :
           value ?
@@ -703,7 +703,7 @@ const SingleImageInput = observer(({
               />
               </HoverCard.Target>
               <MantineInput.Wrapper
-                maw={180}
+                maw={150}
                 label={<InputLabel centered label={label} hint={hint} />}
                 description={description}
                 labelProps={{style: { width: "100%", textAlign: "center "}}}

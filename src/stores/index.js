@@ -23,8 +23,6 @@ configure({
 });
 
 class RootStore {
-  config;
-
   loaded = false;
 
   libraryIds = {};
@@ -32,6 +30,7 @@ class RootStore {
   client;
   address;
   network;
+  liveConfig;
   signedToken;
   publicToken;
   l10n = LocalizationEN;
@@ -86,7 +85,8 @@ class RootStore {
     if(window.top !== window.self) {
       this.client = new FrameClient({timeout: 60});
     } else {
-      this.client = yield ElvClient.FromNetworkName({networkName: "demo"});
+      // eslint-disable-next-line no-undef
+      this.client = yield ElvClient.FromConfigurationUrl({configUrl: EluvioConfiguration["config-url"]});
       const privateKey = StorageHandler.get({type: "local", key: "pk"});
       const wallet = this.client.GenerateWallet();
       const signer = wallet.AddAccount({privateKey});

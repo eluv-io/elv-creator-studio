@@ -14,12 +14,14 @@ form:
     leaderboard_excludes: Leaderboard Excluded Addresses
   overview:
     slug: Slug
-    status: Status
+    status: Deployment Status
     link: Link
     production: Production
     staging: Staging
-    deployed: Latest Deployed
+    deployed: Latest Version Deployed
     not_deployed: Previous Version Deployed
+    link_deployed: Latest Version Linked
+    link_not_deployed: Previous Version Linked
     not_linked: Not Linked
     deploy: Deploy
     add_link: Add Link

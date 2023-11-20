@@ -531,7 +531,7 @@ const MarketplaceStorefront = observer(() => {
                           {...l10n.storefront_footer_links.content_html}
                           subcategory={l10n.categories.storefront_footer_link_info}
                           field="content_html"
-                          extensions="html"
+                          extensions={["html"]}
                         />
                     }
                   </Accordion.Panel>

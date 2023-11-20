@@ -239,6 +239,8 @@ form:
       hint: Small 16x16 pixel icon displayed in the browser tab next to the page title
     theme:
       label: Theme
+    font:
+      label: Font
     use_custom_css:
       label: Use Custom CSS
     custom_css:

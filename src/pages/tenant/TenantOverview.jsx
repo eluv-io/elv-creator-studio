@@ -17,12 +17,28 @@ import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
 import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 
-import {IconUnlink, IconLinkOff, IconEqual, IconEqualNot, IconInputSearch} from "@tabler/icons-react";
+import {
+  IconUnlink,
+  IconLinkOff,
+  IconLink,
+  IconInputSearch,
+  IconWorldUpload,
+  IconWorldOff
+} from "@tabler/icons-react";
 
-const DeployedIcon = ({deployed}) =>
+const DeployedIcon = ({deployed, isLink}) =>
   <TooltipIcon
-    label={rootStore.l10n.pages.tenant.form.overview[deployed ? "deployed" : "not_deployed"]}
-    Icon={deployed ? IconEqual : IconEqualNot}
+    label={rootStore.l10n.pages.tenant.form.overview[
+      isLink ?
+        (deployed ? "link_deployed" : "link_not_deployed") :
+        (deployed ? "deployed" : "not_deployed")
+      ]
+    }
+    Icon={
+      isLink ?
+        (deployed ? IconLink : IconLinkOff) :
+        (deployed ? IconWorldUpload : IconWorldOff)
+    }
     size={20}
     color={deployed ? "green" : "red"}
   />;
@@ -75,7 +91,7 @@ const UnlinkButton = ({type, record}) => {
       variant="transparent"
       loading={loading}
       color="red.5"
-      Icon={IconUnlink}
+      Icon={IconLinkOff}
       onClick={() =>
         ConfirmDelete({
           title: l10n.remove_link,
@@ -181,7 +197,7 @@ const Sites = observer(() => {
                 <Container p={0} m={0}>
                   <Group align="center" h={25} position="apart">
                     <Text fw={500}>{l10n.overview.link}:</Text>
-                    <DeployedIcon deployed={record.latestDeployed} />
+                    <DeployedIcon deployed={record.latestDeployed} isLink />
                   </Group>
                   <Group align="center" h={25} position="apart">
                     <Text fw={500}>{l10n.overview.production}:</Text>
@@ -265,7 +281,7 @@ const Marketplaces = observer(() => {
                 <Container p={0} m={0}>
                   <Group align="center" h={25} position="apart">
                     <Text fw={500}>{l10n.overview.link}:</Text>
-                    <DeployedIcon deployed={record.latestDeployed} />
+                    <DeployedIcon deployed={record.latestDeployed} isLink />
                   </Group>
                   <Group align="center" h={25} position="apart">
                     <Text fw={500}>{l10n.overview.production}:</Text>
