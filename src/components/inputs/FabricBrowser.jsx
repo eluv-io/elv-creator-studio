@@ -107,10 +107,7 @@ const DirectSelectionButton = observer(({label, Submit}) => {
           title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
           centered: true,
           children:
-            <DirectSelectionForm Submit={Submit} />,
-          overlayProps: {
-            zIndex: 202
-          }
+            <DirectSelectionForm Submit={Submit} />
         })
       }
     />

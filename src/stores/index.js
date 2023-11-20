@@ -1,5 +1,5 @@
 import {flow, makeAutoObservable, configure} from "mobx";
-import {Utils} from "@eluvio/elv-client-js";
+import {ElvWalletClient, Utils} from "@eluvio/elv-client-js";
 import {ElvClient} from "@eluvio/elv-client-js";
 import {FrameClient} from "@eluvio/elv-client-js/src/FrameClient";
 import LiveConfig from "@eluvio/elv-client-js/src/walletClient/Configuration";
@@ -91,6 +91,14 @@ class RootStore {
       const wallet = this.client.GenerateWallet();
       const signer = wallet.AddAccount({privateKey});
       this.client.SetSigner({signer});
+
+      this.client.walletClient = yield ElvWalletClient.Initialize({
+        client: this.client,
+        appId: "default",
+        network: (yield this.client.NetworkInfo()).name,
+        skipMarketplaceLoad: true,
+        storeAuthToken: false
+      });
     }
 
     this.address = yield this.client.CurrentAccountAddress();

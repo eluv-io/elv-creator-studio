@@ -105,7 +105,6 @@ const UploadForm = observer(({objectId, path, Close}) => {
       opened
       centered
       size={800}
-      overlayProps={{zIndex: 201}}
       onClose={uploading ? () => {} : Close}
       withCloseButton={!uploading}
       title={LocalizeString(rootStore.l10n.components.file_browser.upload_files, {path})}
@@ -339,9 +338,6 @@ const DeleteFileButton = ({filename, Delete}) => {
         ConfirmDelete({
           title: LocalizeString(rootStore.l10n.components.file_browser.delete, {filename}),
           itemName: filename,
-          overlayProps: {
-            zIndex: 202
-          },
           onConfirm: () => {
             setDeleting(true);
             Delete()
@@ -489,10 +485,7 @@ const FileBrowserTable = observer(({
                                 // If record was selected, remove from selection
                                 setSelectedRecords(selectedRecords.filter(selectedRecord => selectedRecord.fullPath !== fullPath));
                               }}
-                            />,
-                          overlayProps: {
-                            zIndex: 202
-                          }
+                            />
                         })
                       }
                     />
@@ -621,10 +614,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
                   title: rootStore.l10n.components.file_browser.create_directory,
                   centered: true,
                   children:
-                    <CreateDirectoryForm Create={async ({filename}) => await fileBrowserStore.CreateDirectory({objectId, path, filename})} />,
-                  overlayProps: {
-                    zIndex: 202
-                  }
+                    <CreateDirectoryForm Create={async ({filename}) => await fileBrowserStore.CreateDirectory({objectId, path, filename})} />
                 })
               }
             >

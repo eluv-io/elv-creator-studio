@@ -121,24 +121,24 @@ const TenantGeneralSettings = observer(() => {
 
             <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.use_custom_openid}
-              path="/public/asset_metadata/info/openid"
-              field="use_custom_openid"
+              {...l10n.general.use_custom_open_id}
+              path="/public/asset_metadata/info/open_id"
+              field="use_custom_open_id"
             />
 
             {
-              !info?.openid?.use_custom_openid ? null :
-                <Inputs.InputWrapper {...l10n.general.openid}>
+              !info?.open_id?.use_custom_open_id ? null :
+                <Inputs.InputWrapper {...l10n.general.open_id}>
                   <Inputs.Text
                     {...inputProps}
                     {...l10n.general.issuer_id}
-                    path="/public/asset_metadata/info/openid"
+                    path="/public/asset_metadata/info/open_id"
                     field="issuer_id"
                   />
                   <Inputs.URL
                     {...inputProps}
                     {...l10n.general.issuer_url}
-                    path="/public/asset_metadata/info/openid"
+                    path="/public/asset_metadata/info/open_id"
                     field="issuer_url"
                   />
                 </Inputs.InputWrapper>

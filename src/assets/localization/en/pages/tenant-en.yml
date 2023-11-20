@@ -66,7 +66,7 @@ form:
       fieldLabel: Address
     openid:
       label: Open ID Settings
-    use_custom_openid:
+    use_custom_open_id:
       label: Use Custom OpenID Provider
       description: Specify a custom OpenID provider for use with the Eluvio Custodial Wallet
     issuer_id:

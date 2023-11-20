@@ -250,15 +250,9 @@ class TenantStore {
   });
 
   DeployTenant = flow(function * () {
-    const body = { content_hash: this.latestTenant.versionHash, ts: Date.now() };
-    const token = yield this.client.Sign(JSON.stringify(body));
-    yield this.client.authClient.MakeAuthServiceRequest({
-      path: UrlJoin("as", "tnt", "config", this.rootStore.tenantId, "metadata"),
-      method: "POST",
-      body,
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    yield this.client.walletClient.DeployTenant({
+      tenantId: this.rootStore.tenantId,
+      tenantSlug: this.tenantSlug
     });
 
     yield new Promise(resolve => setTimeout(resolve, 5000));
