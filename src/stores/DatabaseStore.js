@@ -498,7 +498,7 @@ class DatabaseStore {
           metadataSubtree: UrlJoin("public/asset_metadata/tenants", marketplaceInfo.tenant_slug, "marketplaces", marketplaceInfo.marketplace_slug)
         });
 
-        info.marketplace_id = !marketplaceLink ? undefined : this.utils.DecodeVersionHash(ExtractHashFromLink(marketplaceLink)).objectId;
+        info.marketplace_id = !marketplaceLink ? "" : this.utils.DecodeVersionHash(ExtractHashFromLink(marketplaceLink)).objectId;
       }
     }
 

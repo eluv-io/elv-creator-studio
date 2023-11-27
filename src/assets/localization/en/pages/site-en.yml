@@ -76,6 +76,9 @@ form:
     default_store_page:
       label: Default Marketplace Page
       description: Which page shows by default when the marketplace is opened
+    link_text:
+      label: Header Link Text
+      description: Customize the text shown in the link to open the marketplace in the site header
     marketplace_only:
       label: Marketplace Only
       description: If enabled, only the marketplace will be shown. The rest of the site will be inaccessible.

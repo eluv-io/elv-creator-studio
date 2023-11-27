@@ -109,6 +109,14 @@ const SiteGeneralSettings = observer(() => {
         defaultValue="Storefront"
         options={["Storefront", "Listings"]}
       />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.link_text}
+        subcategory={l10n.categories.marketplace}
+        path="/public/asset_metadata/info/marketplace_info"
+        field="link_text"
+        placeholder="Store"
+      />
 
       {
         info?.marketplace_info?.disable_marketplace ? null :
