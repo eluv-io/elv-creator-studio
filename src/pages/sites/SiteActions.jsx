@@ -103,19 +103,34 @@ const SiteActions = observer(() => {
               {...inputProps}
               {...l10n.actions.main_button_marketplace_item}
               clearable
-              marketplaceSlug={info?.event_info?.event_button_marketplace}
+              marketplaceSlug={info?.event_info?.event_button_marketplace || info?.marketplace_info?.marketplace_slug}
               subcategory={l10n.categories.main_button_behavior}
               field="event_button_marketplace_sku"
             />
             {
               !info?.event_info?.event_button_marketplace_sku ? null :
-                <Inputs.Checkbox
-                  {...inputProps}
-                  {...l10n.actions.main_button_marketplace_redirect_to_owned_item}
-                  subcategory={l10n.categories.main_button_behavior}
-                  field="event_button_marketplace_redirect_to_owned_item"
-                  defaultValue={false}
-                />
+                <>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.actions.main_button_marketplace_redirect_to_owned_item}
+                    subcategory={l10n.categories.main_button_behavior}
+                    field="event_button_marketplace_redirect_to_owned_item"
+                    defaultValue={false}
+                  />
+                  {
+                    !info?.event_info?.event_button_marketplace_redirect_to_owned_item ? null :
+                      <Inputs.Select
+                        {...inputProps}
+                        {...l10n.actions.main_button_marketplace_redirect_page}
+                        subcategory={l10n.categories.main_button_behavior}
+                        field="event_button_marketplace_redirect_page"
+                        options={[
+                          { label: "Item Details", value: "item_details" },
+                          { label: "Media", value: "media" }
+                        ]}
+                      />
+                  }
+                </>
             }
           </>
       }
@@ -233,6 +248,76 @@ const SiteActions = observer(() => {
                     path="/public/asset_metadata/info/event_info/modal_message_get_started/post_login"
                     field="button_image"
                   />
+                </>
+            }
+          </>
+      }
+
+      <Title order={3} mt={50}>{ l10n.categories.post_login }</Title>
+      <Title order={6} mb="md" color="dimmed">{ l10n.categories.post_login_description }</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.post_login.action}
+        path="/public/asset_metadata/info/event_info/post_login"
+        subcategory={l10n.categories.post_login}
+        field="action"
+        defaultValue=""
+        options={[
+          { label: "None", value: "" },
+          { label: "Open Marketplace", value: "marketplace" }
+        ]}
+      />
+
+      {
+        info.event_info.post_login?.action !== "marketplace" ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.post_login.marketplace}
+              path="/public/asset_metadata/info/event_info/post_login"
+              subcategory={l10n.categories.post_login}
+              field="marketplace"
+              defaultValue={info?.marketplace_info?.marketplace_slug}
+              defaultOnBlankString
+              options={marketplaceOptions}
+            />
+            <MarketplaceItemSelect
+              {...inputProps}
+              {...l10n.post_login.sku}
+              clearable
+              marketplaceSlug={info?.event_info?.event_button_marketplace || info?.marketplace_info?.marketplace_slug}
+              subcategory={l10n.categories.post_login}
+              path="/public/asset_metadata/info/event_info/post_login"
+              field="sku"
+            />
+
+            {
+              !info.event_info.post_login?.sku ? null :
+                <>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.post_login.redirect_to_owned_item}
+                    path="/public/asset_metadata/info/event_info/post_login"
+                    subcategory={l10n.categories.post_login}
+                    field="redirect_to_owned_item"
+                    defaultValue={false}
+                  />
+                  {
+                    !info.event_info.post_login?.redirect_to_owned_item ? null :
+                      <Inputs.Select
+                        {...inputProps}
+                        {...l10n.post_login.redirect_page}
+                        path="/public/asset_metadata/info/event_info/post_login"
+                        subcategory={l10n.categories.post_login}
+                        field="redirect_page"
+                        defaultValue="item_details"
+                        options={[
+                          { label: "Item Details", value: "item_details" },
+                          { label: "Media", value: "media" }
+                        ]}
+                      />
+                  }
                 </>
             }
           </>

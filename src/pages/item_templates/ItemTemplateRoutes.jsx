@@ -14,9 +14,10 @@ import ItemTemplateRedeemableOffers, {
 } from "@/pages/item_templates/ItemTemplateRedeemableOffers.jsx";
 import ItemTemplateAdditionalMedia, {
   ItemTemplateAdditionalMediaCollection,
-  ItemTemplateAdditionalMediaSection
+  ItemTemplateAdditionalMediaSection,
 } from "@/pages/item_templates/ItemTemplateAdditionalMedia.jsx";
 import ItemTemplateMediaItem from "@/pages/item_templates/ItemTemplateMediaItem.jsx";
+import ItemTemplateReferenceImages, {ItemTemplateReferenceImage} from "@/pages/item_templates/ItemTemplateReferenceImages.jsx";
 
 const ItemTemplateRoutes = observer(({rootPath}) => {
   const routes = [
@@ -33,6 +34,8 @@ const ItemTemplateRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId", Component: <ItemTemplateAdditionalMediaCollection /> },
     { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId/:mediaId", Component: <ItemTemplateMediaItem containerType="collection" /> },
     { label: rootStore.l10n.pages.item_template.nav.additional_media, path: "/item-templates/:itemTemplateId/additional_media/:sectionId/:collectionId/:mediaId/gallery/:galleryItemId", Component: <ItemTemplateMediaItem containerType="collection" galleryItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.item_template.nav.reference_images, path: "/item-templates/:itemTemplateId/reference_images", Component: <ItemTemplateReferenceImages /> },
+    { label: rootStore.l10n.pages.item_template.nav.reference_images, path: "/item-templates/:itemTemplateId/reference_images/:imageUUID", Component: <ItemTemplateReferenceImage /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.pack_settings, path: "/item-templates/:itemTemplateId/pack_settings", Component: <ItemTemplatePackSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers", Component: <ItemTemplateRedeemableOffers /> },
     { label: rootStore.l10n.pages.item_template.nav.redeemable_offers, path: "/item-templates/:itemTemplateId/redeemable_offers/:redeemableOfferId", Component: <ItemTemplateRedeemableOffer /> },

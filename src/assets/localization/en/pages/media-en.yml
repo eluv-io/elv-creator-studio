@@ -18,6 +18,11 @@ form:
     id:
       label: ID
   media:
+    title:
+      label: Title
+    annotated_title:
+      label: Annotated Title
+      description: This title overrides the default title and allows for including reference images by specifying the reference image ID in brackets, e.g. {my_reference_image_id}. Images referenced in this field will be rendered as small icons with a maxiumum height and width of 30px.
     container:
       label: Container Type
     media_id:

@@ -92,7 +92,45 @@ export const ListItemCategory = ({store, objectId, listPath, idField="id", id, l
 
     if(!list || itemIndex < 0) { return ""; }
 
-    const label = (labelField === "index" ? itemIndex.toString() : list[itemIndex]?.[labelField]) || id;
+    const labelFields = Array.isArray(labelField) ? labelField : [labelField];
+    let label = labelFields.map(field =>
+      list[itemIndex]?.[field]
+    )
+      .filter(f => f)[0] || id;
+
     return LocalizeString(l10n, {label});
   };
+};
+
+export const AnnotatedText = ({text, referenceImages=[], withInput, ...componentProps}) => {
+  if(!text) { return null; }
+
+  let referenceMap = {};
+  referenceImages.forEach(({uuid, image_id, image, alt_text}) => {
+    if(!image?.url) { return; }
+    referenceMap[image_id] = <Image width={30} height={30} src={image.url} alt={alt_text} />;
+    referenceMap[uuid] = referenceMap[image_id];
+  });
+
+  if(withInput) {
+    componentProps = {
+      mt: -8,
+      mb: "md",
+      fz: "sm",
+      bg: "gray.2",
+      w: "max-content",
+      p: "xs",
+      ...componentProps
+    };
+  }
+
+  return (
+    <Group
+      align="center"
+      spacing={5}
+      {...componentProps}
+    >
+      { LocalizeString(text, referenceMap, {reactNode: true}) }
+    </Group>
+  );
 };

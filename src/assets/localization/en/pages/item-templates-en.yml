@@ -5,6 +5,7 @@ nav:
   settings: Settings
   primary_media: Primary Media
   additional_media: Additional Media
+  reference_images: Reference Images
   pack_settings: Pack Settings
   redeemable_offers: Redeemable Offers
 form:
@@ -28,6 +29,9 @@ form:
     additional_media_collection_label: Media Collection '{label}'
     featured_media: Featured Media
     media_item: Media Item
+    reference_images: Reference Images
+    reference_image: Reference Image
+    reference_image_label: Reference Image '{label}'
     pack_settings: Pack Settings
     pack_open_status_page: Pack Open Status Page
     pack_items: Pack Items
@@ -328,6 +332,25 @@ form:
       label: Media
     media_id:
       label: Media ID
+  reference_images:
+    reference_images:
+      label: Reference Images
+      description: Reference images can be inserted inline in 'annotated' fields by specifying the image ID within brackets, e.g. {my_image_id}
+      fieldLabel: Reference Image
+      columns:
+        id: Image ID
+        alt_text: Alt Text
+    uuid:
+      label: UUID
+    image_id:
+      label: Image ID
+      description: This ID will be used to reference the image in annotated fields, e.g. {my_image_id}
+    alt_text:
+      label: Alt Text
+      description: Text describing the image
+    image:
+      label: Image
+
 
 
 

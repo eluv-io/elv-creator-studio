@@ -1,4 +1,4 @@
-import {flow} from "mobx";
+import {flow, toJS} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
@@ -106,7 +106,7 @@ const SetMetadata = function({
     Write: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
-      metadata: parsedValue || value
+      metadata: toJS(parsedValue || value)
     })
   });
 };
@@ -161,7 +161,7 @@ const SetBatchMetadata = function({
           await this.client.ReplaceMetadata({
             ...objectParams,
             metadataSubtree: UrlJoin(path, field),
-            metadata: value
+            metadata: toJS(value)
           });
         })
       );
@@ -260,7 +260,7 @@ const SetLink = flow(function * ({
     Write: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
-      metadata: writeValue
+      metadata: toJS(writeValue)
     })
   });
 });
@@ -302,7 +302,7 @@ const ListAction = function({
       if(typeof index === "undefined") {
         // Append
         index = originalList.length;
-        newList =[...originalList, value];
+        newList = [...originalList, value];
       } else {
         // Insert at position
         newList = [...originalList.slice(0, index), value, ...originalList.slice(index)];
@@ -360,7 +360,7 @@ const ListAction = function({
     Write: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
-      metadata: newList
+      metadata: JSON.parse(JSON.stringify(newList))
     })
   });
 };

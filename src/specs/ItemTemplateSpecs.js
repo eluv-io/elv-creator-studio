@@ -42,3 +42,10 @@ export const ItemTemplateMediaCollectionSpec = {
   show_autoplay: false,
   media: []
 };
+
+export const ItemTemplateReferenceImageSpec = {
+  id: undefined,
+  image_id: "<image_id>",
+  alt_text: "",
+  image: undefined
+};

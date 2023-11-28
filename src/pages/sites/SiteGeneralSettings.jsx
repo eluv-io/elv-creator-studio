@@ -1,11 +1,64 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, siteStore, marketplaceStore, tenantStore} from "@/stores";
+import {rootStore, siteStore, marketplaceStore, tenantStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Title} from "@mantine/core";
+import {Title, Paper} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import {SiteAdditionalMarketplaceSpec} from "@/specs/SiteSpecs.js";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
+import UrlJoin from "url-join";
+import {LocalizeString} from "@/components/common/Misc.jsx";
+
+const HeaderLinkConfiguration = observer(({type}) => {
+  const { siteId } = useParams();
+
+  const site = siteStore.sites[siteId];
+
+  const info = site?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.site.form;
+  const inputProps = {
+    store: siteStore,
+    objectId: siteId,
+    category: l10n.categories.general
+  };
+
+  const path = UrlJoin("/public/asset_metadata/info/header_links", type);
+
+  return (
+    <Paper withBorder p="xl" mt="xl" w={uiStore.inputWidth}>
+      <Title order={5} mb="md">{ l10n.general.header_link_types[type] }</Title>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.header_link_text}
+        subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+        path={path}
+        field="link_text"
+      />
+      <Inputs.Checkbox
+        INVERTED
+        {...inputProps}
+        {...l10n.general.header_show_icon}
+        subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+        path={path}
+        field="hide_icon"
+        defaultValue={false}
+      />
+      {
+        info.header_links[type]?.hide_icon ? null :
+          <Inputs.SingleImageInput
+            {...inputProps}
+            {...l10n.general.header_icon}
+            subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+            path={path}
+            field="icon"
+            noResizePreview
+          />
+      }
+    </Paper>
+  );
+});
 
 const SiteGeneralSettings = observer(() => {
   const { siteId } = useParams();
@@ -182,6 +235,13 @@ const SiteGeneralSettings = observer(() => {
             />
           </>
       }
+
+      <Title order={3} mt={50}>{ l10n.categories.header_links }</Title>
+
+      <HeaderLinkConfiguration type="sign_in" />
+      <HeaderLinkConfiguration type="store" />
+      <HeaderLinkConfiguration type="wallet" />
+      <HeaderLinkConfiguration type="discover_projects" />
 
       <Title order={3} mt={50}>{ l10n.categories.featured }</Title>
       <Title order={6} mb="md" color="dimmed">{ l10n.general.featured_note }</Title>

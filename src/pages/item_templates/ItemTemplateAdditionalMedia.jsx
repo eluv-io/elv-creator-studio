@@ -8,7 +8,7 @@ import {ScaleImage} from "@/helpers/Fabric";
 import {MediaItemSpec} from "@/specs/MediaSpecs.js";
 import {ItemTemplateMediaCollectionSpec, ItemTemplateMediaSectionSpec} from "@/specs/ItemTemplateSpecs.js";
 import UrlJoin from "url-join";
-import {ListItemCategory} from "@/components/common/Misc.jsx";
+import {AnnotatedText, ListItemCategory} from "@/components/common/Misc.jsx";
 
 const ItemTemplateAdditionalMediaList = observer(({containerType}) => {
   const { itemTemplateId, sectionId, collectionId } = useParams();
@@ -84,7 +84,11 @@ const ItemTemplateAdditionalMediaList = observer(({containerType}) => {
               >
                 <Image src={ScaleImage(mediaItem.image?.url || mediaItem.image, 400)} alt={mediaItem.name} withPlaceholder />
               </AspectRatio>
-              <Text>{mediaItem.name || mediaItem.id}</Text>
+              {
+                mediaItem.annotated_title ?
+                  <AnnotatedText text={mediaItem.annotated_title} referenceImages={info.reference_images}/> :
+                  <Text>{mediaItem.name || mediaItem.id}</Text>
+              }
             </Group>
           )
         },
@@ -302,7 +306,6 @@ const ItemTemplateAdditionalMediaSections = observer(() => {
     />
   );
 });
-
 
 
 const ItemTemplateAdditionalMedia = observer(() => {

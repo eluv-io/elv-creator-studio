@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {useLocation, useParams} from "react-router-dom";
 import {itemTemplateStore, rootStore, uiStore} from "@/stores/index.js";
 import UrlJoin from "url-join";
-import {ListItemCategory} from "@/components/common/Misc.jsx";
+import {AnnotatedText, ListItemCategory} from "@/components/common/Misc.jsx";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs.jsx";
 import {Accordion, AspectRatio, Group, Image, Text, Title} from "@mantine/core";
@@ -376,8 +376,18 @@ export const ItemTemplateMediaItem = observer(({containerType, galleryItem}) => 
       />
       <Inputs.Text
         {...inputProps}
-        {...l10n.common.name}
+        {...l10n.media.title}
         field="name"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.media.annotated_title}
+        field="annotated_title"
+      />
+      <AnnotatedText
+        text={mediaItem.annotated_title}
+        referenceImages={info.reference_images}
+        withInput
       />
       <Inputs.ImageInput
         {...inputProps}

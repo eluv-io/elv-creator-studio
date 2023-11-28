@@ -16,12 +16,16 @@ form:
     info: Site Info
     marketplace: Marketplace
     additional_marketplaces: Additional Marketplaces
+    header_links: Header Links
+    header_link_label: "'{type}' Header Link"
     featured: Featured Site Settings
     hero: Hero Settings
     hero_background: Hero Background
     hero_banner: Hero Banner
     hero_text: Hero Text
     actions: Actions
+    post_login: After Login
+    post_login_description: Specify what should happen after the user logs in
     main_button_behavior: Main Button Behavior
     get_started_modal: Get Started Modal
     post_login_modal: Post Login Modal
@@ -76,9 +80,6 @@ form:
     default_store_page:
       label: Default Marketplace Page
       description: Which page shows by default when the marketplace is opened
-    link_text:
-      label: Header Link Text
-      description: Customize the text shown in the link to open the marketplace in the site header
     marketplace_only:
       label: Marketplace Only
       description: If enabled, only the marketplace will be shown. The rest of the site will be inaccessible.
@@ -101,6 +102,23 @@ form:
       label: Featured URL
     featured_button:
       label: Featured Button Settings
+    header_links:
+      label: Header Links
+      description: Customize the text and icons of the links in the site header
+    header_link_types:
+      sign_in: Sign In
+      store: Store
+      wallet: Wallet
+      discover_projects: Discover Projects
+    header_link_text:
+      label: Link Text
+    header_show_icon:
+      label: Show Icon
+      description: If unchecked, this link will not have an accompanying icon
+    header_icon:
+      label: Custom Icon
+      description: Specify a custom icon to accompany this link. If not specified, a default icon will be used.
+
   hero:
     logo:
       label: Logo
@@ -168,6 +186,9 @@ form:
     main_button_marketplace_redirect_to_owned_item:
       label: Redirect to Owned Item
       description: If the user is logged in and already owns the item, redirect to their item instead of the store page
+    main_button_marketplace_redirect_page:
+      label: Redirect Page
+      description: Specify which page the user should be directed to if they own the item
   event_modals:
     show_post_login:
       label: Show Post Login Modal
@@ -187,6 +208,21 @@ form:
     show_marketplace:
       label: Show Marketplace
       description: If specified, the modal button will open the marketplace instead of just closing the modal
+  post_login:
+    action:
+      label: Action
+    marketplace:
+      label: After Login Marketplace
+      description: The specified marketplace will be shown after login
+    sku:
+      label: After Login Marketplace Item
+      description: Open the marketplace to the specified item
+    redirect_to_owned_item:
+      label: Redirect to Owned Item
+      description: If checked, the user will be redirected from the store page to the item of that type that they own in their wallet
+    redirect_page:
+      label: Redirect Page
+      description: Specify which page the user should be directed to
   banners:
     banners_description: Banner images shown below the hero. These banners may open the marketplace, show a video, or link to an external URL
     banner_cards_description: Banner cards are shown in a row below the main hero. Banner cards are shown at a maximum width of 400px. The banner card section may have its own background image and header text.

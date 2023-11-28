@@ -208,6 +208,7 @@ const Input = observer(({
   searchable,
   disabled,
   hidden,
+  required,
   Validate,
   validateOnLoad=true,
   componentProps={}
@@ -342,6 +343,7 @@ const Input = observer(({
       label={label || hint ? <InputLabel label={label} hint={hint} /> : ""}
       description={description}
       value={value}
+      required={required}
       onBlur={() => {
         if(type === "json") {
           value = (value && value.trim?.()) || "{}";
@@ -669,6 +671,7 @@ const SingleImageInput = observer(({
   path,
   field,
   url=false,
+  noResizePreview,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -681,7 +684,7 @@ const SingleImageInput = observer(({
   if(url) {
     imageUrl = imageMetadata;
   } else if(imageMetadata) {
-    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: 200});
+    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
   }
 
   return (

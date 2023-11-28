@@ -12,6 +12,10 @@ export const ExtractHashFromLink = link => {
 export const ScaleImage = (url, width) => {
   if(!url) { return ""; }
 
+  if(url.includes(".svg")) {
+    return url;
+  }
+
   url = new URL(url);
   url.searchParams.set("width", width);
 
@@ -62,7 +66,7 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWrite
     url.searchParams.set("resolve", "true");
   }
 
-  if(width) {
+  if(width && !path.endsWith(".svg")) {
     url.searchParams.set("width", width);
   }
 
