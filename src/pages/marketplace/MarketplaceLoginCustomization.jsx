@@ -37,8 +37,15 @@ const MarketplaceLoginCustomization = observer(() => {
         subcategory={l10n.categories.login_theme}
         altTextField="logo_alt"
         fields={[
-          { field: "logo", label: "Logo" },
+          { field: "logo" },
         ]}
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.login.increase_logo_size}
+        subcategory={l10n.categories.login_theme}
+        field="large_logo_mode"
       />
 
       <Inputs.ImageInput
@@ -51,11 +58,14 @@ const MarketplaceLoginCustomization = observer(() => {
         ]}
       />
 
-      <Inputs.Checkbox
+      <Inputs.ImageInput
         {...inputProps}
-        {...l10n.login.increase_logo_size}
+        {...l10n.login.powered_by_logo}
         subcategory={l10n.categories.login_theme}
-        field="large_logo_mode"
+        altTextField="powered_by_logo_alt"
+        fields={[
+          { field: "powered_by_logo" },
+        ]}
       />
 
       <Inputs.InputWrapper {...l10n.login.log_in_button}>

@@ -110,6 +110,9 @@ form:
       store: Store
       wallet: Wallet
       discover_projects: Discover Projects
+    header_link_show:
+      label: Show Link
+      description: If unchecked, this link will be hidden
     header_link_text:
       label: Link Text
     header_show_icon:
@@ -269,6 +272,12 @@ form:
       description: Open the marketplace to the specified item
     link:
       label: External URL
+    redirect_to_owned_item:
+      label: Redirect to Owned Item
+      description: If checked, the user will be redirected from the store page to the item of that type that they own in their wallet
+    redirect_page:
+      label: Redirect Page
+      description: Specify which page the user should be directed to
 
 
 

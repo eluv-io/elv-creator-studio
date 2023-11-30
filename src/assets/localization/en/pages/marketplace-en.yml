@@ -200,6 +200,7 @@ form:
       custom_consent_options: Custom Consent Options
     logo:
       label: Logo
+      description: Logo image displayed at the top of the login box
     background:
       label: Login Background
     background_desktop:
@@ -209,6 +210,9 @@ form:
     increase_logo_size:
       label: Increase Logo Size
       description: Make your logo image larger in proportion to the login box
+    powered_by_logo:
+      label: "'Powered By' Logo"
+      description: Customize the 'Powered By' logo at the bottom of the login box
     log_in_button:
       label: Log In Button
     sign_up_button:

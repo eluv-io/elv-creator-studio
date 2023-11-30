@@ -89,30 +89,6 @@ export const SiteBanner = observer(() => {
         ]}
       />
       {
-        banner.type !== "marketplace" ? null :
-          <>
-            <MarketplaceSelect
-              {...inputProps}
-              {...l10n.banner.marketplace}
-              field="marketplace"
-              tenantSlugField="marketplace_tenant_slug"
-              marketplaceIdField="marketplace_id"
-              defaultFirst
-            />
-            {
-              !banner.marketplace ? null :
-                <MarketplaceItemSelect
-                  {...inputProps}
-                  {...l10n.banner.marketplace_item}
-                  marketplaceSlug={banner.marketplace}
-                  field="sku"
-                  searchable
-                  clearable
-                />
-            }
-          </>
-      }
-      {
         banner.type !== "video" ? null :
           <Inputs.FabricBrowser
             {...inputProps}
@@ -138,6 +114,56 @@ export const SiteBanner = observer(() => {
           { field: "image_mobile", ...l10n.banner.image_mobile },
         ]}
       />
+      {
+        banner.type !== "marketplace" ? null :
+          <>
+            <MarketplaceSelect
+              {...inputProps}
+              {...l10n.banner.marketplace}
+              field="marketplace"
+              tenantSlugField="marketplace_tenant_slug"
+              marketplaceIdField="marketplace_id"
+              defaultFirst
+            />
+            {
+              !banner.marketplace ? null :
+                <>
+                  <MarketplaceItemSelect
+                    {...inputProps}
+                    {...l10n.banner.marketplace_item}
+                    marketplaceSlug={banner.marketplace}
+                    field="sku"
+                    searchable
+                    clearable
+                  />
+                  {
+                    !banner.sku ? null :
+                      <>
+                        <Inputs.Checkbox
+                          {...inputProps}
+                          {...l10n.banner.redirect_to_owned_item}
+                          field="redirect_to_owned_item"
+                          defaultValue={false}
+                        />
+                        {
+                          !banner.redirect_to_owned_item ? null :
+                            <Inputs.Select
+                              {...inputProps}
+                              {...l10n.post_login.redirect_page}
+                              field="redirect_page"
+                              defaultValue="item_details"
+                              options={[
+                                { label: "Item Details", value: "item_details" },
+                                { label: "Media", value: "media" }
+                              ]}
+                            />
+                        }
+                      </>
+                  }
+                </>
+            }
+          </>
+      }
     </PageContent>
   );
 });

@@ -29,32 +29,46 @@ const HeaderLinkConfiguration = observer(({type}) => {
     <Paper withBorder p="xl" mt="xl" w={uiStore.inputWidth}>
       <Title order={5} mb="md">{ l10n.general.header_link_types[type] }</Title>
 
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.general.header_link_text}
-        subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
-        path={path}
-        field="link_text"
-      />
       <Inputs.Checkbox
         INVERTED
         {...inputProps}
-        {...l10n.general.header_show_icon}
+        {...l10n.general.header_link_show}
         subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
         path={path}
-        field="hide_icon"
+        field="hide"
         defaultValue={false}
       />
       {
-        info.header_links[type]?.hide_icon ? null :
-          <Inputs.SingleImageInput
-            {...inputProps}
-            {...l10n.general.header_icon}
-            subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
-            path={path}
-            field="icon"
-            noResizePreview
-          />
+        info.header_links[type]?.hide ? null :
+          <>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.header_link_text}
+              subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+              path={path}
+              field="link_text"
+            />
+            <Inputs.Checkbox
+              INVERTED
+              {...inputProps}
+              {...l10n.general.header_show_icon}
+              subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+              path={path}
+              field="hide_icon"
+              defaultValue={false}
+            />
+            {
+              info.header_links[type]?.hide_icon ? null :
+                <Inputs.SingleImageInput
+                  {...inputProps}
+                  {...l10n.general.header_icon}
+                  subcategory={LocalizeString(l10n.categories.header_link_label, {type: l10n.general.header_link_types[type]})}
+                  path={path}
+                  field="icon"
+                  noResizePreview
+                />
+            }
+          </>
       }
     </Paper>
   );
