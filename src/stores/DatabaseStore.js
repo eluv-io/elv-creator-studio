@@ -159,7 +159,6 @@ class DatabaseStore {
       marketplaces: {},
       sites: {},
       templates: {},
-      media: {},
       types: {
         tenant: "",
         marketplace: "",
@@ -320,6 +319,7 @@ class DatabaseStore {
       marketplace.templateIds = templateIds;
     }
 
+    /*
     this.rootStore.DebugLog({message: "Loading media", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.media);
 
@@ -413,6 +413,8 @@ class DatabaseStore {
       );
     }
 
+     */
+
     this.rootStore.DebugLog({message: "Saving to database", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.saving);
 
@@ -463,6 +465,7 @@ class DatabaseStore {
     );
     yield batch.commit();
 
+    /*
     batch = FS.writeBatch(this.firestore);
     yield Promise.all(
       Object.values(content.media).map(async media => {
@@ -473,6 +476,8 @@ class DatabaseStore {
       })
     );
     yield batch.commit();
+
+     */
   });
 
   // Retrieve marketplace ID by resolving link, if necessary
@@ -580,7 +585,6 @@ class DatabaseStore {
     });
   });
 
-  // TODO: Update media records as well
   SaveItemTemplate = flow(function * ({batch, itemTemplateId}) {
     const libraryId = yield this.client.ContentObjectLibraryId({objectId: itemTemplateId});
     const metadata = {

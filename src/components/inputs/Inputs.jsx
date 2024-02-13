@@ -956,6 +956,7 @@ export const FabricBrowserInput = observer(({
   previewable,
   previewIsAnimation,
   previewOptions={},
+  previewAspectRatio,
   GetName,
   GetImage,
   fabricBrowserProps={},
@@ -1123,7 +1124,12 @@ export const FabricBrowserInput = observer(({
               {
                 !showPreview ? null :
                   <Paper mt="sm">
-                    <Video videoLink={value} animation={previewIsAnimation} playerOptions={previewOptions} />
+                    <Video
+                      videoLink={value}
+                      animation={previewIsAnimation}
+                      playerOptions={previewOptions}
+                      aspectRatio={previewAspectRatio}
+                    />
                   </Paper>
               }
             </Paper>
