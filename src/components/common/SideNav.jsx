@@ -3,7 +3,7 @@ import {createStyles, Navbar, rem, Title, Tooltip} from "@mantine/core";
 import {NavLink, useLocation} from "react-router-dom";
 import {rootStore} from "@/stores";
 
-import {IconAppWindow, IconBuildingStore, IconSitemap, IconArrowBackUp, IconTemplate} from "@tabler/icons-react";
+import {IconAppWindow, IconBuildingStore, IconSitemap, IconArrowBackUp, IconTemplate, IconPlaylist} from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -106,9 +106,10 @@ const useStyles = createStyles((theme) => ({
 
 const mainLinks = [
   { label: rootStore.l10n.components.nav.home, icon: <IconSitemap />, path: "/"},
+  { label: rootStore.l10n.components.nav.media_catalogs, icon: <IconPlaylist />, path: "/media-catalogs"},
   { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBuildingStore />, path: "/marketplaces"},
   { label: rootStore.l10n.components.nav.sites, icon: <IconAppWindow />, path: "/sites"},
-  { label: rootStore.l10n.components.nav.item_templates, icon: <IconTemplate />, path: "/item-templates"},
+  { label: rootStore.l10n.components.nav.item_templates, icon: <IconTemplate />, path: "/item-templates"}
 ];
 
 const SideNav = observer(({links, backLink}) => {

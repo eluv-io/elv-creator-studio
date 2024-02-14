@@ -5,6 +5,7 @@ import MarketplaceRoutes from "@/pages/marketplace/MarketplaceRoutes.jsx";
 import ScrollToTop from "@/components/common/ScrollToTop.jsx";
 import SiteRoutes from "@/pages/sites/SiteRoutes.jsx";
 import ItemTemplateRoutes from "@/pages/item_templates/ItemTemplateRoutes.jsx";
+import MediaCatalogRoutes from "@/pages/media_catalogs/MediaCatalogRoutes.jsx";
 
 const AppRoutes = observer(() => {
   return (
@@ -14,6 +15,7 @@ const AppRoutes = observer(() => {
       <MarketplaceRoutes rootPath="/marketplaces/" />
       <SiteRoutes rootPath="/sites/" />
       <ItemTemplateRoutes rootPath="/item-templates/" />
+      <MediaCatalogRoutes rootPath="/media-catalogs/" />
     </BrowserRouter>
   );
 });

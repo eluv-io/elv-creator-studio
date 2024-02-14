@@ -14,6 +14,7 @@ import TenantStore from "@/stores/TenantStore.js";
 import MarketplaceStore from "@/stores/MarketplaceStore.js";
 import SiteStore from "@/stores/SiteStore.js";
 import ItemTemplateStore from "@/stores/ItemTemplateStore.js";
+import MediaCatalogStore from "@/stores/MediaCatalogStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 
@@ -35,7 +36,9 @@ class RootStore {
   publicToken;
   l10n = LocalizationEN;
 
-
+  tenantId;
+  tenantInfo;
+  typeInfo;
 
   debugLevel = parseInt(StorageHandler.get({type: "local", key: "debug-level"}) || 0);
 
@@ -60,16 +63,9 @@ class RootStore {
     this.marketplaceStore = new MarketplaceStore(this);
     this.siteStore = new SiteStore(this);
     this.itemTemplateStore = new ItemTemplateStore(this);
+    this.mediaCatalogStore = new MediaCatalogStore(this);
 
     this.Initialize();
-  }
-
-  get tenantInfo() {
-    return StorageHandler.get({type: "local", key: `${this.address}-tenant-info`, json: true, b64: true});
-  }
-
-  get tenantId() {
-    return this.tenantInfo?.tenantId;
   }
 
   get utils() {
@@ -107,9 +103,14 @@ class RootStore {
     this.signedToken = yield this.client.CreateFabricToken();
     this.liveConfig = LiveConfig[this.network];
 
+    this.tenantId = yield this.client.userProfileClient.TenantContractId();
+
     yield this.databaseStore.Initialize();
     yield this.tenantStore.Initialize();
     yield this.editStore.Initialize();
+
+    this.tenantInfo = yield this.databaseStore.GetDocument({collection: "tenant", document: "info"});
+    this.typeInfo = yield this.databaseStore.GetDocument({collection: "tenant", document: "types"});
 
     this.uiStore.SetLoading(false);
 
@@ -131,10 +132,6 @@ class RootStore {
 
     return this.libraryIds[objectId];
   });
-
-  SetTenantInfo(tenantInfo) {
-    StorageHandler.set({type: "local", key: `${this.address}-tenant-info`, value: tenantInfo, json: true, b64: true});
-  }
 
   DebugLog({message, error, level=this.logLevels.DEBUG_LEVEL_INFO}) {
     if(this.debugLevel < level) { return; }
@@ -181,5 +178,6 @@ export const tenantStore = rootStore.tenantStore;
 export const marketplaceStore = rootStore.marketplaceStore;
 export const siteStore = rootStore.siteStore;
 export const itemTemplateStore = rootStore.itemTemplateStore;
+export const mediaCatalogStore = rootStore.mediaCatalogStore;
 
 window.rootStore = rootStore;

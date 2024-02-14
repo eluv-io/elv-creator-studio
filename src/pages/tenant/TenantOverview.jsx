@@ -339,6 +339,8 @@ const TenantOverview = observer(() => {
               Icon={IconInputSearch}
               onClick={async () => {
                 uiStore.SetLoading(true);
+                uiStore.SetLoadingMessage(rootStore.l10n.stores.initialization.loading.scanning);
+
                 try {
                   await databaseStore.ScanContent({force: true});
                 } catch(error) {

@@ -46,23 +46,6 @@ class DatabaseStore {
         FS.connectFirestoreEmulator(this.firestore, "127.0.0.1", 9001);
       }
 
-      if(this.rootStore.tenantInfo) {
-        // Tenant info retrieved from localstorage, make sure it's actually in the database
-        const tenantInfoFromDB = yield this.rootStore.databaseStore.GetDocument({
-          collection: "tenant",
-          document: "info"
-        });
-
-        if(tenantInfoFromDB) {
-          this.rootStore.DebugLog({
-            message: "Tenant info retrieved from local storage - skipping initialization",
-            level: this.logLevels.DEBUG_LEVEL_LOW
-          });
-
-          return;
-        }
-      }
-
       yield this.ScanContent();
     } catch(error) {
       this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -71,8 +54,74 @@ class DatabaseStore {
     }
   });
 
+  InitializeTypes = flow(function * () {
+    this.rootStore.DebugLog({message: "Initializing Types", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
+
+    const typeNames = {
+      tenant: "Tenant",
+      marketplace: "Marketplace",
+      site: "Drop Event Site",
+      template: "Template",
+      mezzanine: "Title",
+      mediaCatalog: "Media Catalog",
+      mediaProperty: "Media Property"
+    };
+
+    let typeIds = {};
+
+    const allTypes = yield this.client.ContentTypes();
+
+    yield Promise.all(
+      Object.keys(typeNames).map(async key => {
+        const name = typeNames[key];
+        const existingType = Object.values(allTypes)
+          .find(type =>
+            type.name?.toLowerCase()?.includes(name.toLowerCase())
+          );
+
+        if(existingType) {
+          typeIds[key] = existingType.id;
+        } else {
+          // Create type
+          this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+
+          typeIds[key] = await this.client.CreateContentType({
+            metadata: {
+              "bitcode_flags": "abrmaster",
+              "bitcode_format": "builtin",
+              "description": "",
+              "name": name,
+              "public": {
+                "description": "",
+                "eluv.manageApp": "default",
+                "name": name,
+                "title_configuration": {
+                  "profile": {
+                    "name": `Eluvio ${name}`,
+                    "version": "1.0"
+                  }
+                }
+              }
+            }
+          });
+        }
+      })
+    );
+
+    return typeIds;
+  });
+
   ScanContent = flow(function * ({force}={}) {
     this.rootStore.DebugLog({message: "Initializing database setup", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+
+    // Problem: The only reliable way to determine the 'right' tenant ID is by finding the properties library
+    const tenantInfo = yield this.GetDocument({collection: "tenant", document: "info"});
+
+    if(tenantInfo && !force) {
+      this.rootStore.DebugLog({message: "Database already set up - skipping", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+      return;
+    }
 
     this.rootStore.DebugLog({message: "Finding properties library", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 
@@ -81,36 +130,25 @@ class DatabaseStore {
     // Find properties library
     let propertiesLibraryId;
     for(const libraryId of libraryIds) {
-      const metadata = yield this.client.ContentObjectMetadata({
-        libraryId,
-        objectId: libraryId.replace("ilib", "iq__"),
-        metadataSubtree: "public"
-      });
+      try {
+        const metadata = yield this.client.ContentObjectMetadata({
+          libraryId,
+          objectId: libraryId.replace("ilib", "iq__"),
+          metadataSubtree: "public"
+        });
 
-      if(metadata?.name?.toLowerCase()?.includes("- properties")) {
-        propertiesLibraryId = libraryId;
-        break;
+        if(metadata?.name?.toLowerCase()?.includes("- properties")) {
+          propertiesLibraryId = libraryId;
+          break;
+        }
+      } catch(error) {
+        this.rootStore.DebugLog({message: "Unable to query library", error, level: this.logLevels.DEBUG_LEVEL_ERROR});
       }
     }
 
     if(!propertiesLibraryId) {
       this.DebugLog({message: "No properties library found", level: this.logLevels.DEBUG_LEVEL_ERROR});
       return;
-    }
-
-    // Problem: The only reliable way to determine the 'right' tenant ID is by finding the properties library
-    const tenantId = yield this.client.ContentObjectTenantId({objectId: propertiesLibraryId});
-    const tenantInfo = yield this.GetDocument({collection: "tenant", document: "info"});
-
-    if(tenantInfo) {
-      this.rootStore.SetTenantInfo({
-        ...tenantInfo,
-        tenantId
-      });
-
-      if(!force) {
-        return;
-      }
     }
 
     this.rootStore.DebugLog({message: "Loading content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
@@ -126,7 +164,6 @@ class DatabaseStore {
     });
 
     // Get type info for objects
-    let typeIds = [];
     const objects = (yield Promise.all(
       contents.map(async object => {
         try {
@@ -135,10 +172,6 @@ class DatabaseStore {
           const objectInfo = await this.client.ContentObject({libraryId: propertiesLibraryId, objectId});
           const typeId = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : "";
           const name = metadata.public?.name || "";
-
-          if(!typeIds.includes(typeId)) {
-            typeIds.push(typeId);
-          }
 
           return {
             typeId,
@@ -159,62 +192,36 @@ class DatabaseStore {
       marketplaces: {},
       sites: {},
       templates: {},
-      types: {
-        tenant: "",
-        marketplace: "",
-        site: "",
-        template: "",
-        mezzanine: ""
-      }
+      mediaCatalogs: {},
     };
+
+    const typeIds = yield this.InitializeTypes();
 
     this.rootStore.DebugLog({message: "Classifying content from properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
 
-    // Classify property objects by type
-    yield Promise.all(
-      typeIds.map(async typeId => {
-        try {
-          let { name } = await this.client.ContentType({
-            typeId,
-            publicOnly: true
-          });
+    objects.forEach(object => {
+      const typeKey = Object.keys(typeIds).find(key => object.typeId === typeIds[key]);
 
-          if(!name) { return; }
+      switch(typeKey) {
+        case "marketplace":
+          object.brandedName = object.metadata.public?.asset_metadata?.info?.branding?.name || "";
+          object.description = object.metadata.public?.asset_metadata?.info?.branding?.description || "";
 
-          name = name.toLowerCase();
-
-          if(name.includes("marketplace")) {
-            content.types.marketplace = typeId;
-            objects.forEach(object => {
-              if(object.typeId !== typeId) { return; }
-
-              object.brandedName = object.metadata.public?.asset_metadata?.info?.branding?.name || "";
-              object.description = object.metadata.public?.asset_metadata?.info?.branding?.description || "";
-
-              content.marketplaces[object.objectId] = object;
-            });
-          } else if(name.includes("event site")) {
-            // Only use newer 'drop event site' type vs old 'event site' type
-            if(name.includes("drop event site")) {
-              content.types.site = typeId;
-            }
-
-            objects.forEach(object => {
-              if(object.typeId !== typeId) { return; }
-
-              object.brandedName = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
-              content.sites[object.objectId] = object;
-            });
-          } else if(name.includes("tenant")) {
-            content.types.tenant = typeId;
-
-            content.tenant = objects.find(object => object.typeId === typeId);
-          }
-        } catch(error) {
-          this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-        }
-      })
-    );
+          content.marketplaces[object.objectId] = object;
+          break;
+        case "site":
+          object.brandedName = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
+          content.sites[object.objectId] = object;
+          break;
+        case "tenant":
+          content.tenant = object;
+          break;
+        case "mediaCatalog":
+          object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
+          content.mediaCatalogs[object.objectId] = object;
+          break;
+      }
+    });
 
     if(!content.tenant) {
       this.DebugLog({message: "Unable to find tenant object", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -250,6 +257,12 @@ class DatabaseStore {
       })
     );
 
+    yield Promise.all(
+      Object.keys(content.mediaCatalogs).map(async mediaCatalogId => {
+        content.mediaCatalogs[mediaCatalogId].tenantSlug = tenantSlug;
+      })
+    );
+
     this.rootStore.DebugLog({message: "Loading templates", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.templates);
 
@@ -267,11 +280,6 @@ class DatabaseStore {
 
             const templateId = this.utils.DecodeVersionHash(templateHash).objectId;
             const templateLibraryId = await this.rootStore.LibraryId({objectId: templateId});
-
-            if(!content.types.template) {
-              const objectInfo = await this.client.ContentObject({libraryId: templateLibraryId, objectId: templateId});
-              content.types.template = objectInfo.type ? this.utils.DecodeVersionHash(objectInfo.type).objectId : undefined;
-            }
 
             // Template referenced and loaded already, add to referenced marketplace list and stop
             if(content.templates[templateId]) {
@@ -419,20 +427,19 @@ class DatabaseStore {
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.saving);
 
     // Write data
-    let tenant = { ...content.tenant };
+    let tenant = {
+      ...content.tenant,
+      tenantId: this.rootStore.tenantId,
+      propertiesLibraryId
+    };
     delete tenant.metadata;
 
     this.DebugLog({message: content, level: this.logLevels.DEBUG_LEVEL_INFO});
 
-    this.rootStore.SetTenantInfo({
-      ...tenantInfo,
-      tenantId
-    });
-
     let batch = FS.writeBatch(this.firestore);
 
     yield this.WriteDocument({batch, collection: "tenant", document: "info",  content: tenant});
-    yield this.WriteDocument({batch, collection: "tenant", document: "types",  content: content.types});
+    yield this.WriteDocument({batch, collection: "tenant", document: "types",  content: typeIds});
 
     yield Promise.all(
       Object.values(content.marketplaces).map(async marketplace => {
@@ -449,6 +456,15 @@ class DatabaseStore {
         delete site.metadata;
 
         await this.WriteDocument({batch, collection: "sites", document: site.objectId, content: site});
+      })
+    );
+
+    yield Promise.all(
+      Object.values(content.mediaCatalogs).map(async mediaCatalog => {
+        mediaCatalog = { ...mediaCatalog };
+        delete mediaCatalog.metadata;
+
+        await this.WriteDocument({batch, collection: "mediaCatalogs", document: mediaCatalog.objectId, content: mediaCatalog});
       })
     );
 
@@ -641,6 +657,32 @@ class DatabaseStore {
       batch,
       collection: "templates",
       document: itemTemplateId,
+      content: object
+    });
+  });
+
+  SaveMediaCatalog = flow(function * ({batch, mediaCatalogId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: mediaCatalogId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: mediaCatalogId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    let object = {
+      libraryId,
+      objectId: mediaCatalogId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
+      name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
+      description: metadata.public?.asset_metadata?.info?.description || ""
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "mediaCatalogs",
+      document: mediaCatalogId,
       content: object
     });
   });

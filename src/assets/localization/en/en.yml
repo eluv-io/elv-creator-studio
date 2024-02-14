@@ -1,6 +1,7 @@
 components:
   nav:
     home: Home
+    media_catalogs: Media Catalogs
     marketplaces: Marketplaces
     sites: Sites
     item_templates: Item Templates
@@ -104,6 +105,8 @@ stores:
   initialization:
     loading:
       initializing: Initializing
+      types: Initializing Content Types
+      scanning: Scanning for Content
       properties: Running Initial Setup - Discovering Properties
       templates: Running Initial Setup - Discovering Templates
       media: Running Initial Setup - Discovering Media

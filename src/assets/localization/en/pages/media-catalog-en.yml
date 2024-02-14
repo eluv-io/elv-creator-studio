@@ -1,0 +1,25 @@
+nav:
+  list: Media Catalogs
+  overview: Overview
+  general: General
+form:
+  categories:
+    media_catalog: Media Catalog
+    media_catalogs: Media Catalogs
+    general: General Settings
+    info: Media Catalog Info
+  create:
+    create: Create New Media Catalog
+    name: Name
+    validation:
+      name: Name must be specified
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+    image:
+      label: Image
+

@@ -12,7 +12,7 @@ class MarketplaceStore {
   }
 
   LoadMarketplaces = flow(function * () {
-    if(this.allMarketplaces?.length > 0) { return; }
+    if(this.allMarketplaces) { return; }
 
     this.allMarketplaces = yield this.rootStore.databaseStore.GetCollection({collection: "marketplaces"});
   });
