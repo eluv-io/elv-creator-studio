@@ -5,7 +5,7 @@ import {GenerateUUID} from "@/helpers/Misc.js";
 import {
   MediaCatalogMediaImageSpec,
   MediaCatalogMediaOtherSpec,
-  MediaCatalogMediaVideoSpec
+  MediaCatalogMediaVideoSpec, MediaCatalogSpec
 } from "@/specs/MediaCatalogSpecs.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
@@ -37,6 +37,7 @@ class MediaCatalogStore {
               name: `Media Catalog - ${name}`,
               asset_metadata: {
                 info: {
+                  ...MediaCatalogSpec,
                   name
                 }
               }
@@ -90,7 +91,7 @@ class MediaCatalogStore {
     };
   });
 
-  CreateMediaItem({page, mediaCatalogId, mediaType}) {
+  CreateMediaItem({page, mediaCatalogId, mediaType, title}) {
     const id = GenerateUUID();
 
     let spec = MediaCatalogMediaOtherSpec({mediaType});
@@ -101,6 +102,8 @@ class MediaCatalogStore {
     }
 
     spec.id = id;
+    spec.title = title;
+    spec.archive_title = title;
 
     mediaCatalogStore.AddField({
       objectId: mediaCatalogId,
@@ -108,11 +111,7 @@ class MediaCatalogStore {
       path: "/public/asset_metadata/info/media",
       field: id,
       value: spec,
-      category: () => {
-        const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info/media", id), field: "title"});
-
-        return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.media_item_label, { label: title });
-      },
+      category: this.MediaItemCategory({mediaCatalogId, mediaItemId: id}),
       label: this.rootStore.l10n.pages.media_catalog.form.categories.media_item
     });
 
@@ -128,6 +127,14 @@ class MediaCatalogStore {
       category: this.rootStore.l10n.pages.media_catalog.form.categories.media,
       label: mediaItem.title
     });
+  }
+
+  MediaItemCategory({mediaCatalogId, mediaItemId}) {
+    return () => {
+      const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info/media", mediaItemId), field: "title"});
+
+      return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.media_item_label, { label: title });
+    };
   }
 
   Reload = flow(function * ({objectId}) {

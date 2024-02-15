@@ -27,7 +27,11 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
 
   const form = useForm({
     initialValues: {
+      title: "",
       mediaType: "Video"
+    },
+    validate: {
+      title: value => value ? null : rootStore.l10n.pages.media_catalog.form.media.create.validation.title
     }
   });
 
@@ -36,7 +40,7 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({mediaType: values.mediaType})
+          Create({title: values.title, mediaType: values.mediaType})
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -51,6 +55,7 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
           data-autofocus
           {...rootStore.l10n.pages.media_catalog.form.media.media_type}
           defaultValue="Video"
+          mb="md"
           data={[
             "Video",
             "Image",
@@ -59,6 +64,11 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
             "Link"
           ]}
           {...form.getInputProps("mediaType")}
+        />
+        <TextInput
+          data-autofocus
+          {...rootStore.l10n.pages.media_catalog.form.media.title}
+          {...form.getInputProps("title")}
         />
         <Group mt="md">
           <Button
@@ -128,10 +138,11 @@ const MediaCatalogMediaList = observer(() => {
                 centered: true,
                 children:
                   <CreateMediaCatalogMediaItemForm
-                    Create={async ({mediaType}) => {
+                    Create={async ({title, mediaType}) => {
                       const id = mediaCatalogStore.CreateMediaItem({
                         page: location.pathname,
                         mediaCatalogId,
+                        title,
                         mediaType
                       });
 
@@ -161,7 +172,7 @@ const MediaCatalogMediaList = observer(() => {
               title: l10n.media.list.columns.title,
               render: mediaItem => (
                 <Group>
-                  <Image width={60} height={60} fit="contain" src={ScaleImage(mediaItem.image, 400)} alt={mediaItem.title} withPlaceholder />
+                  <Image width={60} height={60} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
                   <Stack spacing={0}>
                     <Text>
                       <Group spacing={5} align="top">

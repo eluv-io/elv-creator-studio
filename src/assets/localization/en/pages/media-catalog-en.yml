@@ -33,6 +33,68 @@ form:
         media_type: Media Type
     create:
       create: Create New Media Item
+      validation:
+        title: Title must be specified
+    id:
+      label: Media ID
     media_type:
       label: Media Type
+    title:
+      label: Display Title
+    archive_title:
+      label: Archive Title
+      description: For alphabetical sorting (e.g. The Best Movie -> Best Movie, The)
+    image:
+      label: Image
+      description: 16/9 Aspect Ratio
+    headers:
+      label: Headers
+      description: Short text that will appear above the title, e.g. content rating, release year, duration
+      fieldLabel: Header
+    subtitle:
+      label: Subtitle
+    description:
+      label: Description
+    description_rich_text:
+      label: Description (Rich Text)
+    tags:
+      label: Tags
+      description: Configure available tags in the Tags section
+    media_link:
+      label: Video
+    live_video:
+      label: Live Video
+      description: Check this box if the video content is live
+    offerings:
+      label: Offerings
+      description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
+      fieldLabel: Offering
+    start_time:
+      label: Start Time
+      description: Approximate start time of this live video
+    end_time:
+      label: End Time
+      description: Approximate end time of this live video
+    poster_image:
+      label: Video Poster Image
+      description: Displayed in the video player before playback is started
+    image_aspect_ratio:
+      label: Image Orientation
+    media_file:
+      label: Media File
+      description: Select the file to display.
+    link:
+      label: External Link
+    authorized_link:
+      label: Authorized Link
+      description: If specified, user authentication will be added to the URL parameters of the external link
+    parameters:
+      label: Parameters
+      description: URL parameters to add when displaying the HTML file
+      fieldLabel: Parameter
+    key:
+      label: Key
+    value:
+      label: Value
+
 

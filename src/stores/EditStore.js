@@ -1,6 +1,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import {StorageHandler} from "@/helpers/Misc.js";
 import {FormatChangeList} from "@/stores/helpers/Changelist.js";
+import {rootStore} from "@/stores/index.js";
 
 // TODO: Move write token saving to database, load metadata from write token if present
 
@@ -50,6 +51,7 @@ class EditStore {
           const name = store.GetMetadata({objectId, path: namePath}) || objectId;
           return {
             type,
+            typeName: this.rootStore.l10n.components.save_modal.types[type] || type,
             storeKey,
             name,
             objectId,
@@ -85,7 +87,7 @@ class EditStore {
 
       try {
         this.rootStore.uiStore.SetLoading(true);
-        this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.type} ${item.name}`);
+        this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.typeName} ${item.name}`);
 
         const libraryId = yield this.rootStore.LibraryId({objectId});
         const writeToken = yield this.InitializeWrite({objectId});

@@ -672,6 +672,7 @@ const SingleImageInput = observer(({
   field,
   url=false,
   noResizePreview,
+  aspectRatio=1,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -687,6 +688,15 @@ const SingleImageInput = observer(({
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
   }
 
+  let width, height;
+  if(aspectRatio < 1) {
+    width = 150;
+    height = width / aspectRatio;
+  } else {
+    height = 150;
+    width = height * aspectRatio;
+  }
+
   return (
     <>
       <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
@@ -696,8 +706,8 @@ const SingleImageInput = observer(({
               <Image
                 mb="xs"
                 withPlaceholder
-                height={150}
-                width={150}
+                height={height}
+                width={width}
                 src={imageUrl}
                 alt={label}
                 fit="contain"
@@ -706,7 +716,7 @@ const SingleImageInput = observer(({
               />
               </HoverCard.Target>
               <MantineInput.Wrapper
-                maw={150}
+                maw={width}
                 label={<InputLabel centered label={label} hint={hint} />}
                 description={description}
                 labelProps={{style: { width: "100%", textAlign: "center "}}}
@@ -717,8 +727,8 @@ const SingleImageInput = observer(({
             <Image
               mb="xs"
               withPlaceholder
-              height={400}
-              width={400}
+              height={height * 2}
+              width={width * 2}
               src={ScaleImage(imageUrl, 1000)}
               alt={label}
               fit="contain"
@@ -1180,6 +1190,7 @@ const ImageInput = observer(({
               hint={field.hint}
               field={field.field}
               actionLabel={field.label || label}
+              aspectRatio={field.aspectRatio}
               mb={0}
               url={field.url}
             />
