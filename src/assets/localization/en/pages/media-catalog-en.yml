@@ -3,12 +3,16 @@ nav:
   overview: Overview
   general: General
   media: Media
+  tags: Tags and Attributes
 form:
   categories:
     media_catalog: Media Catalog
     media_catalogs: Media Catalogs
     general: General Settings
     info: Media Catalog Info
+    tags_and_attributes: Tags and Attributes
+    tags: Tags
+    attributes: Attributes
     media: Media
     media_item: Media Item
     media_item_label: Media Item '{label}'
@@ -26,11 +30,21 @@ form:
       label: ID
     image:
       label: Image
+  tags:
+    tags:
+      label: Tags
+      description: Define tags to assign to your media
+      fieldLabel: Tag
+    view: View all media tagged `{tag}`
   media:
     list:
       columns:
         title: Title
         media_type: Media Type
+      filters:
+        filter: Filter
+        media_type: Media Type
+        tags: Tags
     create:
       create: Create New Media Item
       validation:
@@ -59,7 +73,7 @@ form:
       label: Description (Rich Text)
     tags:
       label: Tags
-      description: Configure available tags in the Tags section
+      description: Configure available tags on the 'Tags and Attributes' page
     media_link:
       label: Video
     live_video:

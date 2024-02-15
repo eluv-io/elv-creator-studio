@@ -27,7 +27,7 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
       {
         !props.disabled ?
           button :
-          <Group>
+          <Group {...props}>
             {button}
           </Group>
       }

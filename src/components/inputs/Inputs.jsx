@@ -1330,15 +1330,17 @@ const List = observer(({
   fieldLabel,
   fields=[],
   newItemSpec={},
+  sortable=true,
   renderItem,
   showBottomAddButton,
   inputProps={},
   narrow,
+  simpleList,
   ...componentProps
 }) => {
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
-  const simpleList = !renderItem && (!fields || fields.length === 0);
+  simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
 
   const items = values.map((value, index) => {
     const id = (idField === "index" ? index.toString() : value[idField]) || "";
@@ -1355,8 +1357,17 @@ const List = observer(({
             key={`list-item-${id}`}
             {...provided.draggableProps}
           >
-            <Group align="start" style={{position: "relative"}} px={40}>
-              <div style={{cursor: "grab", position: "absolute", top: simpleList ? 5 : 0, left: 0}} {...provided.dragHandleProps}>
+            <Group align="start" style={{position: "relative"}} pr={40} pl={sortable ? 40 : 0}>
+              <div
+                style={{
+                  display: sortable ? "block" : "none",
+                  cursor: "grab",
+                  position: "absolute",
+                  top: simpleList ? 5 : 0,
+                  left: 0
+                }}
+                {...provided.dragHandleProps}
+              >
                 <IconGripVertical/>
               </div>
               <Container p={0} m={0} fluid w="100%" maw="unset">

@@ -229,6 +229,14 @@ const MediaCatalogMediaItem = observer(() => {
         field="description_rich_text"
       />
 
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.media.tags}
+        disabled={(info.tags || []).length === 0}
+        field="tags"
+        options={info.tags || []}
+      />
+
       <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
 
       <MediaConfiguration

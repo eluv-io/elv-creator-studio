@@ -4,7 +4,7 @@ import {
   Image,
   Stack,
   TextInput,
-  Paper, Title, Container, Button, Select
+  Paper, Title, Container, Button, Select, MultiSelect
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import {mediaCatalogStore, rootStore, uiStore} from "@/stores";
@@ -21,6 +21,14 @@ import {ScaleImage} from "@/helpers/Fabric";
 import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
+
+const MediaTypes = [
+  "Video",
+  "Image",
+  "Ebook",
+  "HTML",
+  "Link"
+];
 
 const CreateMediaCatalogMediaItemForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
@@ -56,13 +64,7 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
           {...rootStore.l10n.pages.media_catalog.form.media.media_type}
           defaultValue="Video"
           mb="md"
-          data={[
-            "Video",
-            "Image",
-            "Ebook",
-            "HTML",
-            "Link"
-          ]}
+          data={MediaTypes}
           {...form.getInputProps("mediaType")}
         />
         <TextInput
@@ -87,10 +89,15 @@ const CreateMediaCatalogMediaItemForm = ({Create}) => {
 const MediaCatalogMediaList = observer(() => {
   const navigate = useNavigate();
 
+  const initialTagFilter = new URLSearchParams(window.location.search).get("tags")?.split(",");
+  const initialMediaTypeFilter = new URLSearchParams(window.location.search).get("media_type");
+
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(50);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "archive_title", direction: "asc"});
   const [filter, setFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [tagFilter, setTagFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState(initialMediaTypeFilter || "");
+  const [tagFilter, setTagFilter] = useState(initialTagFilter || []);
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
   const { mediaCatalogId } = useParams();
@@ -110,8 +117,8 @@ const MediaCatalogMediaList = observer(() => {
         mediaItem.media_type === typeFilter
       )
       .filter(mediaItem =>
-        !tagFilter ||
-        mediaItem.tags?.includes(tagFilter)
+        tagFilter.length === 0 ||
+        !tagFilter.find(tag => !mediaItem.tags.includes(tag))
       )
       .filter(mediaItem =>
         !debouncedFilter ||
@@ -120,13 +127,15 @@ const MediaCatalogMediaList = observer(() => {
       )
       .sort(SortTable({sortStatus}));
 
+  const mediaItemsPage = mediaItems.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
+
   return (
     <PageContent
       title={`${info.name || mediaCatalog.name || "MediaCatalog"} - Media`}
       section="mediaCatalog"
       useHistory
     >
-      <Title order={3} my="md" maw={uiStore.inputWidthWide}>
+      <Title order={4} my="md" maw={uiStore.inputWidthWide}>
         <Group position="apart">
           { l10n.categories.media }
           <IconButton
@@ -156,15 +165,52 @@ const MediaCatalogMediaList = observer(() => {
       </Title>
 
       <Paper maw={uiStore.inputWidthWide}>
-        <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
+        <Group grow align="center" mb="xs" spacing="xs">
+          <TextInput
+            label={l10n.media.list.filters.filter}
+            value={filter}
+            onChange={event => {
+              setFilter(event.target.value);
+              setPage(1);
+            }}
+          />
+          <Select
+            label={l10n.media.list.filters.media_type}
+            value={typeFilter}
+            onChange={type => {
+              setTypeFilter(type);
+              setPage(1);
+            }}
+            data={[
+              { label: "Any", value: "" },
+              ...MediaTypes
+            ]}
+          />
+          {
+            (info.tags || []).length === 0 ? null :
+              <MultiSelect
+                label={l10n.media.list.filters.tags}
+                value={tagFilter}
+                onChange={tags => {
+                  setTagFilter(tags);
+                  setPage(1);
+                }}
+                data={info.tags || []}
+              />
+          }
+        </Group>
         <DataTable
           minHeight={mediaItems.length === 0 ? 200 : 0}
           withBorder
           highlightOnHover
           idAccessor="id"
-          records={mediaItems}
+          records={mediaItemsPage}
           sortStatus={sortStatus}
           onSortStatusChange={setSortStatus}
+          totalRecords={mediaItems.length}
+          recordsPerPage={pageSize}
+          page={page}
+          onPageChange={page => setPage(page)}
           columns={[
             {
               accessor: "archive_title",
@@ -172,7 +218,7 @@ const MediaCatalogMediaList = observer(() => {
               title: l10n.media.list.columns.title,
               render: mediaItem => (
                 <Group>
-                  <Image width={60} height={60} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
+                  <Image width={100} height={56} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
                   <Stack spacing={0}>
                     <Text>
                       <Group spacing={5} align="top">
