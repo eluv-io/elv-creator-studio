@@ -10,6 +10,8 @@ const MediaCatalogGeneralSettings = observer(() => {
 
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
 
+  if(!mediaCatalog) { return null; }
+
   const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
 
   const l10n = rootStore.l10n.pages.media_catalog.form;

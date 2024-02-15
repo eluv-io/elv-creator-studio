@@ -1,5 +1,14 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
+import {mediaCatalogStore} from "@/stores/index.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
+import {
+  MediaCatalogMediaImageSpec,
+  MediaCatalogMediaOtherSpec,
+  MediaCatalogMediaVideoSpec
+} from "@/specs/MediaCatalogSpecs.js";
+import UrlJoin from "url-join";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 class MediaCatalogStore {
   allMediaCatalogs;
@@ -80,6 +89,46 @@ class MediaCatalogStore {
       }
     };
   });
+
+  CreateMediaItem({page, mediaCatalogId, mediaType}) {
+    const id = GenerateUUID();
+
+    let spec = MediaCatalogMediaOtherSpec({mediaType});
+    if(mediaType === "Video") {
+      spec = MediaCatalogMediaVideoSpec;
+    } else if(mediaType === "Image") {
+      spec = MediaCatalogMediaImageSpec;
+    }
+
+    spec.id = id;
+
+    mediaCatalogStore.AddField({
+      objectId: mediaCatalogId,
+      page,
+      path: "/public/asset_metadata/info/media",
+      field: id,
+      value: spec,
+      category: () => {
+        const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info/media", id), field: "title"});
+
+        return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.media_item_label, { label: title });
+      },
+      label: this.rootStore.l10n.pages.media_catalog.form.categories.media_item
+    });
+
+    return id;
+  }
+
+  RemoveMediaItem({page, mediaCatalogId, mediaItem}) {
+    this.RemoveField({
+      objectId: mediaCatalogId,
+      page,
+      path: "/public/asset_metadata/info/media",
+      field: mediaItem.id,
+      category: this.rootStore.l10n.pages.media_catalog.form.categories.media,
+      label: mediaItem.title
+    });
+  }
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadMediaCatalog({mediaCatalogId: objectId, force: true});

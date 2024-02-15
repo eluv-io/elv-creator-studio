@@ -2,12 +2,16 @@ nav:
   list: Media Catalogs
   overview: Overview
   general: General
+  media: Media
 form:
   categories:
     media_catalog: Media Catalog
     media_catalogs: Media Catalogs
     general: General Settings
     info: Media Catalog Info
+    media: Media
+    media_item: Media Item
+    media_item_label: Media Item '{label}'
   create:
     create: Create New Media Catalog
     name: Name
@@ -22,4 +26,13 @@ form:
       label: ID
     image:
       label: Image
+  media:
+    list:
+      columns:
+        title: Title
+        media_type: Media Type
+    create:
+      create: Create New Media Item
+    media_type:
+      label: Media Type
 

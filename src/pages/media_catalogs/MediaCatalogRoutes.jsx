@@ -6,11 +6,13 @@ import {rootStore, mediaCatalogStore} from "@/stores";
 import MediaCatalogList from "./MediaCatalogList.jsx";
 import MediaCatalogOverview from "@/pages/media_catalogs/MediaCatalogOverview.jsx";
 import MediaCatalogGeneralSettings from "@/pages/media_catalogs/MediaCatalogGeneralSettings.jsx";
+import MediaCatalogMediaList from "@/pages/media_catalogs/MediaCatalogMediaList.jsx";
 
 const MediaCatalogRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.overview, path: "/media-catalogs/:mediaCatalogId", Component: <MediaCatalogOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.general, path: "/media-catalogs/:mediaCatalogId/general", Component: <MediaCatalogGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media", Component: <MediaCatalogMediaList /> },
   ]
     .map(route => ({
       ...route,

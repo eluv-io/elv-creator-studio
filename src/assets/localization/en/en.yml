@@ -122,6 +122,8 @@ actions:
   TOGGLE_FIELD: Toggle '{label}'
   TOGGLE_FIELD_ON: Toggle '{label}' On
   TOGGLE_FIELD_OFF: Toggle '{label}' Off
+  ADD_FIELD: Add {label}
+  REMOVE_FIELD: Remove '{label}'
   SET_LINK: Modify '{label}' link
   UPDATE_LINK: Update '{label}' link
   REMOVE_LINK: Remove '{label}' link

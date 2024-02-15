@@ -21,6 +21,12 @@ export const ACTIONS = {
   TOGGLE_FIELD: {
     stackable: false
   },
+  ADD_FIELD: {
+    stackable: false
+  },
+  REMOVE_FIELD: {
+    stackable: false
+  },
   SET_DEFAULT: {
     invisible: true,
     stackable: false
@@ -166,6 +172,82 @@ const SetBatchMetadata = function({
         })
       );
     }
+  });
+};
+
+const AddField = function({
+  objectId,
+  page,
+  path,
+  field,
+  value,
+  category,
+  subcategory,
+  label
+}) {
+  if(!objectId) {
+    this.DebugLog({message: "Add Field: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  this.ApplyAction({
+    objectId,
+    page,
+    path: UrlJoin(path, field),
+    actionType: "ADD_FIELD",
+    category,
+    subcategory,
+    label,
+    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value),
+    Undo: () => {
+      const metadata = { ...this.GetMetadata({objectId, path}) };
+      delete metadata[field];
+      return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
+    },
+    Write: async (objectParams) => await this.client.ReplaceMetadata({
+      ...objectParams,
+      metadataSubtree: UrlJoin(path, field),
+      metadata: value
+    })
+  });
+};
+
+const RemoveField = function({
+  objectId,
+  page,
+  path,
+  field,
+  category,
+  subcategory,
+  label
+}) {
+  if(!objectId) {
+    this.DebugLog({message: "Remove Field: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  const originalValue = this.GetMetadata({objectId, path, field});
+
+  this.ApplyAction({
+    objectId,
+    page,
+    path: UrlJoin(path, field),
+    actionType: "REMOVE_FIELD",
+    category,
+    subcategory,
+    label,
+    Apply: () => {
+      const metadata = { ...this.GetMetadata({objectId, path}) };
+      delete metadata[field];
+      return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
+    },
+    Undo: () => Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], originalValue),
+    Write: async (objectParams) => await this.client.DeleteMetadata({
+      ...objectParams,
+      metadataSubtree: UrlJoin(path, field)
+    })
   });
 };
 
@@ -551,6 +633,8 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.GetMetadata = GetMetadata;
   storeClass.prototype.SetMetadata = SetMetadata;
   storeClass.prototype.SetBatchMetadata = SetBatchMetadata;
+  storeClass.prototype.AddField = AddField;
+  storeClass.prototype.RemoveField = RemoveField;
   storeClass.prototype.SetDefaultValue = SetDefaultValue;
   storeClass.prototype.SetLink = SetLink;
   storeClass.prototype.ListAction = ListAction;
