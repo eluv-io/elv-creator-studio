@@ -61,7 +61,8 @@ export const MediaCatalogMediaImageSpec = {
   media_type: "Image",
   title: "<New Image>",
   catalog_title: "<New Image>",
-  image_aspect_ratio: "Square"
+  image_aspect_ratio: "Square",
+  associated_media: []
 };
 
 export const MediaCatalogMediaVideoSpec = {
@@ -74,7 +75,8 @@ export const MediaCatalogMediaVideoSpec = {
   live: false,
   start_time: undefined,
   end_time: undefined,
-  offerings: []
+  offerings: [],
+  associated_media: []
 };
 
 export const MediaCatalogMediaOtherSpec = ({mediaType}) => ({
@@ -87,7 +89,8 @@ export const MediaCatalogMediaOtherSpec = ({mediaType}) => ({
   url: "",
   authorized_link: false,
   offerings: [],
-  parameters: []
+  parameters: [],
+  associated_media: []
 });
 
 export const MediaCatalogCollectionSpec = {

@@ -25,6 +25,16 @@ form:
     media_collections: Media Collections
     media_collection: Media Collection
     media_collection_label: Media Collection '{label}'
+    associated_media: Associated Media
+  type_descriptions:
+    media:
+      Media Items are individual viewable media, such as videos, images, ebooks, etc.
+    associated_media:
+      Media bundled with this media item, such as trailers, images, etc.
+    media_lists:
+      Media Lists are ordered lists of media
+    media_collections: |
+      Media Collections are ordered lists of media lists
   create:
     create: Create New {type}
     name: Name
@@ -64,6 +74,12 @@ form:
       select: Select Media
     id:
       label: Media ID
+    media_lists:
+      label: Media Lists
+      fieldLabel: Media List
+    media:
+      label: Media
+      fieldLabel: Media Item
     media_type:
       label: Media Type
     title:

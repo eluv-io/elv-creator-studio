@@ -31,8 +31,6 @@ const MediaCatalogTags = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <Title order={3} my="md">{ l10n.categories.tags }</Title>
-
       <Inputs.List
         {...inputProps}
         {...l10n.tags.tags}

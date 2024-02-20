@@ -2,7 +2,7 @@ export default {
   fontFamily: "Montserrat, Helvetica Neue, Helvetica, sans-serif",
   fontFamilyMonospace: "Monaco, Courier, monospace",
   headings: {
-    fontFamily: "Greycliff CF, sans-serif"
+    fontFamily: "system-ui, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
   },
   components: {
     Input: {

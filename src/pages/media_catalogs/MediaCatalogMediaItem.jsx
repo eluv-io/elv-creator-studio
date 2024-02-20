@@ -5,7 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import MediaItemSharedItemFields from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
+import MediaItemSharedItemFields, {MediaItemSubList} from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
 
 const aspectRatioOptions = [
   { label: "Square (1:1)", value: "Square" },
@@ -13,8 +13,17 @@ const aspectRatioOptions = [
   { label: "Portrait (3:4)", value: "Tall" }
 ];
 
-const MediaConfiguration = observer(({mediaItem, l10n, inputProps}) => {
-  inputProps.subcategory = l10n.categories.media;
+const MediaConfiguration = observer(({mediaItem}) => {
+  const { mediaCatalogId, mediaItemId } = useParams();
+
+  const l10n = rootStore.l10n.pages.media_catalog.form;
+  const inputProps = {
+    store: mediaCatalogStore,
+    objectId: mediaCatalogId,
+    category: mediaCatalogStore.MediaItemCategory({type: "media", mediaCatalogId, id: mediaItemId}),
+    subcategory: l10n.categories.media,
+    path: UrlJoin("/public/asset_metadata/info/media/", mediaItemId)
+  };
 
   let imageInput = (
     <Inputs.SingleImageInput
@@ -165,13 +174,6 @@ const MediaCatalogMediaItem = observer(() => {
   if(!mediaItem) { return null; }
 
   const l10n = rootStore.l10n.pages.media_catalog.form;
-  const inputProps = {
-    store: mediaCatalogStore,
-    objectId: mediaCatalogId,
-    category: mediaCatalogStore.MediaItemCategory({type: "media", mediaCatalogId, id: mediaItemId}),
-    subcategory: l10n.categories.general,
-    path: UrlJoin("/public/asset_metadata/info/media/", mediaItemId)
-  };
 
   return (
     <PageContent
@@ -180,15 +182,15 @@ const MediaCatalogMediaItem = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <MediaItemSharedItemFields l10n={l10n} inputProps={inputProps} type="media" />
+      <MediaItemSharedItemFields type="media" mediaId={mediaItemId} />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
 
-      <MediaConfiguration
-        mediaItem={mediaItem}
-        l10n={l10n}
-        inputProps={inputProps}
-      />
+      <MediaConfiguration mediaItem={mediaItem} />
+
+      <Title order={3} mt={50}>{ l10n.categories.associated_media }</Title>
+      <Title order={6} color="dimmed" mb="xl">{ l10n.type_descriptions.associated_media }</Title>
+      <MediaItemSubList type="media" mediaId={mediaItemId} />
     </PageContent>
   );
 });

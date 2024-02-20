@@ -122,12 +122,13 @@ const MediaCatalogItems = observer(({type="media"}) => {
   return (
     <PageContent
       title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${title}`}
+      subtitle={l10n.type_descriptions[type]}
       section="mediaCatalog"
       useHistory
     >
       <Title order={4} my="md" maw={uiStore.inputWidthWide}>
         <Group position="apart">
-          { l10n.categories.media }
+          { l10n.categories[type] }
           <IconButton
             label={LocalizeString(rootStore.l10n.components.inputs.add, {item: category})}
             Icon={IconPlus}

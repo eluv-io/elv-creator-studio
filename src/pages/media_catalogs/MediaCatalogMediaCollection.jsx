@@ -3,20 +3,20 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
-import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import MediaItemSharedItemFields from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
+import MediaItemSharedItemFields, {MediaItemSubList} from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
 
-const MediaCatalogMediaCollection = observer(() => {
+const MediaCatalogMediaList = observer(() => {
   const { mediaCatalogId, mediaCollectionId } = useParams();
 
+  const type = "media_collections";
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
 
   if(!mediaCatalog) { return null; }
 
   const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
 
-  const mediaItem = info.media_collections?.[mediaCollectionId];
+  const mediaItem = info[type]?.[mediaCollectionId];
 
   if(!mediaItem) { return null; }
 
@@ -24,23 +24,24 @@ const MediaCatalogMediaCollection = observer(() => {
   const inputProps = {
     store: mediaCatalogStore,
     objectId: mediaCatalogId,
-    category: mediaCatalogStore.MediaItemCategory({type: "media_collections", mediaCatalogId, id: mediaCollectionId}),
+    category: mediaCatalogStore.MediaItemCategory({type, mediaCatalogId, id: mediaCollectionId}),
     subcategory: l10n.categories.general,
-    path: UrlJoin("/public/asset_metadata/info/media_collections/", mediaCollectionId)
+    path: UrlJoin("/public/asset_metadata/info/", type, mediaCollectionId)
   };
 
   return (
     <PageContent
-      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.media_collections} - ${mediaItem.title}`}
-      backLink={UrlJoin("/media-catalogs", mediaCatalogId, "media_collections")}
+      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories[type]} - ${mediaItem.title}`}
+      backLink={UrlJoin("/media-catalogs", mediaCatalogId, type)}
       section="mediaCatalog"
       useHistory
     >
-      <MediaItemSharedItemFields l10n={l10n} inputProps={inputProps} type="media_collections" />
+      <MediaItemSharedItemFields inputProps={inputProps} type={type} />
 
-      <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
+      <Title order={3} mt={50} mb="md">{ l10n.categories.media_lists }</Title>
+      <MediaItemSubList type={type} mediaId={mediaCollectionId} />
     </PageContent>
   );
 });
 
-export default MediaCatalogMediaCollection;
+export default MediaCatalogMediaList;

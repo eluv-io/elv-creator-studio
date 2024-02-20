@@ -28,8 +28,6 @@ const MediaCatalogGeneralSettings = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <Title order={3} my="md">{ l10n.categories.info }</Title>
-
       <Inputs.Text
         {...inputProps}
         {...l10n.common.name}

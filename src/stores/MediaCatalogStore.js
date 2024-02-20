@@ -95,17 +95,22 @@ class MediaCatalogStore {
   CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {
     const id = GenerateUUID();
 
-    let spec;
-    if(type === "media_collection") {
+    let spec, label;
+    if(type === "media_collections") {
       spec = MediaCatalogCollectionSpec;
-    } else if(type === "media_list") {
+      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_collection;
+    } else if(type === "media_lists") {
       spec = MediaCatalogMediaListSpec;
+      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_list;
     } else if(mediaType === "Video") {
       spec = MediaCatalogMediaVideoSpec;
+      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
     } else if(mediaType === "Image") {
       spec = MediaCatalogMediaImageSpec;
+      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
     } else {
       spec = MediaCatalogMediaOtherSpec({mediaType});
+      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
     }
 
     spec.id = id;
@@ -119,7 +124,7 @@ class MediaCatalogStore {
       field: id,
       value: spec,
       category: this.MediaItemCategory({type, mediaCatalogId, id}),
-      label: this.rootStore.l10n.pages.media_catalog.form.categories.media_item
+      label
     });
 
     return id;

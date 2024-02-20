@@ -31,10 +31,46 @@ const MediaTypes = [
   "Link"
 ];
 
+export const MediaItemTitle = observer(({mediaItem}) => {
+  if(!mediaItem) { return null; }
+
+  return (
+    <Group noWrap>
+      <Image width={100} height={56} miw={100} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
+      <Stack spacing={2}>
+        <Text fw={500}>
+          <Group spacing={5} align="top">
+            { mediaItem.catalog_title || mediaItem.title || mediaItem.id }
+          </Group>
+        </Text>
+        <Text fz={11} mb={3} color="dimmed">{mediaItem.id}</Text>
+        <Group spacing={3}>
+          {
+            mediaItem.tags?.map(tag =>
+              <Paper
+                withBorder
+                radius="md"
+                fz="xs"
+                py={2}
+                px={5}
+                key={`tag-${tag}`}
+                sx={theme => ({backgroundColor: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]})}
+              >
+                { tag }
+              </Paper>
+            )
+          }
+        </Group>
+      </Stack>
+    </Group>
+  );
+});
+
 // Display and select from top level media, media lists and media collections
 const MediaCatalogItemTable = observer(({
   type="media",
   mediaCatalogId,
+  excludedMediaIds=[],
   initialTagFilter,
   initialMediaTypeFilter,
   selectedRecords,
@@ -68,6 +104,7 @@ const MediaCatalogItemTable = observer(({
 
   const mediaItems =
     Object.values(content)
+      .filter(mediaItem => !excludedMediaIds.includes(mediaItem.id))
       .filter(mediaItem =>
         type !== "media" ||
         !mediaTypeFilter ||
@@ -146,28 +183,7 @@ const MediaCatalogItemTable = observer(({
             accessor: "catalog_title",
             sortable: true,
             title: l10n.media.list.columns.title,
-            render: mediaItem => (
-              <Group noWrap>
-                <Image width={100} height={56} miw={100} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
-                <Stack spacing={2}>
-                  <Text fw={500}>
-                    <Group spacing={5} align="top">
-                      { mediaItem.catalog_title }
-                    </Group>
-                  </Text>
-                  <Text fz={11} mb={3} color="dimmed">{mediaItem.id}</Text>
-                  <Group spacing={3}>
-                    {
-                      mediaItem.tags?.map(tag =>
-                        <Paper withBorder radius="md" fz="xs" py={2} px={5} key={`tag-${tag}`}>
-                          { tag }
-                        </Paper>
-                      )
-                    }
-                  </Group>
-                </Stack>
-              </Group>
-            )
+            render: mediaItem => <MediaItemTitle mediaItem={mediaItem} />
           },
           type !== "media" ? null :
             {
@@ -219,10 +235,10 @@ const MediaCatalogItemTable = observer(({
                   Icon={IconTrashX}
                   onClick={() => {
                     ConfirmDelete({
-                      listItem: true,
                       itemName: mediaItem.title,
                       onConfirm: () => mediaCatalogStore.RemoveMediaItem({
                         page: location.pathname,
+                        type,
                         mediaCatalogId,
                         mediaItem
                       })

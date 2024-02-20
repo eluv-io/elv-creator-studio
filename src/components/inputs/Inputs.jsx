@@ -1343,7 +1343,7 @@ const List = observer(({
   simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
 
   const items = values.map((value, index) => {
-    const id = (idField === "index" ? index.toString() : value[idField]) || "";
+    const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
 
     return (
       <Draggable key={`draggable-item-${id || index}`} index={index} draggableId={`item-${id}`}>
@@ -1498,13 +1498,15 @@ const CollectionTableRows = observer(({
   actionLabel,
   columns=[],
   fieldLabel,
-  idField="index",
+  idField=".",
   values,
-  routePath=""
+  routePath="",
+  editable=true,
+  Actions
 }) => {
   return (
     values.map((value, index) => {
-      const id = (idField === "index" ? index.toString() : value[idField]) || "";
+      const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
 
       return (
         <Draggable key={`draggable-item-${id || index}}`} index={index} draggableId={`item-${id}`}>
@@ -1528,13 +1530,20 @@ const CollectionTableRows = observer(({
               )}
               <td style={{width: "100px"}}>
                 <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
-                  <IconButton
-                    label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
-                    component={Link}
-                    to={UrlJoin(location.pathname, routePath || "", id)}
-                    color="blue.5"
-                    Icon={IconEdit}
-                  />
+                  {
+                    !Actions ? null :
+                      Actions(value)
+                  }
+                  {
+                    !editable ? null :
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
+                        component={Link}
+                        to={UrlJoin(location.pathname, routePath || "", id)}
+                        color="blue.5"
+                        Icon={IconEdit}
+                      />
+                  }
                   <IconButton
                     label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
                     color="red.5"
@@ -1585,7 +1594,10 @@ const CollectionTable = observer(({
   idField="index",
   routePath="",
   filterable,
-  Filter
+  Filter,
+  editable=true,
+  AddItem,
+  Actions
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1618,8 +1630,13 @@ const CollectionTable = observer(({
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
       onClick={() => {
+        if(AddItem) {
+          AddItem();
+          return;
+        }
+
         let id = values.length.toString();
-        let newEntry = { ...newItemSpec };
+        let newEntry = {...newItemSpec};
 
         if(idField !== "index") {
           id = GenerateUUID();
@@ -1706,6 +1723,8 @@ const CollectionTable = observer(({
                     idField={idField}
                     fieldLabel={fieldLabel}
                     routePath={routePath}
+                    editable={editable}
+                    Actions={Actions}
                   />
                   {containerProvided.placeholder}
                 </tbody>

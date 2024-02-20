@@ -28,6 +28,7 @@ components:
     add: Add {item}
     select_file: Select file for {item}
     edit: Edit {item}
+    navigate_to: Navigate to {item}
     confirm: Confirm
     remove: Remove {item}
     remove_confirm: Are you sure you want to remove {item}?
