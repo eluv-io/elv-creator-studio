@@ -16,7 +16,7 @@ import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import {rootStore, mediaCatalogStore} from "@/stores";
 import {FabricUrl} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
-import {LinkButton} from "@/components/common/Misc";
+import {LinkButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
 import {modals} from "@mantine/modals";
 import {useForm} from "@mantine/form";
@@ -90,7 +90,7 @@ const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
           <LinkButton radius="md" style={{ flex: 1 }} to={UrlJoin("/media-catalogs", mediaCatalog.objectId)}>
-            Show details
+            Manage
           </LinkButton>
         </Group>
       </Card.Section>
@@ -99,6 +99,7 @@ const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
 });
 
 const MediaCatalogList = observer(() => {
+  const l10n = rootStore.l10n.pages.media_catalog.form;
   return (
     <AsyncWrapper
       loadingMessage="Loading MediaCatalogs"
@@ -110,7 +111,7 @@ const MediaCatalogList = observer(() => {
           <Button
             onClick={() =>
               modals.open({
-                title: rootStore.l10n.pages.media_catalog.form.create.create,
+                title: LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}),
                 centered: true,
                 children:
                   <CreateMediaCatalogForm
@@ -119,7 +120,7 @@ const MediaCatalogList = observer(() => {
               })
             }
           >
-            { rootStore.l10n.pages.media_catalog.form.create.create }
+            { LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}) }
           </Button>
         }
       >

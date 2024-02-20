@@ -40,7 +40,7 @@ const MarketplaceCard = observer(({marketplace, fullMarketplace}) => {
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
           <LinkButton radius="md" style={{ flex: 1 }} to={UrlJoin("/marketplaces", marketplace.objectId)}>
-            Show details
+            Manage
           </LinkButton>
         </Group>
       </Card.Section>

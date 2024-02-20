@@ -6,17 +6,23 @@ import {rootStore, mediaCatalogStore} from "@/stores";
 import MediaCatalogList from "./MediaCatalogList.jsx";
 import MediaCatalogOverview from "@/pages/media_catalogs/MediaCatalogOverview.jsx";
 import MediaCatalogGeneralSettings from "@/pages/media_catalogs/MediaCatalogGeneralSettings.jsx";
-import MediaCatalogMediaList from "@/pages/media_catalogs/MediaCatalogMediaList.jsx";
+import MediaCatalogItems from "@/pages/media_catalogs/MediaCatalogItems.jsx";
 import MediaCatalogMediaItem from "@/pages/media_catalogs/MediaCatalogMediaItem.jsx";
 import MediaCatalogTags from "@/pages/media_catalogs/MediaCatalogTags.jsx";
+import MediaCatalogMediaList from "@/pages/media_catalogs/MediaCatalogMediaList.jsx";
+import MediaCatalogMediaCollection from "@/pages/media_catalogs/MediaCatalogMediaCollection.jsx";
 
 const MediaCatalogRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.overview, path: "/media-catalogs/:mediaCatalogId", Component: <MediaCatalogOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.general, path: "/media-catalogs/:mediaCatalogId/general", Component: <MediaCatalogGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.tags, path: "/media-catalogs/:mediaCatalogId/tags", Component: <MediaCatalogTags /> },
-    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media", Component: <MediaCatalogMediaList /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media", Component: <MediaCatalogItems type="media" /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media/:mediaItemId", Component: <MediaCatalogMediaItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media_lists, path: "/media-catalogs/:mediaCatalogId/media_lists", Component: <MediaCatalogItems type="media_lists" /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.media_list, path: "/media-catalogs/:mediaCatalogId/media_lists/:mediaListId", Component: <MediaCatalogMediaList /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media_collections, path: "/media-catalogs/:mediaCatalogId/media_collections", Component: <MediaCatalogItems type="media_collections" /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.media_collection, path: "/media-catalogs/:mediaCatalogId/media_collections/:mediaCollectionId", Component: <MediaCatalogMediaCollection /> },
   ]
     .map(route => ({
       ...route,

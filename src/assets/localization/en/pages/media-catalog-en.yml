@@ -3,11 +3,14 @@ nav:
   overview: Overview
   general: General
   media: Media
+  media_lists: Media Lists
+  media_collections: Media Collections
   tags: Tags and Attributes
 form:
   categories:
-    media_catalog: Media Catalog
     media_catalogs: Media Catalogs
+    media_catalog: Media Catalog
+    media_catalog_label: Media Catalog '{label}'
     general: General Settings
     info: Media Catalog Info
     tags_and_attributes: Tags and Attributes
@@ -16,8 +19,14 @@ form:
     media: Media
     media_item: Media Item
     media_item_label: Media Item '{label}'
+    media_lists: Media Lists
+    media_list: Media List
+    media_list_label: Media List '{label}'
+    media_collections: Media Collections
+    media_collection: Media Collection
+    media_collection_label: Media Collection '{label}'
   create:
-    create: Create New Media Catalog
+    create: Create New {type}
     name: Name
     validation:
       name: Name must be specified
@@ -41,6 +50,8 @@ form:
       columns:
         title: Title
         media_type: Media Type
+        media: Media
+        media_lists: Media Lists
       filters:
         filter: Filter
         media_type: Media Type
@@ -49,14 +60,16 @@ form:
       create: Create New Media Item
       validation:
         title: Title must be specified
+    modal:
+      select: Select Media
     id:
       label: Media ID
     media_type:
       label: Media Type
     title:
       label: Display Title
-    archive_title:
-      label: Archive Title
+    catalog_title:
+      label: Catalog Title
       description: For alphabetical sorting (e.g. The Best Movie -> Best Movie, The)
     image:
       label: Image

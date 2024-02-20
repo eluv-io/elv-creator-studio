@@ -10,8 +10,6 @@ class FabricBrowserStore {
   }
 
   LoadLibraries = flow(function * () {
-    this.rootStore.DebugTimeStart({key: "Load Libraries"});
-
     const libraryIds = yield this.client.ContentLibraries();
 
     // Find properties library
@@ -41,8 +39,6 @@ class FabricBrowserStore {
     );
 
     this.libraries = libraries;
-
-    this.rootStore.DebugTimeEnd({key: "Load Libraries"});
   });
 
   LoadObjects = flow(function * ({libraryId, sortStatus, filter}) {

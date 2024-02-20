@@ -3,7 +3,8 @@ import {AddActions} from "@/stores/helpers/Actions.js";
 import {mediaCatalogStore} from "@/stores/index.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import {
-  MediaCatalogMediaImageSpec,
+  MediaCatalogCollectionSpec,
+  MediaCatalogMediaImageSpec, MediaCatalogMediaListSpec,
   MediaCatalogMediaOtherSpec,
   MediaCatalogMediaVideoSpec, MediaCatalogSpec
 } from "@/specs/MediaCatalogSpecs.js";
@@ -91,49 +92,60 @@ class MediaCatalogStore {
     };
   });
 
-  CreateMediaItem({page, mediaCatalogId, mediaType, title}) {
+  CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {
     const id = GenerateUUID();
 
-    let spec = MediaCatalogMediaOtherSpec({mediaType});
-    if(mediaType === "Video") {
+    let spec;
+    if(type === "media_collection") {
+      spec = MediaCatalogCollectionSpec;
+    } else if(type === "media_list") {
+      spec = MediaCatalogMediaListSpec;
+    } else if(mediaType === "Video") {
       spec = MediaCatalogMediaVideoSpec;
     } else if(mediaType === "Image") {
       spec = MediaCatalogMediaImageSpec;
+    } else {
+      spec = MediaCatalogMediaOtherSpec({mediaType});
     }
 
     spec.id = id;
     spec.title = title;
-    spec.archive_title = title;
+    spec.catalog_title = title;
 
     mediaCatalogStore.AddField({
       objectId: mediaCatalogId,
       page,
-      path: "/public/asset_metadata/info/media",
+      path: UrlJoin("/public/asset_metadata/info/", type),
       field: id,
       value: spec,
-      category: this.MediaItemCategory({mediaCatalogId, mediaItemId: id}),
+      category: this.MediaItemCategory({type, mediaCatalogId, id}),
       label: this.rootStore.l10n.pages.media_catalog.form.categories.media_item
     });
 
     return id;
   }
 
-  RemoveMediaItem({page, mediaCatalogId, mediaItem}) {
+  RemoveMediaItem({page, type, mediaCatalogId, mediaItem}) {
     this.RemoveField({
       objectId: mediaCatalogId,
       page,
-      path: "/public/asset_metadata/info/media",
+      path: UrlJoin("/public/asset_metadata/info", type),
       field: mediaItem.id,
       category: this.rootStore.l10n.pages.media_catalog.form.categories.media,
       label: mediaItem.title
     });
   }
 
-  MediaItemCategory({mediaCatalogId, mediaItemId}) {
+  MediaItemCategory({type="media", mediaCatalogId, id}) {
     return () => {
-      const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info/media", mediaItemId), field: "title"});
+      const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "title"});
 
-      return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.media_item_label, { label: title });
+      let category =
+        type === "media" ? "media_item_label" :
+          type === "media_lists" ? "media_list_label" :
+            "media_collection_label";
+
+      return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories[category], { label: title });
     };
   }
 

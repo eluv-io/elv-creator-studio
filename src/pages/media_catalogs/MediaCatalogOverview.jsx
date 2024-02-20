@@ -19,6 +19,7 @@ const MediaCatalogOverview = observer(() => {
               width={250}
               height={250 * 9 / 16}
               withPlaceholder
+              fit="contain"
               src={metadata?.info?.image?.url}
               alt={metadata?.info?.name || mediaCatalog?.name}
             />

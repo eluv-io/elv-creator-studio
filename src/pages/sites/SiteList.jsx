@@ -40,7 +40,7 @@ const SiteCard = observer(({site, fullSite}) => {
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
           <LinkButton radius="md" style={{ flex: 1 }} to={UrlJoin("/sites", site.objectId)}>
-            Show details
+            Manage
           </LinkButton>
         </Group>
       </Card.Section>

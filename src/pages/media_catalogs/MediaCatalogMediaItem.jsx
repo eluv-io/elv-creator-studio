@@ -5,6 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
+import MediaItemSharedItemFields from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
 
 const aspectRatioOptions = [
   { label: "Square (1:1)", value: "Square" },
@@ -99,7 +100,7 @@ const MediaConfiguration = observer(({mediaItem, l10n, inputProps}) => {
           <Inputs.URL
             {...inputProps}
             {...l10n.media.link}
-            field="link"
+            field="url"
           />
           <Inputs.Checkbox
             {...inputProps}
@@ -167,75 +168,19 @@ const MediaCatalogMediaItem = observer(() => {
   const inputProps = {
     store: mediaCatalogStore,
     objectId: mediaCatalogId,
-    category: mediaCatalogStore.MediaItemCategory({mediaCatalogId, mediaItemId}),
+    category: mediaCatalogStore.MediaItemCategory({type: "media", mediaCatalogId, id: mediaItemId}),
     subcategory: l10n.categories.general,
     path: UrlJoin("/public/asset_metadata/info/media/", mediaItemId)
   };
 
   return (
     <PageContent
-      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${mediaItem.title}`}
+      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.media} - ${mediaItem.title}`}
       backLink={UrlJoin("/media-catalogs", mediaCatalogId, "media")}
       section="mediaCatalog"
       useHistory
     >
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.media.id}
-        disabled
-        field="id"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.media.media_type}
-        disabled
-        field="media_type"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.media.archive_title}
-        field="archive_title"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.media.title}
-        field="title"
-      />
-
-      <Inputs.List
-        {...inputProps}
-        {...l10n.media.headers}
-        field="headers"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.media.subtitle}
-        field="subtitle"
-      />
-
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.media.description}
-        field="description"
-      />
-
-      <Inputs.RichText
-        {...inputProps}
-        {...l10n.media.description_rich_text}
-        field="description_rich_text"
-      />
-
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.media.tags}
-        disabled={(info.tags || []).length === 0}
-        field="tags"
-        options={info.tags || []}
-      />
+      <MediaItemSharedItemFields l10n={l10n} inputProps={inputProps} type="media" />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
 
