@@ -21,13 +21,6 @@ const MediaCatalogMediaList = observer(() => {
   if(!mediaItem) { return null; }
 
   const l10n = rootStore.l10n.pages.media_catalog.form;
-  const inputProps = {
-    store: mediaCatalogStore,
-    objectId: mediaCatalogId,
-    category: mediaCatalogStore.MediaItemCategory({type, mediaCatalogId, id: mediaCollectionId}),
-    subcategory: l10n.categories.general,
-    path: UrlJoin("/public/asset_metadata/info/", type, mediaCollectionId)
-  };
 
   return (
     <PageContent
@@ -36,7 +29,7 @@ const MediaCatalogMediaList = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <MediaItemSharedItemFields inputProps={inputProps} type={type} />
+      <MediaItemSharedItemFields type={type} mediaId={mediaCollectionId} />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.media_lists }</Title>
       <MediaItemSubList type={type} mediaId={mediaCollectionId} />

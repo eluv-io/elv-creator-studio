@@ -19,6 +19,7 @@ const MediaCatalogRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.tags, path: "/media-catalogs/:mediaCatalogId/tags", Component: <MediaCatalogTags /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media", Component: <MediaCatalogItems type="media" /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media/:mediaItemId", Component: <MediaCatalogMediaItem /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media/:mediaItemId/gallery/:galleryItemId", Component: <MediaCatalogMediaItem /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media_lists, path: "/media-catalogs/:mediaCatalogId/media_lists", Component: <MediaCatalogItems type="media_lists" /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media_list, path: "/media-catalogs/:mediaCatalogId/media_lists/:mediaListId", Component: <MediaCatalogMediaList /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media_collections, path: "/media-catalogs/:mediaCatalogId/media_collections", Component: <MediaCatalogItems type="media_collections" /> },

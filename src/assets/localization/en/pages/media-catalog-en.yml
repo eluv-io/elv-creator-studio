@@ -26,6 +26,9 @@ form:
     media_collection: Media Collection
     media_collection_label: Media Collection '{label}'
     associated_media: Associated Media
+    gallery_settings: Gallery Settings
+    gallery_item: Gallery Item
+    gallery_item_label: Gallery Item '{label}'
   type_descriptions:
     media:
       Media Items are individual viewable media, such as videos, images, ebooks, etc.
@@ -139,5 +142,29 @@ form:
       label: Key
     value:
       label: Value
+    gallery:
+      background_image:
+        label: Gallery Background Image
+      background_image_mobile:
+        label: Gallery Background Image (Mobile)
+      controls:
+        label: Gallery Controls
+    gallery_media:
+      label: Gallery Media
+      fieldLabel: Gallery Media Item
+    gallery_item:
+      columns:
+        name: Name
+        type: Type
+      name:
+        label: Name
+      description:
+        label: Description
+      image:
+        label: Image
+      image_aspect_ratio:
+        label: Image Orientation
+      video:
+        label: Video
 
 

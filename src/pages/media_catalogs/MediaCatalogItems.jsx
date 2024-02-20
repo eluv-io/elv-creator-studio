@@ -18,14 +18,6 @@ import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import MediaCatalogItemTable from "@/components/inputs/MediaCatalogItemTable.jsx";
 
-const MediaTypes = [
-  "Video",
-  "Image",
-  "Ebook",
-  "HTML",
-  "Link"
-];
-
 const CreateMediaCatalogItemForm = ({Create, type="media"}) => {
   const [creating, setCreating] = useState(false);
 
@@ -62,7 +54,7 @@ const CreateMediaCatalogItemForm = ({Create, type="media"}) => {
               {...rootStore.l10n.pages.media_catalog.form.media.media_type}
               defaultValue="Video"
               mb="md"
-              data={MediaTypes}
+              data={mediaCatalogStore.MEDIA_TYPES}
               {...form.getInputProps("mediaType")}
             />
         }

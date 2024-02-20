@@ -43,6 +43,16 @@ mediaCatalog = {
 
 
  */
+
+export const MediaCatalogGalleryItemSpec = {
+  id: undefined,
+  name: "<New Gallery Item>",
+  description: "",
+  image: undefined,
+  image_aspect_ratio: "Square",
+  video: undefined
+};
+
 const MediaCatalogMediaBaseSpec = {
   id: undefined,
   title: "",
@@ -76,6 +86,17 @@ export const MediaCatalogMediaVideoSpec = {
   start_time: undefined,
   end_time: undefined,
   offerings: [],
+  associated_media: []
+};
+
+export const MediaCatalogMediaGallerySpec = {
+  ...MediaCatalogMediaBaseSpec,
+  media_type: "Gallery",
+  title: "<New Gallery>",
+  catalog_title: "<New Gallery>",
+  background_image: undefined,
+  background_image_mobile: undefined,
+  controls: "Carousel",
   associated_media: []
 };
 

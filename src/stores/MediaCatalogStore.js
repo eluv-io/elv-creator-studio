@@ -3,7 +3,7 @@ import {AddActions} from "@/stores/helpers/Actions.js";
 import {mediaCatalogStore} from "@/stores/index.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import {
-  MediaCatalogCollectionSpec,
+  MediaCatalogCollectionSpec, MediaCatalogMediaGallerySpec,
   MediaCatalogMediaImageSpec, MediaCatalogMediaListSpec,
   MediaCatalogMediaOtherSpec,
   MediaCatalogMediaVideoSpec, MediaCatalogSpec
@@ -15,6 +15,27 @@ class MediaCatalogStore {
   allMediaCatalogs;
   mediaCatalogs = {};
 
+  MEDIA_TYPES = [
+    "Video",
+    "Image",
+    "Gallery",
+    "Ebook",
+    "HTML",
+    "Link"
+  ];
+
+  ID_PREFIXES = {
+    "Video": "mvid",
+    "Image": "mimg",
+    "Ebook": "mebk",
+    "HTML": "mhtm",
+    "Link": "mlnk",
+    "Gallery": "mgal",
+    "media_lists": "mlst",
+    "media_collections":" mcol",
+    "media_catalog": "mcat"
+  };
+
   constructor(rootStore) {
     this.rootStore = rootStore;
 
@@ -22,8 +43,10 @@ class MediaCatalogStore {
   }
 
   CreateMediaCatalog = flow(function * ({name="New Media Catalog"}) {
+    const id = `${this.ID_PREFIXES["media_catalog"]}${GenerateUUID()}`;
+
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
-    const {id} = yield this.client.CreateAndFinalizeContentObject({
+    const response = yield this.client.CreateAndFinalizeContentObject({
       libraryId,
       options: {
         type: this.rootStore.typeInfo.mediaCatalog
@@ -39,6 +62,7 @@ class MediaCatalogStore {
               asset_metadata: {
                 info: {
                   ...MediaCatalogSpec,
+                  id,
                   name
                 }
               }
@@ -50,14 +74,16 @@ class MediaCatalogStore {
       }
     });
 
+    const objectId = response.id;
+
     yield Promise.all([
-      this.UpdateDatabaseRecord({objectId: id}),
-      this.LoadMediaCatalog({mediaCatalogId: id}),
+      this.UpdateDatabaseRecord({objectId}),
+      this.LoadMediaCatalog({mediaCatalogId: objectId}),
     ]);
 
     yield this.LoadMediaCatalogs(true);
 
-    return id;
+    return objectId;
   });
 
   LoadMediaCatalogs = flow(function * (force=false) {
@@ -93,25 +119,33 @@ class MediaCatalogStore {
   });
 
   CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {
-    const id = GenerateUUID();
+    let id = GenerateUUID();
 
-    let spec, label;
+    let spec, label, prefix;
     if(type === "media_collections") {
       spec = MediaCatalogCollectionSpec;
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_collection;
+      prefix = this.ID_PREFIXES["media_collections"];
     } else if(type === "media_lists") {
       spec = MediaCatalogMediaListSpec;
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_list;
-    } else if(mediaType === "Video") {
-      spec = MediaCatalogMediaVideoSpec;
-      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
-    } else if(mediaType === "Image") {
-      spec = MediaCatalogMediaImageSpec;
-      label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
+      prefix = this.ID_PREFIXES["media_lists"];
     } else {
-      spec = MediaCatalogMediaOtherSpec({mediaType});
+      prefix = this.ID_PREFIXES[mediaType];
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
+
+      if(mediaType === "Video") {
+        spec = MediaCatalogMediaVideoSpec;
+      } else if(mediaType === "Image") {
+        spec = MediaCatalogMediaImageSpec;
+      } else if(mediaType === "Gallery") {
+        spec = MediaCatalogMediaGallerySpec;
+      } else {
+        spec = MediaCatalogMediaOtherSpec({mediaType});
+      }
     }
+
+    id = `${prefix}${id}`;
 
     spec.id = id;
     spec.title = title;
@@ -123,7 +157,7 @@ class MediaCatalogStore {
       path: UrlJoin("/public/asset_metadata/info/", type),
       field: id,
       value: spec,
-      category: this.MediaItemCategory({type, mediaCatalogId, id}),
+      category: this.MediaItemCategory({type, mediaCatalogId, id, title}),
       label
     });
 
@@ -136,14 +170,14 @@ class MediaCatalogStore {
       page,
       path: UrlJoin("/public/asset_metadata/info", type),
       field: mediaItem.id,
-      category: this.rootStore.l10n.pages.media_catalog.form.categories.media,
+      category: this.MediaItemCategory({type, mediaCatalogId, id: mediaItem.id, title: mediaItem.title || mediaItem.catalog_title || mediaItem.id}),
       label: mediaItem.title
     });
   }
 
-  MediaItemCategory({type="media", mediaCatalogId, id}) {
+  MediaItemCategory({type="media", mediaCatalogId, id, title}) {
     return () => {
-      const title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "title"});
+      title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "title"}) || title;
 
       let category =
         type === "media" ? "media_item_label" :

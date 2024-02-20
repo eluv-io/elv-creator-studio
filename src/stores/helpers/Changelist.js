@@ -175,6 +175,10 @@ export const FormatChangeList = changeList => {
         category = category(action);
       }
 
+      if(typeof action.subcategory === "function") {
+        action.subcategory = action.subcategory(action);
+      }
+
       formattedChangeList[category] = formattedChangeList[category] || { uncategorized: [] };
 
       if(!action.subcategory) {

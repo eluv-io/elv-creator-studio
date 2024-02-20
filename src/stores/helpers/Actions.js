@@ -406,6 +406,17 @@ const ListAction = function({
         });
       }
 
+      // If subcategory is a function, resolve it now before item is removed
+      if(typeof subcategory === "function") {
+        subcategory = subcategory({
+          actionType,
+          info: {
+            index,
+            newIndex
+          },
+        });
+      }
+
       newList = originalList.filter((_, i) => i !== index);
       break;
     case "MOVE_LIST_ELEMENT":

@@ -1576,6 +1576,22 @@ const CollectionTableRows = observer(({
   );
 });
 
+// For collection table, automatically generate category/subcategory label determination function from params specifying the label and where to find the data
+const CategoryFn = ({store, objectId, path, field, params}) => {
+  return (
+    (action) => {
+      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
+      let label = params.fields
+        .map(labelField =>
+          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
+        )
+        .filter(f => f)[0];
+
+      return LocalizeString(params.l10n, { label });
+    }
+  );
+};
+
 const CollectionTable = observer(({
   store,
   objectId,
@@ -1583,6 +1599,7 @@ const CollectionTable = observer(({
   field,
   categoryFnParams,
   category,
+  subcategoryFnParams,
   subcategory,
   label,
   description,
@@ -1611,16 +1628,11 @@ const CollectionTable = observer(({
     values;
 
   if(categoryFnParams) {
-    category = (action) => {
-      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
-      let label = categoryFnParams.fields
-        .map(labelField =>
-          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
-        )
-        .filter(f => f)[0];
+    category = CategoryFn({store, objectId, path, field, params: categoryFnParams});
+  }
 
-      return LocalizeString(categoryFnParams.l10n, { label });
-    };
+  if(subcategoryFnParams) {
+    subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
   }
 
   // Only show bottom add button if there are a lot of entries

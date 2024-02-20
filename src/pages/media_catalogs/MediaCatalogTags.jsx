@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {Link, useParams} from "react-router-dom";
 import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Flex, Title} from "@mantine/core";
+import {Flex} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";

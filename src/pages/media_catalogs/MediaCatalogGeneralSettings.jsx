@@ -2,8 +2,8 @@ import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
+import {GenerateUUID} from "@/helpers/Misc.js";
 
 const MediaCatalogGeneralSettings = observer(() => {
   const { mediaCatalogId } = useParams();
@@ -28,6 +28,16 @@ const MediaCatalogGeneralSettings = observer(() => {
       section="mediaCatalog"
       useHistory
     >
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.id}
+        disabled
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info"
+        field="id"
+        defaultValue={`${mediaCatalogStore.ID_PREFIXES["media_catalog"]}${GenerateUUID()}`}
+      />
+
       <Inputs.Text
         {...inputProps}
         {...l10n.common.name}
