@@ -673,6 +673,7 @@ const SingleImageInput = observer(({
   url=false,
   noResizePreview,
   aspectRatio=1,
+  baseSize=150,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -690,10 +691,10 @@ const SingleImageInput = observer(({
 
   let width, height;
   if(aspectRatio < 1) {
-    width = 150;
+    width = baseSize;
     height = width / aspectRatio;
   } else {
-    height = 150;
+    height = baseSize;
     width = height * aspectRatio;
   }
 
@@ -1171,11 +1172,12 @@ const ImageInput = observer(({
       description={description}
       hint={hint}
       h="max-content"
-      w="100%"
+      //w="100%"
+      w="max-content"
       maw={uiStore.inputWidth}
       {...componentProps}
     >
-      <Group my="md" pt="sm" position="center">
+      <Group my="md" position="center">
         {
           fields.map((field) =>
             <SingleImageInput
@@ -1193,6 +1195,7 @@ const ImageInput = observer(({
               aspectRatio={field.aspectRatio}
               mb={0}
               url={field.url}
+              baseSize={field.baseSize}
             />
           )
         }

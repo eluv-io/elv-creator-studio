@@ -15,6 +15,7 @@ import MarketplaceStore from "@/stores/MarketplaceStore.js";
 import SiteStore from "@/stores/SiteStore.js";
 import ItemTemplateStore from "@/stores/ItemTemplateStore.js";
 import MediaCatalogStore from "@/stores/MediaCatalogStore.js";
+import MediaPropertyStore from "@/stores/MediaPropertyStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 
@@ -64,6 +65,7 @@ class RootStore {
     this.siteStore = new SiteStore(this);
     this.itemTemplateStore = new ItemTemplateStore(this);
     this.mediaCatalogStore = new MediaCatalogStore(this);
+    this.mediaPropertyStore = new MediaPropertyStore(this);
 
     this.Initialize();
   }
@@ -179,5 +181,6 @@ export const marketplaceStore = rootStore.marketplaceStore;
 export const siteStore = rootStore.siteStore;
 export const itemTemplateStore = rootStore.itemTemplateStore;
 export const mediaCatalogStore = rootStore.mediaCatalogStore;
+export const mediaPropertyStore = rootStore.mediaPropertyStore;
 
 window.rootStore = rootStore;

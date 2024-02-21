@@ -78,6 +78,7 @@ const ItemTemplateAdditionalMediaList = observer(({containerType}) => {
             <Group noWrap>
               <AspectRatio
                 w={100}
+
                 ratio={
                   mediaItem.image_aspect_ratio === "Square" ? 1 : mediaItem.image_aspect_ratio === "Wide" ? 16/9 : 3/4
                 }

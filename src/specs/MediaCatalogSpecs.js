@@ -1,49 +1,3 @@
-/*
-
-mediaCatalog = {
-  media: {
-    abc123: {
-      ...,
-      tags: [Rocky],
-      attributes: {
-        franchise: Rocky,
-
-      },
-      associated_media: [
-        qwe123
-      ]
-    }
-  },
-  media_lists: {
-    qwe123: {
-      ...,
-      playlist: true,
-      media: [
-        "abc123",
-        "sdf123"
-      ]
-    }
-  },
-  media_collections: {
-    ...,
-    media_lists: [
-      "qwe123"
-    ],
-    or,
-    media_lists: [
-      playlist: true,
-        media: [
-        "abc123",
-        "sdf123"
-      ]
-    ]
-  }
-}
-
-
-
- */
-
 export const MediaCatalogGalleryItemSpec = {
   id: undefined,
   name: "<New Gallery Item>",
@@ -53,29 +7,44 @@ export const MediaCatalogGalleryItemSpec = {
   video: undefined
 };
 
-const MediaCatalogMediaBaseSpec = {
+const MediaCatalogBaseSpec = {
   id: undefined,
   title: "",
   catalog_title: "",
-  headers: [],
   subtitle: "",
+  headers: [],
   description: "",
   description_rich_text: "",
-  image: undefined,
+  thumbnail_image_portrait: undefined,
+  thumbnail_image_square: undefined,
+  thumbnail_image_landscape: undefined,
   tags: [],
   attributes: {}
 };
 
+const MediaCatalogMediaBaseSpec = {
+  viewed_settings: {
+    title: "",
+    subtitle: "",
+    headers: [],
+    description: "",
+    description_rich_text: ""
+  }
+};
+
 export const MediaCatalogMediaImageSpec = {
+  ...MediaCatalogBaseSpec,
   ...MediaCatalogMediaBaseSpec,
   media_type: "Image",
   title: "<New Image>",
   catalog_title: "<New Image>",
   image_aspect_ratio: "Square",
-  associated_media: []
+  full_image: undefined,
+  associated_media: [],
 };
 
 export const MediaCatalogMediaVideoSpec = {
+  ...MediaCatalogBaseSpec,
   ...MediaCatalogMediaBaseSpec,
   title: "<New Video>",
   catalog_title: "<New Video>",
@@ -86,10 +55,14 @@ export const MediaCatalogMediaVideoSpec = {
   start_time: undefined,
   end_time: undefined,
   offerings: [],
-  associated_media: []
+  associated_media: [],
+  override_settings_when_viewed: false,
+  poster_image: undefined
+
 };
 
 export const MediaCatalogMediaGallerySpec = {
+  ...MediaCatalogBaseSpec,
   ...MediaCatalogMediaBaseSpec,
   media_type: "Gallery",
   title: "<New Gallery>",
@@ -101,7 +74,7 @@ export const MediaCatalogMediaGallerySpec = {
 };
 
 export const MediaCatalogMediaOtherSpec = ({mediaType}) => ({
-  ...MediaCatalogMediaBaseSpec,
+  ...MediaCatalogBaseSpec,
   title: "<New Media Item>",
   catalog_title: "<New Media Item>",
   media_type: mediaType,
@@ -115,12 +88,12 @@ export const MediaCatalogMediaOtherSpec = ({mediaType}) => ({
 });
 
 export const MediaCatalogCollectionSpec = {
-  ...MediaCatalogMediaBaseSpec,
+  ...MediaCatalogBaseSpec,
   media_lists: []
 };
 
 export const MediaCatalogMediaListSpec = {
-  ...MediaCatalogMediaBaseSpec,
+  ...MediaCatalogBaseSpec,
   playlist: true,
   media: []
 };

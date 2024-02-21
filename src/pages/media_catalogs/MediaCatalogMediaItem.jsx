@@ -5,17 +5,17 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {AspectRatio, Group, Image, Text, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import MediaItemSharedItemFields, {MediaItemSubList} from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
+import {
+  MediaCatalogCommonFields,
+  MediaCatalogViewedSettings,
+  MediaItemSubList
+} from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
 import {MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
 
-const aspectRatioOptions = [
-  { label: "Square (1:1)", value: "Square" },
-  { label: "Landscape (16:9)", value: "Wide" },
-  { label: "Portrait (3:4)", value: "Tall" }
-];
-
+const aspectRatioOptions = Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
+  .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}));
 
 const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
   const location = useLocation();
@@ -65,10 +65,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
         {...inputProps}
         {...l10n.media.gallery_item.image}
         field="image"
-        aspectRatio={
-          galleryItem.image_aspect_ratio === "Wide" ? 16/9 :
-            galleryItem.image_aspect_ratio === "Tall" ? 3/4 : 1
-        }
+        aspectRatio={mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.image_aspect_ratio]?.ratio}
       />
       <Inputs.Select
         {...inputProps}
@@ -108,26 +105,88 @@ const MediaConfiguration = observer(({mediaItem}) => {
     path: UrlJoin("/public/asset_metadata/info/media/", mediaItemId)
   };
 
-  let imageInput = (
-    <Inputs.SingleImageInput
-      {...inputProps}
-      {...l10n.media.image}
-      field="image"
-      aspectRatio={16/9}
-    />
-  );
-
+  let content;
   switch(mediaItem.media_type) {
-    case "Video":
-      return (
+    case "Image":
+      content = (
         <>
-          { imageInput }
-          <Inputs.SingleImageInput
+          <Inputs.ImageInput
             {...inputProps}
-            {...l10n.media.poster_image}
-            field="poster_image"
-            aspectRatio={16/9}
+            {...l10n.media.full_image}
+            componentProps={{maw: 400}}
+            fields={[{field: "image", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS[mediaItem.image_aspect_ratio]?.ratio}]}
           />
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.media.image_aspect_ratio}
+            field="image_aspect_ratio"
+            options={aspectRatioOptions}
+          />
+        </>
+      );
+
+      break;
+
+    case "Link":
+      content = (
+        <>
+          <Inputs.URL
+            {...inputProps}
+            {...l10n.media.link}
+            field="url"
+          />
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.media.authorized_link}
+            field="authorized_link"
+          />
+        </>
+      );
+
+      break;
+
+    case "Ebook":
+      content = (
+        <>
+          <Inputs.File
+            {...inputProps}
+            {...l10n.media.media_file}
+            subcategory={l10n.categories.media}
+            field="media_file"
+            extensions={["epub"]}
+          />
+        </>
+      );
+
+      break;
+
+    case "HTML":
+      content = (
+        <>
+          <Inputs.File
+            {...inputProps}
+            {...l10n.media.media_file}
+            subcategory={l10n.categories.media}
+            field="media_file"
+            extensions={["html"]}
+          />
+          <Inputs.List
+            {...inputProps}
+            {...l10n.media.parameters}
+            field="parameters"
+            fields={[
+              { field: "name", InputComponent: Inputs.Text, ...l10n.media.key },
+              { field: "value", InputComponent: Inputs.Text, ...l10n.media.value },
+            ]}
+          />
+        </>
+      );
+
+      break;
+
+    case "Video":
+      content = (
+        <>
           <Inputs.FabricBrowser
             {...inputProps}
             {...l10n.media.media_link}
@@ -161,85 +220,18 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 />
               </>
           }
-        </>
-      );
-
-    case "Image":
-      return (
-        <>
-          <Inputs.SingleImageInput
+          <Inputs.ImageInput
             {...inputProps}
-            {...l10n.media.image}
-            field="image"
-            aspectRatio={
-              mediaItem.image_aspect_ratio === "Wide" ? 16/9 :
-                mediaItem.image_aspect_ratio === "Tall" ? 3/4 : 1
-            }
-          />
-          <Inputs.Select
-            {...inputProps}
-            {...l10n.media.image_aspect_ratio}
-            field="image_aspect_ratio"
-            options={aspectRatioOptions}
+            {...l10n.media.poster_image}
+            fields={[{field: "poster_image", aspectRatio: 16/9}]}
           />
         </>
       );
 
-    case "Link":
-      return (
-        <>
-          { imageInput }
-          <Inputs.URL
-            {...inputProps}
-            {...l10n.media.link}
-            field="url"
-          />
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.media.authorized_link}
-            field="authorized_link"
-          />
-        </>
-      );
+      break;
 
-    case "Ebook":
-      return (
-        <>
-          { imageInput }
-          <Inputs.File
-            {...inputProps}
-            {...l10n.media.media_file}
-            subcategory={l10n.categories.media}
-            field="media_file"
-            extensions={["epub"]}
-          />
-        </>
-      );
-
-    case "HTML":
-      return (
-        <>
-          { imageInput }
-          <Inputs.File
-            {...inputProps}
-            {...l10n.media.media_file}
-            subcategory={l10n.categories.media}
-            field="media_file"
-            extensions={["html"]}
-          />
-          <Inputs.List
-            {...inputProps}
-            {...l10n.media.parameters}
-            field="parameters"
-            fields={[
-              { field: "name", InputComponent: Inputs.Text, ...l10n.media.key },
-              { field: "value", InputComponent: Inputs.Text, ...l10n.media.value },
-            ]}
-          />
-        </>
-      );
     case "Gallery":
-      return (
+      content = (
         <>
           <Inputs.Select
             {...inputProps}
@@ -275,9 +267,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
                   <Group noWrap>
                     <AspectRatio
                       w={100}
-                      ratio={
-                        galleryItem.image_aspect_ratio === "Square" ? 1 : galleryItem.image_aspect_ratio === "Wide" ? 16/9 : 3/4
-                      }
+                      ratio={mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.image_aspect_ratio]?.ratio}
                     >
                       <Image src={ScaleImage(galleryItem.image?.url, 400)} alt={galleryItem.name} withPlaceholder />
                     </AspectRatio>
@@ -296,9 +286,21 @@ const MediaConfiguration = observer(({mediaItem}) => {
           />
         </>
       );
+
+      break;
   }
 
-  return null;
+  return (
+    <>
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.media.media_type}
+        disabled
+        field="media_type"
+      />
+      { content }
+    </>
+  );
 });
 
 const MediaCatalogMediaItem = observer(() => {
@@ -333,15 +335,27 @@ const MediaCatalogMediaItem = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <MediaItemSharedItemFields type="media" mediaId={mediaItemId} />
+      <MediaCatalogCommonFields type="media" mediaId={mediaItemId} />
+
+      {
+        ["Link"].includes(mediaItem.media_type) ? null :
+          <>
+            <Title order={3} mt={50} mb="md">{l10n.categories.viewed_settings}</Title>
+            <MediaCatalogViewedSettings type="media" mediaId={mediaItemId} />
+          </>
+      }
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
-
       <MediaConfiguration mediaItem={mediaItem} />
 
-      <Title order={3} mt={50}>{ l10n.categories.associated_media }</Title>
-      <Title order={6} color="dimmed" mb="xl">{ l10n.type_descriptions.associated_media }</Title>
-      <MediaItemSubList type="media" mediaId={mediaItemId} />
+      {
+        ["Link"].includes(mediaItem.media_type) ? null :
+          <>
+            <Title order={3} mt={50}>{ l10n.categories.associated_media }</Title>
+            <Title order={6} color="dimmed" mb="xl">{l10n.type_descriptions.associated_media}</Title>
+            <MediaItemSubList type="media" mediaId={mediaItemId}/>
+          </>
+      }
     </PageContent>
   );
 });

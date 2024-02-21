@@ -4,7 +4,7 @@ import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import MediaItemSharedItemFields, {MediaItemSubList} from "@/pages/media_catalogs/MediaItemSharedItemFields.jsx";
+import {MediaCatalogCommonFields, MediaItemSubList} from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
 
 const MediaCatalogMediaList = observer(() => {
   const { mediaCatalogId, mediaListId } = useParams();
@@ -29,7 +29,7 @@ const MediaCatalogMediaList = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <MediaItemSharedItemFields type={type} mediaId={mediaListId} />
+      <MediaCatalogCommonFields type={type} mediaId={mediaListId} />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.media }</Title>
       <MediaItemSubList type={type} mediaId={mediaListId} />

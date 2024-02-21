@@ -1,6 +1,7 @@
 components:
   nav:
     home: Home
+    media_properties: Media Properties
     media_catalogs: Media Catalogs
     marketplaces: Marketplaces
     sites: Sites

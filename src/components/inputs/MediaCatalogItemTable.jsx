@@ -34,9 +34,11 @@ const MediaTypes = [
 export const MediaItemTitle = observer(({mediaItem}) => {
   if(!mediaItem) { return null; }
 
+  const imageUrl = (mediaItem.thumbnail_image_square || mediaItem.thumbnail_image_landscape || mediaItem.thumbnail_image_portrait)?.url;
+
   return (
     <Group noWrap>
-      <Image width={100} height={56} miw={100} fit="contain" src={ScaleImage(mediaItem.image?.url, 400)} alt={mediaItem.title} withPlaceholder />
+      <Image width={100} height={56} miw={100} fit="contain" src={ScaleImage(imageUrl, 400)} alt={mediaItem.title} withPlaceholder />
       <Stack spacing={2}>
         <Text fw={500}>
           <Group spacing={5} align="top">

@@ -1,12 +1,13 @@
 import {observer} from "mobx-react-lite";
 import Inputs from "@/components/inputs/Inputs.jsx";
 import {Link, useParams} from "react-router-dom";
-import {mediaCatalogStore, rootStore} from "@/stores/index.js";
+import {mediaCatalogStore, rootStore, uiStore} from "@/stores/index.js";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaCatalogItemSelectionModal, MediaItemTitle} from "@/components/inputs/MediaCatalogItemTable.jsx";
 import {useState} from "react";
+import {Paper, Text} from "@mantine/core";
 
 export const MediaItemSubList = observer(({type, mediaId}) => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
@@ -114,7 +115,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
   );
 });
 
-const MediaItemSharedItemFields = observer(({type, mediaId}) => {
+export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
   const { mediaCatalogId } = useParams();
 
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
@@ -141,16 +142,6 @@ const MediaItemSharedItemFields = observer(({type, mediaId}) => {
         field="id"
       />
 
-      {
-        type !== "media" ? null :
-          <Inputs.Text
-            {...inputProps}
-            {...l10n.media.media_type}
-            disabled
-            field="media_type"
-          />
-      }
-
       <Inputs.Text
         {...inputProps}
         {...l10n.media.catalog_title}
@@ -163,16 +154,16 @@ const MediaItemSharedItemFields = observer(({type, mediaId}) => {
         field="title"
       />
 
-      <Inputs.List
-        {...inputProps}
-        {...l10n.media.headers}
-        field="headers"
-      />
-
       <Inputs.Text
         {...inputProps}
         {...l10n.media.subtitle}
         field="subtitle"
+      />
+
+      <Inputs.List
+        {...inputProps}
+        {...l10n.media.headers}
+        field="headers"
       />
 
       <Inputs.TextArea
@@ -194,8 +185,83 @@ const MediaItemSharedItemFields = observer(({type, mediaId}) => {
         field="tags"
         options={info.tags || []}
       />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.media.thumbnail_images}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        fields={[
+          { ...l10n.media.image_portrait, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Portrait"]?.ratio, field: "thumbnail_image_portrait" },
+          { ...l10n.media.image_square, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Square"]?.ratio, field: "thumbnail_image_square" },
+          { ...l10n.media.image_landscape, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "thumbnail_image_landscape" }
+        ]}
+      />
     </>
   );
 });
 
-export default MediaItemSharedItemFields;
+export const MediaCatalogViewedSettings = observer(({type, mediaId}) => {
+  const { mediaCatalogId } = useParams();
+
+  const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
+
+  if(!mediaCatalog) { return null; }
+
+  const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
+
+  const mediaItem = info[type]?.[mediaId];
+
+  if(!mediaItem) { return null; }
+
+  const l10n = rootStore.l10n.pages.media_catalog.form;
+  const inputProps = {
+    store: mediaCatalogStore,
+    objectId: mediaCatalogId,
+    category: mediaCatalogStore.MediaItemCategory({type, mediaCatalogId, id: mediaId}),
+    subcategory: l10n.categories.viewed_settings,
+    path: UrlJoin("/public/asset_metadata/info/", type, mediaId, "viewed_settings")
+  };
+
+  return (
+    <>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.media.override_settings_when_viewed}
+        path={UrlJoin("/public/asset_metadata/info/", type, mediaId)}
+        field="override_settings_when_viewed"
+      />
+      {
+        !mediaItem.override_settings_when_viewed ? null :
+          <Paper withBorder p="xl" maw={uiStore.inputWidth}>
+            <Text fz="sm">{ l10n.media.viewed_settings.label }</Text>
+            <Text fz="xs" color="dimmed" mb="md">{ l10n.media.viewed_settings.description }</Text>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.media.title}
+              field="title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.media.subtitle}
+              field="subtitle"
+            />
+            <Inputs.List
+              {...inputProps}
+              {...l10n.media.headers}
+              field="headers"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.media.description}
+              field="description"
+            />
+            <Inputs.RichText
+              {...inputProps}
+              {...l10n.media.description_rich_text}
+              field="description_rich_text"
+            />
+          </Paper>
+      }
+    </>
+  );
+});

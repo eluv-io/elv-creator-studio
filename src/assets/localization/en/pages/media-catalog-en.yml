@@ -26,6 +26,7 @@ form:
     media_collection: Media Collection
     media_collection_label: Media Collection '{label}'
     associated_media: Associated Media
+    viewed_settings: Viewed Settings
     gallery_settings: Gallery Settings
     gallery_item: Gallery Item
     gallery_item_label: Gallery Item '{label}'
@@ -93,6 +94,15 @@ form:
     image:
       label: Image
       description: 16/9 Aspect Ratio
+    thumbnail_images:
+      label: Thumbnail Images
+      description: Different aspect ratios may be used in different presentations of this content
+    image_portrait:
+      label: Portrait (2:3)
+    image_square:
+      label: Square (1:1)
+    image_landscape:
+      label: Landscape (16:9)
     headers:
       label: Headers
       description: Short text that will appear above the title, e.g. content rating, release year, duration
@@ -121,11 +131,20 @@ form:
     end_time:
       label: End Time
       description: Approximate end time of this live video
+    override_settings_when_viewed:
+      label: Use different settings when viewed
+      description: If specified, you can show a different title, description, etc. to use when this media is being viewed
+    viewed_settings:
+      label: Viewed Settings
+      description: These options will be used when the media item is being viewed
     poster_image:
       label: Video Poster Image
       description: Displayed in the video player before playback is started
     image_aspect_ratio:
       label: Image Orientation
+    full_image:
+      label: Full Image
+      description: The full image file. If not specified, the thumbnail with the specified aspect ratio will be used instead
     media_file:
       label: Media File
       description: Select the file to display.

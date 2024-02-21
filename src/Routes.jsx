@@ -6,6 +6,7 @@ import ScrollToTop from "@/components/common/ScrollToTop.jsx";
 import SiteRoutes from "@/pages/sites/SiteRoutes.jsx";
 import ItemTemplateRoutes from "@/pages/item_templates/ItemTemplateRoutes.jsx";
 import MediaCatalogRoutes from "@/pages/media_catalogs/MediaCatalogRoutes.jsx";
+import MediaPropertyRoutes from "@/pages/media_properties/MediaPropertyRoutes.jsx";
 
 const AppRoutes = observer(() => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes = observer(() => {
       <SiteRoutes rootPath="/sites/" />
       <ItemTemplateRoutes rootPath="/item-templates/" />
       <MediaCatalogRoutes rootPath="/media-catalogs/" />
+      <MediaPropertyRoutes rootPath="/media-properties/" />
     </BrowserRouter>
   );
 });

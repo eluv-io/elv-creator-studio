@@ -193,6 +193,7 @@ class DatabaseStore {
       sites: {},
       templates: {},
       mediaCatalogs: {},
+      mediaProperties: {}
     };
 
     const typeIds = yield this.InitializeTypes();
@@ -219,6 +220,10 @@ class DatabaseStore {
         case "mediaCatalog":
           object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
           content.mediaCatalogs[object.objectId] = object;
+          break;
+        case "mediaProperty":
+          object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
+          content.mediaProperties[object.objectId] = object;
           break;
       }
     });
@@ -260,6 +265,12 @@ class DatabaseStore {
     yield Promise.all(
       Object.keys(content.mediaCatalogs).map(async mediaCatalogId => {
         content.mediaCatalogs[mediaCatalogId].tenantSlug = tenantSlug;
+      })
+    );
+
+    yield Promise.all(
+      Object.keys(content.mediaProperties).map(async mediaPropertyId => {
+        content.mediaProperties[mediaPropertyId].tenantSlug = tenantSlug;
       })
     );
 
@@ -465,6 +476,15 @@ class DatabaseStore {
         delete mediaCatalog.metadata;
 
         await this.WriteDocument({batch, collection: "mediaCatalogs", document: mediaCatalog.objectId, content: mediaCatalog});
+      })
+    );
+
+    yield Promise.all(
+      Object.values(content.mediaProperties).map(async mediaProperty => {
+        mediaProperty = { ...mediaProperty };
+        delete mediaProperty.metadata;
+
+        await this.WriteDocument({batch, collection: "mediaProperties", document: mediaProperty.objectId, content: mediaProperty});
       })
     );
 
@@ -683,6 +703,32 @@ class DatabaseStore {
       batch,
       collection: "mediaCatalogs",
       document: mediaCatalogId,
+      content: object
+    });
+  });
+
+  SaveMediaProperty = flow(function * ({batch, mediaPropertyId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: mediaPropertyId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: mediaPropertyId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    let object = {
+      libraryId,
+      objectId: mediaPropertyId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
+      name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
+      description: metadata.public?.asset_metadata?.info?.description || ""
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "mediaProperties",
+      document: mediaPropertyId,
       content: object
     });
   });

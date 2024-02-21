@@ -36,6 +36,21 @@ class MediaCatalogStore {
     "media_catalog": "mcat"
   };
 
+  IMAGE_ASPECT_RATIOS = {
+    "Portrait": {
+      label: "Portrait (2:3)",
+      ratio: 2/3
+    },
+    "Square": {
+      label: "Square (1:1)",
+      ratio: 1
+    },
+    "Landscape": {
+      label: "Landscape (16:9)",
+      ratio: 16/9
+    }
+  };
+
   constructor(rootStore) {
     this.rootStore = rootStore;
 
