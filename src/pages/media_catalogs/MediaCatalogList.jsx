@@ -14,7 +14,7 @@ import {
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import {rootStore, mediaCatalogStore} from "@/stores";
-import {FabricUrl} from "@/helpers/Fabric.js";
+import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
@@ -68,7 +68,9 @@ const CreateMediaCatalogForm = ({Create}) => {
 const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
   const fullMediaCatalogMetadata = fullMediaCatalog?.metadata?.public?.asset_metadata || {};
   const name = fullMediaCatalogMetadata?.info?.name || mediaCatalog.name;
-  const image = FabricUrl({...mediaCatalog, path: "/meta/public/asset_metadata/info/image", width: 400});
+  const image =
+    ScaleImage(fullMediaCatalogMetadata?.info?.image?.url, 400) ||
+    FabricUrl({...mediaCatalog, path: "/meta/public/asset_metadata/info/image", width: 400});
 
   return (
     <Card withBorder radius="md" p="md" style={{display: "flex", flexDirection: "column"}}>

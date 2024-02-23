@@ -1172,7 +1172,6 @@ const ImageInput = observer(({
       description={description}
       hint={hint}
       h="max-content"
-      //w="100%"
       w="max-content"
       maw={uiStore.inputWidth}
       {...componentProps}

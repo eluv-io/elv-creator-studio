@@ -11,6 +11,15 @@ class EditStore {
   actions = {};
   showSaveModal = false;
 
+  types = {
+    "tenant": { storeKey: "tenantStore"},
+    "marketplace": { storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"},
+    "site": { storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"},
+    "item_template": { storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"},
+    "media_catalog": { storeKey: "mediaCatalogStore", namePath: "/public/asset_metadata/info/name"},
+    "media_property": { storeKey: "mediaPropertyStore", namePath: "/public/asset_metadata/info/name"}
+  };
+
   constructor(rootStore) {
     this.rootStore = rootStore;
 
@@ -18,7 +27,9 @@ class EditStore {
   }
 
   get hasUnsavedChanges() {
-    return this.ChangeLists().find(({changeList}) => !!changeList.string);
+    return Object.values(this.types).find(({storeKey}) =>
+      this.rootStore[storeKey].HasUnsavedChanges()
+    );
   }
 
   Initialize() {
@@ -62,13 +73,9 @@ class EditStore {
         .filter(a => a);
     };
 
-    return [
-      ...GetChangeList({type: "tenant", storeKey: "tenantStore"}),
-      ...GetChangeList({type: "marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
-      ...GetChangeList({type: "site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"}),
-      ...GetChangeList({type: "item_template", storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"}),
-      ...GetChangeList({type: "media_catalog", storeKey: "mediaCatalogStore", namePath: "/public/asset_metadata/info/name"})
-    ];
+    return Object.keys(this.types)
+      .map(type => GetChangeList({type, ...this.types[type]}))
+      .flat();
   }
 
   ToggleSaveModal(show) {

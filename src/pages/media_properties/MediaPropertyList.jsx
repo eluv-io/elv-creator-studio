@@ -14,7 +14,7 @@ import {
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import {rootStore, mediaPropertyStore} from "@/stores";
-import {FabricUrl} from "@/helpers/Fabric.js";
+import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
@@ -68,12 +68,14 @@ const CreateMediaPropertyForm = ({Create}) => {
 const MediaPropertyCard = observer(({mediaProperty, fullMediaProperty}) => {
   const fullMediaPropertyMetadata = fullMediaProperty?.metadata?.public?.asset_metadata || {};
   const name = fullMediaPropertyMetadata?.info?.name || mediaProperty.name;
-  const image = FabricUrl({...mediaProperty, path: "/meta/public/asset_metadata/info/image", width: 400});
+  const image =
+    ScaleImage(fullMediaPropertyMetadata?.info?.image?.url, 400) ||
+    FabricUrl({...mediaProperty, path: "/meta/public/asset_metadata/info/image", width: 400});
 
   return (
     <Card withBorder radius="md" p="md" style={{display: "flex", flexDirection: "column"}}>
       <Card.Section p="xl">
-        <AspectRatio ratio={1}>
+        <AspectRatio ratio={2/3}>
           <Image src={image} alt={name} withPlaceholder />
         </AspectRatio>
       </Card.Section>

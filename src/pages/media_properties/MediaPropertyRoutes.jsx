@@ -4,10 +4,14 @@ import SectionLayout from "@/components/common/SectionLayout.jsx";
 import {rootStore, mediaPropertyStore} from "@/stores";
 import MediaPropertyList from "@/pages/media_properties/MediaPropertyList.jsx";
 import MediaPropertyOverview from "@/pages/media_properties/MediaPropertyOverview.jsx";
+import MediaPropertyGeneralSettings from "@/pages/media_properties/MediaPropertyGeneralSettings.jsx";
+import MediaPropertyLayout from "@/pages/media_properties/MediaPropertyLayout.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.overview, path: "/media-properties/:mediaPropertyId", Component: <MediaPropertyOverview /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.general, path: "/media-properties/:mediaPropertyId/general", Component: <MediaPropertyGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.layout, path: "/media-properties/:mediaPropertyId/layout", Component: <MediaPropertyLayout /> },
   ]
     .map(route => ({
       ...route,

@@ -636,6 +636,12 @@ const SetListFieldIds = function({objectId, path, idField="id", category, label}
   });
 };
 
+const HasUnsavedChanges = function() {
+  return !!Object.values(this.actionStack).find(actions =>
+    actions?.length > 0 && actions?.find(action => action.actionType !== "SET_DEFAULT")
+  );
+};
+
 export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.objectsMapKey = objectsMapKey;
   storeClass.prototype.actionStack = {};
@@ -663,4 +669,6 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.ClearActions = ClearActions;
 
   storeClass.prototype.SetListFieldIds = SetListFieldIds;
+
+  storeClass.prototype.HasUnsavedChanges = HasUnsavedChanges;
 };

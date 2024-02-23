@@ -1,6 +1,5 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
-import {GenerateUUID} from "@/helpers/Misc.js";
 import {
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
@@ -16,8 +15,6 @@ class MediaPropertyStore {
   }
 
   CreateMediaProperty = flow(function * ({name="New Media Property"}) {
-    const id = `prop${GenerateUUID()}`;
-
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
       libraryId,
@@ -25,6 +22,7 @@ class MediaPropertyStore {
         type: this.rootStore.typeInfo.mediaProperty
       },
       callback: async ({objectId, writeToken}) => {
+        const id = `prop${objectId.replace("iq__", "")}`;
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -70,7 +68,7 @@ class MediaPropertyStore {
 
     yield this.LoadMediaProperties();
 
-    const info = this.allMediaProperties.find(mediaPropertyId => mediaPropertyId.objectId === mediaPropertyId);
+    const info = this.allMediaProperties.find(mediaProperty => mediaProperty.objectId === mediaPropertyId);
 
     const libraryId = yield this.rootStore.LibraryId({objectId: mediaPropertyId});
 

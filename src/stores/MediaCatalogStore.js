@@ -58,8 +58,6 @@ class MediaCatalogStore {
   }
 
   CreateMediaCatalog = flow(function * ({name="New Media Catalog"}) {
-    const id = `${this.ID_PREFIXES["media_catalog"]}${GenerateUUID()}`;
-
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
       libraryId,
@@ -67,6 +65,7 @@ class MediaCatalogStore {
         type: this.rootStore.typeInfo.mediaCatalog
       },
       callback: async ({objectId, writeToken}) => {
+        const id = `${this.ID_PREFIXES["media_catalog"]}${objectId.replace("iq__", "")}`;
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -78,7 +77,8 @@ class MediaCatalogStore {
                 info: {
                   ...MediaCatalogSpec,
                   id,
-                  name
+                  name,
+                  title: name
                 }
               }
             }
@@ -112,7 +112,7 @@ class MediaCatalogStore {
 
     yield this.LoadMediaCatalogs();
 
-    const info = this.allMediaCatalogs.find(mediaCatalogId => mediaCatalogId.objectId === mediaCatalogId);
+    const info = this.allMediaCatalogs.find(mediaCatalog => mediaCatalog.objectId === mediaCatalogId);
 
     const libraryId = yield this.rootStore.LibraryId({objectId: mediaCatalogId});
 

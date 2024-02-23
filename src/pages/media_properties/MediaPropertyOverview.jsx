@@ -17,7 +17,7 @@ const MediaPropertyOverview = observer(() => {
           <Group align="top" noWrap spacing="xl">
             <Image
               width={250}
-              height={250 * 9 / 16}
+              height={250 * 3 / 2}
               withPlaceholder
               fit="contain"
               src={metadata?.info?.image?.url}
@@ -26,7 +26,7 @@ const MediaPropertyOverview = observer(() => {
             <Container p={0} m={0} maw={400}>
               <Title order={4}>{ metadata?.info?.name || mediaProperty?.name }</Title>
               <Title order={6} color="dimmed">{ mediaProperty.objectId }</Title>
-              <Text fz="xs" color="dimmed">{ mediaProperty.objectId }</Text>
+              <Text fz="xs" color="dimmed">{ metadata.info.id }</Text>
               <Text fz="sm" mt="md">{metadata?.info?.description}</Text>
             </Container>
           </Group>
