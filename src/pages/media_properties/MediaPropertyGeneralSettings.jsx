@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore} from "@/stores";
+import {rootStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 
@@ -54,6 +54,33 @@ const MediaPropertyGeneralSettings = observer(() => {
         {...l10n.general.page_title}
         subcategory={l10n.categories.info}
         field="page_title"
+      />
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.media_catalogs}
+        subcategory={l10n.categories.info}
+        field="media_catalogs"
+        options={
+          mediaCatalogStore.allMediaCatalogs.map(mediaCatalog => ({
+            label: mediaCatalog.name,
+            value: mediaCatalog.id
+          }))
+        }
+      />
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.subproperties}
+        subcategory={l10n.categories.info}
+        field="subproperties"
+        options={
+          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+            label: mediaProperty.name,
+            value: mediaProperty.id
+          }))
+            .filter(({value}) => value === mediaPropertyId)
+        }
       />
 
       <Inputs.ImageInput

@@ -3,9 +3,9 @@ nav:
   overview: Overview
   general: General
   layout: Layout
-  sections: Content Sections
-  section: Content Section
-  section_label: Content Section '{label}'
+  pages: Pages
+  sections: Page Sections
+
 form:
   categories:
     media_properties: Media Properties
@@ -15,9 +15,12 @@ form:
     info: Media Property Info
     layout: Layout
     header: Header
-    sections: Content Sections
-    section: Content Section
-    section_label: Content Section '{label}'
+    pages: Pages
+    page: Page
+    page_label: Page '{label}'
+    sections: Page Sections
+    section: Page Section
+    section_label: Page Section '{label}'
   create:
     create: Create New {type}
     name: Name
@@ -41,6 +44,12 @@ form:
     image:
       label: Image
       description: Portrait (2:3)
+    media_catalogs:
+      label: Media Catalogs
+      description: Media from these catalogs will be available in this property
+    subproperties:
+      label: Subproperties
+      description: Other properties within this property
   header:
     title:
       label: Title
@@ -56,4 +65,41 @@ form:
       label: Desktop (16:9)
     background_image_mobile:
       label: Mobile
+  pages:
+    create:
+      create: Create New Page
+      name:
+        label: Name
+      validation:
+        name: Name must be specified
+    pages:
+      label: Pages
+      description: Create a page in your property to display content
+    name:
+      label: Name
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+
+  sections:
+    create:
+      create: Create New Page Section
+      name:
+        label: Name
+      type:
+        label: Type
+        description: Section content may either be specified manually, or automatically based on tags, attributes and schedule options
+      validation:
+        name: Name must be specified
+    sections:
+      label: Page Content Sections
+      description: Define groups of content that can be displayed on pages
+    name:
+      label: Name
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+
 

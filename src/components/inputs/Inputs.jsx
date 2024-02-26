@@ -33,7 +33,7 @@ import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {GenerateUUID, ParseDate} from "@/helpers/Misc";
+import {GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "@/components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
@@ -59,6 +59,7 @@ import {
   IconLink,
   IconUnlink
 } from "@tabler/icons-react";
+import {DataTable} from "mantine-datatable";
 
 export const Confirm = ({title, text, onConfirm, ...modalProps}) => {
   modals.openConfirmModal({
@@ -1760,6 +1761,150 @@ const CollectionTable = observer(({
   );
 });
 
+
+// A table for 'reference' lists (key->value instead of array)
+const ReferenceTable = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  fieldLabel,
+  description,
+  hint,
+  columns=[],
+  routePath="",
+  pageSize=50,
+  nameField="name",
+  filterable,
+  filterFields=[],
+  Filter,
+  editable=true,
+  AddItem,
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const values = Object.values(store.GetMetadata({objectId, path, field}) || {});
+
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
+  const [sortStatus, setSortStatus] = useState({columnAccessor: nameField, direction: "asc"});
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedFilter]);
+
+  let filteredValues = values;
+  if(filterable) {
+    filteredValues = Filter ?
+      values.filter(value => Filter({filter: debouncedFilter, value})) :
+      values.filter(value => !!filterFields.find(field => (value[field]?.toLowerCase() || "").includes(debouncedFilter.toLowerCase())));
+  }
+
+  filteredValues = filteredValues.sort(SortTable({sortStatus}));
+
+  const pagedValues = filteredValues.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
+
+  // Only show bottom add button if there are a lot of entries
+  const showBottomAddButton = values.length >= 10;
+
+  let addButton;
+  if(AddItem) {
+    addButton = (
+      <IconButton
+        label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+        Icon={IconPlus}
+        onClick={async () => {
+          const newKey = await AddItem();
+
+          if(newKey) {
+            navigate(UrlJoin(location.pathname, routePath || "", newKey));
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
+      <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
+        {
+          !filterable ? null :
+            <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
+        }
+        <Paper maw={uiStore.inputWidthWide}>
+          <DataTable
+            minHeight={filteredValues.length === 0 ? 200 : 0}
+            withBorder
+            highlightOnHover
+            idAccessor="id"
+            records={pagedValues}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+            totalRecords={filteredValues.length}
+            recordsPerPage={pageSize}
+            page={values.length > pageSize ? page : undefined}
+            onPageChange={page => setPage(page)}
+            columns={[
+              ...columns,
+              !editable ? null :
+              {
+                accessor: "id",
+                width: 120,
+                title: "",
+                render: item => (
+                  <Group position="center">
+                    <IconButton
+                      label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
+                      component={Link}
+                      to={UrlJoin(location.pathname, routePath || "", item.id)}
+                      color="blue.5"
+                      Icon={IconEdit}
+                    />
+                    <IconButton
+                      label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
+                      color="red.5"
+                      Icon={IconTrashX}
+                      onClick={() => {
+                        ConfirmDelete({
+                          itemName: item[nameField] || fieldLabel,
+                          onConfirm: () => {
+                            store.RemoveField({
+                              objectId,
+                              page,
+                              path: UrlJoin(path, field),
+                              field: item.id,
+                              category,
+                              subcategory,
+                              label: item[nameField] || fieldLabel
+                            });
+                          }
+                        });
+                      }}
+                    />
+                  </Group>
+                )
+              }
+            ].filter(column => column)}
+          />
+        </Paper>
+        <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
+          {addButton}
+        </Group>
+        {
+          !showBottomAddButton ? null :
+            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+              {addButton}
+            </Group>
+        }
+      </Container>
+    </InputWrapper>
+  );
+});
+
 export default {
   Input,
   Hidden: props => <Input {...props} type="text" hidden />,
@@ -1786,6 +1931,7 @@ export default {
   ImageInput,
   List,
   CollectionTable,
+  ReferenceTable,
   FabricBrowser: FabricBrowserInput,
   File: FileInput,
   InputWrapper

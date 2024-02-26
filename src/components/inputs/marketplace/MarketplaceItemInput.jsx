@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
 import {Box, Text, Group, Paper, Stack} from "@mantine/core";
-import Inputs, {ConfirmDelete} from "./Inputs.jsx";
-import {rootStore, marketplaceStore, uiStore} from "@/stores";
+import Inputs, {ConfirmDelete} from "../Inputs.jsx";
+import {rootStore, marketplaceStore, uiStore} from "@/stores/index.js";
 import {IconButton, ItemImage, LocalizeString} from "@/components/common/Misc.jsx";
 import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";

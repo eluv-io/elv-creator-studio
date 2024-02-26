@@ -1,12 +1,25 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
+  MediaPropertyPageSpec,
+  MediaPropertySectionAutomaticSpec,
+  MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
+import UrlJoin from "url-join";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 class MediaPropertyStore {
   allMediaProperties;
   mediaProperties = {};
+
+  ID_PREFIXES = {
+    "property": "prop",
+    "section_manual": "pscm",
+    "section_automatic": "psca",
+    "page": "ppge",
+  };
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -22,7 +35,7 @@ class MediaPropertyStore {
         type: this.rootStore.typeInfo.mediaProperty
       },
       callback: async ({objectId, writeToken}) => {
-        const id = `prop${objectId.replace("iq__", "")}`;
+        const id = `${this.ID_PREFIXES["property"]}${objectId.replace("iq__", "")}`;
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -72,6 +85,8 @@ class MediaPropertyStore {
 
     const libraryId = yield this.rootStore.LibraryId({objectId: mediaPropertyId});
 
+    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
+
     this.mediaProperties[mediaPropertyId] = {
       ...info,
       metadata: {
@@ -88,6 +103,55 @@ class MediaPropertyStore {
       }
     };
   });
+
+  CreatePage({page, mediaPropertyId, name}) {
+    let id = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
+
+    const spec = MediaPropertyPageSpec;
+    spec.id = id;
+    spec.name = name || spec.name;
+
+    this.AddField({
+      objectId: mediaPropertyId,
+      page,
+      path: "/public/asset_metadata/info/pages",
+      field: id,
+      value: spec,
+      category: this.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id, name: spec.name}),
+      label: name
+    });
+
+    return id;
+  }
+
+  CreateSection({page, mediaPropertyId, type="manual", name}) {
+    let id = `${this.ID_PREFIXES[`section_${type}`]}${GenerateUUID()}`;
+
+    const spec = type === "manual" ? MediaPropertySectionManualSpec : MediaPropertySectionAutomaticSpec;
+
+    spec.id = id;
+    spec.name = name || spec.name;
+
+    this.AddField({
+      objectId: mediaPropertyId,
+      page,
+      path: "/public/asset_metadata/info/sections",
+      field: id,
+      value: spec,
+      category: this.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id, name: spec.name}),
+      label: name
+    });
+
+    return id;
+  }
+
+  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, name}) {
+    return () => {
+      name = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "name"}) || name;
+
+      return LocalizeString(this.rootStore.l10n.pages.media_property.form.categories[category], { label: name });
+    };
+  }
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});

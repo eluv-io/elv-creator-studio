@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "serve": "rm -rf node_modules/.vite; vite",
+    "serve-db": "firebase emulators:start",
     "build": "rm -rf dist/* ; vite build",
     "preview": "vite preview",
     "lint": "npm-run-all -s lint-js-fix lint-scss-fix",

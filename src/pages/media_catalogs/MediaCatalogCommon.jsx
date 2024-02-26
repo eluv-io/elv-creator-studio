@@ -5,7 +5,7 @@ import {mediaCatalogStore, rootStore, uiStore} from "@/stores/index.js";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {IconExternalLink} from "@tabler/icons-react";
-import {MediaCatalogItemSelectionModal, MediaItemTitle} from "@/components/inputs/MediaCatalogItemTable.jsx";
+import {MediaCatalogItemSelectionModal, MediaItemTitle} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {useState} from "react";
 import {Paper, Text} from "@mantine/core";
 
@@ -181,6 +181,7 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.media.tags}
+        subcategory={l10n.categories.tags}
         disabled={(info.tags || []).length === 0}
         field="tags"
         options={info.tags || []}

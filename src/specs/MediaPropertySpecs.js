@@ -15,25 +15,25 @@ Property
    - Media Catalog 1
    - Media Catalog 2
 
-   - Pages
-    - Main (2024)
-      - bg image, title, logo, etc.
-      - Sections:
-        -> Live Now
-        -> Upcoming
-        -> Previous Matches
-        -> National Associations
-        -> More Clubs and Competitors
-    - 2023
-      - bg image, title, logo, etc.
-      - Sections:
-        -> Highlights (2023)
-        -> All Matches (2023)
-    - Country
+ - Pages
+  - Main (2024)
+    - bg image, title, logo, etc.
+    - Sections:
+      -> Live Now
+      -> Upcoming
+      -> Previous Matches
+      -> National Associations
+      -> More Clubs and Competitors
+  - 2023
+    - bg image, title, logo, etc.
+    - Sections:
+      -> Highlights (2023)
+      -> All Matches (2023)
+  - Country
 
 
-    -> Country page, filtered by attributes=[{"association": "albania"}]
-    ...
+  -> Country page, filtered by attributes=[{"association": "albania"}]
+  ...
 
  - Sections
    - Live now (automatic, schedule="live", tags=[2024 season, Live Event])
@@ -72,8 +72,13 @@ Property
 export const MediaPropertySectionBaseSpec = {
   id: undefined,
   url_slug: "",
+  name: "<New Media Section>",
+  description: "",
   content_spec: "manual",
   display: {
+    title: "<New Media Section>",
+    description: "",
+    format: "list", // Featured, etc.
     mode: "carousel", // or grid
     display_limit: undefined,
     hide_text: false,
@@ -88,17 +93,21 @@ export const MediaPropertySectionManualSpec = {
 
 export const MediaPropertySectionAutomaticSpec = {
   ...MediaPropertySectionBaseSpec,
-  tags: [],
-  attributes: [],
-  schedule: "", // live, upcoming, past, time_range
-  start_time: undefined,
-  end_time: undefined,
-  sort: "start_time"
+  select: {
+    tags: [],
+    attributes: [],
+    schedule: "", // live, upcoming, past, time_range
+    start_time: undefined,
+    end_time: undefined,
+    sort: "start_time"
+  }
 };
 
 export const MediaPropertyPageSpec = {
   id: undefined,
   url_slug: "",
+  name: "<New Page>",
+  description: "",
   layout: {
     title: "",
     description: "",
@@ -116,10 +125,8 @@ export const MediaPropertySpec = {
   name: "",
   description: "",
   image: undefined,
-  sub_properties: [],
+  subproperties: [],
   media_catalogs: [],
   sections: {},
-  pages: {
-
-  }
+  pages: {}
 };

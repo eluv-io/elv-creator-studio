@@ -103,6 +103,7 @@ components:
       marketplace: Marketplace
       item_template: Item Template
       media_catalog: Media Catalog
+      media_property: Media Property
 
 stores:
   initialization:

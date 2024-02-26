@@ -16,7 +16,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {IconPlus} from "@tabler/icons-react";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
-import MediaCatalogItemTable from "@/components/inputs/MediaCatalogItemTable.jsx";
+import MediaCatalogItemTable from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 
 const CreateMediaCatalogItemForm = ({Create, type="media"}) => {
   const [creating, setCreating] = useState(false);

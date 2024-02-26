@@ -30,6 +30,8 @@ form:
     gallery_settings: Gallery Settings
     gallery_item: Gallery Item
     gallery_item_label: Gallery Item '{label}'
+  type:
+    label: Content Type
   type_descriptions:
     media:
       Media Items are individual viewable media, such as videos, images, ebooks, etc.
@@ -75,7 +77,9 @@ form:
       validation:
         title: Title must be specified
     modal:
-      select: Select Media
+      media: Select Media
+      media_lists: Select Media List
+      media_collections: Select Media Collections
     id:
       label: Media ID
     media_lists:

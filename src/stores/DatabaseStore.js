@@ -696,7 +696,8 @@ class DatabaseStore {
       objectId: mediaCatalogId,
       tenantSlug: this.rootStore.tenantInfo.tenantSlug,
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
-      description: metadata.public?.asset_metadata?.info?.description || ""
+      description: metadata.public?.asset_metadata?.info?.description || "",
+      id: metadata.public?.asset_metadata?.info?.id
     };
 
     yield this.WriteDocument({
@@ -722,7 +723,8 @@ class DatabaseStore {
       objectId: mediaPropertyId,
       tenantSlug: this.rootStore.tenantInfo.tenantSlug,
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
-      description: metadata.public?.asset_metadata?.info?.description || ""
+      description: metadata.public?.asset_metadata?.info?.description || "",
+      id: metadata.public?.asset_metadata?.info?.id
     };
 
     yield this.WriteDocument({

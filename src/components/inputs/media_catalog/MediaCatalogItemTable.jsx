@@ -38,7 +38,14 @@ export const MediaItemTitle = observer(({mediaItem}) => {
 
   return (
     <Group noWrap>
-      <Image width={100} height={56} miw={100} fit="contain" src={ScaleImage(imageUrl, 400)} alt={mediaItem.title} withPlaceholder />
+      <Image
+        width={75}
+        height={75}
+        fit="contain"
+        position="left"
+        style={{objectPosition: "left" }}
+        src={ScaleImage(imageUrl, 400)} alt={mediaItem.title} withPlaceholder
+      />
       <Stack spacing={2}>
         <Text fw={500}>
           <Group spacing={5} align="top">
@@ -259,20 +266,58 @@ const MediaCatalogItemTable = observer(({
 export const MediaCatalogItemSelectionModal = observer(({
   Submit,
   Close,
+  allowTypeSelection=false,
+  mediaCatalogIds=[],
   ...props
 }) => {
   const [selectedRecords, setSelectedRecords] = useState([]);
+  const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(props.mediaCatalogId || mediaCatalogIds[0]);
+  const [selectedContentType, setSelectedContentType] = useState(props.type || "media");
 
   return (
     <Modal
-      title={rootStore.l10n.pages.media_catalog.form.media.modal.select}
+      title={rootStore.l10n.pages.media_catalog.form.media.modal[selectedContentType]}
       size={uiStore.inputWidthWide}
       opened
       onClose={Close}
     >
-      <Paper p="xl" withBorder>
+      <Paper p="xl" pt="md" withBorder>
+        {
+          mediaCatalogIds.length <= 1 ? null :
+            <Group mb="xl">
+              <Select
+                label={rootStore.l10n.pages.media_catalog.form.categories.media_catalog}
+                onChange={value => setSelectedMediaCatalogId(value)}
+                value={selectedMediaCatalogId}
+                data={
+                  mediaCatalogStore.allMediaCatalogs
+                    .map(mediaCatalog => ({
+                      label: mediaCatalog.name,
+                      value: mediaCatalog.objectId
+                    }))
+                    .filter(({value}) => mediaCatalogIds.includes(value))
+                }
+              />
+              {
+                !allowTypeSelection ? null :
+                  <Select
+                    label={rootStore.l10n.pages.media_catalog.form.type.label}
+                    onChange={value => setSelectedContentType(value)}
+                    value={selectedContentType}
+                    data={[
+                      { label: rootStore.l10n.pages.media_catalog.form.categories.media, value: "media" },
+                      { label: rootStore.l10n.pages.media_catalog.form.categories.media_lists, value: "media_lists" },
+                      { label: rootStore.l10n.pages.media_catalog.form.categories.media_collections, value: "media_collections" },
+                    ]}
+                  />
+              }
+            </Group>
+        }
+
         <MediaCatalogItemTable
           {...props}
+          mediaCatalogId={selectedMediaCatalogId}
+          type={selectedContentType}
           disableActions
           selectedRecords={selectedRecords}
           setSelectedRecords={setSelectedRecords}

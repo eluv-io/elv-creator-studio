@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, marketplaceStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/MarketplaceItemInput.jsx";
+import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Title} from "@mantine/core";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js";

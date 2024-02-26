@@ -1,12 +1,14 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
-import {mediaCatalogStore} from "@/stores/index.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import {
-  MediaCatalogCollectionSpec, MediaCatalogMediaGallerySpec,
-  MediaCatalogMediaImageSpec, MediaCatalogMediaListSpec,
+  MediaCatalogCollectionSpec,
+  MediaCatalogMediaGallerySpec,
+  MediaCatalogMediaImageSpec,
+  MediaCatalogMediaListSpec,
   MediaCatalogMediaOtherSpec,
-  MediaCatalogMediaVideoSpec, MediaCatalogSpec
+  MediaCatalogMediaVideoSpec,
+  MediaCatalogSpec
 } from "@/specs/MediaCatalogSpecs.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
@@ -166,7 +168,7 @@ class MediaCatalogStore {
     spec.title = title;
     spec.catalog_title = title;
 
-    mediaCatalogStore.AddField({
+    this.AddField({
       objectId: mediaCatalogId,
       page,
       path: UrlJoin("/public/asset_metadata/info/", type),
