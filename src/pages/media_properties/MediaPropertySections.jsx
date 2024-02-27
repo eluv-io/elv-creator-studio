@@ -1,13 +1,13 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore} from "@/stores";
+import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {modals} from "@mantine/modals";
 import {LocalizeString} from "@/components/common/Misc.jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
-import {Button, Container, Group, Select, TextInput} from "@mantine/core";
+import {Button, Container, Group, Modal, Paper, Select, TextInput, Text} from "@mantine/core";
 
 const CreateSectionForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
@@ -71,14 +71,20 @@ const CreateSectionForm = ({Create}) => {
   );
 };
 
-const MediaPropertySections = observer(() => {
-  const { mediaPropertyId } = useParams();
+export const MediaPropertySectionsTable = observer(({
+  mediaPropertyId,
+  editable,
+  excludedSectionIds=[],
+  selectedRecords,
+  setSelectedRecords
+}) => {
+  useEffect(() => {
+    mediaPropertyStore.LoadMediaProperty({mediaPropertyId});
+  }, [mediaPropertyId]);
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
   if(!mediaProperty) { return null; }
-
-  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
   const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
@@ -89,55 +95,124 @@ const MediaPropertySections = observer(() => {
   };
 
   return (
+    <Inputs.ReferenceTable
+      {...inputProps}
+      {...l10n.sections.sections}
+      field="sections"
+      fieldLabel={l10n.categories.section}
+      nameField="name"
+      filterable
+      filterFields={["name", "description"]}
+      selectedRecords={selectedRecords}
+      setSelectedRecords={setSelectedRecords}
+      excludedKeys={excludedSectionIds}
+      editable={editable}
+      AddItem={async () => {
+        return new Promise((resolve) => {
+          modals.open({
+            title: LocalizeString(l10n.create.create, {type: l10n.categories.section}),
+            centered: true,
+            onCancel: () => resolve(),
+            children:
+              <CreateSectionForm
+                Create={async ({name, type}) => {
+                  const id = mediaPropertyStore.CreateSection({
+                    name,
+                    type,
+                    page: location.pathname,
+                    mediaPropertyId,
+                  });
+
+                  modals.closeAll();
+
+                  resolve(id);
+                }}
+              />
+          });
+        });
+      }}
+      columns={[
+        {
+          accessor: "name",
+          sortable: true,
+          title: l10n.sections.name.label
+        },
+        {
+          accessor: "type",
+          sortable: true,
+          title: l10n.sections.type.label,
+          render: section => <Text>{section.type?.capitalize() || ""}</Text>,
+          width: 175
+        },
+        {
+          accessor: "display.display_format",
+          sortable: true,
+          title: l10n.sections.display.display_format.label,
+          render: section => <Text>{ section.display?.display_format?.capitalize() || "" }</Text>,
+          width: 175
+        }
+      ]}
+    />
+  );
+});
+
+export const MediaPropertySectionSelectionModal = observer(({
+  excludedSectionIds=[],
+  mediaPropertyId,
+  Submit,
+  Close
+}) => {
+  const [selectedRecords, setSelectedRecords] = useState([]);
+  return (
+    <Modal
+      title={rootStore.l10n.pages.media_property.form.sections.modal.title}
+      size={uiStore.inputWidthWide}
+      opened
+      onClose={Close}
+    >
+      <Paper p="xl" pt="md" withBorder>
+        <MediaPropertySectionsTable
+          editable={false}
+          excludedSectionIds={excludedSectionIds}
+          mediaPropertyId={mediaPropertyId}
+          selectedRecords={selectedRecords}
+          setSelectedRecords={setSelectedRecords}
+        />
+        <Group position="right" spacing="md" mt={50}>
+          <Button variant="subtle" w={200} onClick={Close}>
+            { rootStore.l10n.components.actions.cancel }
+          </Button>
+          <Button
+            w={200}
+            disabled={selectedRecords.length === 0}
+            onClick={() => Submit(selectedRecords.map(section => section.id))}
+          >
+            { rootStore.l10n.components.actions.submit }
+          </Button>
+        </Group>
+      </Paper>
+    </Modal>
+  );
+});
+
+const MediaPropertySections = observer(() => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+
+  return (
     <PageContent
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.sections}`}
       section="mediaProperty"
       useHistory
     >
-      <Inputs.ReferenceTable
-        {...inputProps}
-        {...l10n.sections.sections}
-        field="sections"
-        fieldLabel={l10n.categories.section}
-        nameField="name"
-        filterable
-        filterFields={["name", "description"]}
-        AddItem={async () => {
-          return new Promise((resolve) => {
-            modals.open({
-              title: LocalizeString(l10n.create.create, {type: l10n.categories.section}),
-              centered: true,
-              onCancel: () => resolve(),
-              children:
-                <CreateSectionForm
-                  Create={async ({name, type}) => {
-                    const id = mediaPropertyStore.CreateSection({
-                      name,
-                      type,
-                      page: location.pathname,
-                      mediaPropertyId,
-                    });
-
-                    modals.closeAll();
-
-                    resolve(id);
-                  }}
-                />
-            });
-          });
-        }}
-        columns={[
-          {
-            accessor: "name",
-            sortable: true,
-            title: l10n.sections.name.label
-          },
-          {
-            accessor: "description",
-            title: l10n.pages.description.label
-          }
-        ]}
-      />
+      <MediaPropertySectionsTable editable mediaPropertyId={mediaPropertyId} />
     </PageContent>
   );
 });

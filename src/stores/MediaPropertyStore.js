@@ -2,11 +2,11 @@ import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
   MediaPropertyPageSpec,
-  MediaPropertySectionAutomaticSpec,
+  MediaPropertySectionAutomaticSpec, MediaPropertySectionItemBaseSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
-import {GenerateUUID} from "@/helpers/Misc.js";
+import {CategoryFn, GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 
@@ -16,9 +16,18 @@ class MediaPropertyStore {
 
   ID_PREFIXES = {
     "property": "prop",
+    "page": "ppge",
     "section_manual": "pscm",
     "section_automatic": "psca",
-    "page": "ppge",
+    "section_item": "psci"
+  };
+
+  SECTION_CONTENT_TYPES = {
+    "media": "Media",
+    "filter": "Filtered View",
+    "page_link": "Page Link",
+    "subproperty_link": "Subproperty Link",
+    "marketplace_link": "Marketplace Link"
   };
 
   constructor(rootStore) {
@@ -139,6 +148,46 @@ class MediaPropertyStore {
       field: id,
       value: spec,
       category: this.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id, name: spec.name}),
+      label: name
+    });
+
+    return id;
+  }
+
+  CreateSectionItem({page, mediaPropertyId, sectionId, type="media", name}) {
+    let id = `${this.ID_PREFIXES["section_item"]}${GenerateUUID()}`;
+
+    const spec = MediaPropertySectionItemBaseSpec;
+
+    spec.id = id;
+    spec.type = type;
+    spec.name = name || spec.name;
+
+    const path = UrlJoin("/public/asset_metadata/info/sections", sectionId);
+
+    this.InsertListElement({
+      objectId: mediaPropertyId,
+      page,
+      path,
+      field: "content",
+      value: spec,
+      category: this.MediaPropertyCategory({
+        category: "section_label",
+        mediaPropertyId,
+        type: "sections",
+        id,
+        name: this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[sectionId]?.name || "Section"
+      }),
+      subcategory: CategoryFn({
+        store: this,
+        objectId: mediaPropertyId,
+        path,
+        field: "content",
+        params: {
+          fields: ["name", "id"],
+          l10n: this.rootStore.l10n.pages.media_property.form.categories.section_item_label
+        }
+      }),
       label: name
     });
 

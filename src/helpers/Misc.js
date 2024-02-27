@@ -2,6 +2,8 @@ import {Utils} from "@eluvio/elv-client-js";
 import {rootStore} from "@/stores";
 import {v4 as UUID, parse as UUIDParse} from "uuid";
 import DayJS from "dayjs";
+import UrlJoin from "url-join";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 String.prototype.capitalize =
   function() {
@@ -9,6 +11,22 @@ String.prototype.capitalize =
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   };
+
+// For collection table, automatically generate category/subcategory label determination function from params specifying the label and where to find the data
+export const CategoryFn = ({store, objectId, path, field, params}) => {
+  return (
+    (action) => {
+      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
+      let label = params.fields
+        .map(labelField =>
+          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
+        )
+        .filter(f => f)[0];
+
+      return LocalizeString(params.l10n, { label });
+    }
+  );
+};
 
 export const GenerateUUID = () => rootStore.utils.B58(UUIDParse(UUID()));
 
@@ -21,8 +39,14 @@ export const SortTable = ({sortStatus, AdditionalCondition}) => {
       return AdditionalCondition(a, b);
     }
 
-    a = a[sortStatus.columnAccessor];
-    b = b[sortStatus.columnAccessor];
+    if(sortStatus.columnAccessor.includes(".")) {
+      const [root, accessor] = sortStatus.columnAccessor.split(".");
+      a = a[root]?.[accessor];
+      b = b[root]?.[accessor];
+    } else {
+      a = a[sortStatus.columnAccessor];
+      b = b[sortStatus.columnAccessor];
+    }
 
     if(typeof a === "number") {
       a = a || 0;

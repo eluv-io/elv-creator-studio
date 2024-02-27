@@ -54,6 +54,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
         subcategory={l10n.categories[subType]}
         field={field}
         idField="."
+        GetName={mediaItemId => info[subType][mediaItemId]?.title}
         editable={false}
         AddItem={() => setShowSelectionModal(true)}
         Actions={mediaItemId => [

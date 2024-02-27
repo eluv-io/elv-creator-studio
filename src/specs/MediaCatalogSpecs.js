@@ -7,7 +7,7 @@ export const MediaCatalogGalleryItemSpec = {
   video: undefined
 };
 
-const MediaCatalogBaseSpec = {
+export const MediaCatalogBaseSpec = {
   id: undefined,
   title: "",
   catalog_title: "",

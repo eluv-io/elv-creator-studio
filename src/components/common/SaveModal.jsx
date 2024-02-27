@@ -103,7 +103,7 @@ const ModifiedItem = observer(({
         !selected.includes(item.objectId) ? null :
           <Textarea
             mt="xs"
-            minRows={1}
+            minRows={2}
             label="Commit Message"
             value={commitMessages[item.objectId] || ""}
             onChange={event => setCommitMessages({...commitMessages, [item.objectId]: event.target.value})}

@@ -183,9 +183,9 @@ const MediaCatalogItemTable = observer(({
         onSortStatusChange={setSortStatus}
         totalRecords={mediaItems.length}
         recordsPerPage={pageSize}
+        page={mediaItems.length > pageSize ? page : undefined}
         selectedRecords={selectedRecords}
         onSelectedRecordsChange={setSelectedRecords}
-        page={page}
         onPageChange={page => setPage(page)}
         columns={[
           {

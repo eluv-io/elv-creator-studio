@@ -33,7 +33,7 @@ import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
+import {CategoryFn, GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "@/components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
@@ -1502,6 +1502,8 @@ const CollectionTableRows = observer(({
   columns=[],
   fieldLabel,
   idField=".",
+  nameField,
+  GetName,
   values,
   routePath="",
   editable=true,
@@ -1510,6 +1512,7 @@ const CollectionTableRows = observer(({
   return (
     values.map((value, index) => {
       const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+      const name = (GetName && GetName(value)) || nameField && value[nameField];
 
       return (
         <Draggable key={`draggable-item-${id || index}}`} index={index} draggableId={`item-${id}`}>
@@ -1540,7 +1543,7 @@ const CollectionTableRows = observer(({
                   {
                     !editable ? null :
                       <IconButton
-                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: name || fieldLabel})}
                         component={Link}
                         to={UrlJoin(location.pathname, routePath || "", id)}
                         color="blue.5"
@@ -1548,13 +1551,13 @@ const CollectionTableRows = observer(({
                       />
                   }
                   <IconButton
-                    label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
+                    label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: name || fieldLabel})}
                     color="red.5"
                     Icon={IconTrashX}
                     onClick={() => {
                       ConfirmDelete({
-                        listItem: true,
-                        itemName: fieldLabel,
+                        listItem: !name,
+                        itemName: name || fieldLabel,
                         onConfirm: () => store.RemoveListElement({
                           objectId,
                           page: location.pathname,
@@ -1563,8 +1566,8 @@ const CollectionTableRows = observer(({
                           index,
                           category,
                           subcategory,
-                          label: actionLabel || fieldLabel,
-                          useLabel: false
+                          label: name || actionLabel || fieldLabel,
+                          useLabel: !!name
                         })
                       });
                     }}
@@ -1578,22 +1581,6 @@ const CollectionTableRows = observer(({
     })
   );
 });
-
-// For collection table, automatically generate category/subcategory label determination function from params specifying the label and where to find the data
-const CategoryFn = ({store, objectId, path, field, params}) => {
-  return (
-    (action) => {
-      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
-      let label = params.fields
-        .map(labelField =>
-          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
-        )
-        .filter(f => f)[0];
-
-      return LocalizeString(params.l10n, { label });
-    }
-  );
-};
 
 const CollectionTable = observer(({
   store,
@@ -1612,6 +1599,8 @@ const CollectionTable = observer(({
   fieldLabel,
   newItemSpec={},
   idField="index",
+  nameField,
+  GetName,
   routePath="",
   filterable,
   Filter,
@@ -1644,9 +1633,13 @@ const CollectionTable = observer(({
     <IconButton
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
-      onClick={() => {
+      onClick={async () => {
         if(AddItem) {
-          AddItem();
+          const id = await AddItem();
+
+          if(id) {
+            navigate(UrlJoin(location.pathname, routePath || "", id));
+          }
           return;
         }
 
@@ -1736,6 +1729,8 @@ const CollectionTable = observer(({
                     columns={columns}
                     values={filteredValues}
                     idField={idField}
+                    nameField={nameField}
+                    GetName={GetName}
                     fieldLabel={fieldLabel}
                     routePath={routePath}
                     editable={editable}
@@ -1781,12 +1776,19 @@ const ReferenceTable = observer(({
   filterable,
   filterFields=[],
   Filter,
+  excludedKeys=[],
   editable=true,
+  selectedRecords,
+  setSelectedRecords,
   AddItem,
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const values = Object.values(store.GetMetadata({objectId, path, field}) || {});
+
+  const map = store.GetMetadata({objectId, path, field}) || {};
+  const values = Object.keys(map)
+    .filter(key => !excludedKeys.includes(key))
+    .map(key => map[key]);
 
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -1812,7 +1814,7 @@ const ReferenceTable = observer(({
   const showBottomAddButton = values.length >= 10;
 
   let addButton;
-  if(AddItem) {
+  if(editable && AddItem) {
     addButton = (
       <IconButton
         label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
@@ -1848,6 +1850,8 @@ const ReferenceTable = observer(({
             recordsPerPage={pageSize}
             page={values.length > pageSize ? page : undefined}
             onPageChange={page => setPage(page)}
+            selectedRecords={selectedRecords}
+            onSelectedRecordsChange={setSelectedRecords}
             columns={[
               ...columns,
               !editable ? null :
@@ -1855,38 +1859,42 @@ const ReferenceTable = observer(({
                 accessor: "id",
                 width: 120,
                 title: "",
-                render: item => (
-                  <Group position="center">
-                    <IconButton
-                      label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
-                      component={Link}
-                      to={UrlJoin(location.pathname, routePath || "", item.id)}
-                      color="blue.5"
-                      Icon={IconEdit}
-                    />
-                    <IconButton
-                      label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
-                      color="red.5"
-                      Icon={IconTrashX}
-                      onClick={() => {
-                        ConfirmDelete({
-                          itemName: item[nameField] || fieldLabel,
-                          onConfirm: () => {
-                            store.RemoveField({
-                              objectId,
-                              page,
-                              path: UrlJoin(path, field),
-                              field: item.id,
-                              category,
-                              subcategory,
-                              label: item[nameField] || fieldLabel
-                            });
-                          }
-                        });
-                      }}
-                    />
-                  </Group>
-                )
+                render: item => {
+                  const itemName = item[nameField] || fieldLabel;
+
+                  return (
+                    <Group position="center">
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
+                        component={Link}
+                        to={UrlJoin(location.pathname, routePath || "", item.id)}
+                        color="blue.5"
+                        Icon={IconEdit}
+                      />
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
+                        color="red.5"
+                        Icon={IconTrashX}
+                        onClick={() => {
+                          ConfirmDelete({
+                            itemName: itemName,
+                            onConfirm: () => {
+                              store.RemoveField({
+                                objectId,
+                                page,
+                                path: UrlJoin(path, field),
+                                field: item.id,
+                                category,
+                                subcategory,
+                                label: itemName
+                              });
+                            }
+                          });
+                        }}
+                      />
+                    </Group>
+                  );
+                }
               }
             ].filter(column => column)}
           />

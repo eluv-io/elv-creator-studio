@@ -67,33 +67,43 @@ Property
         ...
  */
 
+import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+export const MediaPropertySectionItemBaseSpec = {
+  id: undefined,
+  name: "",
+  description: "",
+  ...MediaCatalogBaseSpec,
+  type: "media" // Filter link, page link, property link
+};
 
 export const MediaPropertySectionBaseSpec = {
   id: undefined,
   url_slug: "",
   name: "<New Media Section>",
   description: "",
-  content_spec: "manual",
+  type: "manual",
   display: {
-    title: "<New Media Section>",
+    title: "",
     description: "",
-    format: "list", // Featured, etc.
-    mode: "carousel", // or grid
+    description_rich_text: "",
+    display_format: "carousel",
     display_limit: undefined,
-    hide_text: false,
     aspect_ratio: ""
   }
 };
 
 export const MediaPropertySectionManualSpec = {
   ...MediaPropertySectionBaseSpec,
+  type: "manual",
   content: []
 };
 
 export const MediaPropertySectionAutomaticSpec = {
   ...MediaPropertySectionBaseSpec,
+  type: "automatic",
   select: {
+    media_catalogs: [],
     tags: [],
     attributes: [],
     schedule: "", // live, upcoming, past, time_range
@@ -112,6 +122,7 @@ export const MediaPropertyPageSpec = {
     title: "",
     description: "",
     logo: undefined,
+    logo_alt: "",
     header_logo: undefined,
     background_image: undefined,
     background_image_mobile: undefined,

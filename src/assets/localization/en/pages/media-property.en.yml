@@ -5,7 +5,7 @@ nav:
   layout: Layout
   pages: Pages
   sections: Page Sections
-
+  section: Page Section
 form:
   categories:
     media_properties: Media Properties
@@ -18,9 +18,15 @@ form:
     pages: Pages
     page: Page
     page_label: Page '{label}'
+    page_header: Header
+    page_sections: Sections
     sections: Page Sections
     section: Page Section
     section_label: Page Section '{label}'
+    section_presentation: Section Presentation
+    section_content: Section Content
+    section_item: Section Item
+    section_item_label: Section Item `{label}`
   create:
     create: Create New {type}
     name: Name
@@ -50,21 +56,6 @@ form:
     subproperties:
       label: Subproperties
       description: Other properties within this property
-  header:
-    title:
-      label: Title
-    description:
-      label: Description
-    description_rich_text:
-      label: Description (Rich Text)
-    logo:
-      label: Logo
-    background_image:
-      label: Background Image
-    background_image_desktop:
-      label: Desktop (16:9)
-    background_image_mobile:
-      label: Mobile
   pages:
     create:
       create: Create New Page
@@ -81,7 +72,27 @@ form:
     description:
       label: Description
       description: For internal reference, not displayed
-
+    header:
+      position:
+        label: Header Content Position
+      title:
+        label: Title
+      description:
+        label: Description
+      description_rich_text:
+        label: Description (Rich Text)
+      logo:
+        label: Logo
+      background_image:
+        label: Background Image
+      background_image_desktop:
+        label: Desktop (16:9)
+      background_image_mobile:
+        label: Mobile
+    sections:
+      label: Sections
+      description: Lay out your page by specifying a list of sections
+      fieldLabel: Section
   sections:
     create:
       create: Create New Page Section
@@ -89,17 +100,48 @@ form:
         label: Name
       type:
         label: Type
-        description: Section content may either be specified manually, or automatically based on tags, attributes and schedule options
+        description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
       validation:
         name: Name must be specified
+    modal:
+      title: Select Page Sections
     sections:
       label: Page Content Sections
       description: Define groups of content that can be displayed on pages
+    type:
+      label: Type
+      description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
     name:
       label: Name
       description: For internal reference, not displayed
     description:
       label: Description
       description: For internal reference, not displayed
-
+    display:
+      title:
+        label: Title
+      description:
+        label: Description
+      description_rich_text:
+        label: Description Rich Text
+      display_format:
+        label: Display Format
+      display_limit:
+        label: Display Limit
+        description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+      aspect_ratio:
+        label: Aspect Ratio
+        description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type.
+    section_content:
+      label: Section Content
+      fieldLabel: Section Item
+  section_items:
+    create:
+      create: Add Item to Page Section
+      type:
+        label: Type
+      name:
+        label: Name
+      validation:
+        name: Name must be specified
 

@@ -78,7 +78,7 @@ form:
         title: Title must be specified
     modal:
       media: Select Media
-      media_lists: Select Media List
+      media_lists: Select Media Lists
       media_collections: Select Media Collections
     id:
       label: Media ID
