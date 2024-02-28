@@ -31,7 +31,7 @@ const MediaPropertyPage = observer(() => {
   const inputProps = {
     store: mediaPropertyStore,
     objectId: mediaPropertyId,
-    category: mediaPropertyStore.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, name: page.name}),
+    category: mediaPropertyStore.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: page.label}),
     subcategory: l10n.categories.general,
     path: UrlJoin("/public/asset_metadata/info/pages", pageId)
   };
@@ -46,8 +46,8 @@ const MediaPropertyPage = observer(() => {
 
       <Inputs.Text
         {...inputProps}
-        {...l10n.pages.name}
-        field="name"
+        {...l10n.pages.label}
+        field="label"
       />
 
       <Inputs.TextArea
@@ -109,8 +109,8 @@ const MediaPropertyPage = observer(() => {
         subcategory={l10n.categories.page_header}
         path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
         fields={[
-          { field: "background_image", ...l10n.pages.header.background_image_desktop },
-          { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile },
+          { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 125 },
+          { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 2/3, baseSize: 125 },
         ]}
       />
 
@@ -124,13 +124,13 @@ const MediaPropertyPage = observer(() => {
         path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
         field="sections"
         idField="."
-        GetName={sectionId => info.sections[sectionId]?.name}
+        GetName={sectionId => info.sections[sectionId]?.label}
         editable={false}
         AddItem={() => setShowSectionSelectionModal(true)}
         Actions={sectionId => [
           <IconButton
             key="link-button"
-            label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info.sections[sectionId]?.name || sectionId })}
+            label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info.sections[sectionId]?.label || sectionId })}
             component={Link}
             to={UrlJoin("/media-properties/", mediaPropertyId, "sections", sectionId)}
             color="blue.5"
@@ -139,9 +139,9 @@ const MediaPropertyPage = observer(() => {
         ]}
         columns={[
           {
-            label: l10n.sections.name.label,
-            field: "name",
-            render: sectionId => <Text>{info.sections[sectionId]?.name || (!info.sections[sectionId] ? "<Deleted Section>" : sectionId)}</Text>
+            label: l10n.sections.label.label,
+            field: "label",
+            render: sectionId => <Text>{info.sections[sectionId]?.label || (!info.sections[sectionId] ? "<Deleted Section>" : sectionId)}</Text>
           },
           {
             label: l10n.sections.type.label,
@@ -173,7 +173,7 @@ const MediaPropertyPage = observer(() => {
                   page: location.pathname,
                   field: "sections",
                   value: sectionId,
-                  label: info.sections[sectionId]?.name || sectionId
+                  label: info.sections[sectionId]?.label || sectionId
                 });
               });
 

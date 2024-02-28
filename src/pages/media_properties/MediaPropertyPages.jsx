@@ -16,10 +16,10 @@ const CreatePageForm = ({Create}) => {
 
   const form = useForm({
     initialValues: {
-      name: ""
+      label: ""
     },
     validate: {
-      name: value => value ? null : l10n.pages.create.validation.name
+      label: value => value ? null : l10n.pages.create.validation.label
     }
   });
 
@@ -28,7 +28,7 @@ const CreatePageForm = ({Create}) => {
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({name: values.name, type: values.type})
+          Create({label: values.label, type: values.type})
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -41,8 +41,8 @@ const CreatePageForm = ({Create}) => {
         <TextInput
           data-autofocus
           mb="md"
-          {...l10n.pages.create.name}
-          {...form.getInputProps("name")}
+          {...l10n.pages.create.label}
+          {...form.getInputProps("label")}
         />
         <Group mt="md">
           <Button
@@ -86,9 +86,9 @@ const MediaPropertyPages = observer(() => {
         {...l10n.pages.pages}
         field="pages"
         fieldLabel={l10n.categories.page}
-        nameField="name"
+        nameField="label"
         filterable
-        filterFields={["name", "description"]}
+        filterFields={["label", "description"]}
         AddItem={async () => {
           return new Promise((resolve) => {
             modals.open({
@@ -97,9 +97,9 @@ const MediaPropertyPages = observer(() => {
               onCancel: () => resolve(),
               children:
                 <CreatePageForm
-                  Create={async ({name}) => {
+                  Create={async ({label}) => {
                     const id = mediaPropertyStore.CreatePage({
-                      name,
+                      label,
                       page: location.pathname,
                       mediaPropertyId
                     });
@@ -114,9 +114,9 @@ const MediaPropertyPages = observer(() => {
         }}
         columns={[
           {
-            accessor: "name",
+            accessor: "label",
             sortable: true,
-            title: l10n.pages.name.label
+            title: l10n.pages.label.label
           },
           {
             accessor: "description",

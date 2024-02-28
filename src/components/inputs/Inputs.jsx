@@ -714,7 +714,7 @@ const SingleImageInput = observer(({
                 alt={label}
                 fit="contain"
                 placeholder={<IconPhotoX size={35} />}
-                styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
+                styles={ theme => ({ image: { padding: 0, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
               />
               </HoverCard.Target>
               <MantineInput.Wrapper

@@ -19,10 +19,10 @@ const CreateSectionItemForm = ({Create}) => {
   const form = useForm({
     initialValues: {
       type: "media",
-      name: ""
+      label: ""
     },
     validate: {
-      name: value => value ? null : l10n.sections.create.validation.name
+      label: value => value ? null : l10n.sections.create.validation.label
     }
   });
 
@@ -31,7 +31,7 @@ const CreateSectionItemForm = ({Create}) => {
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({name: values.name, type: values.type})
+          Create({label: values.label, type: values.type})
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -56,8 +56,8 @@ const CreateSectionItemForm = ({Create}) => {
         <TextInput
           data-autofocus
           mb="md"
-          {...l10n.sections.create.name}
-          {...form.getInputProps("name")}
+          {...l10n.sections.create.label}
+          {...form.getInputProps("label")}
         />
         <Group mt="md">
           <Button
@@ -92,7 +92,7 @@ const MediaPropertyContentOptions = observer(() => {
   const inputProps = {
     store: mediaPropertyStore,
     objectId: mediaPropertyId,
-    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, name: section.name}),
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
     subcategory: l10n.categories.section_content,
     path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
   };
@@ -102,7 +102,7 @@ const MediaPropertyContentOptions = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sections.section_content}
-        subcategoryFnParams={{fields: ["name", "id"], l10n: l10n.categories.section_item_label}}
+        subcategoryFnParams={{fields: ["label", "id"], l10n: l10n.categories.section_item_label}}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId)}
         field="content"
         idField="id"
@@ -114,9 +114,9 @@ const MediaPropertyContentOptions = observer(() => {
               onCancel: () => resolve(),
               children:
                 <CreateSectionItemForm
-                  Create={async ({name, type}) => {
+                  Create={async ({label, type}) => {
                     const id = mediaPropertyStore.CreateSectionItem({
-                      name,
+                      label,
                       type,
                       page: location.pathname,
                       mediaPropertyId,
@@ -133,8 +133,8 @@ const MediaPropertyContentOptions = observer(() => {
         }}
         columns={[
           {
-            label: l10n.sections.name.label,
-            field: "name"
+            label: l10n.sections.label.label,
+            field: "label"
           },
           {
             label: l10n.sections.type.label,
@@ -170,7 +170,7 @@ const MediaPropertySection = observer(() => {
   const inputProps = {
     store: mediaPropertyStore,
     objectId: mediaPropertyId,
-    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, name: section.name}),
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
     subcategory: l10n.categories.general,
     path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
   };
@@ -185,8 +185,8 @@ const MediaPropertySection = observer(() => {
 
       <Inputs.Text
         {...inputProps}
-        {...l10n.sections.name}
-        field="name"
+        {...l10n.sections.label}
+        field="label"
       />
 
       <Inputs.TextArea

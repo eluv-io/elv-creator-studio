@@ -16,11 +16,11 @@ const CreateSectionForm = ({Create}) => {
 
   const form = useForm({
     initialValues: {
-      name: "",
+      label: "",
       type: "manual"
     },
     validate: {
-      name: value => value ? null : l10n.sections.create.validation.name
+      label: value => value ? null : l10n.sections.create.validation.label
     }
   });
 
@@ -29,7 +29,7 @@ const CreateSectionForm = ({Create}) => {
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({name: values.name, type: values.type})
+          Create({label: values.label, type: values.type})
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -54,8 +54,8 @@ const CreateSectionForm = ({Create}) => {
         <TextInput
           data-autofocus
           mb="md"
-          {...l10n.sections.create.name}
-          {...form.getInputProps("name")}
+          {...l10n.sections.create.label}
+          {...form.getInputProps("label")}
         />
         <Group mt="md">
           <Button
@@ -100,9 +100,9 @@ export const MediaPropertySectionsTable = observer(({
       {...l10n.sections.sections}
       field="sections"
       fieldLabel={l10n.categories.section}
-      nameField="name"
+      nameField="label"
       filterable
-      filterFields={["name", "description"]}
+      filterFields={["label", "description"]}
       selectedRecords={selectedRecords}
       setSelectedRecords={setSelectedRecords}
       excludedKeys={excludedSectionIds}
@@ -115,9 +115,9 @@ export const MediaPropertySectionsTable = observer(({
             onCancel: () => resolve(),
             children:
               <CreateSectionForm
-                Create={async ({name, type}) => {
+                Create={async ({label, type}) => {
                   const id = mediaPropertyStore.CreateSection({
-                    name,
+                    label,
                     type,
                     page: location.pathname,
                     mediaPropertyId,
@@ -133,9 +133,9 @@ export const MediaPropertySectionsTable = observer(({
       }}
       columns={[
         {
-          accessor: "name",
+          accessor: "label",
           sortable: true,
-          title: l10n.sections.name.label
+          title: l10n.sections.label.label
         },
         {
           accessor: "type",

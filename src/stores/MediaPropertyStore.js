@@ -113,12 +113,12 @@ class MediaPropertyStore {
     };
   });
 
-  CreatePage({page, mediaPropertyId, name}) {
+  CreatePage({page, mediaPropertyId, label}) {
     let id = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
 
     const spec = MediaPropertyPageSpec;
     spec.id = id;
-    spec.name = name || spec.name;
+    spec.label = label || spec.label;
 
     this.AddField({
       objectId: mediaPropertyId,
@@ -126,20 +126,20 @@ class MediaPropertyStore {
       path: "/public/asset_metadata/info/pages",
       field: id,
       value: spec,
-      category: this.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id, name: spec.name}),
-      label: name
+      category: this.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id, label: spec.label}),
+      label: spec.label
     });
 
     return id;
   }
 
-  CreateSection({page, mediaPropertyId, type="manual", name}) {
+  CreateSection({page, mediaPropertyId, type="manual", label}) {
     let id = `${this.ID_PREFIXES[`section_${type}`]}${GenerateUUID()}`;
 
     const spec = type === "manual" ? MediaPropertySectionManualSpec : MediaPropertySectionAutomaticSpec;
 
     spec.id = id;
-    spec.name = name || spec.name;
+    spec.label = label || spec.label;
 
     this.AddField({
       objectId: mediaPropertyId,
@@ -147,21 +147,21 @@ class MediaPropertyStore {
       path: "/public/asset_metadata/info/sections",
       field: id,
       value: spec,
-      category: this.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id, name: spec.name}),
-      label: name
+      category: this.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id, label: spec.label}),
+      label: spec.label
     });
 
     return id;
   }
 
-  CreateSectionItem({page, mediaPropertyId, sectionId, type="media", name}) {
+  CreateSectionItem({page, mediaPropertyId, sectionId, type="media", label}) {
     let id = `${this.ID_PREFIXES["section_item"]}${GenerateUUID()}`;
 
     const spec = MediaPropertySectionItemBaseSpec;
 
     spec.id = id;
     spec.type = type;
-    spec.name = name || spec.name;
+    spec.label = label || spec.label;
 
     const path = UrlJoin("/public/asset_metadata/info/sections", sectionId);
 
@@ -176,7 +176,7 @@ class MediaPropertyStore {
         mediaPropertyId,
         type: "sections",
         id,
-        name: this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[sectionId]?.name || "Section"
+        label: this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[sectionId]?.label || "Section"
       }),
       subcategory: CategoryFn({
         store: this,
@@ -184,21 +184,21 @@ class MediaPropertyStore {
         path,
         field: "content",
         params: {
-          fields: ["name", "id"],
+          fields: ["label", "id"],
           l10n: this.rootStore.l10n.pages.media_property.form.categories.section_item_label
         }
       }),
-      label: name
+      label: spec.label
     });
 
     return id;
   }
 
-  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, name}) {
+  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, label}) {
     return () => {
-      name = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "name"}) || name;
+      label = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "label"}) || label;
 
-      return LocalizeString(this.rootStore.l10n.pages.media_property.form.categories[category], { label: name });
+      return LocalizeString(this.rootStore.l10n.pages.media_property.form.categories[category], { label: label });
     };
   }
 

@@ -71,7 +71,7 @@ import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
 export const MediaPropertySectionItemBaseSpec = {
   id: undefined,
-  name: "",
+  label: "",
   description: "",
   ...MediaCatalogBaseSpec,
   type: "media" // Filter link, page link, property link
@@ -80,7 +80,7 @@ export const MediaPropertySectionItemBaseSpec = {
 export const MediaPropertySectionBaseSpec = {
   id: undefined,
   url_slug: "",
-  name: "<New Media Section>",
+  label: "<New Media Section>",
   description: "",
   type: "manual",
   display: {
@@ -116,7 +116,7 @@ export const MediaPropertySectionAutomaticSpec = {
 export const MediaPropertyPageSpec = {
   id: undefined,
   url_slug: "",
-  name: "<New Page>",
+  label: "<New Page>",
   description: "",
   layout: {
     title: "",

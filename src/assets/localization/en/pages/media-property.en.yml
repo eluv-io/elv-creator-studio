@@ -59,15 +59,15 @@ form:
   pages:
     create:
       create: Create New Page
-      name:
-        label: Name
+      label:
+        label: Label
       validation:
-        name: Name must be specified
+        label: Label must be specified
     pages:
       label: Pages
       description: Create a page in your property to display content
-    name:
-      label: Name
+    label:
+      label: Label
       description: For internal reference, not displayed
     description:
       label: Description
@@ -96,13 +96,13 @@ form:
   sections:
     create:
       create: Create New Page Section
-      name:
-        label: Name
+      label:
+        label: Label
       type:
         label: Type
         description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
       validation:
-        name: Name must be specified
+        label: Label must be specified
     modal:
       title: Select Page Sections
     sections:
@@ -111,8 +111,8 @@ form:
     type:
       label: Type
       description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
-    name:
-      label: Name
+    label:
+      label: Label
       description: For internal reference, not displayed
     description:
       label: Description
@@ -140,8 +140,8 @@ form:
       create: Add Item to Page Section
       type:
         label: Type
-      name:
+      label:
         label: Name
       validation:
-        name: Name must be specified
+        label: Label must be specified
 
