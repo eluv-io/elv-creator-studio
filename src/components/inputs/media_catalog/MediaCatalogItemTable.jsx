@@ -131,6 +131,10 @@ const MediaCatalogItemTable = observer(({
     };
   }, [selectedMediaCatalogId, selectedContentType, tagFilter, mediaTypeFilter, debouncedFilter]);
 
+  useEffect(() => {
+    setSelectedRecords && setSelectedRecords([]);
+  }, [setSelectedRecords, selectedContentType]);
+
   const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
 
   const content = info[selectedContentType] || {};

@@ -11,7 +11,7 @@ import {
   MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
-import {CategoryFn, GenerateUUID} from "@/helpers/Misc.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 
@@ -59,6 +59,12 @@ class MediaPropertyStore {
     yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
     yield this.rootStore.marketplaceStore.LoadMarketplaces();
 
+    yield Promise.all(
+      this.rootStore.mediaCatalogStore.allMediaCatalogs.map(async ({objectId}) =>
+        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: objectId})
+      )
+    );
+
     this.mediaProperties[mediaPropertyId] = {
       ...info,
       metadata: {
@@ -74,33 +80,54 @@ class MediaPropertyStore {
         }))
       }
     };
-
-    const associatedMediaCatalogIds = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [];
-
-    yield Promise.all(
-      associatedMediaCatalogIds.map(async mediaCatalogId =>
-        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId})
-      )
-    );
   });
 
-  GetMediaItem({mediaPropertyId, mediaItemId}) {
-    const mediaCatalogIds =
-      mediaPropertyId ?
-        this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [] :
-        this.rootStore.mediaCatalogStore.allMediaCatalogs.map(mediaCatalog => mediaCatalog.objectId);
+  GetMediaItem({mediaItemId}) {
+    const mediaCatalogIds = this.rootStore.mediaCatalogStore.allMediaCatalogs.map(mediaCatalog => mediaCatalog.objectId);
 
     for(const mediaCatalogId of mediaCatalogIds) {
       const mediaCatalog = this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info;
 
       if(!mediaCatalog) { continue; }
 
-      return (
-        mediaCatalog?.media[mediaItemId] ||
-        mediaCatalog?.media_lists[mediaItemId] ||
-        mediaCatalog?.media_collections[mediaItemId]
+      const mediaItem = (
+        mediaCatalog?.media?.[mediaItemId] ||
+        mediaCatalog?.media_lists?.[mediaItemId] ||
+        mediaCatalog?.media_collections?.[mediaItemId]
       );
+
+      if(mediaItem) {
+        return {
+          mediaCatalogId,
+          ...mediaItem
+        };
+      }
     }
+  }
+
+  GetMediaPropertyTags({mediaPropertyId}) {
+    const associatedCatalogIds = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [];
+
+    return associatedCatalogIds.map(mediaCatalogId =>
+      this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info.tags || []
+    )
+      .flat();
+  }
+
+  GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId, sectionItem}) {
+    if(!sectionItem) {
+      const sectionContent = this.GetMetadata({
+        objectId: mediaPropertyId,
+        path: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content")
+      }) || [];
+
+      sectionItem = sectionContent.find(sectionItem => sectionItem.id === sectionItemId);
+    }
+
+    return (
+      sectionItem?.label ||
+      (sectionItem.type === "media" && this.GetMediaItem({mediaItemId: sectionItem?.media_id})?.label)
+    );
   }
 
   CreateMediaProperty = flow(function * ({name="New Media Property"}) {
@@ -194,6 +221,7 @@ class MediaPropertyStore {
     type="media",
     label,
     mediaItemId,
+    expand,
     pageId,
     subPropertyId,
     marketplaceId,
@@ -204,9 +232,12 @@ class MediaPropertyStore {
     let spec;
     switch(type) {
       case "media":
+        // eslint-disable-next-line no-case-declarations
+        const mediaItem = this.GetMediaItem({mediaItemId});
         spec = MediaPropertySectionItemMediaSpec;
         spec.media_id = mediaItemId;
-        spec.label = this.GetMediaItem({mediaPropertyId, mediaItemId})?.label;
+        spec.media_type = mediaItem?.type;
+        spec.expand = expand;
         break;
       case "filter":
         spec = MediaPropertySectionItemFilterSpec;
@@ -224,9 +255,9 @@ class MediaPropertyStore {
         // eslint-disable-next-line no-case-declarations
         const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
         spec.marketplace = {
-          marketplaceId,
-          tenantSlug: marketplace.tenantSlug,
-          marketplaceSlug: marketplace.marketplaceSlug
+          marketplace_id: marketplaceId,
+          tenant_slug: marketplace.tenantSlug,
+          marketplace_slug: marketplace.marketplaceSlug
         };
         spec.marketplace_sku = marketplaceSKU;
         break;
@@ -248,28 +279,30 @@ class MediaPropertyStore {
         category: "section_label",
         mediaPropertyId,
         type: "sections",
-        id,
+        id: sectionId,
         label: this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[sectionId]?.label || "Section"
       }),
-      subcategory: CategoryFn({
-        store: this,
-        objectId: mediaPropertyId,
-        path,
-        field: "content",
-        params: {
-          fields: ["label", "id"],
-          l10n: this.rootStore.l10n.pages.media_property.form.categories.section_item_label
-        }
+      subcategory: this.MediaPropertyCategory({
+        category: "section_item_label",
+        mediaPropertyId,
+        type: "sectionItem",
+        id: sectionId,
+        sectionItemId: id,
+        label: spec.label
       }),
-      label: spec.label
+      label: this.GetSectionItemLabel({sectionItem: spec})
     });
 
     return id;
   }
 
-  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, label}) {
+  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, sectionItemId, label}) {
     return () => {
-      label = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "label"}) || label;
+      if(type === "sectionItem") {
+        label = this.GetSectionItemLabel({mediaPropertyId, sectionId: id, sectionItemId}) || label;
+      } else {
+        label = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "label"}) || label;
+      }
 
       return LocalizeString(this.rootStore.l10n.pages.media_property.form.categories[category], { label: label });
     };

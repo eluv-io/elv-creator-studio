@@ -80,29 +80,34 @@ const SelectedItem = observer(({
   );
 });
 
-const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, Component, ...props}) => {
-  const [marketplaceId, setMarketplaceId] = useState(marketplaceSlug ? undefined : objectId);
+const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, marketplaceId, Component, ...props}) => {
+  const [resolvedMarketplaceId, setResolvedMarketplaceId] = useState(marketplaceId || (marketplaceSlug ? undefined : objectId));
 
   useEffect(() => {
     marketplaceStore.LoadMarketplaces()
       .then(() => {
+        if(marketplaceId) {
+          marketplaceStore.LoadMarketplace({marketplaceId});
+          return;
+        }
+
         const selectedMarketplace = marketplaceStore.allMarketplaces?.find(marketplace => marketplace.marketplaceSlug === marketplaceSlug);
 
         if(!selectedMarketplace) {
           return;
         }
 
-        setMarketplaceId(selectedMarketplace.objectId);
+        setResolvedMarketplaceId(selectedMarketplace.objectId);
         marketplaceStore.LoadMarketplace({marketplaceId: selectedMarketplace.objectId});
       });
-  }, [marketplaceSlug]);
+  }, [marketplaceSlug, marketplaceId]);
 
-  const items = marketplaceStore.marketplaces[marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
+  const items = marketplaceStore.marketplaces[resolvedMarketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
 
   const options = items
     .map(item =>
       ({
-        image: <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={40} height={40} />,
+        image: <ItemImage marketplaceId={resolvedMarketplaceId} item={item} scale={200} width={40} height={40} />,
         label: item.name || item.sku,
         value: item.sku
       })

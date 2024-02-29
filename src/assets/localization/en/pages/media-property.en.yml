@@ -2,10 +2,10 @@ nav:
   list: Media Properties
   overview: Overview
   general: General
-  layout: Layout
   pages: Pages
   sections: Page Sections
   section: Page Section
+  section_item: Page Section Item
 form:
   categories:
     media_properties: Media Properties
@@ -27,6 +27,7 @@ form:
     section_content: Section Content
     section_item: Section Item
     section_item_label: Section Item `{label}`
+    section_item_presentation: Section Item Presentation
   create:
     create: Create New {type}
     name: Name
@@ -140,27 +141,38 @@ form:
   section_items:
     create:
       create: Add Item to Page Section
-      type:
-        label: Type
-      label:
-        label: Label
-      select_media:
-        label: Select Media
-      media_items:
-        label: Media Item(s)
-      page:
-        label: Page
-      subproperty:
-        label: Subproperty
-      marketplace:
-        label: Marketplace
-      marketplace_sku:
-        label: Marketplace Item (optional)
-        description: Link to a specific item page
       validation:
         label: Label must be specified
         media_items: One more more media items must be specified
         page: Page must be specified
         subproperty: Subproperty must be specified
         marketplace: Marketplace must be specified
+    type:
+      label: Type
+    label:
+      label: Label
+    select_media:
+      label: Select Media
+    media_items:
+      label: Media Item(s)
+    media_item:
+      label: Media Item
+    expand_list:
+      label: Expand Media List
+      description: By default, media lists are shown as a link to the list. Select this to instead show links to each media item with the list.
+    expand_collection:
+      label: Expand Media Collection
+      description: By default, media collections are shown as a link to the collection. Select this to instead show links to each media list within the collection.
+    use_media_settings:
+      label: Use Media Presentation Settings
+      description: If checked, this item will be presented in the section according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item when displayed in this section.
+    page:
+      label: Page
+    subproperty:
+      label: Subproperty
+    marketplace:
+      label: Marketplace
+    marketplace_sku:
+      label: Marketplace Item (optional)
+      description: Link to a specific item page
 

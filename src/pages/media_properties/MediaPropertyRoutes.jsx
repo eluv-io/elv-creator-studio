@@ -9,6 +9,7 @@ import MediaPropertyPage from "@/pages/media_properties/MediaPropertyPage.jsx";
 import MediaPropertySections from "@/pages/media_properties/MediaPropertySections.jsx";
 import MediaPropertyPages from "@/pages/media_properties/MediaPropertyPages.jsx";
 import MediaPropertySection from "@/pages/media_properties/MediaPropertySection.jsx";
+import MediaPropertySectionItem from "@/pages/media_properties/MediaPropertySectionItem.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
   const routes = [
@@ -18,6 +19,7 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.media_property.nav.page, path: "/media-properties/:mediaPropertyId/pages/:pageId", Component: <MediaPropertyPage /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.sections, path: "/media-properties/:mediaPropertyId/sections", Component: <MediaPropertySections /> },
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId", Component: <MediaPropertySection /> },
+    { label: rootStore.l10n.pages.media_property.nav.section_item, path: "/media-properties/:mediaPropertyId/sections/:sectionId/content/:sectionItemId", Component: <MediaPropertySectionItem /> },
   ]
     .map(route => ({
       ...route,

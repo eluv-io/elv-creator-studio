@@ -3,28 +3,27 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore, marketplaceStore} from "@/stores";
 import {
   Input as MantineInput,
-  Paper,
   Button,
   Container,
   Group,
   Select,
   Stack,
   Text,
-  TextInput
+  TextInput, Checkbox
 } from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
-import {MediaItemImage} from "@/components/common/MediaCatalog.jsx";
+import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
 
-const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
+const CreateSectionItemForm = ({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
@@ -39,6 +38,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
       type: "media",
       label: "",
       mediaItemIds: [],
+      expand: false,
       pageId: pages[0],
       subpropertyId: mediaProperties[0]?.objectId,
       marketplaceId: marketplaces[0]?.objectId,
@@ -54,8 +54,13 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
   });
 
   const selectedMediaItems = form.values.mediaItemIds.map(mediaItemId =>
-    mediaPropertyStore.GetMediaItem({mediaPropertyId, mediaItemId})
+    mediaPropertyStore.GetMediaItem({mediaItemId})
   );
+
+  useEffect(() => {
+    form.getInputProps("marketplaceSKU").onChange("");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.marketplaceId]);
 
   let formContent;
   switch(form.values.type) {
@@ -63,44 +68,32 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
       formContent = (
         <MantineInput.Wrapper
           disabled
-          {...l10n.section_items.create.media_item}
+          {...l10n.section_items.media_items}
           {...form.getInputProps("mediaItemIds")}
         >
           <Stack mb={5} spacing={5}>
             <Button variant="outline" onClick={() => setShowMediaSelectionModal(true)}>
-              { l10n.section_items.create.select_media.label }
+              { l10n.section_items.select_media.label }
             </Button>
             {
               selectedMediaItems.length === 0 ? null :
-                selectedMediaItems.map(selectedMediaItem => (
-                  <Paper withBorder p={5} key={`media-item-${selectedMediaItem.id}`}>
-                    <Group>
-                      <MediaItemImage
-                        mediaItem={selectedMediaItem}
-                        scale={400}
-                        width={50}
-                        height={50}
-                        fit="contain"
-                        position="left"
-                        style={{objectPosition: "left" }}
+                <>
+                  {selectedMediaItems.map(selectedMediaItem =>
+                    <MediaItemCard
+                      key={`media-item-${selectedMediaItem.id}`}
+                      mediaItem={selectedMediaItem}
+                      imageSize={50}
+                    />
+                  )}
+                  {
+                    selectedMediaItems[0].type === "media" ? null :
+                      <Checkbox
+                        mt="md"
+                        {...l10n.section_items[`expand_${selectedMediaItems[0].type}`]}
+                        {...form.getInputProps("expand")}
                       />
-                      <Stack spacing={0}>
-                        <Text fz="sm" fw={600}>
-                          { selectedMediaItem.label }
-                        </Text>
-                        <Text fz="xs">
-                          {
-                            selectedMediaItem.type === "collection" ?
-                              "Media Collection" :
-                              selectedMediaItem.type === "list" ?
-                                "Media List" :
-                                `Media - ${selectedMediaItem.media_type}`
-                          }
-                        </Text>
-                      </Stack>
-                    </Group>
-                  </Paper>
-                ))
+                  }
+                </>
             }
           </Stack>
         </MantineInput.Wrapper>
@@ -111,7 +104,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
       formContent = (
         <Select
           withinPortal
-          {...l10n.section_items.create.page}
+          {...l10n.section_items.page}
           data={pages.map(pageId => ({label: mediaProperty.pages[pageId].label, value: pageId}))}
           {...form.getInputProps("pageId")}
         />
@@ -122,7 +115,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
       formContent = (
         <Select
           withinPortal
-          {...l10n.section_items.create.subproperty}
+          {...l10n.section_items.subproperty}
           data={mediaProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
           {...form.getInputProps("subpropertyId")}
         />
@@ -134,12 +127,13 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
         <>
           <Select
             withinPortal
-            {...l10n.section_items.create.marketplace}
+            {...l10n.section_items.marketplace}
             data={marketplaces.map(marketplace => ({label: marketplace.brandedName || marketplace.name, value: marketplace.objectId}))}
             {...form.getInputProps("marketplaceId")}
           />
           <MarketplaceItemSelect
-            marketplaceSlug="masked-singer-marketplace"
+            key={form.values.marketplaceId}
+            marketplaceId={form.values.marketplaceId}
             useBasicInput
             componentProps={{
               withBorder: false,
@@ -151,7 +145,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
             inputProps={{
               withinPortal: true,
               mb: form.values.marketplaceSKU ? "xs" : 0,
-              ...l10n.section_items.create.marketplace_sku,
+              ...l10n.section_items.marketplace_sku,
               ...form.getInputProps("marketplaceSKU")
             }}
           />
@@ -178,7 +172,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
           <Select
             withinPortal
             data-autofocus
-            {...l10n.section_items.create.type}
+            {...l10n.section_items.type}
             defaultValue="media"
             data={
               Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
@@ -190,7 +184,7 @@ const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
           {
             form.values.type === "media" ? null :
               <TextInput
-                {...l10n.section_items.create.label}
+                {...l10n.section_items.label}
                 {...form.getInputProps("label")}
               />
           }
@@ -251,6 +245,7 @@ const MediaPropertyContentOptions = observer(() => {
         {...l10n.sections.section_content}
         subcategoryFnParams={{fields: ["label", "id"], l10n: l10n.categories.section_item_label}}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId)}
+        routePath="content"
         field="content"
         idField="id"
         AddItem={async () => {
@@ -297,15 +292,27 @@ const MediaPropertyContentOptions = observer(() => {
           {
             label: l10n.sections.label.label,
             field: "label",
-            render: sectionItem =>
-              sectionItem.type !== "media" ?
-                <Text>{sectionItem.label}</Text> :
-                <Text italic>{mediaPropertyStore.GetMediaItem({mediaPropertyId, mediaItemId: sectionItem.media_id})?.label}</Text>
+            render: sectionItem => sectionItem.label ?
+              sectionItem.label :
+              <Text italic>{mediaPropertyStore.GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId: sectionItem.id})}</Text>
           },
           {
             label: l10n.sections.type.label,
             field: "type",
-            render: sectionItem => <Text>{mediaPropertyStore.SECTION_CONTENT_TYPES[sectionItem.type]}</Text>
+            render: sectionItem => {
+              if(sectionItem.type !== "media") {
+                return <Text>{mediaPropertyStore.SECTION_CONTENT_TYPES[sectionItem.type]}</Text>;
+              }
+
+              const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId: sectionItem.media_id});
+
+              return (
+                <Text>
+                  {mediaItem.type === "collection" ? "Media Collection" : mediaItem.type === "list" ? "Media List" : "Media"}
+                  {!sectionItem.expand ? null : <Text italic>(Expanded)</Text>}
+                </Text>
+              );
+            }
           }
         ]}
       />
@@ -340,11 +347,18 @@ const MediaPropertySection = observer(() => {
   return (
     <PageContent
       backLink={UrlJoin("/media-properties", mediaPropertyId, "sections")}
-      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.layout}`}
+      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.sections} - ${section.label || ""}`}
       section="mediaProperty"
       useHistory
     >
       <Title order={3} mb="md">{l10n.categories.general}</Title>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.id}
+        disabled
+        field="id"
+      />
 
       <Inputs.Text
         {...inputProps}

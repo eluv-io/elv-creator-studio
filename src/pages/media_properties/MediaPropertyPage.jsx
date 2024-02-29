@@ -39,11 +39,18 @@ const MediaPropertyPage = observer(() => {
   return (
     <PageContent
       backLink={UrlJoin("/media-properties", mediaPropertyId, "pages")}
-      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.layout}`}
+      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.pages} - ${page.label || ""}`}
       section="mediaProperty"
       useHistory
     >
       <Title order={3} mb="md">{l10n.categories.general}</Title>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.id}
+        disabled
+        field="id"
+      />
 
       <Inputs.Text
         {...inputProps}

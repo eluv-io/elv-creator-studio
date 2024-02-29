@@ -80,6 +80,8 @@ export const MediaPropertySectionItemBaseSpec = {
 export const MediaPropertySectionItemMediaSpec = {
   ...MediaPropertySectionItemBaseSpec,
   media_id: "",
+  media_type: "",
+  expand: false,
   use_media_settings: true
 };
 

@@ -212,6 +212,7 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
           { ...l10n.media.image_square, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Square"]?.ratio, field: "thumbnail_image_square" },
           { ...l10n.media.image_landscape, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "thumbnail_image_landscape" }
         ]}
+        altTextField="thumbnail_alt_text"
       />
     </>
   );
