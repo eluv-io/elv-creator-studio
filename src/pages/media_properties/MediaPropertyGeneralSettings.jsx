@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
+import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -59,20 +60,29 @@ const MediaPropertyGeneralSettings = observer(() => {
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.media_catalogs}
-        subcategory={l10n.categories.info}
+        subcategory={l10n.general.media_catalogs.label}
         field="media_catalogs"
         options={
           mediaCatalogStore.allMediaCatalogs.map(mediaCatalog => ({
             label: mediaCatalog.name,
-            value: mediaCatalog.id
+            value: mediaCatalog.objectId
           }))
         }
+      />
+
+      <MarketplaceMultiselect
+        {...inputProps}
+        {...l10n.general.associated_marketplaces}
+        subcategory={l10n.general.associated_marketplaces.label}
+        field="associated_marketplaces"
+        tenantSlugField="tenant_slug"
+        marketplaceIdField="marketplace_id"
       />
 
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.subproperties}
-        subcategory={l10n.categories.info}
+        subcategory={l10n.general.subproperties.label}
         field="subproperties"
         options={
           mediaPropertyStore.allMediaProperties.map(mediaProperty => ({

@@ -9,6 +9,7 @@ export const MediaCatalogGalleryItemSpec = {
 
 export const MediaCatalogBaseSpec = {
   id: undefined,
+  label: "",
   title: "",
   catalog_title: "",
   subtitle: "",
@@ -23,6 +24,7 @@ export const MediaCatalogBaseSpec = {
 };
 
 const MediaCatalogMediaBaseSpec = {
+  type: "media",
   viewed_settings: {
     title: "",
     subtitle: "",
@@ -58,7 +60,6 @@ export const MediaCatalogMediaVideoSpec = {
   associated_media: [],
   override_settings_when_viewed: false,
   poster_image: undefined
-
 };
 
 export const MediaCatalogMediaGallerySpec = {
@@ -89,11 +90,13 @@ export const MediaCatalogMediaOtherSpec = ({mediaType}) => ({
 
 export const MediaCatalogCollectionSpec = {
   ...MediaCatalogBaseSpec,
+  type: "collection",
   media_lists: []
 };
 
 export const MediaCatalogMediaListSpec = {
   ...MediaCatalogBaseSpec,
+  type: "list",
   playlist: true,
   media: []
 };

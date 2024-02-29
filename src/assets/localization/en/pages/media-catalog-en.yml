@@ -64,6 +64,7 @@ form:
   media:
     list:
       columns:
+        label: Label
         title: Title
         media_type: Media Type
         media: Media
@@ -82,6 +83,8 @@ form:
       media_collections: Select Media Collections
     id:
       label: Media ID
+    type:
+      label: Type
     media_lists:
       label: Media Lists
       fieldLabel: Media List
@@ -90,6 +93,9 @@ form:
       fieldLabel: Media Item
     media_type:
       label: Media Type
+    label:
+      label: Label
+      description: For internal reference, not displayed
     title:
       label: Display Title
     catalog_title:

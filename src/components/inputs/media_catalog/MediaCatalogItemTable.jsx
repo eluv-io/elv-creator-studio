@@ -1,7 +1,6 @@
 import {
   Group,
   Text,
-  Image,
   Stack,
   TextInput,
   Paper,
@@ -15,13 +14,13 @@ import {mediaCatalogStore, rootStore, uiStore} from "@/stores";
 import UrlJoin from "url-join";
 import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {DataTable} from "mantine-datatable";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 import {SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
 import {IconEdit, IconTrashX} from "@tabler/icons-react";
-import {ScaleImage} from "@/helpers/Fabric";
 import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
+import {MediaItemImage} from "@/components/common/MediaCatalog";
 
 const MediaTypes = [
   "Video",
@@ -34,22 +33,21 @@ const MediaTypes = [
 export const MediaItemTitle = observer(({mediaItem}) => {
   if(!mediaItem) { return null; }
 
-  const imageUrl = (mediaItem.thumbnail_image_square || mediaItem.thumbnail_image_landscape || mediaItem.thumbnail_image_portrait)?.url;
-
   return (
     <Group noWrap>
-      <Image
+      <MediaItemImage
+        mediaItem={mediaItem}
+        scale={400}
         width={75}
         height={75}
         fit="contain"
         position="left"
         style={{objectPosition: "left" }}
-        src={ScaleImage(imageUrl, 400)} alt={mediaItem.title} withPlaceholder
       />
       <Stack spacing={2}>
         <Text fw={500}>
           <Group spacing={5} align="top">
-            { mediaItem.catalog_title || mediaItem.title || mediaItem.id }
+            { mediaItem.label || mediaItem.id }
           </Group>
         </Text>
         <Text fz={11} mb={3} color="dimmed">{mediaItem.id}</Text>
@@ -75,47 +73,73 @@ export const MediaItemTitle = observer(({mediaItem}) => {
   );
 });
 
+let mediaCatalogItemTableSettingsCache = {};
+
 // Display and select from top level media, media lists and media collections
 const MediaCatalogItemTable = observer(({
-  type="media",
+  type,
+  allowTypeSelection,
   mediaCatalogId,
+  mediaCatalogIds=[],
   excludedMediaIds=[],
   initialTagFilter,
   initialMediaTypeFilter,
   selectedRecords,
   setSelectedRecords,
+  multiple=true,
   perPage=50,
   disableActions
 }) => {
+  let settingsCache = mediaCatalogItemTableSettingsCache;
+  if(settingsCache.pathname !== location.pathname || settingsCache.search !== location.search) {
+    mediaCatalogItemTableSettingsCache = {};
+    settingsCache = undefined;
+  }
+
   initialTagFilter = initialTagFilter || new URLSearchParams(window.location.search).get("tags")?.split(",");
   initialMediaTypeFilter = initialMediaTypeFilter || new URLSearchParams(window.location.search).get("media_type");
 
+  const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(mediaCatalogId || settingsCache?.mediaCatalogId || mediaCatalogIds[0]);
+  const [selectedContentType, setSelectedContentType] = useState(type || settingsCache?.type || "media");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(perPage);
-  const [sortStatus, setSortStatus] = useState({columnAccessor: "catalog_title", direction: "asc"});
-  const [filter, setFilter] = useState("");
-  const [mediaTypeFilter, setMediaTypefilter] = useState(initialMediaTypeFilter || "");
-  const [tagFilter, setTagFilter] = useState(initialTagFilter || []);
+  const [sortStatus, setSortStatus] = useState({columnAccessor: "label", direction: "asc"});
+  const [filter, setFilter] = useState(settingsCache?.filter || "");
+  const [mediaTypeFilter, setMediaTypefilter] = useState((settingsCache ? settingsCache.mediaType : initialMediaTypeFilter) || "");
+  const [tagFilter, setTagFilter] = useState((settingsCache ? settingsCache.tags : initialTagFilter) || []);
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
   const l10n = rootStore.l10n.pages.media_catalog.form;
-  const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
+  const mediaCatalog = mediaCatalogStore.mediaCatalogs[selectedMediaCatalogId];
 
   if(!mediaCatalog) { return null; }
 
-  if(!["media", "media_lists", "media_collections"].includes(type)) {
+  if(!["media", "media_lists", "media_collections"].includes(selectedContentType)) {
     throw Error("Missing type for MediaCatalogItemTable");
   }
 
+  // Save settings so that they are applied when viewing the same table again
+  useEffect(() => {
+    mediaCatalogItemTableSettingsCache = {
+      pathname: location.pathname,
+      search: location.search,
+      mediaCatalogId: selectedMediaCatalogId,
+      type: selectedContentType,
+      filter: debouncedFilter,
+      mediaType: mediaTypeFilter,
+      tags: tagFilter.length > 0 ? tagFilter : undefined
+    };
+  }, [selectedMediaCatalogId, selectedContentType, tagFilter, mediaTypeFilter, debouncedFilter]);
+
   const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
 
-  const content = info[type] || {};
+  const content = info[selectedContentType] || {};
 
   const mediaItems =
     Object.values(content)
       .filter(mediaItem => !excludedMediaIds.includes(mediaItem.id))
       .filter(mediaItem =>
-        type !== "media" ||
+        selectedContentType !== "media" ||
         !mediaTypeFilter ||
         mediaItem.media_type === mediaTypeFilter
       )
@@ -125,6 +149,7 @@ const MediaCatalogItemTable = observer(({
       )
       .filter(mediaItem =>
         !debouncedFilter ||
+        mediaItem.label?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
         mediaItem.title?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
         mediaItem.catalog_title?.toLowerCase()?.includes(debouncedFilter.toLowerCase()) ||
         mediaItem.id?.toLowerCase()?.includes(debouncedFilter.toLowerCase())
@@ -135,6 +160,40 @@ const MediaCatalogItemTable = observer(({
 
   return (
     <Paper maw={uiStore.inputWidthWide}>
+      {
+        mediaCatalogIds.length <= 1 && !allowTypeSelection ? null :
+          <Group mb="xs">
+            {
+              mediaCatalogIds.length <= 1 ? null :
+                <Select
+                  label={rootStore.l10n.pages.media_catalog.form.categories.media_catalog}
+                  onChange={value => setSelectedMediaCatalogId(value)}
+                  value={selectedMediaCatalogId}
+                  data={
+                    mediaCatalogStore.allMediaCatalogs
+                      .map(mediaCatalog => ({
+                        label: mediaCatalog.name,
+                        value: mediaCatalog.objectId
+                      }))
+                      .filter(({value}) => mediaCatalogIds.includes(value))
+                  }
+                />
+            }
+            {
+              !allowTypeSelection ? null :
+                <Select
+                  label={rootStore.l10n.pages.media_catalog.form.type.label}
+                  onChange={value => setSelectedContentType(value)}
+                  value={selectedContentType}
+                  data={[
+                    { label: rootStore.l10n.pages.media_catalog.form.categories.media, value: "media" },
+                    { label: rootStore.l10n.pages.media_catalog.form.categories.media_lists, value: "media_lists" },
+                    { label: rootStore.l10n.pages.media_catalog.form.categories.media_collections, value: "media_collections" },
+                  ]}
+                />
+            }
+          </Group>
+      }
       <Group grow align="center" mb="xs" spacing="xs">
         <TextInput
           label={l10n.media.list.filters.filter}
@@ -145,7 +204,7 @@ const MediaCatalogItemTable = observer(({
           }}
         />
         {
-          type !== "media" ? null :
+          selectedContentType !== "media" ? null :
             <Select
               label={l10n.media.list.filters.media_type}
               value={mediaTypeFilter}
@@ -185,16 +244,31 @@ const MediaCatalogItemTable = observer(({
         recordsPerPage={pageSize}
         page={mediaItems.length > pageSize ? page : undefined}
         selectedRecords={selectedRecords}
-        onSelectedRecordsChange={setSelectedRecords}
+        allRecordsSelectionCheckboxProps={{style: multiple ? {} : {display: "none"}}}
+        onRowClick={
+        !setSelectedRecords ? undefined :
+          record => {
+            selectedRecords.includes(record) ?
+              setSelectedRecords(selectedRecords.filter(otherRecord => otherRecord !== record)) :
+              multiple ?
+                setSelectedRecords([...selectedRecords, record]) :
+                setSelectedRecords([record]);
+          }
+        }
+        onSelectedRecordsChange={newSelectedRecords => {
+          multiple ?
+            setSelectedRecords(newSelectedRecords) :
+            setSelectedRecords(newSelectedRecords.slice(-1));
+        }}
         onPageChange={page => setPage(page)}
         columns={[
           {
-            accessor: "catalog_title",
+            accessor: "label",
             sortable: true,
-            title: l10n.media.list.columns.title,
+            title: l10n.media.list.columns.label,
             render: mediaItem => <MediaItemTitle mediaItem={mediaItem} />
           },
-          type !== "media" ? null :
+          selectedContentType !== "media" ? null :
             {
               accessor: "media_type",
               width: 125,
@@ -204,7 +278,7 @@ const MediaCatalogItemTable = observer(({
                 <Text fz="xs">{mediaItem.media_type}</Text>
               )
             },
-          type !== "media_lists" ? null :
+          selectedContentType !== "media_lists" ? null :
             {
               accessor: "media",
               width: 125,
@@ -214,7 +288,7 @@ const MediaCatalogItemTable = observer(({
                 <Text fz="xs">{mediaItem.media?.length || 0}</Text>
               )
             },
-          type !== "media_collections" ? null :
+          selectedContentType !== "media_collections" ? null :
             {
               accessor: "media_lists",
               width: 125,
@@ -232,23 +306,23 @@ const MediaCatalogItemTable = observer(({
             render: mediaItem => (
               <Group position="center">
                 <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.title})}
+                  label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.label})}
                   component={Link}
                   to={UrlJoin(location.pathname, mediaItem.id)}
                   color="blue.5"
                   Icon={IconEdit}
                 />
                 <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: mediaItem.title})}
+                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: mediaItem.label})}
                   color="red.5"
                   Icon={IconTrashX}
                   onClick={() => {
                     ConfirmDelete({
-                      itemName: mediaItem.title,
+                      itemName: mediaItem.label,
                       onConfirm: () => mediaCatalogStore.RemoveMediaItem({
                         page: location.pathname,
-                        type,
-                        mediaCatalogId,
+                        type: selectedContentType,
+                        mediaCatalogId: selectedMediaCatalogId,
                         mediaItem
                       })
                     });
@@ -266,58 +340,22 @@ const MediaCatalogItemTable = observer(({
 export const MediaCatalogItemSelectionModal = observer(({
   Submit,
   Close,
-  allowTypeSelection=false,
-  mediaCatalogIds=[],
   ...props
 }) => {
   const [selectedRecords, setSelectedRecords] = useState([]);
-  const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(props.mediaCatalogId || mediaCatalogIds[0]);
-  const [selectedContentType, setSelectedContentType] = useState(props.type || "media");
 
   return (
     <Modal
-      title={rootStore.l10n.pages.media_catalog.form.media.modal[selectedContentType]}
+      title={rootStore.l10n.pages.media_catalog.form.media.modal.media}
       size={uiStore.inputWidthWide}
       opened
       onClose={Close}
+      style={{position: "relative", zIndex: 1000000}}
     >
       <Paper p="xl" pt="md" withBorder>
-        {
-          mediaCatalogIds.length <= 1 ? null :
-            <Group mb="xl">
-              <Select
-                label={rootStore.l10n.pages.media_catalog.form.categories.media_catalog}
-                onChange={value => setSelectedMediaCatalogId(value)}
-                value={selectedMediaCatalogId}
-                data={
-                  mediaCatalogStore.allMediaCatalogs
-                    .map(mediaCatalog => ({
-                      label: mediaCatalog.name,
-                      value: mediaCatalog.objectId
-                    }))
-                    .filter(({value}) => mediaCatalogIds.includes(value))
-                }
-              />
-              {
-                !allowTypeSelection ? null :
-                  <Select
-                    label={rootStore.l10n.pages.media_catalog.form.type.label}
-                    onChange={value => setSelectedContentType(value)}
-                    value={selectedContentType}
-                    data={[
-                      { label: rootStore.l10n.pages.media_catalog.form.categories.media, value: "media" },
-                      { label: rootStore.l10n.pages.media_catalog.form.categories.media_lists, value: "media_lists" },
-                      { label: rootStore.l10n.pages.media_catalog.form.categories.media_collections, value: "media_collections" },
-                    ]}
-                  />
-              }
-            </Group>
-        }
-
         <MediaCatalogItemTable
           {...props}
-          mediaCatalogId={selectedMediaCatalogId}
-          type={selectedContentType}
+          key={`catalog-items-${props.type}`}
           disableActions
           selectedRecords={selectedRecords}
           setSelectedRecords={setSelectedRecords}
@@ -329,7 +367,10 @@ export const MediaCatalogItemSelectionModal = observer(({
           <Button
             w={200}
             disabled={selectedRecords.length === 0}
-            onClick={() => Submit(selectedRecords.map(mediaItem => mediaItem.id))}
+            onClick={async () => {
+              await Submit(selectedRecords.map(mediaItem => mediaItem.id));
+              Close();
+            }}
           >
             { rootStore.l10n.components.actions.submit }
           </Button>

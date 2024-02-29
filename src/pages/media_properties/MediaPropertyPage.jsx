@@ -38,6 +38,7 @@ const MediaPropertyPage = observer(() => {
 
   return (
     <PageContent
+      backLink={UrlJoin("/media-properties", mediaPropertyId, "pages")}
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.layout}`}
       section="mediaProperty"
       useHistory

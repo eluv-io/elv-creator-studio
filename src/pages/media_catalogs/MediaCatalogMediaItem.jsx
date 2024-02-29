@@ -317,7 +317,7 @@ const MediaCatalogMediaItem = observer(() => {
   if(!mediaItem) { return null; }
 
   const l10n = rootStore.l10n.pages.media_catalog.form;
-  const pageTitle = `${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.media} - ${mediaItem.title}`;
+  const pageTitle = `${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.media} - ${mediaItem.label}`;
 
   if(galleryItemId) {
     return (

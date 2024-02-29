@@ -56,6 +56,8 @@ form:
     subproperties:
       label: Subproperties
       description: Other properties within this property
+    associated_marketplaces:
+      label: Associated Marketplaces
   pages:
     create:
       create: Create New Page
@@ -141,7 +143,24 @@ form:
       type:
         label: Type
       label:
-        label: Name
+        label: Label
+      select_media:
+        label: Select Media
+      media_items:
+        label: Media Item(s)
+      page:
+        label: Page
+      subproperty:
+        label: Subproperty
+      marketplace:
+        label: Marketplace
+      marketplace_sku:
+        label: Marketplace Item (optional)
+        description: Link to a specific item page
       validation:
         label: Label must be specified
+        media_items: One more more media items must be specified
+        page: Page must be specified
+        subproperty: Subproperty must be specified
+        marketplace: Marketplace must be specified
 

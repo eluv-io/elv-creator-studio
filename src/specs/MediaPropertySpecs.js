@@ -77,6 +77,37 @@ export const MediaPropertySectionItemBaseSpec = {
   type: "media" // Filter link, page link, property link
 };
 
+export const MediaPropertySectionItemMediaSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  media_id: "",
+  use_media_settings: true
+};
+
+export const MediaPropertySectionItemFilterSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  filter: {
+    media_catalogs: [],
+    tags: [],
+    attributes: {}
+  }
+};
+
+export const MediaPropertySectionItemPageLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  page_id: "",
+};
+
+export const MediaPropertySectionItemSubpropertyLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  subproperty_id: ""
+};
+
+export const MediaPropertySectionItemMarketplaceLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  marketplace: undefined,
+  marketplace_sku: ""
+};
+
 export const MediaPropertySectionBaseSpec = {
   id: undefined,
   url_slug: "",
@@ -138,6 +169,13 @@ export const MediaPropertySpec = {
   image: undefined,
   subproperties: [],
   media_catalogs: [],
+  associated_marketplaces: [],
   sections: {},
-  pages: {}
+  pages: {
+    main: {
+      ...MediaPropertyPageSpec,
+      id: "main",
+      label: "Main Page"
+    }
+  }
 };

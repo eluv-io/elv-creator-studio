@@ -165,6 +165,7 @@ class MediaCatalogStore {
     id = `${prefix}${id}`;
 
     spec.id = id;
+    spec.label = title;
     spec.title = title;
     spec.catalog_title = title;
 

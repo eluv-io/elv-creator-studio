@@ -152,6 +152,7 @@ const MediaCatalogItems = observer(({type="media"}) => {
       </Title>
 
       <MediaCatalogItemTable
+        key={`media-catalog-items-${type}`}
         type={type}
         mediaCatalogId={mediaCatalogId}
       />

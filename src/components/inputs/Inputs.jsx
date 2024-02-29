@@ -98,6 +98,7 @@ const MultiSelect = observer(({
   objectId,
   path,
   field,
+  primaryValueField, // If options are objects, use this field to determine the canonical value
   category,
   subcategory,
   label,
@@ -113,7 +114,11 @@ const MultiSelect = observer(({
 }) => {
   const location = useLocation();
 
-  const values = value || store.GetMetadata({objectId, path, field}) || [];
+  let values = value || store.GetMetadata({objectId, path, field}) || [];
+
+  if(primaryValueField) {
+    values = values.map(value => value[primaryValueField]);
+  }
 
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
@@ -171,6 +176,17 @@ const MultiSelect = observer(({
         const addedValues = newValues.filter(value => !values.includes(value));
         addedValues.forEach(newValue => {
           const option = options.find(option => option === newValue || option?.value === newValue);
+
+          if(primaryValueField) {
+            newValue = {
+              [primaryValueField]: newValue,
+            };
+
+            (option.additionalValues || []).forEach(({field, value}) =>
+              newValue[field] = value
+            );
+          }
+
           store.InsertListElement({
             objectId,
             page: location.pathname,

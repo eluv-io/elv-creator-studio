@@ -54,13 +54,13 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
         subcategory={l10n.categories[subType]}
         field={field}
         idField="."
-        GetName={mediaItemId => info[subType][mediaItemId]?.title}
+        GetName={mediaItemId => info[subType][mediaItemId]?.label}
         editable={false}
         AddItem={() => setShowSelectionModal(true)}
         Actions={mediaItemId => [
           <IconButton
             key="link-button"
-            label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info[subType][mediaItemId]?.title || mediaItemId })}
+            label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info[subType][mediaItemId]?.label || mediaItemId })}
             component={Link}
             to={UrlJoin("/media-catalogs/", mediaCatalogId, subType, mediaItemId)}
             color="blue.5"
@@ -145,6 +145,20 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.media.type}
+        disabled
+        field="type"
+        defaultValue={type === "media_collections" ? "collection" : type === "media_lists" ? "list" : "media"}
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.media.label}
+        field="label"
+      />
+
+      <Inputs.Text
+        {...inputProps}
         {...l10n.media.catalog_title}
         field="catalog_title"
       />
@@ -185,6 +199,7 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
         subcategory={l10n.categories.tags}
         disabled={(info.tags || []).length === 0}
         field="tags"
+        searchable
         options={info.tags || []}
       />
 

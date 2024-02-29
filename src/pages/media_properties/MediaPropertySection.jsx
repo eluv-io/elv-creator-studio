@@ -1,7 +1,17 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
-import {Button, Container, Group, Select, Text, TextInput} from "@mantine/core";
+import {rootStore, mediaPropertyStore, mediaCatalogStore, marketplaceStore} from "@/stores";
+import {
+  Input as MantineInput,
+  Paper,
+  Button,
+  Container,
+  Group,
+  Select,
+  Stack,
+  Text,
+  TextInput
+} from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
@@ -10,28 +20,151 @@ import {useState} from "react";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
+import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
+import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
+import {MediaItemImage} from "@/components/common/MediaCatalog.jsx";
 
-const CreateSectionItemForm = ({Create}) => {
+const CreateSectionItemForm = ({mediaPropertyId, mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
+  const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
+
+  const pages = Object.keys(mediaProperty.pages);
+  const mediaProperties = mediaPropertyStore.allMediaProperties
+    .filter(otherProperty => otherProperty.id !== mediaProperty.id);
+  const marketplaces = marketplaceStore.allMarketplaces;
 
   const l10n = rootStore.l10n.pages.media_property.form;
-
   const form = useForm({
     initialValues: {
       type: "media",
-      label: ""
+      label: "",
+      mediaItemIds: [],
+      pageId: pages[0],
+      subpropertyId: mediaProperties[0]?.objectId,
+      marketplaceId: marketplaces[0]?.objectId,
+      marketplaceSKU: "",
     },
     validate: {
-      label: value => value ? null : l10n.sections.create.validation.label
+      label: value => form.values.type === "media" || value ? null : l10n.section_items.create.validation.label,
+      mediaItemIds: value => form.values.type !== "media" || value.length > 0 ? null : l10n.section_items.create.validation.media_items,
+      pageId: value => form.values.type !== "page_link" || value ? null : l10n.section_items.create.validation.page,
+      subpropertyId: value => form.values.type !== "subproperty_link" || value ? null : l10n.section_items.create.validation.subproperty,
+      marketplaceId: value => form.values.type !== "marketplace_link" || value ? null : l10n.section_items.create.validation.marketplace
     }
   });
+
+  const selectedMediaItems = form.values.mediaItemIds.map(mediaItemId =>
+    mediaPropertyStore.GetMediaItem({mediaPropertyId, mediaItemId})
+  );
+
+  let formContent;
+  switch(form.values.type) {
+    case "media":
+      formContent = (
+        <MantineInput.Wrapper
+          disabled
+          {...l10n.section_items.create.media_item}
+          {...form.getInputProps("mediaItemIds")}
+        >
+          <Stack mb={5} spacing={5}>
+            <Button variant="outline" onClick={() => setShowMediaSelectionModal(true)}>
+              { l10n.section_items.create.select_media.label }
+            </Button>
+            {
+              selectedMediaItems.length === 0 ? null :
+                selectedMediaItems.map(selectedMediaItem => (
+                  <Paper withBorder p={5} key={`media-item-${selectedMediaItem.id}`}>
+                    <Group>
+                      <MediaItemImage
+                        mediaItem={selectedMediaItem}
+                        scale={400}
+                        width={50}
+                        height={50}
+                        fit="contain"
+                        position="left"
+                        style={{objectPosition: "left" }}
+                      />
+                      <Stack spacing={0}>
+                        <Text fz="sm" fw={600}>
+                          { selectedMediaItem.label }
+                        </Text>
+                        <Text fz="xs">
+                          {
+                            selectedMediaItem.type === "collection" ?
+                              "Media Collection" :
+                              selectedMediaItem.type === "list" ?
+                                "Media List" :
+                                `Media - ${selectedMediaItem.media_type}`
+                          }
+                        </Text>
+                      </Stack>
+                    </Group>
+                  </Paper>
+                ))
+            }
+          </Stack>
+        </MantineInput.Wrapper>
+      );
+
+      break;
+    case "page_link":
+      formContent = (
+        <Select
+          withinPortal
+          {...l10n.section_items.create.page}
+          data={pages.map(pageId => ({label: mediaProperty.pages[pageId].label, value: pageId}))}
+          {...form.getInputProps("pageId")}
+        />
+      );
+
+      break;
+    case "subproperty_link":
+      formContent = (
+        <Select
+          withinPortal
+          {...l10n.section_items.create.subproperty}
+          data={mediaProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
+          {...form.getInputProps("subpropertyId")}
+        />
+      );
+
+      break;
+    case "marketplace_link":
+      formContent = (
+        <>
+          <Select
+            withinPortal
+            {...l10n.section_items.create.marketplace}
+            data={marketplaces.map(marketplace => ({label: marketplace.brandedName || marketplace.name, value: marketplace.objectId}))}
+            {...form.getInputProps("marketplaceId")}
+          />
+          <MarketplaceItemSelect
+            marketplaceSlug="masked-singer-marketplace"
+            useBasicInput
+            componentProps={{
+              withBorder: false,
+              p: 0,
+              pt: 0,
+              pb: 0,
+              mb:0
+            }}
+            inputProps={{
+              withinPortal: true,
+              mb: form.values.marketplaceSKU ? "xs" : 0,
+              ...l10n.section_items.create.marketplace_sku,
+              ...form.getInputProps("marketplaceSKU")
+            }}
+          />
+        </>
+      );
+  }
 
   return (
     <Container p={0}>
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({label: values.label, type: values.type})
+          Create(values)
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -41,25 +174,29 @@ const CreateSectionItemForm = ({Create}) => {
             });
         })}
       >
-        <Select
-          withinPortal
-          data-autofocus
-          {...l10n.section_items.create.type}
-          defaultValue="media"
-          mb="md"
-          data={
-            Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
-              .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key}))
+        <Stack spacing="md">
+          <Select
+            withinPortal
+            data-autofocus
+            {...l10n.section_items.create.type}
+            defaultValue="media"
+            data={
+              Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
+                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key}))
+            }
+            {...form.getInputProps("type")}
+          />
+          { formContent }
+          {
+            form.values.type === "media" ? null :
+              <TextInput
+                {...l10n.section_items.create.label}
+                {...form.getInputProps("label")}
+              />
           }
-          {...form.getInputProps("type")}
-        />
-        <TextInput
-          data-autofocus
-          mb="md"
-          {...l10n.sections.create.label}
-          {...form.getInputProps("label")}
-        />
-        <Group mt="md">
+        </Stack>
+
+        <Group mt="xl">
           <Button
             w="100%"
             loading={creating}
@@ -69,6 +206,16 @@ const CreateSectionItemForm = ({Create}) => {
           </Button>
         </Group>
       </form>
+      {
+        !showMediaSelectionModal ? null :
+          <MediaCatalogItemSelectionModal
+            multiple
+            allowTypeSelection
+            mediaCatalogIds={mediaProperty.media_catalogs || []}
+            Submit={(mediaItemIds) => form.getInputProps("mediaItemIds").onChange(mediaItemIds)}
+            Close={() => setShowMediaSelectionModal(false)}
+          />
+      }
     </Container>
   );
 };
@@ -114,14 +261,29 @@ const MediaPropertyContentOptions = observer(() => {
               onCancel: () => resolve(),
               children:
                 <CreateSectionItemForm
-                  Create={async ({label, type}) => {
-                    const id = mediaPropertyStore.CreateSectionItem({
-                      label,
-                      type,
-                      page: location.pathname,
-                      mediaPropertyId,
-                      sectionId
-                    });
+                  mediaPropertyId={mediaPropertyId}
+                  mediaProperty={info}
+                  Create={async args => {
+                    let id;
+                    if(args.type === "media") {
+                      // When specifying media, multiple items are allowed. Create an entry for each and don't redirect
+                      args.mediaItemIds.forEach(mediaItemId =>
+                        mediaPropertyStore.CreateSectionItem({
+                          page: location.pathname,
+                          mediaPropertyId,
+                          sectionId,
+                          mediaItemId,
+                          ...args
+                        })
+                      );
+                    } else {
+                      id = mediaPropertyStore.CreateSectionItem({
+                        page: location.pathname,
+                        mediaPropertyId,
+                        sectionId,
+                        ...args
+                      });
+                    }
 
                     modals.closeAll();
 
@@ -134,16 +296,16 @@ const MediaPropertyContentOptions = observer(() => {
         columns={[
           {
             label: l10n.sections.label.label,
-            field: "label"
+            field: "label",
+            render: sectionItem =>
+              sectionItem.type !== "media" ?
+                <Text>{sectionItem.label}</Text> :
+                <Text italic>{mediaPropertyStore.GetMediaItem({mediaPropertyId, mediaItemId: sectionItem.media_id})?.label}</Text>
           },
           {
             label: l10n.sections.type.label,
             field: "type",
             render: sectionItem => <Text>{mediaPropertyStore.SECTION_CONTENT_TYPES[sectionItem.type]}</Text>
-          },
-          {
-            label: l10n.sections.description.label,
-            field: "description"
           }
         ]}
       />
@@ -177,6 +339,7 @@ const MediaPropertySection = observer(() => {
 
   return (
     <PageContent
+      backLink={UrlJoin("/media-properties", mediaPropertyId, "sections")}
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.layout}`}
       section="mediaProperty"
       useHistory

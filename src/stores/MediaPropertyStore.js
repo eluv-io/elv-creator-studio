@@ -2,7 +2,12 @@ import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
   MediaPropertyPageSpec,
-  MediaPropertySectionAutomaticSpec, MediaPropertySectionItemBaseSpec,
+  MediaPropertySectionAutomaticSpec,
+  MediaPropertySectionItemFilterSpec,
+  MediaPropertySectionItemMarketplaceLinkSpec,
+  MediaPropertySectionItemMediaSpec,
+  MediaPropertySectionItemPageLinkSpec,
+  MediaPropertySectionItemSubpropertyLinkSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
@@ -34,6 +39,68 @@ class MediaPropertyStore {
     this.rootStore = rootStore;
 
     makeAutoObservable(this);
+  }
+
+  LoadMediaProperties = flow(function * (force=false) {
+    if(this.allMediaProperties && !force) { return; }
+
+    this.allMediaProperties = yield this.rootStore.databaseStore.GetCollection({collection: "mediaProperties"});
+  });
+
+  LoadMediaProperty = flow(function * ({mediaPropertyId, force=false}) {
+    if(this.mediaProperties[mediaPropertyId] && !force) { return; }
+
+    yield this.LoadMediaProperties();
+
+    const info = this.allMediaProperties.find(mediaProperty => mediaProperty.objectId === mediaPropertyId);
+
+    const libraryId = yield this.rootStore.LibraryId({objectId: mediaPropertyId});
+
+    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
+    yield this.rootStore.marketplaceStore.LoadMarketplaces();
+
+    this.mediaProperties[mediaPropertyId] = {
+      ...info,
+      metadata: {
+        public: (yield this.client.ContentObjectMetadata({
+          libraryId: libraryId,
+          objectId: mediaPropertyId,
+          metadataSubtree: "public",
+          resolveLinks: true,
+          linkDepthLimit: 1,
+          resolveIgnoreErrors: true,
+          resolveIncludeSource: true,
+          produceLinkUrls: true
+        }))
+      }
+    };
+
+    const associatedMediaCatalogIds = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [];
+
+    yield Promise.all(
+      associatedMediaCatalogIds.map(async mediaCatalogId =>
+        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId})
+      )
+    );
+  });
+
+  GetMediaItem({mediaPropertyId, mediaItemId}) {
+    const mediaCatalogIds =
+      mediaPropertyId ?
+        this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [] :
+        this.rootStore.mediaCatalogStore.allMediaCatalogs.map(mediaCatalog => mediaCatalog.objectId);
+
+    for(const mediaCatalogId of mediaCatalogIds) {
+      const mediaCatalog = this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info;
+
+      if(!mediaCatalog) { continue; }
+
+      return (
+        mediaCatalog?.media[mediaItemId] ||
+        mediaCatalog?.media_lists[mediaItemId] ||
+        mediaCatalog?.media_collections[mediaItemId]
+      );
+    }
   }
 
   CreateMediaProperty = flow(function * ({name="New Media Property"}) {
@@ -79,40 +146,6 @@ class MediaPropertyStore {
     return objectId;
   });
 
-  LoadMediaProperties = flow(function * (force=false) {
-    if(this.allMediaProperties && !force) { return; }
-
-    this.allMediaProperties = yield this.rootStore.databaseStore.GetCollection({collection: "mediaProperties"});
-  });
-
-  LoadMediaProperty = flow(function * ({mediaPropertyId, force=false}) {
-    if(this.mediaProperties[mediaPropertyId] && !force) { return; }
-
-    yield this.LoadMediaProperties();
-
-    const info = this.allMediaProperties.find(mediaProperty => mediaProperty.objectId === mediaPropertyId);
-
-    const libraryId = yield this.rootStore.LibraryId({objectId: mediaPropertyId});
-
-    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
-
-    this.mediaProperties[mediaPropertyId] = {
-      ...info,
-      metadata: {
-        public: (yield this.client.ContentObjectMetadata({
-          libraryId: libraryId,
-          objectId: mediaPropertyId,
-          metadataSubtree: "public",
-          resolveLinks: true,
-          linkDepthLimit: 1,
-          resolveIgnoreErrors: true,
-          resolveIncludeSource: true,
-          produceLinkUrls: true
-        }))
-      }
-    };
-  });
-
   CreatePage({page, mediaPropertyId, label}) {
     let id = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
 
@@ -154,10 +187,50 @@ class MediaPropertyStore {
     return id;
   }
 
-  CreateSectionItem({page, mediaPropertyId, sectionId, type="media", label}) {
+  CreateSectionItem({
+    page,
+    mediaPropertyId,
+    sectionId,
+    type="media",
+    label,
+    mediaItemId,
+    pageId,
+    subPropertyId,
+    marketplaceId,
+    marketplaceSKU
+  }) {
     let id = `${this.ID_PREFIXES["section_item"]}${GenerateUUID()}`;
 
-    const spec = MediaPropertySectionItemBaseSpec;
+    let spec;
+    switch(type) {
+      case "media":
+        spec = MediaPropertySectionItemMediaSpec;
+        spec.media_id = mediaItemId;
+        spec.label = this.GetMediaItem({mediaPropertyId, mediaItemId})?.label;
+        break;
+      case "filter":
+        spec = MediaPropertySectionItemFilterSpec;
+        break;
+      case "page_link":
+        spec = MediaPropertySectionItemPageLinkSpec;
+        spec.page_id = pageId;
+        break;
+      case "subproperty_link":
+        spec = MediaPropertySectionItemSubpropertyLinkSpec;
+        spec.subproperty_id = subPropertyId;
+        break;
+      case "marketplace_link":
+        spec = MediaPropertySectionItemMarketplaceLinkSpec;
+        // eslint-disable-next-line no-case-declarations
+        const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+        spec.marketplace = {
+          marketplaceId,
+          tenantSlug: marketplace.tenantSlug,
+          marketplaceSlug: marketplace.marketplaceSlug
+        };
+        spec.marketplace_sku = marketplaceSKU;
+        break;
+    }
 
     spec.id = id;
     spec.type = type;
