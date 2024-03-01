@@ -20,14 +20,19 @@ import {LinkButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
 import {modals} from "@mantine/modals";
 import {useForm} from "@mantine/form";
+import {Slugify, ValidateSlug} from "@/components/common/Validation.jsx";
 
 const CreateMediaPropertyForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
 
   const form = useForm({
-    initialValues: { name: "" },
+    initialValues: {
+      name: "",
+      slug: ""
+    },
     validate: {
-      name: value => value ? null : rootStore.l10n.pages.media_property.form.create.validation.name
+      name: value => value ? null : rootStore.l10n.pages.media_property.form.create.validation.name,
+      slug: value => ValidateSlug(value)
     }
   });
 
@@ -47,9 +52,15 @@ const CreateMediaPropertyForm = ({Create}) => {
         })}
       >
         <TextInput
+          mb="md"
           data-autofocus
-          label={rootStore.l10n.pages.media_property.form.create.name}
+          {...rootStore.l10n.pages.media_property.form.create.name}
           {...form.getInputProps("name")}
+        />
+        <TextInput
+          {...rootStore.l10n.pages.media_property.form.create.slug}
+          {...form.getInputProps("slug")}
+          placeholder={Slugify(form.values.name)}
         />
         <Group mt="md">
           <Button
@@ -117,7 +128,7 @@ const MediaPropertyList = observer(() => {
                 centered: true,
                 children:
                   <CreateMediaPropertyForm
-                    Create={async ({name}) => await mediaPropertyStore.CreateMediaProperty({name})}
+                    Create={async ({name, slug}) => await mediaPropertyStore.CreateMediaProperty({name, slug})}
                   />
               })
             }

@@ -51,6 +51,7 @@ components:
     validation:
       invalid_url: Invalid URL
       invalid_address: Invalid Address
+      invalid_slug: URL slugs may only contain letters, numbers and hyphens (-).
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory

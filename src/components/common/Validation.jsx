@@ -23,6 +23,19 @@ export const ValidateAddress = address => {
   }
 };
 
+export const ValidateSlug = slug => {
+  if(slug && !/^[a-zA-Z0-9-]*$/.test(slug)) {
+    return rootStore.l10n.components.inputs.validation.invalid_slug;
+  }
+};
+
+export const Slugify = str =>
+  (str || "")
+    .toLowerCase()
+    .replace(/ /g, "-")
+    .replace(/[^a-z0-9-]/g,"")
+    .replace(/-+/g, "-");
+
 // Note - Unlike other validation functions, ValidateCSS returns additional results, not just the error message
 export const ValidateCSS = css => {
   if(!css) { return; }

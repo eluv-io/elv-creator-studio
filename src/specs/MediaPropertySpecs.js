@@ -136,7 +136,7 @@ export const MediaPropertySectionAutomaticSpec = {
   ...MediaPropertySectionBaseSpec,
   type: "automatic",
   select: {
-    media_catalogs: [],
+    media_catalog: "",
     tags: [],
     attributes: [],
     schedule: "", // live, upcoming, past, time_range
@@ -177,6 +177,7 @@ export const MediaPropertySpec = {
     main: {
       ...MediaPropertyPageSpec,
       id: "main",
+      slug: "main",
       label: "Main Page"
     }
   }

@@ -4,6 +4,7 @@ import {rootStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
+import {Slugify} from "@/components/common/Validation.jsx";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -34,6 +35,15 @@ const MediaPropertyGeneralSettings = observer(() => {
         disabled
         subcategory={l10n.categories.info}
         field="id"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.slug}
+        defaultValue={Slugify(info.name)}
+        disabled
+        subcategory={l10n.categories.info}
+        field="slug"
       />
 
       <Inputs.Text

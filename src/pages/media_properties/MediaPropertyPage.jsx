@@ -10,6 +10,7 @@ import {useState} from "react";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
+import {ValidateSlug} from "@/components/common/Validation.jsx";
 
 const MediaPropertyPage = observer(() => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
@@ -50,6 +51,16 @@ const MediaPropertyPage = observer(() => {
         {...l10n.common.id}
         disabled
         field="id"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.slug}
+        disabled={page.slug === "main"}
+        hidden={page.slug === "main"}
+        defaultValue={page.slug === "main" ? "main" : ""}
+        field="slug"
+        Validate={ValidateSlug}
       />
 
       <Inputs.Text

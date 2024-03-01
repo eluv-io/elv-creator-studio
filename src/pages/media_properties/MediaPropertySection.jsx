@@ -22,6 +22,7 @@ import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
 import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
+import {ValidateSlug} from "@/components/common/Validation.jsx";
 
 const CreateSectionItemForm = ({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
@@ -214,7 +215,7 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
   );
 };
 
-const MediaPropertyContentOptions = observer(() => {
+const SectionContentList = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
@@ -320,6 +321,109 @@ const MediaPropertyContentOptions = observer(() => {
   }
 });
 
+const SectionFilters = observer(() => {
+  const { mediaPropertyId, sectionId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const section = info.sections?.[sectionId];
+
+  if(!section) {
+    return null;
+  }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: l10n.categories.section_filters,
+    path: UrlJoin("/public/asset_metadata/info/sections", sectionId, "select")
+  };
+
+  return (
+    <>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.filters.media_catalog}
+        field="media_catalog"
+        defaultValue=""
+        options={[
+          { label: "All Property Catalogs", value: "" },
+          ...info.media_catalogs.map(mediaCatalogId => ({
+            label: mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info.name,
+            value: mediaCatalogId
+          }))
+        ]}
+      />
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.sections.filters.tags}
+        clearable
+        options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
+        field="tags"
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.filters.content_type}
+        defaultValue=""
+        field="content_type"
+        options={[
+          { label: "All Types", value: "" },
+          { label: "Media", value: "media" },
+          { label: "Media List", value: "list" },
+          { label: "Media Collection", value: "collection" }
+        ]}
+      />
+      {
+        section.select.content_type !== "media" ? null :
+          <>
+            <Inputs.MultiSelect
+              {...inputProps}
+              {...l10n.sections.filters.media_types}
+              clearable
+              field="media_types"
+              options={mediaCatalogStore.MEDIA_TYPES}
+            />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.filters.schedule}
+              field="schedule"
+              defaultValue=""
+              options={[
+                { label: "Any Time", value: "" },
+                { label: "Live Now", value: "live" },
+                { label: "Upcoming", value: "upcoming" },
+                { label: "Past", value: "past" },
+                { label: "Specific Time Period", value: "period" }
+              ]}
+            />
+            {
+              !["past", "period"].includes(section.select.schedule) ? null :
+                <Inputs.DateTime
+                  {...inputProps}
+                  {...l10n.sections.filters.start_time}
+                  field="start_time"
+                />
+            }
+            {
+              !["upcoming", "period"].includes(section.select.schedule) ? null :
+                <Inputs.DateTime
+                  {...inputProps}
+                  {...l10n.sections.filters.end_time}
+                  field="end_time"
+                />
+            }
+          </>
+      }
+    </>
+  );
+});
+
 const MediaPropertySection = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
@@ -358,6 +462,25 @@ const MediaPropertySection = observer(() => {
         {...l10n.common.id}
         disabled
         field="id"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.slug}
+        field="slug"
+        Validate={ValidateSlug}
+        validateOnLoad
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.type}
+        disabled
+        field="type"
+        options={[
+          { label: "Manual", value: "manual" },
+          { label: "Automatic", value: "automatic" }
+        ]}
       />
 
       <Inputs.Text
@@ -437,20 +560,13 @@ const MediaPropertySection = observer(() => {
         }
       />
 
-      <Title order={3} mb="md" mt={50}>{l10n.categories.section_content}</Title>
+      <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>
 
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.type}
-        disabled
-        field="type"
-        options={[
-          { label: "Manual", value: "manual" },
-          { label: "Automatic", value: "automatic" }
-        ]}
-      />
-
-      <MediaPropertyContentOptions />
+      {
+        section.type === "manual" ?
+          <SectionContentList /> :
+          <SectionFilters />
+      }
     </PageContent>
   );
 });

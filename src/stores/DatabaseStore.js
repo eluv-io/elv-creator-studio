@@ -721,7 +721,8 @@ class DatabaseStore {
     let object = {
       libraryId,
       objectId: mediaPropertyId,
-      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug || "",
+      propertySlug: metadata.public?.asset_metadata?.info?.slug || "",
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
       description: metadata.public?.asset_metadata?.info?.description || "",
       id: metadata.public?.asset_metadata?.info?.id

@@ -26,7 +26,7 @@ const MediaPropertyOverview = observer(() => {
             <Container p={0} m={0} maw={400}>
               <Title order={4}>{ metadata?.info?.name || mediaProperty?.name }</Title>
               <Title order={6} color="dimmed">{ mediaProperty.objectId }</Title>
-              <Text fz="xs" color="dimmed">{ metadata.info.id }</Text>
+              <Text fz="xs" color="dimmed">{ metadata.info.slug }</Text>
               <Text fz="sm" mt="md">{metadata?.info?.description}</Text>
             </Container>
           </Group>

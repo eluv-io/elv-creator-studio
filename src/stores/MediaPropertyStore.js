@@ -14,6 +14,7 @@ import {
 import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
+import {Slugify} from "@/components/common/Validation.jsx";
 
 class MediaPropertyStore {
   allMediaProperties;
@@ -130,7 +131,8 @@ class MediaPropertyStore {
     );
   }
 
-  CreateMediaProperty = flow(function * ({name="New Media Property"}) {
+  CreateMediaProperty = flow(function * ({name="New Media Property", slug}) {
+    slug = slug || Slugify(name);
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
       libraryId,
@@ -147,10 +149,12 @@ class MediaPropertyStore {
             public: {
               name: `Media Property - ${name}`,
               asset_metadata: {
+                slug,
                 info: {
                   ...MediaPropertySpec,
                   id,
-                  name
+                  name,
+                  slug
                 }
               }
             }
@@ -310,6 +314,57 @@ class MediaPropertyStore {
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
+  });
+
+  Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
+    // Build slug map
+    const mediaProperty = yield this.client.ContentObjectMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info"
+    });
+
+    let slugs = {
+      pages: {},
+      sections: {}
+    };
+
+    Object.values(mediaProperty?.pages).forEach(page =>
+      slugs.pages[page.slug || page.id] = {
+        page_id: page.id,
+        label: page.label,
+        slug: page.slug || page.id
+      }
+    );
+
+    Object.values(mediaProperty?.sections).forEach(section => {
+      slugs.sections[section.slug || section.id] = {
+        section_id: section.id,
+        label: section.label,
+        slug: section.slug || section.id,
+        section_items: {}
+      };
+
+      if(section.type === "manual") {
+        section.content?.forEach((sectionItem, sectionItemIndex) =>
+          slugs.sections[section.slug || section.id].section_items[sectionItem.slug || sectionItem.id] = {
+            section_item_id: sectionItem.id,
+            label: sectionItem.label,
+            slug: sectionItem.slug || sectionItem.id,
+            index: sectionItemIndex
+          }
+        );
+      }
+    });
+
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/slug_map",
+      metadata: slugs
+    });
   });
 
   UpdateDatabaseRecord = flow(function * ({objectId}) {

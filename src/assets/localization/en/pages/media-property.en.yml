@@ -25,12 +25,16 @@ form:
     section_label: Page Section '{label}'
     section_presentation: Section Presentation
     section_content: Section Content
+    section_filters: Section Filters
     section_item: Section Item
     section_item_label: Section Item `{label}`
     section_item_presentation: Section Item Presentation
   create:
     create: Create New {type}
-    name: Name
+    name:
+      label: Name
+    slug:
+      label: Slug
     validation:
       name: Name must be specified
   common:
@@ -42,7 +46,12 @@ form:
       label: ID
     image:
       label: Image
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
   general:
+    slug:
+      label: Property Slug
     title:
       label: Display Title
     page_title:
@@ -134,10 +143,32 @@ form:
         description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
       aspect_ratio:
         label: Aspect Ratio
-        description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type.
+        description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type of the item.
     section_content:
       label: Section Content
       fieldLabel: Section Item
+    filters:
+      media_catalog:
+        label: Media Catalog
+        description: Limit the displayed content to a specific media catalog
+      content_type:
+        label: Content Type
+        description: Content of the specified type
+      media_types:
+        label: Media Types
+        description: Content with the specified media type(s)
+      tags:
+        label: Tags
+        description: Content matching all of the specified tags
+      schedule:
+        label: Schedule
+        description: Live content matching the specified time period
+      start_time:
+        label: Start Time
+        description: Live content starting after the specified time
+      end_time:
+        label: End Time
+        description: Live content starting before the specified time
   section_items:
     create:
       create: Add Item to Page Section

@@ -89,6 +89,7 @@ const MediaPropertyPages = observer(() => {
         nameField="label"
         filterable
         filterFields={["label", "description"]}
+        protectedKeys={["main"]}
         AddItem={async () => {
           return new Promise((resolve) => {
             modals.open({

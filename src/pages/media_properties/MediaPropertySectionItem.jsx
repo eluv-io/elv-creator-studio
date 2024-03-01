@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
+import {ValidateSlug} from "@/components/common/Validation.jsx";
 
 const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inputProps, l10n}) => {
   const pages = Object.keys(mediaProperty.pages);
@@ -197,6 +198,16 @@ const MediaPropertySectionItem = observer(() => {
         disabled
         field="id"
       />
+
+      {
+        !["media", "filter"].includes(sectionItem.type) ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.common.slug}
+            field="slug"
+            Validate={ValidateSlug}
+          />
+      }
 
       <Inputs.Text
         {...inputProps}

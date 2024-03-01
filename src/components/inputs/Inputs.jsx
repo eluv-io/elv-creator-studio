@@ -1797,6 +1797,7 @@ const ReferenceTable = observer(({
   selectedRecords,
   setSelectedRecords,
   AddItem,
+  protectedKeys=[]
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1822,7 +1823,17 @@ const ReferenceTable = observer(({
       values.filter(value => !!filterFields.find(field => (value[field]?.toLowerCase() || "").includes(debouncedFilter.toLowerCase())));
   }
 
-  filteredValues = filteredValues.sort(SortTable({sortStatus}));
+  filteredValues = filteredValues.sort(
+    SortTable({
+      sortStatus,
+      // Keep special items at the top
+      AdditionalCondition: protectedKeys.length === 0 ? undefined :
+        (a, b) =>
+          protectedKeys.includes(a.id) ?
+            protectedKeys.includes(b.id) ? undefined : -1 :
+            protectedKeys.includes(b.id) ? 1 : undefined
+    })
+  );
 
   const pagedValues = filteredValues.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
 
@@ -1879,7 +1890,7 @@ const ReferenceTable = observer(({
                   const itemName = item[nameField] || fieldLabel;
 
                   return (
-                    <Group position="center">
+                    <Group position="right">
                       <IconButton
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
                         component={Link}
@@ -1887,27 +1898,30 @@ const ReferenceTable = observer(({
                         color="blue.5"
                         Icon={IconEdit}
                       />
-                      <IconButton
-                        label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
-                        color="red.5"
-                        Icon={IconTrashX}
-                        onClick={() => {
-                          ConfirmDelete({
-                            itemName: itemName,
-                            onConfirm: () => {
-                              store.RemoveField({
-                                objectId,
-                                page,
-                                path: UrlJoin(path, field),
-                                field: item.id,
-                                category,
-                                subcategory,
-                                label: itemName
+                      {
+                        protectedKeys.includes(item.id) ? null :
+                          <IconButton
+                            label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
+                            color="red.5"
+                            Icon={IconTrashX}
+                            onClick={() => {
+                              ConfirmDelete({
+                                itemName: itemName,
+                                onConfirm: () => {
+                                  store.RemoveField({
+                                    objectId,
+                                    page,
+                                    path: UrlJoin(path, field),
+                                    field: item.id,
+                                    category,
+                                    subcategory,
+                                    label: itemName
+                                  });
+                                }
                               });
-                            }
-                          });
-                        }}
-                      />
+                            }}
+                          />
+                      }
                     </Group>
                   );
                 }
