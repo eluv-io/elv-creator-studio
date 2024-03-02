@@ -59,6 +59,70 @@ class MediaCatalogStore {
     makeAutoObservable(this);
   }
 
+  GetFilteredContent({mediaCatalogId, select}) {
+    const mediaCatalog = this.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info;
+
+    if(!mediaCatalog) { return []; }
+
+    const FilterContent = ({contentType, content}) => {
+      if(select.content_type && select.content_type !== contentType) {
+        return [];
+      }
+
+      // Schedule filter
+      // Only videos can be filtered by schedule
+      if(
+        select.content_type === "media" &&
+        (select.media_types.length === 0 || (select.media_types.length === 1 && select.media_types[0] === "Video")) &&
+        select.schedule
+      ) {
+        const now = new Date();
+        content = content.filter(mediaItem => {
+          if(mediaItem.media_type !== "Video" || !mediaItem.start_time) {
+            return false;
+          }
+
+          const startTime = new Date(mediaItem.start_time);
+          const endTime = mediaItem.end_time && new Date(mediaItem.end_time);
+
+          const started = startTime < now;
+          const ended = endTime < now;
+          const afterStartLimit = !select.start_time && new Date(select.start_time) < startTime;
+          const beforeEndLimit = !select.end_time && new Date(select.end_time) > startTime;
+
+          switch(select.schedule) {
+            case "live":
+              return started && !ended;
+            case "upcoming":
+              return !started && beforeEndLimit;
+            case "past":
+              return ended && afterStartLimit;
+            case "period":
+              return afterStartLimit && beforeEndLimit;
+          }
+        });
+      }
+
+      if(select.content_type === "media" && select.media_types?.length > 0) {
+        content = content.filter(mediaItem => select.media_types.includes(mediaItem.media_type));
+      }
+
+      if(select.tags?.length > 0) {
+        content = content.filter(mediaItem =>
+          !select.tags.find(tag => !mediaItem.tags.includes(tag))
+        );
+      }
+
+      return content;
+    };
+
+    return [
+      ...FilterContent({contentType: "collection", content: Object.values(mediaCatalog.media_collections || {})}),
+      ...FilterContent({contentType: "list", content: Object.values(mediaCatalog.media_lists || {})}),
+      ...FilterContent({contentType: "media", content: Object.values(mediaCatalog.media || {})})
+    ];
+  }
+
   CreateMediaCatalog = flow(function * ({name="New Media Catalog"}) {
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
@@ -168,6 +232,7 @@ class MediaCatalogStore {
     spec.label = title;
     spec.title = title;
     spec.catalog_title = title;
+    spec.media_catalog_id = mediaCatalogId;
 
     this.AddField({
       objectId: mediaCatalogId,

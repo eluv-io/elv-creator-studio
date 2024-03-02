@@ -69,12 +69,24 @@ Property
 
 import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+export const MediaPropertyFilterSpec = {
+  media_catalog: "",
+  content_type: "",
+  media_types: [],
+  tags: [],
+  attributes: [],
+  schedule: "", // live, upcoming, past, time_range
+  start_time: undefined,
+  end_time: undefined,
+  sort: "start_time"
+};
+
 export const MediaPropertySectionItemBaseSpec = {
   id: undefined,
   label: "",
   description: "",
-  ...MediaCatalogBaseSpec,
-  type: "media" // Filter link, page link, property link
+  type: "media", // Filter link, page link, property link
+  display: MediaCatalogBaseSpec
 };
 
 export const MediaPropertySectionItemMediaSpec = {
@@ -87,11 +99,7 @@ export const MediaPropertySectionItemMediaSpec = {
 
 export const MediaPropertySectionItemFilterSpec = {
   ...MediaPropertySectionItemBaseSpec,
-  filter: {
-    media_catalogs: [],
-    tags: [],
-    attributes: {}
-  }
+  select: MediaPropertyFilterSpec
 };
 
 export const MediaPropertySectionItemPageLinkSpec = {
@@ -135,15 +143,7 @@ export const MediaPropertySectionManualSpec = {
 export const MediaPropertySectionAutomaticSpec = {
   ...MediaPropertySectionBaseSpec,
   type: "automatic",
-  select: {
-    media_catalog: "",
-    tags: [],
-    attributes: [],
-    schedule: "", // live, upcoming, past, time_range
-    start_time: undefined,
-    end_time: undefined,
-    sort: "start_time"
-  }
+  select: MediaPropertyFilterSpec
 };
 
 export const MediaPropertyPageSpec = {

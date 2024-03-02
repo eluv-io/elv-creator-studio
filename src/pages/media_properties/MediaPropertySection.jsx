@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore, mediaCatalogStore, marketplaceStore} from "@/stores";
+import {rootStore, mediaPropertyStore, mediaCatalogStore, marketplaceStore, uiStore} from "@/stores";
 import {
   Input as MantineInput,
   Button,
@@ -9,7 +9,9 @@ import {
   Select,
   Stack,
   Text,
-  TextInput, Checkbox
+  TextInput,
+  Checkbox,
+  Paper
 } from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
@@ -21,7 +23,7 @@ import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
-import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
+import {MediaItemCard, MediaItemImage} from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 
 const CreateSectionItemForm = ({mediaProperty, Create}) => {
@@ -215,6 +217,36 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
   );
 };
 
+export const SectionItemTitle = observer(({sectionItem, aspectRatio}) => {
+  sectionItem = mediaPropertyStore.GetResolvedSectionItem({sectionItem});
+
+  const mediaLabel = (
+    !sectionItem.label &&
+    sectionItem.mediaItem &&
+    sectionItem.use_media_settings &&
+    sectionItem.mediaItem.label
+  ) || "";
+
+  return (
+    <Group noWrap>
+      <MediaItemImage
+        mediaItem={sectionItem.display}
+        scale={400}
+        width={50}
+        height={50}
+        fit="contain"
+        position="left"
+        aspectRatio={aspectRatio}
+      />
+      <Stack spacing={2}>
+        <Text italic={mediaLabel}>
+          { mediaLabel || sectionItem.label || sectionItem.display.title || sectionItem.id }
+        </Text>
+      </Stack>
+    </Group>
+  );
+});
+
 const SectionContentList = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
@@ -293,9 +325,9 @@ const SectionContentList = observer(() => {
           {
             label: l10n.sections.label.label,
             field: "label",
-            render: sectionItem => sectionItem.label ?
-              sectionItem.label :
-              <Text italic>{mediaPropertyStore.GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId: sectionItem.id})}</Text>
+            render: sectionItem => <SectionItemTitle sectionItem={sectionItem} aspectRatio={section.display.aspect_ratio} />
+              //sectionItem.label :
+              //<Text italic>{mediaPropertyStore.GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId: sectionItem.id})}</Text>
           },
           {
             label: l10n.sections.type.label,
@@ -321,7 +353,37 @@ const SectionContentList = observer(() => {
   }
 });
 
+const AutomaticSectionContentPreview = observer(({mediaPropertyId, sectionId, aspectRatio}) => {
+  let content = mediaPropertyStore.GetAutomaticSectionContent({mediaPropertyId, sectionId});
+
+  if(content.length === 0) {
+    return (
+      <Text mt="md" italic fz="sm" align="center">No Matching Content</Text>
+    );
+  }
+
+  return (
+    <>
+      <Text align="center" fz="xs" mb="sm">{content.length} Matching Items</Text>
+      <Stack spacing={5}>
+        {
+          content.map(mediaItem =>
+            <MediaItemCard
+              key={`media-item-${mediaItem.id}`}
+              mediaItem={mediaItem}
+              aspectRatio={aspectRatio || "Canonical"}
+              size="sm"
+              withLink
+            />
+          )
+        }
+      </Stack>
+    </>
+  );
+});
+
 const SectionFilters = observer(() => {
+  const [showContentPreview, setShowContentPreview] = useState(false);
   const { mediaPropertyId, sectionId } = useParams();
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
@@ -346,42 +408,43 @@ const SectionFilters = observer(() => {
   };
 
   return (
-    <>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.filters.media_catalog}
-        field="media_catalog"
-        defaultValue=""
-        options={[
-          { label: "All Property Catalogs", value: "" },
-          ...info.media_catalogs.map(mediaCatalogId => ({
-            label: mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info.name,
-            value: mediaCatalogId
-          }))
-        ]}
-      />
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.sections.filters.tags}
-        clearable
-        options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
-        field="tags"
-      />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.filters.content_type}
-        defaultValue=""
-        field="content_type"
-        options={[
-          { label: "All Types", value: "" },
-          { label: "Media", value: "media" },
-          { label: "Media List", value: "list" },
-          { label: "Media Collection", value: "collection" }
-        ]}
-      />
-      {
-        section.select.content_type !== "media" ? null :
-          <>
+    <Group noWrap align="top" pr={50}>
+      <Container m={0} p={0} miw={uiStore.inputWidth}>
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.sections.filters.media_catalog}
+          field="media_catalog"
+          defaultValue=""
+          options={[
+            { label: "All Property Catalogs", value: "" },
+            ...info.media_catalogs.map(mediaCatalogId => ({
+              label: mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info.name,
+              value: mediaCatalogId
+            }))
+          ]}
+        />
+        <Inputs.MultiSelect
+          {...inputProps}
+          {...l10n.sections.filters.tags}
+          clearable
+          options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
+          field="tags"
+        />
+
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.sections.filters.content_type}
+          defaultValue=""
+          field="content_type"
+          options={[
+            { label: "All Types", value: "" },
+            { label: "Media", value: "media" },
+            { label: "Media List", value: "list" },
+            { label: "Media Collection", value: "collection" }
+          ]}
+        />
+        {
+          section.select.content_type !== "media" ? null :
             <Inputs.MultiSelect
               {...inputProps}
               {...l10n.sections.filters.media_types}
@@ -389,38 +452,67 @@ const SectionFilters = observer(() => {
               field="media_types"
               options={mediaCatalogStore.MEDIA_TYPES}
             />
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.sections.filters.schedule}
-              field="schedule"
-              defaultValue=""
-              options={[
-                { label: "Any Time", value: "" },
-                { label: "Live Now", value: "live" },
-                { label: "Upcoming", value: "upcoming" },
-                { label: "Past", value: "past" },
-                { label: "Specific Time Period", value: "period" }
-              ]}
+        }
+        {
+          (
+            section.select.content_type !== "media" ||
+            section.select.media_types.length > 1 ||
+            (section.select.media_types.length === 1 && section.select.media_types[0] !== "Video")
+          ) ? null :
+            <>
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.sections.filters.schedule}
+                field="schedule"
+                defaultValue=""
+                options={[
+                  { label: "Any Time", value: "" },
+                  { label: "Live Now", value: "live" },
+                  { label: "Upcoming", value: "upcoming" },
+                  { label: "Past", value: "past" },
+                  { label: "Specific Time Period", value: "period" }
+                ]}
+              />
+              {
+                !["past", "period"].includes(section.select.schedule) ? null :
+                  <Inputs.DateTime
+                    {...inputProps}
+                    {...l10n.sections.filters.start_time}
+                    field="start_time"
+                  />
+              }
+              {
+                !["upcoming", "period"].includes(section.select.schedule) ? null :
+                  <Inputs.DateTime
+                    {...inputProps}
+                    {...l10n.sections.filters.end_time}
+                    field="end_time"
+                  />
+              }
+            </>
+        }
+        <Button
+          mt="xl"
+          fz="xs"
+          variant="outline"
+          onClick={() => setShowContentPreview(!showContentPreview)}
+        >
+          { showContentPreview ? "Hide Content Preview" : "Show Content Preview" }
+        </Button>
+      </Container>
+
+      {
+        !showContentPreview ? null :
+          <Paper withBorder py="md" h="max-content" mt={-50} w={uiStore.inputWidth} p="sm">
+            <Title order={4} align="center">Section Content Preview</Title>
+            <AutomaticSectionContentPreview
+              mediaPropertyId={mediaPropertyId}
+              sectionId={sectionId}
+              aspectRatio={section.display.aspect_ratio}
             />
-            {
-              !["past", "period"].includes(section.select.schedule) ? null :
-                <Inputs.DateTime
-                  {...inputProps}
-                  {...l10n.sections.filters.start_time}
-                  field="start_time"
-                />
-            }
-            {
-              !["upcoming", "period"].includes(section.select.schedule) ? null :
-                <Inputs.DateTime
-                  {...inputProps}
-                  {...l10n.sections.filters.end_time}
-                  field="end_time"
-                />
-            }
-          </>
+          </Paper>
       }
-    </>
+    </Group>
   );
 });
 
@@ -531,7 +623,7 @@ const MediaPropertySection = observer(() => {
         options={[
           { label: "Carousel", value: "carousel" },
           { label: "Grid", value: "grid" },
-          { label: "Featured", value: "featured" }
+          { label: "Feature", value: "feature" }
         ]}
       />
 

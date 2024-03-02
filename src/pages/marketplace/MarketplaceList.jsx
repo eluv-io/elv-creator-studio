@@ -52,7 +52,7 @@ const MarketplaceList = observer(() => {
   return (
     <AsyncWrapper
       loadingMessage="Loading Marketplaces"
-      Load={async () => await marketplaceStore.LoadMarketplaces()}
+      Load={async () => await marketplaceStore.LoadMarketplaces({force: true})}
     >
       <PageContent title={rootStore.l10n.pages.marketplace.form.categories.marketplaces}>
         <SimpleGrid

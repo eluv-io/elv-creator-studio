@@ -11,8 +11,8 @@ class MarketplaceStore {
     makeAutoObservable(this);
   }
 
-  LoadMarketplaces = flow(function * () {
-    if(this.allMarketplaces) { return; }
+  LoadMarketplaces = flow(function * ({force=false}={}) {
+    if(this.allMarketplaces && !force) { return; }
 
     this.allMarketplaces = yield this.rootStore.databaseStore.GetCollection({collection: "marketplaces"});
   });

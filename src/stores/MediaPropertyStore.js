@@ -115,6 +115,30 @@ class MediaPropertyStore {
       .flat();
   }
 
+  GetResolvedSectionItem({mediaPropertyId, sectionId, sectionItemId, sectionItem}) {
+    if(!sectionItem) {
+      const sectionContent = this.GetMetadata({
+        objectId: mediaPropertyId,
+        path: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content")
+      }) || [];
+
+      sectionItem = sectionContent.find(sectionItem => sectionItem.id === sectionItemId);
+    }
+
+    let mediaItem;
+    if(sectionItem.type === "media" && sectionItem.use_media_settings) {
+      mediaItem = this.GetMediaItem({mediaItemId: sectionItem?.media_id});
+    }
+
+    return {
+      ...sectionItem,
+      mediaItem,
+      display: {
+        ...(mediaItem || sectionItem.display)
+      }
+    };
+  }
+
   GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId, sectionItem}) {
     if(!sectionItem) {
       const sectionContent = this.GetMetadata({
@@ -128,6 +152,28 @@ class MediaPropertyStore {
     return (
       sectionItem?.label ||
       (sectionItem.type === "media" && this.GetMediaItem({mediaItemId: sectionItem?.media_id})?.label)
+    );
+  }
+
+  GetAutomaticSectionContent({mediaPropertyId, sectionId}) {
+    const mediaProperty = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info;
+
+    if(!mediaProperty) { return []; }
+
+    const section = mediaProperty.sections[sectionId];
+
+    if(!section) { return []; }
+
+    let catalogIds = section.select.media_catalog ?
+      [ section.select.media_catalog ] :
+      mediaProperty.media_catalogs || [];
+
+    return (
+      catalogIds.map(mediaCatalogId =>
+        this.rootStore.mediaCatalogStore.GetFilteredContent({mediaCatalogId, select: section.select})
+      )
+        .flat()
+        .sort((a, b) => a.catalog_title < b.catalog_title ? -1 : 1)
     );
   }
 
@@ -270,6 +316,9 @@ class MediaPropertyStore {
     spec.id = id;
     spec.type = type;
     spec.label = label || spec.label;
+
+    delete spec.display.id;
+    delete spec.display.label;
 
     const path = UrlJoin("/public/asset_metadata/info/sections", sectionId);
 

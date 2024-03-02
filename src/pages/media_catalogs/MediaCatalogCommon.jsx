@@ -145,6 +145,15 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.media.id}
+        disabled
+        hidden
+        defaultValue={mediaCatalogId}
+        field="media_catalog_id"
+      />
+
+      <Inputs.Text
+        {...inputProps}
         {...l10n.media.type}
         disabled
         field="type"

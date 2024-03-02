@@ -8,6 +8,10 @@ export const LinkButton = (props) => {
 };
 
 export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
+  if(props.disabled) {
+    props.onClick = undefined;
+  }
+
   const button = (
     <ActionIcon {...props} aria-label={label}>
       { icon ? icon : <Icon /> }

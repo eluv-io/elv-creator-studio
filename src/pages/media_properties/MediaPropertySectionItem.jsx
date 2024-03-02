@@ -87,6 +87,11 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, mediaIte
   // These fields mirror catalog media configuration
   const l10n = rootStore.l10n.pages.media_catalog.form;
 
+  inputProps = {
+    ...inputProps,
+    path: UrlJoin(inputProps.path, "display")
+  };
+
   const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId});
 
   return (
@@ -241,25 +246,30 @@ const MediaPropertySectionItem = observer(() => {
         inputProps={inputProps}
       />
 
-      <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_presentation}</Title>
-
       {
-        sectionItem.type !== "media" ? null :
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.section_items.use_media_settings}
-            defaultValue={true}
-            field="use_media_settings"
-          />
-      }
+        sectionItem.expand ? null :
+          <>
+            <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_presentation}</Title>
 
-      {
-        sectionItem.type === "media" && sectionItem.use_media_settings ? null :
-          <SectionItemPresentation
-            mediaPropertyId={mediaPropertyId}
-            inputProps={inputProps}
-            mediaItem={mediaItem}
-          />
+            {
+              sectionItem.type !== "media" ? null :
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.section_items.use_media_settings}
+                  defaultValue={true}
+                  field="use_media_settings"
+                />
+            }
+
+            {
+              sectionItem.type === "media" && sectionItem.use_media_settings ? null :
+                <SectionItemPresentation
+                  mediaPropertyId={mediaPropertyId}
+                  inputProps={inputProps}
+                  mediaItem={mediaItem}
+                />
+            }
+          </>
       }
     </PageContent>
   );

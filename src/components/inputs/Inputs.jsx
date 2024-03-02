@@ -1898,30 +1898,28 @@ const ReferenceTable = observer(({
                         color="blue.5"
                         Icon={IconEdit}
                       />
-                      {
-                        protectedKeys.includes(item.id) ? null :
-                          <IconButton
-                            label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
-                            color="red.5"
-                            Icon={IconTrashX}
-                            onClick={() => {
-                              ConfirmDelete({
-                                itemName: itemName,
-                                onConfirm: () => {
-                                  store.RemoveField({
-                                    objectId,
-                                    page,
-                                    path: UrlJoin(path, field),
-                                    field: item.id,
-                                    category,
-                                    subcategory,
-                                    label: itemName
-                                  });
-                                }
+                      <IconButton
+                        disabled={protectedKeys.includes(item.id)}
+                        label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
+                        color="red.5"
+                        Icon={IconTrashX}
+                        onClick={() => {
+                          ConfirmDelete({
+                            itemName: itemName,
+                            onConfirm: () => {
+                              store.RemoveField({
+                                objectId,
+                                page,
+                                path: UrlJoin(path, field),
+                                field: item.id,
+                                category,
+                                subcategory,
+                                label: itemName
                               });
-                            }}
-                          />
-                      }
+                            }
+                          });
+                        }}
+                      />
                     </Group>
                   );
                 }

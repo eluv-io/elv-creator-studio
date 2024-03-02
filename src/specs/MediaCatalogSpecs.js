@@ -107,5 +107,6 @@ export const MediaCatalogSpec = {
   image: undefined,
   tags: [],
   media: {},
-  collections: []
+  media_lists: {},
+  media_collections: {}
 };

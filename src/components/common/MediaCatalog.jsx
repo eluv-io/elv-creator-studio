@@ -54,7 +54,7 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, ...c
   };
 
   const page = mediaItem.type === "collection" ? "media-collections" : mediaItem.type === "list" ? "media-lists" : "media";
-  const link = UrlJoin("/media-catalogs", mediaItem.mediaCatalogId, page, mediaItem.id);
+  const link = UrlJoin("/media-catalogs", mediaItem.media_catalog_id, page, mediaItem.id);
 
   return (
     <Paper withBorder p={sizes[size].p} key={`media-item-${mediaItem.id}`} maw={uiStore.inputWidth} {...componentProps}>
@@ -102,3 +102,4 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, ...c
     </Paper>
   );
 };
+
