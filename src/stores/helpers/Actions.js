@@ -2,6 +2,7 @@ import {flow, toJS} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
+import Unset from "lodash/unset";
 import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 
@@ -109,7 +110,8 @@ const SetMetadata = function({
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
+    Write: metadata => Set(metadata, pathComponents, toJS(value)),
+    WriteSurgical: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
       metadata: toJS(parsedValue || value)
@@ -161,7 +163,14 @@ const SetBatchMetadata = function({
         Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value);
       });
     },
-    Write: async (objectParams) => {
+    Write: async metadata => {
+      values.forEach(({field, value}) =>
+        Set(metadata, [...pathComponents, field], toJS(value))
+      );
+
+      return metadata;
+    },
+    WriteSurgical: async (objectParams) => {
       await Promise.all(
         values.map(async ({field, value}) => {
           await this.client.ReplaceMetadata({
@@ -205,7 +214,8 @@ const AddField = function({
       delete metadata[field];
       return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
     },
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
+    Write: metadata => Set(metadata, [...pathComponents, field], toJS(value)),
+    WriteSurgical: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: UrlJoin(path, field),
       metadata: value
@@ -238,13 +248,10 @@ const RemoveField = function({
     category,
     subcategory,
     label,
-    Apply: () => {
-      const metadata = { ...this.GetMetadata({objectId, path}) };
-      delete metadata[field];
-      return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
-    },
+    Apply: () => Unset(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field]),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], originalValue),
-    Write: async (objectParams) => await this.client.DeleteMetadata({
+    Write: metadata => Unset(metadata, [...pathComponents, field]),
+    WriteSurgical: async (objectParams) => await this.client.DeleteMetadata({
       ...objectParams,
       metadataSubtree: UrlJoin(path, field)
     })
@@ -339,7 +346,8 @@ const SetLink = flow(function * ({
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
+    Write: metadata => Set(metadata, pathComponents, toJS(metadataValue)),
+    WriteSurgical: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
       metadata: toJS(writeValue)
@@ -450,7 +458,8 @@ const ListAction = function({
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, newList),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalList),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
+    Write: metadata => Set(metadata, pathComponents, newList),
+    WriteSurgical: async (objectParams) => await this.client.ReplaceMetadata({
       ...objectParams,
       metadataSubtree: fullPath,
       metadata: JSON.parse(JSON.stringify(newList))
@@ -600,10 +609,39 @@ const Save = flow(function * ({libraryId, objectId, writeToken}) {
     yield this.Preprocess({libraryId, objectId, writeToken});
   }
 
+  // Write content by modifying all metadata and replacing
+  let metadata = {
+    public: (yield this.client.ContentObjectMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "public",
+      resolveLinks: true,
+      linkDepthLimit: 1,
+      resolveIgnoreErrors: true,
+      resolveIncludeSource: true,
+      produceLinkUrls: true
+    }))
+  };
+
   for(const action of this.actionStack[objectId]) {
-    yield action.Write({libraryId, objectId, writeToken});
+    yield action.Write(metadata);
   }
 
+  yield this.client.ReplaceMetadata({
+    libraryId,
+    objectId,
+    writeToken,
+    metadataSubtree: "/public",
+    metadata: metadata.public
+  });
+
+  /*
+    // Write content by making a fabric request for every action
+    for(const action of this.actionStack[objectId]) {
+      yield action.WriteSurgical({libraryId, objectId, writeToken});
+    }
+  */
   if(this.Postprocess) {
     yield this.Postprocess({libraryId, objectId, writeToken});
   }
