@@ -141,6 +141,9 @@ form:
       display_limit:
         label: Display Limit
         description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+      content_display_text:
+        label: Content Display Text
+        description: Choose which text fields will be shown for items in this section
       aspect_ratio:
         label: Aspect Ratio
         description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type of the item.

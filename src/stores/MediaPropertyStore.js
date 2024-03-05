@@ -11,6 +11,7 @@ import {
   MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
+import Clone from "lodash/clone";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
@@ -226,7 +227,7 @@ class MediaPropertyStore {
   CreatePage({page, mediaPropertyId, label}) {
     let id = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
 
-    const spec = MediaPropertyPageSpec;
+    const spec = Clone(MediaPropertyPageSpec);
     spec.id = id;
     spec.label = label || spec.label;
 
@@ -246,7 +247,11 @@ class MediaPropertyStore {
   CreateSection({page, mediaPropertyId, type="manual", label}) {
     let id = `${this.ID_PREFIXES[`section_${type}`]}${GenerateUUID()}`;
 
-    const spec = type === "manual" ? MediaPropertySectionManualSpec : MediaPropertySectionAutomaticSpec;
+    const spec = Clone(
+      type === "manual" ?
+        MediaPropertySectionManualSpec :
+        MediaPropertySectionAutomaticSpec
+    );
 
     spec.id = id;
     spec.label = label || spec.label;
@@ -284,24 +289,24 @@ class MediaPropertyStore {
       case "media":
         // eslint-disable-next-line no-case-declarations
         const mediaItem = this.GetMediaItem({mediaItemId});
-        spec = MediaPropertySectionItemMediaSpec;
+        spec = Clone(MediaPropertySectionItemMediaSpec);
         spec.media_id = mediaItemId;
         spec.media_type = mediaItem?.type;
         spec.expand = expand;
         break;
       case "filter":
-        spec = MediaPropertySectionItemFilterSpec;
+        spec = Clone(MediaPropertySectionItemFilterSpec);
         break;
       case "page_link":
-        spec = MediaPropertySectionItemPageLinkSpec;
+        spec = Clone(MediaPropertySectionItemPageLinkSpec);
         spec.page_id = pageId;
         break;
       case "subproperty_link":
-        spec = MediaPropertySectionItemSubpropertyLinkSpec;
+        spec = Clone(MediaPropertySectionItemSubpropertyLinkSpec);
         spec.subproperty_id = subPropertyId;
         break;
       case "marketplace_link":
-        spec = MediaPropertySectionItemMarketplaceLinkSpec;
+        spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);
         // eslint-disable-next-line no-case-declarations
         const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
         spec.marketplace = {

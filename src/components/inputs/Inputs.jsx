@@ -282,6 +282,13 @@ const Input = observer(({
       value = value || "";
       Component = Textarea;
       componentProps.minRows = componentProps.minRows || 3;
+      componentProps.styles = {
+        ...(componentProps.styles || {}),
+        input: {
+          ...(componentProps?.styles?.input || {}),
+          resize: "vertical"
+        }
+      };
       break;
     case "number":
       // Additional options: min, max, step
@@ -1856,7 +1863,7 @@ const ReferenceTable = observer(({
       />
     );
   }
-
+  
   return (
     <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">

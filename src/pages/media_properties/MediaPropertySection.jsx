@@ -78,25 +78,31 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
             <Button variant="outline" onClick={() => setShowMediaSelectionModal(true)}>
               { l10n.section_items.select_media.label }
             </Button>
+            <Stack mb={5} spacing={5} mah={500} style={{overflowY: "scroll"}}>
+              {
+                selectedMediaItems.length === 0 ? null :
+                  <>
+                    {selectedMediaItems.map(selectedMediaItem =>
+                      <MediaItemCard
+                        key={`media-item-${selectedMediaItem.id}`}
+                        mediaItem={selectedMediaItem}
+                        imageSize={50}
+                      />
+                    )}
+                    {
+                      selectedMediaItems[0].type === "media" ? null :
+                        <Checkbox
+                          mt="md"
+                          {...l10n.section_items[`expand_${selectedMediaItems[0].type}`]}
+                          {...form.getInputProps("expand")}
+                        />
+                    }
+                  </>
+              }
+            </Stack>
             {
               selectedMediaItems.length === 0 ? null :
-                <>
-                  {selectedMediaItems.map(selectedMediaItem =>
-                    <MediaItemCard
-                      key={`media-item-${selectedMediaItem.id}`}
-                      mediaItem={selectedMediaItem}
-                      imageSize={50}
-                    />
-                  )}
-                  {
-                    selectedMediaItems[0].type === "media" ? null :
-                      <Checkbox
-                        mt="md"
-                        {...l10n.section_items[`expand_${selectedMediaItems[0].type}`]}
-                        {...form.getInputProps("expand")}
-                      />
-                  }
-                </>
+                <Text fz="xs" align="center">{selectedMediaItems.length} Items Selected</Text>
             }
           </Stack>
         </MantineInput.Wrapper>
@@ -634,6 +640,22 @@ const MediaPropertySection = observer(() => {
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="display_limit"
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.content_display_text}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        defaultValue="all"
+        field="content_display_text"
+        options={[
+          { label: "Title, Subtitle and Headers", value: "all" },
+          { label: "Title and Subtitle", value: "titles" },
+          { label: "Title Only", value: "title" },
+          { label: "No Text", value: "none" }
+
+        ]}
       />
 
       <Inputs.Select

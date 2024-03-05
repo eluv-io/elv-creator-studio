@@ -47,7 +47,7 @@ import {
 // Table showing the status of file uploads in the upload form
 const UploadStatus = observer(({selectedFiles, fileStatus}) => {
   const [records, setRecords] = useState([]);
-  const [sortStatus, setSortStatus] = useState({columnAccessor: "progress", direction: "asc"});
+  const [sortStatus, setSortStatus] = useState({columnAccessor: "progress", direction: "desc"});
 
   useEffect(() => {
     setRecords(

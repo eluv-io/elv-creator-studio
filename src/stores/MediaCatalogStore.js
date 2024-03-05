@@ -1,6 +1,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
+import Clone from "lodash/clone";
 import {
   MediaCatalogCollectionSpec,
   MediaCatalogMediaGallerySpec,
@@ -78,7 +79,8 @@ class MediaCatalogStore {
       ) {
         const now = new Date();
         content = content.filter(mediaItem => {
-          if(mediaItem.media_type !== "Video" || !mediaItem.start_time) {
+
+          if(!mediaItem.live_video || mediaItem.media_type !== "Video" || !mediaItem.start_time) {
             return false;
           }
 
@@ -87,8 +89,8 @@ class MediaCatalogStore {
 
           const started = startTime < now;
           const ended = endTime < now;
-          const afterStartLimit = !select.start_time && new Date(select.start_time) < startTime;
-          const beforeEndLimit = !select.end_time && new Date(select.end_time) > startTime;
+          const afterStartLimit = !select.start_time || new Date(select.start_time) < startTime;
+          const beforeEndLimit = !select.end_time || new Date(select.end_time) > startTime;
 
           switch(select.schedule) {
             case "live":
@@ -204,11 +206,11 @@ class MediaCatalogStore {
 
     let spec, label, prefix;
     if(type === "media_collections") {
-      spec = MediaCatalogCollectionSpec;
+      spec = Clone(MediaCatalogCollectionSpec);
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_collection;
       prefix = this.ID_PREFIXES["media_collections"];
     } else if(type === "media_lists") {
-      spec = MediaCatalogMediaListSpec;
+      spec = Clone(MediaCatalogMediaListSpec);
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_list;
       prefix = this.ID_PREFIXES["media_lists"];
     } else {
@@ -216,11 +218,11 @@ class MediaCatalogStore {
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
 
       if(mediaType === "Video") {
-        spec = MediaCatalogMediaVideoSpec;
+        spec = Clone(MediaCatalogMediaVideoSpec);
       } else if(mediaType === "Image") {
-        spec = MediaCatalogMediaImageSpec;
+        spec = Clone(MediaCatalogMediaImageSpec);
       } else if(mediaType === "Gallery") {
-        spec = MediaCatalogMediaGallerySpec;
+        spec = Clone(MediaCatalogMediaGallerySpec);
       } else {
         spec = MediaCatalogMediaOtherSpec({mediaType});
       }

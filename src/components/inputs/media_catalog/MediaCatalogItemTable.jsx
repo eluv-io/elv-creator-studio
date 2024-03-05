@@ -38,30 +38,29 @@ export const MediaItemTitle = observer(({mediaItem}) => {
       <MediaItemImage
         mediaItem={mediaItem}
         scale={400}
-        width={75}
-        height={75}
+        width={40}
+        height={40}
         fit="contain"
         position="left"
         style={{objectPosition: "left" }}
       />
       <Stack spacing={2}>
-        <Text fw={500}>
+        <Text fz={12} fw={500} mb={2}>
           <Group spacing={5} align="top">
             { mediaItem.label || mediaItem.id }
           </Group>
         </Text>
-        <Text fz={11} mb={3} color="dimmed">{mediaItem.id}</Text>
         <Group spacing={3}>
           {
             mediaItem.tags?.map(tag =>
               <Paper
                 withBorder
                 radius="md"
-                fz="xs"
-                py={2}
+                fz={11}
+                py={0}
                 px={5}
                 key={`tag-${tag}`}
-                sx={theme => ({backgroundColor: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]})}
+                sx={theme => ({backgroundColor: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[2]})}
               >
                 { tag }
               </Paper>
@@ -87,7 +86,7 @@ const MediaCatalogItemTable = observer(({
   selectedRecords,
   setSelectedRecords,
   multiple=true,
-  perPage=50,
+  perPage=10,
   disableActions
 }) => {
   let settingsCache = mediaCatalogItemTableSettingsCache;
@@ -159,6 +158,11 @@ const MediaCatalogItemTable = observer(({
         mediaItem.id?.toLowerCase()?.includes(debouncedFilter.toLowerCase())
       )
       .sort(SortTable({sortStatus}));
+  const mediaItemIds = mediaItems.map(mediaItem => mediaItem.id);
+
+  const allRecordsSelected =
+    selectedRecords.length === mediaItems.length &&
+    !selectedRecords.find(record => !mediaItemIds.includes(record.id));
 
   const mediaItemsPage = mediaItems.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
 
@@ -248,7 +252,14 @@ const MediaCatalogItemTable = observer(({
         recordsPerPage={pageSize}
         page={mediaItems.length > pageSize ? page : undefined}
         selectedRecords={selectedRecords}
-        allRecordsSelectionCheckboxProps={{style: multiple ? {} : {display: "none"}}}
+        allRecordsSelectionCheckboxProps={{
+          style: multiple ? {} : {display: "none"},
+          indeterminate: selectedRecords.length > 0 && !allRecordsSelected,
+          checked: allRecordsSelected,
+          onChange: () => allRecordsSelected ?
+            setSelectedRecords([]) :
+            setSelectedRecords(mediaItems)
+        }}
         onRowClick={
         !setSelectedRecords ? undefined :
           record => {
