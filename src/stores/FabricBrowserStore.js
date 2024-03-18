@@ -13,7 +13,7 @@ class FabricBrowserStore {
     const libraryIds = yield this.client.ContentLibraries();
 
     // Find properties library
-    let libraries = {};
+    let libraries = {...this.libraries};
     yield Promise.all(
       libraryIds.map(async libraryId => {
         if(this.libraries[libraryId]) { return; }

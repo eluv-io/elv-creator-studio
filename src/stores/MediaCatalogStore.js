@@ -35,7 +35,7 @@ class MediaCatalogStore {
     "Link": "mlnk",
     "Gallery": "mgal",
     "media_lists": "mlst",
-    "media_collections":" mcol",
+    "media_collections": "mcol",
     "media_catalog": "mcat"
   };
 

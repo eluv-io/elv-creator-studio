@@ -995,6 +995,7 @@ export const FabricBrowserInput = observer(({
   GetName,
   GetImage,
   fabricBrowserProps={},
+  autoUpdate=true,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -1042,7 +1043,8 @@ export const FabricBrowserInput = observer(({
                 linkObjectId: target.objectId,
                 category,
                 subcategory,
-                label
+                label,
+                autoUpdate
               });
             }}
           />
@@ -1863,7 +1865,7 @@ const ReferenceTable = observer(({
       />
     );
   }
-  
+
   return (
     <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">

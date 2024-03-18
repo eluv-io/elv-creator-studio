@@ -132,6 +132,8 @@ form:
     display:
       title:
         label: Title
+      subtitle:
+        label: Subtitle
       description:
         label: Description
       description_rich_text:
@@ -147,6 +149,13 @@ form:
       aspect_ratio:
         label: Aspect Ratio
         description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type of the item.
+      background_image:
+        label: Background Image
+        description: Displayed on the 'view all' page for the section
+      background_image_desktop:
+        label: Desktop (16:9)
+      background_image_mobile:
+        label: Mobile
     section_content:
       label: Section Content
       fieldLabel: Section Item

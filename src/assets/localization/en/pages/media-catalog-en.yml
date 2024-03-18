@@ -113,6 +113,12 @@ form:
       label: Square (1:1)
     image_landscape:
       label: Landscape (16:9)
+    background_image:
+      label: Background Image
+    background_image_desktop:
+      label: Desktop (16:9)
+    background_image_mobile:
+      label: Mobile
     headers:
       label: Headers
       description: Short text that will appear above the title, e.g. content rating, release year, duration

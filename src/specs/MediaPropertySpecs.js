@@ -126,12 +126,15 @@ export const MediaPropertySectionBaseSpec = {
   type: "manual",
   display: {
     title: "",
+    subtitle: "",
     description: "",
     description_rich_text: "",
     display_format: "carousel",
     display_limit: undefined,
     aspect_ratio: "",
-    content_display_text: "titles"
+    content_display_text: "titles",
+    background_image: undefined,
+    background_image_mobile: undefined
   }
 };
 

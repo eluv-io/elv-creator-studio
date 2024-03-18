@@ -75,8 +75,13 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
       />
       <Inputs.Text
         {...inputProps}
-        {...l10n.media.gallery_item.name}
-        field="name"
+        {...l10n.media.gallery_item.title}
+        field="title"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.media.gallery_item.subtitle}
+        field="subtitle"
       />
       <Inputs.TextArea
         {...inputProps}
@@ -190,6 +195,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
           <Inputs.FabricBrowser
             {...inputProps}
             {...l10n.media.media_link}
+            autoUpdate={false}
             field="media_link"
             previewable
           />
@@ -262,7 +268,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
             columns={[
               {
                 label: l10n.media.gallery_item.columns.name,
-                field: "name",
+                field: "title",
                 render: galleryItem => (
                   <Group noWrap>
                     <AspectRatio

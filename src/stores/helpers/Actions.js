@@ -268,7 +268,8 @@ const SetLink = flow(function * ({
   linkPath="/public/asset_metadata",
   category,
   subcategory,
-  label
+  label,
+  autoUpdate
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -290,15 +291,18 @@ const SetLink = flow(function * ({
     }
 
     writeValue = {
-      ".": {
-        "auto_update": {
-          "tag": "latest"
-        }
-      },
       "/": objectId === linkObjectId ?
         UrlJoin("./", linkType, linkPath) :
         UrlJoin("/qfab", targetHash, linkType, linkPath)
     };
+
+    if(autoUpdate) {
+      writeValue["."] = {
+        "auto_update": {
+          "tag": "latest"
+        }
+      };
+    }
 
     if(linkType === "meta") {
       // Metadata links should contain resolved metadata

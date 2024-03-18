@@ -161,8 +161,9 @@ const MediaCatalogItemTable = observer(({
   const mediaItemIds = mediaItems.map(mediaItem => mediaItem.id);
 
   const allRecordsSelected =
-    selectedRecords.length === mediaItems.length &&
-    !selectedRecords.find(record => !mediaItemIds.includes(record.id));
+    !setSelectedRecords ? false :
+      selectedRecords.length === mediaItems.length &&
+      !selectedRecords.find(record => !mediaItemIds.includes(record.id));
 
   const mediaItemsPage = mediaItems.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
 
@@ -252,14 +253,17 @@ const MediaCatalogItemTable = observer(({
         recordsPerPage={pageSize}
         page={mediaItems.length > pageSize ? page : undefined}
         selectedRecords={selectedRecords}
-        allRecordsSelectionCheckboxProps={{
-          style: multiple ? {} : {display: "none"},
-          indeterminate: selectedRecords.length > 0 && !allRecordsSelected,
-          checked: allRecordsSelected,
-          onChange: () => allRecordsSelected ?
-            setSelectedRecords([]) :
-            setSelectedRecords(mediaItems)
-        }}
+        allRecordsSelectionCheckboxProps={
+          !setSelectedRecords ? null :
+            {
+              style: multiple ? {} : {display: "none"},
+              indeterminate: selectedRecords.length > 0 && !allRecordsSelected,
+              checked: allRecordsSelected,
+              onChange: () => allRecordsSelected ?
+                setSelectedRecords([]) :
+                setSelectedRecords(mediaItems)
+            }
+        }
         onRowClick={
         !setSelectedRecords ? undefined :
           record => {

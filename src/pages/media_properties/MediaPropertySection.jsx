@@ -347,7 +347,10 @@ const SectionContentList = observer(() => {
 
               return (
                 <Text>
-                  {mediaItem.type === "collection" ? "Media Collection" : mediaItem.type === "list" ? "Media List" : "Media"}
+                  {
+                    !mediaItem ? "Missing Media Item" :
+                      mediaItem.type === "collection" ? "Media Collection" : mediaItem.type === "list" ? "Media List" : "Media"
+                  }
                   {!sectionItem.expand ? null : <Text italic>(Expanded)</Text>}
                 </Text>
               );
@@ -603,6 +606,14 @@ const MediaPropertySection = observer(() => {
         field="title"
       />
 
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.display.subtitle}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="subtitle"
+      />
+
       <Inputs.TextArea
         {...inputProps}
         {...l10n.sections.display.description}
@@ -654,7 +665,6 @@ const MediaPropertySection = observer(() => {
           { label: "Title and Subtitle", value: "titles" },
           { label: "Title Only", value: "title" },
           { label: "No Text", value: "none" }
-
         ]}
       />
 
@@ -672,6 +682,16 @@ const MediaPropertySection = observer(() => {
               .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
           ]
         }
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.sections.display.background_image}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        fields={[
+          { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 125 },
+          { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2/3, baseSize: 125 },
+        ]}
       />
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>

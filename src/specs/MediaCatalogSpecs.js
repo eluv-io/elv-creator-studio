@@ -16,6 +16,8 @@ export const MediaCatalogBaseSpec = {
   headers: [],
   description: "",
   description_rich_text: "",
+  background_image: undefined,
+  background_image_mobile: undefined,
   thumbnail_image_portrait: undefined,
   thumbnail_image_square: undefined,
   thumbnail_image_landscape: undefined,
@@ -50,7 +52,6 @@ export const MediaCatalogMediaVideoSpec = {
   ...MediaCatalogMediaBaseSpec,
   title: "<New Video>",
   catalog_title: "<New Video>",
-  video_poster: undefined,
   media_type: "Video",
   media_link: undefined,
   live: false,
@@ -71,6 +72,7 @@ export const MediaCatalogMediaGallerySpec = {
   background_image: undefined,
   background_image_mobile: undefined,
   controls: "Carousel",
+  gallery: [],
   associated_media: []
 };
 
