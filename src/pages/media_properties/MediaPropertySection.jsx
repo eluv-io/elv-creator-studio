@@ -655,6 +655,20 @@ const MediaPropertySection = observer(() => {
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.sections.display.justification}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        defaultValue="left"
+        field="justification"
+        options={[
+          { label: "Left", value: "left" },
+          { label: "Center", value: "center" },
+          { label: "Right", value: "right" },
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
         {...l10n.sections.display.content_display_text}
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}

@@ -143,6 +143,9 @@ form:
       display_limit:
         label: Display Limit
         description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+      justification:
+        label: Justification
+        description: Horizontal alignment of this section
       content_display_text:
         label: Content Display Text
         description: Choose which text fields will be shown for items in this section

@@ -131,6 +131,7 @@ export const MediaPropertySectionBaseSpec = {
     description_rich_text: "",
     display_format: "carousel",
     display_limit: undefined,
+    justification: "left",
     aspect_ratio: "",
     content_display_text: "titles",
     background_image: undefined,
