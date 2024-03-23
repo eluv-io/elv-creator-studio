@@ -1,9 +1,12 @@
 export const MediaCatalogGalleryItemSpec = {
   id: undefined,
-  name: "<New Gallery Item>",
+  label: "<New Gallery Item>",
+  title: "",
+  subtitle: "",
   description: "",
   image: undefined,
-  image_aspect_ratio: "Square",
+  thumbnail: undefined,
+  thumbnail_aspect_ratio: "Square",
   video: undefined
 };
 
@@ -23,6 +26,12 @@ export const MediaCatalogBaseSpec = {
   thumbnail_image_landscape: undefined,
   tags: [],
   attributes: {}
+};
+
+export const MediaCatalogAttributeBaseSpec = {
+  id: undefined,
+  title: "",
+  tags: []
 };
 
 const MediaCatalogMediaBaseSpec = {

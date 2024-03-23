@@ -8,7 +8,7 @@ import MediaCatalogOverview from "@/pages/media_catalogs/MediaCatalogOverview.js
 import MediaCatalogGeneralSettings from "@/pages/media_catalogs/MediaCatalogGeneralSettings.jsx";
 import MediaCatalogItems from "@/pages/media_catalogs/MediaCatalogItems.jsx";
 import MediaCatalogMediaItem from "@/pages/media_catalogs/MediaCatalogMediaItem.jsx";
-import MediaCatalogTags from "@/pages/media_catalogs/MediaCatalogTags.jsx";
+import MediaCatalogTags, {MediaCatalogAttribute} from "@/pages/media_catalogs/MediaCatalogTags.jsx";
 import MediaCatalogMediaList from "@/pages/media_catalogs/MediaCatalogMediaList.jsx";
 import MediaCatalogMediaCollection from "@/pages/media_catalogs/MediaCatalogMediaCollection.jsx";
 
@@ -17,6 +17,7 @@ const MediaCatalogRoutes = observer(({rootPath}) => {
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.overview, path: "/media-catalogs/:mediaCatalogId", Component: <MediaCatalogOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.general, path: "/media-catalogs/:mediaCatalogId/general", Component: <MediaCatalogGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.tags, path: "/media-catalogs/:mediaCatalogId/tags", Component: <MediaCatalogTags /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.tags, path: "/media-catalogs/:mediaCatalogId/tags/:attributeId", Component: <MediaCatalogAttribute /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media", Component: <MediaCatalogItems type="media" /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media/:mediaItemId", Component: <MediaCatalogMediaItem /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media, path: "/media-catalogs/:mediaCatalogId/media/:mediaItemId/gallery/:galleryItemId", Component: <MediaCatalogMediaItem /> },

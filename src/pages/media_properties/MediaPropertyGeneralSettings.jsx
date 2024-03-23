@@ -5,6 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
+import {Group} from "@mantine/core";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -97,20 +98,30 @@ const MediaPropertyGeneralSettings = observer(() => {
         options={
           mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
             label: mediaProperty.name,
-            value: mediaProperty.id
+            value: mediaProperty.objectId
           }))
-            .filter(({value}) => value === mediaPropertyId)
+            .filter(({value}) => value !== mediaPropertyId)
         }
       />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.image}
-        subcategory={l10n.categories.info}
-        fields={[
-          { field: "image", aspectRatio: 2/3 },
-        ]}
-      />
+      <Group align="start">
+        <Inputs.ImageInput
+          {...inputProps}
+          {...l10n.general.image}
+          subcategory={l10n.categories.info}
+          fields={[
+            { field: "image", aspectRatio: 2/3 },
+          ]}
+        />
+        <Inputs.ImageInput
+          {...inputProps}
+          {...l10n.general.header_logo}
+          subcategory={l10n.categories.info}
+          fields={[
+            { field: "header_logo", aspectRatio: 1 },
+          ]}
+        />
+      </Group>
     </PageContent>
   );
 });

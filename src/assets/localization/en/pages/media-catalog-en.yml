@@ -16,6 +16,7 @@ form:
     tags_and_attributes: Tags and Attributes
     tags: Tags
     attributes: Attributes
+    attribute_label: Attribute '{label}'
     media: Media
     media_item: Media Item
     media_item_label: Media Item '{label}'
@@ -60,7 +61,33 @@ form:
       label: Tags
       description: Define tags to assign to your media
       fieldLabel: Tag
-    view: View all media tagged `{tag}`
+    create:
+      title: Add New Tag
+      tag:
+        label: Tag
+      validation: Tag must be specified
+    alphabetize: Alphabetize Tags
+  attributes:
+    attributes:
+      label: Attributes
+      description: Define attribute categories to assign to your media
+      fieldLabel: Attribute
+    title:
+      label: Title
+    tags:
+      label: Tags
+      description: Define the possible values for this attribute
+      fieldLabel: Tag
+    create:
+      form_title: Add New Attribute
+      title:
+        label: Title
+      id:
+        label: ID
+      validation:
+        id: Attribute ID must be specified
+        title: Label must be specified
+        id_unique: Attribute ID must be unique
   media:
     list:
       columns:
@@ -132,6 +159,9 @@ form:
     tags:
       label: Tags
       description: Configure available tags on the 'Tags and Attributes' page
+    attributes:
+      label: Attributes
+      description: Configure available attributes on the 'Tags and Attributes' page
     media_link:
       label: Video
     live_video:
@@ -161,8 +191,11 @@ form:
     full_image:
       label: Full Image
       description: The full image file. If not specified, the thumbnail with the specified aspect ratio will be used instead
-    media_file:
-      label: Media File
+    ebook_file:
+      label: EBook File
+      description: Select the file to display.
+    html_file:
+      label: HTML File
       description: Select the file to display.
     link:
       label: External Link
@@ -189,17 +222,28 @@ form:
       fieldLabel: Gallery Media Item
     gallery_item:
       columns:
-        name: Name
+        label: Label
         type: Type
-      name:
-        label: Name
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
       description:
         label: Description
+      images:
+        label: Images
+        description: "Note: If thumbnail and full image are the same, only thumbnail is necessary"
+      thumbnail:
+        label: Thumbnail
       image:
-        label: Image
-      image_aspect_ratio:
-        label: Image Orientation
+        label: Full Image
+      thumbnail_aspect_ratio:
+        label: Thumbnail Aspect Ratio
       video:
         label: Video
+        description: Optional
+      poster_image:
+        label: Video Poster Image
+        description: Displayed in the video player before playback is started
 
 

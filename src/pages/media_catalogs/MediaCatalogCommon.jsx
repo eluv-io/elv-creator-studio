@@ -169,12 +169,14 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
       <Inputs.Text
         {...inputProps}
         {...l10n.media.catalog_title}
+        required
         field="catalog_title"
       />
 
       <Inputs.Text
         {...inputProps}
         {...l10n.media.title}
+        required
         field="title"
       />
 
@@ -202,16 +204,6 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
         field="description_rich_text"
       />
 
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.media.tags}
-        subcategory={l10n.categories.tags}
-        disabled={(info.tags || []).length === 0}
-        field="tags"
-        searchable
-        options={info.tags || []}
-      />
-
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.media.thumbnail_images}
@@ -230,11 +222,49 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
             {...inputProps}
             {...l10n.media.background_image}
             fields={[
-              {field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 125},
-              { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 2 / 3, baseSize: 125
-              },
+              { field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 125},
+              { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 2 / 3, baseSize: 125 },
             ]}
           />
+      }
+
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.media.tags}
+        subcategory={l10n.categories.tags}
+        disabled={(info.tags || []).length === 0}
+        field="tags"
+        searchable
+        options={info.tags || []}
+      />
+
+      {
+        Object.keys(info.attributes || {}).length === 0 ? null :
+          <Inputs.InputWrapper {...l10n.media.attributes}>
+            {
+              Object.keys(info.attributes).map(attributeId => {
+                const attribute = info.attributes[attributeId];
+                return (
+                  <Inputs.Select
+                    componentProps={{mt: "md"}}
+                    key={`attribute-${attributeId}`}
+                    {...inputProps}
+                    searchable
+                    path={UrlJoin(inputProps.path, "attributes")}
+                    field={attributeId}
+                    subcategory={l10n.categories.attributes}
+                    label={attribute.title || "Attribute"}
+                    defaultValue=""
+                    options={[
+                      {label: "<None>", value: ""},
+                      ...(info.attributes[attributeId].tags || [])
+                    ]}
+                  />
+                );
+              })
+            }
+          </Inputs.InputWrapper>
       }
     </>
   );

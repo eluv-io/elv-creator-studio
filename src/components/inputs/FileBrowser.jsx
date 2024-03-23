@@ -73,7 +73,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
     <DataTable
       highlightOnHover
       idAccessor="filename"
-      height={Math.max(250, uiStore.viewportHeight - 600)}
+      height={Math.max(250, uiStore.viewportHeight / 2)}
       records={records}
       sortStatus={sortStatus}
       onSortStatusChange={setSortStatus}

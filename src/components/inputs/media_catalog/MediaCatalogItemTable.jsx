@@ -22,14 +22,6 @@ import {IconEdit, IconTrashX} from "@tabler/icons-react";
 import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 import {MediaItemImage} from "@/components/common/MediaCatalog";
 
-const MediaTypes = [
-  "Video",
-  "Image",
-  "Ebook",
-  "HTML",
-  "Link"
-];
-
 export const MediaItemTitle = observer(({mediaItem}) => {
   if(!mediaItem) { return null; }
 
@@ -223,7 +215,7 @@ const MediaCatalogItemTable = observer(({
               }}
               data={[
                 {label: "Any", value: ""},
-                ...MediaTypes
+                ...mediaCatalogStore.MEDIA_TYPES
               ]}
             />
         }

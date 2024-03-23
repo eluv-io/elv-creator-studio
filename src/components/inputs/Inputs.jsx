@@ -338,8 +338,7 @@ const Input = observer(({
         icon={<IconX size={15} />}
         onClick={() => store.SetMetadata({
           objectId,
-          page:
-          location.pathname,
+          page: location.pathname,
           path,
           field,
           value: type === "number" ? undefined : "",
@@ -1293,7 +1292,7 @@ const ListInputs = observer(({
         field={index.toString()}
         category={category}
         subcategory={subcategory}
-        label={fieldLabel}
+        //label={fieldLabel}
         actionLabel={actionLabel}
         componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
         {...inputProps}
@@ -1364,14 +1363,32 @@ const List = observer(({
   inputProps={},
   narrow,
   simpleList,
+  children,
+  filterable,
+  Filter,
+  AddItem,
   ...componentProps
 }) => {
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
+
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
   simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
 
   const items = values.map((value, index) => {
     const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+
+    if(
+      filterable &&
+      debouncedFilter &&
+      !(
+        (Filter && Filter({value, filter: debouncedFilter})) ||
+        (value?.toString() || "").toLowerCase().includes(debouncedFilter.toLowerCase())
+      )
+    ) {
+      return null;
+    }
 
     return (
       <Draggable key={`draggable-item-${id || index}`} index={index} draggableId={`item-${id}`}>
@@ -1419,7 +1436,7 @@ const List = observer(({
 
               <IconButton
                 label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
-                style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
+                style={{position: "absolute", top: 0, right: 0}}
                 Icon={IconX}
                 onClick={() => {
                   ConfirmDelete({
@@ -1449,69 +1466,88 @@ const List = observer(({
     <IconButton
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
-      onClick={() =>
+      onClick={async () => {
+        let value = simpleList ? "" : newItemSpec;
+        if(AddItem) {
+          value = await AddItem();
+        }
+
         store.InsertListElement({
           objectId,
           page: location.pathname,
           path,
           field,
-          value: simpleList ? "" : newItemSpec,
+          value,
           category,
           subcategory,
           label: actionLabel || fieldLabel
-        })
-      }
+        });
+      }}
     />
   );
 
   showBottomAddButton = showBottomAddButton || items.length >= 5;
 
   return (
-    <InputWrapper
-      label={label}
-      description={description}
-      hint={hint}
-      maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
-      {...componentProps}
-      w="max-content"
-      miw={`min(100%, ${uiStore.inputWidth}px)`}
-    >
-      <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
-        <DragDropContext
-          onDragEnd={({source, destination}) =>
-            store.MoveListElement({
-              objectId,
-              page: location.pathname,
-              path,
-              field,
-              index: source.index,
-              newIndex: destination.index,
-              category,
-              subcategory,
-              label: actionLabel || fieldLabel
-            })
+    <>
+      {
+        !filterable ? null :
+          <TextInput
+            label={rootStore.l10n.components.inputs.filter}
+            mb="xs"
+            value={filter}
+            onChange={event => setFilter(event.target.value)}
+            maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
+            {...componentProps}
+          />
+      }
+      <InputWrapper
+        label={label}
+        description={description}
+        hint={hint}
+        maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
+        w="max-content"
+        miw={`min(100%, ${uiStore.inputWidth}px)`}
+        {...componentProps}
+      >
+        <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
+          { children }
+          <DragDropContext
+            onDragEnd={({source, destination}) =>
+              store.MoveListElement({
+                objectId,
+                page: location.pathname,
+                path,
+                field,
+                index: source.index,
+                newIndex: destination.index,
+                category,
+                subcategory,
+                label: actionLabel || fieldLabel
+              })
+            }
+          >
+            <Droppable droppableId="simple-list" direction="vertical">
+              {provided => (
+                <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
+                  { items }
+                  { provided.placeholder }
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+            {addButton}
+          </Group>
+          {
+            !showBottomAddButton ? null :
+              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+                {addButton}
+              </Group>
           }
-        >
-          <Droppable droppableId="simple-list" direction="vertical">
-            {provided => (
-              <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
-                { items }
-                { provided.placeholder }
-              </Stack>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
-          {addButton}
-        </Group>
-        {
-          !showBottomAddButton ? null :
-            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
-              {addButton}
-            </Group>
-        }
-      </Container>
-    </InputWrapper>
+        </Container>
+      </InputWrapper>
+    </>
   );
 });
 

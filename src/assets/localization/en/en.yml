@@ -37,6 +37,7 @@ components:
     show_editor: Show Editor
     hide_editor: Hide Editor
     clear: Clear this field
+    filter: Filter
     actions:
       modify_field: Modify {field}
       add_item: Add item to {field}
@@ -138,4 +139,5 @@ actions:
   REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list
   MOVE_LIST_ELEMENT: Move '{label}' list position
   MOVE_LIST_ELEMENT_UNLABELLED: Move list position
+  CUSTOM: <Custom Action>
 

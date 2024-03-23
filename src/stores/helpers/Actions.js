@@ -1,4 +1,4 @@
-import {flow, toJS} from "mobx";
+import {flow, runInAction, toJS} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
@@ -47,6 +47,9 @@ export const ACTIONS = {
     stackable: false
   },
   REMOVE_LIST_ELEMENT: {
+    stackable: false
+  },
+  CUSTOM: {
     stackable: false
   }
 };
@@ -480,6 +483,7 @@ const RemoveListElement = function({objectId, page, path, field, index, ...args}
 const ApplyAction = function ({
   id,
   actionType,
+  changelistLabel,
   objectId,
   page,
   path,
@@ -499,7 +503,7 @@ const ApplyAction = function ({
 
   const { stackable } = ACTIONS[actionType];
 
-  Apply();
+  runInAction(() => Apply());
 
   if(stackable) {
     let stackableActions = [];
@@ -533,6 +537,7 @@ const ApplyAction = function ({
   actionStack.push({
     id,
     actionType,
+    changelistLabel,
     objectId,
     page,
     basePath,
@@ -574,7 +579,7 @@ const UndoAction = flow(function * ({objectId, page}) {
 
   if(!action) { return; }
 
-  yield action.Undo();
+  yield runInAction(async () => await action.Undo());
 
   // Remove undone action from action stack
   this.actionStack[objectId] = this.actionStack[objectId].slice(0, -1);
@@ -589,7 +594,7 @@ const RedoAction = flow(function * ({objectId, page}) {
 
   if(!action) { return; }
 
-  yield action.Apply();
+  yield runInAction(async () => await action.Apply());
 
   // Remove undone action from redo stack
   this.redoStack[objectId] = this.redoStack[objectId].slice(0, -1);

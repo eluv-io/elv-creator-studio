@@ -12,12 +12,27 @@ import {
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
+import {useEffect} from "react";
 
 const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inputProps, l10n}) => {
   const pages = Object.keys(mediaProperty.pages);
   const mediaProperties = mediaPropertyStore.allMediaProperties
     .filter(otherProperty => otherProperty.id !== mediaProperty.id);
+  const subProperties = mediaProperties.filter(property => mediaProperty.subproperties?.includes(property.objectId));
 
+  useEffect(() => {
+    if(!["property_link", "subproperty_link"].includes(sectionItem.type)) {
+      return;
+    }
+
+    let propertyId = sectionItem.type === "property_link" ? sectionItem.property_id : sectionItem.subproperty_id;
+
+    if(!propertyId) { return; }
+
+    mediaPropertyStore.LoadMediaProperty({mediaPropertyId: propertyId});
+  }, [sectionItem.property_id, sectionItem.subproperty_id, sectionItem.type]);
+
+  let property;
   switch(sectionItem.type) {
     case "media":
       return (
@@ -47,14 +62,49 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
           field="page_id"
         />
       );
-    case "subproperty_link":
+    case "property_link":
+      property = mediaPropertyStore.mediaProperties[sectionItem.property_id]?.metadata.public.asset_metadata.info;
       return (
-        <Inputs.Select
-          {...inputProps}
-          {...l10n.section_items.subproperty}
-          options={mediaProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
-          field="subproperty_id"
-        />
+        <>
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.property}
+            options={mediaProperties.map(property => ({label: property.name, value: property.objectId}))}
+            field="property_id"
+          />
+          {
+            !property ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.section_items.property_page}
+                defaultValue="main"
+                options={Object.keys(property.pages)?.map(pageId => ({label: property.pages[pageId].label, value: pageId}))}
+                field="property_page_id"
+              />
+          }
+        </>
+      );
+    case "subproperty_link":
+      property = mediaPropertyStore.mediaProperties[sectionItem.subproperty_id]?.metadata.public.asset_metadata.info;
+      return (
+        <>
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.subproperty}
+            options={subProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
+            field="subproperty_id"
+          />
+          {
+            !property ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.section_items.subproperty_page}
+                defaultValue="main"
+                options={Object.keys(property.pages)?.map(pageId => ({label: property.pages[pageId].label, value: pageId}))}
+                field="subproperty_page_id"
+              />
+          }
+        </>
       );
     case "marketplace_link":
       return (

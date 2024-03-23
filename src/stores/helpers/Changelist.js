@@ -136,7 +136,7 @@ const ProcessChangeList = changeList => {
 export const ActionToString = action => {
   if(!action) { return ""; }
 
-  let string = rootStore.l10n.actions[action.useLabel ? action.actionType : `${action.actionType}_UNLABELLED`];
+  let string = action.changelistLabel || rootStore.l10n.actions[action.useLabel ? action.actionType : `${action.actionType}_UNLABELLED`];
   if(action.actionType === "TOGGLE_FIELD") {
     const unchecked = action.info.inverted ? !action.info.cleared : action.info.cleared;
     string = rootStore.l10n.actions[unchecked ? "TOGGLE_FIELD_OFF" : "TOGGLE_FIELD_ON"];

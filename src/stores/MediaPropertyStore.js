@@ -7,6 +7,7 @@ import {
   MediaPropertySectionItemMarketplaceLinkSpec,
   MediaPropertySectionItemMediaSpec,
   MediaPropertySectionItemPageLinkSpec,
+  MediaPropertySectionItemPropertyLinkSpec,
   MediaPropertySectionItemSubpropertyLinkSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
@@ -22,7 +23,6 @@ class MediaPropertyStore {
   mediaProperties = {};
 
   ID_PREFIXES = {
-    "property": "prop",
     "page": "ppge",
     "section_manual": "pscm",
     "section_automatic": "psca",
@@ -33,6 +33,7 @@ class MediaPropertyStore {
     "media": "Media",
     "filter": "Filtered View",
     "page_link": "Page Link",
+    "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
     "marketplace_link": "Marketplace Link"
   };
@@ -116,6 +117,22 @@ class MediaPropertyStore {
       .flat();
   }
 
+  GetMediaPropertyAttributes({mediaPropertyId}) {
+    const associatedCatalogIds = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info.media_catalogs || [];
+
+    let attributes = {};
+    associatedCatalogIds.map(mediaCatalogId =>
+      Object.keys(this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata.public.asset_metadata.info.attributes || {})
+        .forEach(attributeId =>
+          attributes[attributeId] = {
+            ...this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.attributes[attributeId]
+          }
+        )
+    );
+
+    return attributes;
+  }
+
   GetResolvedSectionItem({mediaPropertyId, sectionId, sectionItemId, sectionItem}) {
     if(!sectionItem) {
       const sectionContent = this.GetMetadata({
@@ -187,7 +204,6 @@ class MediaPropertyStore {
         type: this.rootStore.typeInfo.mediaProperty
       },
       callback: async ({objectId, writeToken}) => {
-        const id = `${this.ID_PREFIXES["property"]}${objectId.replace("iq__", "")}`;
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -199,7 +215,7 @@ class MediaPropertyStore {
                 slug,
                 info: {
                   ...MediaPropertySpec,
-                  id,
+                  id: objectId,
                   name,
                   slug
                 }
@@ -278,7 +294,9 @@ class MediaPropertyStore {
     mediaItemId,
     expand,
     pageId,
-    subPropertyId,
+    propertyId,
+    subpropertyId,
+    propertyPageId,
     marketplaceId,
     marketplaceSKU
   }) {
@@ -301,9 +319,15 @@ class MediaPropertyStore {
         spec = Clone(MediaPropertySectionItemPageLinkSpec);
         spec.page_id = pageId;
         break;
+      case "property_link":
+        spec = Clone(MediaPropertySectionItemPropertyLinkSpec);
+        spec.property_id = propertyId;
+        spec.property_page_id = propertyPageId || "main";
+        break;
       case "subproperty_link":
         spec = Clone(MediaPropertySectionItemSubpropertyLinkSpec);
-        spec.subproperty_id = subPropertyId;
+        spec.subproperty_id = subpropertyId;
+        spec.subproperty_page_id = propertyPageId || "main";
         break;
       case "marketplace_link":
         spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);

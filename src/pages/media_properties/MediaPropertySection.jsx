@@ -26,13 +26,14 @@ import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/
 import {MediaItemCard, MediaItemImage} from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 
-const CreateSectionItemForm = ({mediaProperty, Create}) => {
+const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
   const pages = Object.keys(mediaProperty.pages);
   const mediaProperties = mediaPropertyStore.allMediaProperties
     .filter(otherProperty => otherProperty.id !== mediaProperty.id);
+  const subProperties = mediaProperties.filter(property => mediaProperty.subproperties?.includes(property.objectId));
   const marketplaces = marketplaceStore.allMarketplaces;
 
   const l10n = rootStore.l10n.pages.media_property.form;
@@ -43,7 +44,9 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
       mediaItemIds: [],
       expand: false,
       pageId: pages[0],
-      subpropertyId: mediaProperties[0]?.objectId,
+      subpropertyId: subProperties[0]?.objectId,
+      propertyId: mediaProperties[0]?.objectId,
+      propertyPageId: "main",
       marketplaceId: marketplaces[0]?.objectId,
       marketplaceSKU: "",
     },
@@ -52,6 +55,7 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
       mediaItemIds: value => form.values.type !== "media" || value.length > 0 ? null : l10n.section_items.create.validation.media_items,
       pageId: value => form.values.type !== "page_link" || value ? null : l10n.section_items.create.validation.page,
       subpropertyId: value => form.values.type !== "subproperty_link" || value ? null : l10n.section_items.create.validation.subproperty,
+      propertyId: value => form.values.type !== "property_link" || value ? null : l10n.section_items.create.validation.property,
       marketplaceId: value => form.values.type !== "marketplace_link" || value ? null : l10n.section_items.create.validation.marketplace
     }
   });
@@ -62,10 +66,25 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
 
   useEffect(() => {
     form.getInputProps("marketplaceSKU").onChange("");
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.marketplaceId]);
 
-  let formContent;
+  useEffect(() => {
+    if(!["property_link", "subproperty_link"].includes(form.values.type)) {
+      return;
+    }
+
+    // Ensure all properties are loaded
+    mediaPropertyStore.allMediaProperties.forEach(mediaProperty =>
+      mediaPropertyStore.LoadMediaProperty({mediaPropertyId: mediaProperty.objectId})
+    );
+
+    form.getInputProps("propertyPageId").onChange("main");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.type, form.values.propertyId, form.values.subpropertyId]);
+
+  let formContent, property;
   switch(form.values.type) {
     case "media":
       formContent = (
@@ -120,14 +139,51 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
       );
 
       break;
-    case "subproperty_link":
+
+    case "property_link":
+      property = mediaPropertyStore.mediaProperties[form.values.propertyId]?.metadata.public.asset_metadata.info;
       formContent = (
-        <Select
-          withinPortal
-          {...l10n.section_items.subproperty}
-          data={mediaProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
-          {...form.getInputProps("subpropertyId")}
-        />
+        <>
+          <Select
+            withinPortal
+            {...l10n.section_items.property}
+            data={mediaProperties.map(property => ({label: property.name, value: property.objectId}))}
+            {...form.getInputProps("propertyId")}
+          />
+          {
+            !property ? null :
+              <Select
+                withinPortal
+                {...l10n.section_items.page}
+                data={Object.keys(property.pages)?.map(pageId => ({label: property.pages[pageId].label, value: pageId}))}
+                {...form.getInputProps("propertyPageId")}
+              />
+          }
+        </>
+      );
+
+      break;
+
+    case "subproperty_link":
+      property = mediaPropertyStore.mediaProperties[form.values.subpropertyId]?.metadata.public.asset_metadata.info;
+      formContent = (
+        <>
+          <Select
+            withinPortal
+            {...l10n.section_items.subproperty}
+            data={subProperties.map(subproperty => ({label: subproperty.name, value: subproperty.objectId}))}
+            {...form.getInputProps("subpropertyId")}
+          />
+          {
+            !property ? null :
+              <Select
+                withinPortal
+                {...l10n.section_items.page}
+                data={Object.keys(property.pages)?.map(pageId => ({label: property.pages[pageId].label, value: pageId}))}
+                {...form.getInputProps("propertyPageId")}
+              />
+          }
+        </>
       );
 
       break;
@@ -221,7 +277,7 @@ const CreateSectionItemForm = ({mediaProperty, Create}) => {
       }
     </Container>
   );
-};
+});
 
 export const SectionItemTitle = observer(({sectionItem, aspectRatio}) => {
   sectionItem = mediaPropertyStore.GetResolvedSectionItem({sectionItem});
@@ -294,36 +350,38 @@ const SectionContentList = observer(() => {
               centered: true,
               onCancel: () => resolve(),
               children:
-                <CreateSectionItemForm
-                  mediaPropertyId={mediaPropertyId}
-                  mediaProperty={info}
-                  Create={async args => {
-                    let id;
-                    if(args.type === "media") {
-                      // When specifying media, multiple items are allowed. Create an entry for each and don't redirect
-                      args.mediaItemIds.forEach(mediaItemId =>
-                        mediaPropertyStore.CreateSectionItem({
+                <div>
+                  <CreateSectionItemForm
+                    mediaPropertyId={mediaPropertyId}
+                    mediaProperty={info}
+                    Create={async args => {
+                      let id;
+                      if(args.type === "media") {
+                        // When specifying media, multiple items are allowed. Create an entry for each and don't redirect
+                        args.mediaItemIds.forEach(mediaItemId =>
+                          mediaPropertyStore.CreateSectionItem({
+                            page: location.pathname,
+                            mediaPropertyId,
+                            sectionId,
+                            mediaItemId,
+                            ...args
+                          })
+                        );
+                      } else {
+                        id = mediaPropertyStore.CreateSectionItem({
                           page: location.pathname,
                           mediaPropertyId,
                           sectionId,
-                          mediaItemId,
                           ...args
-                        })
-                      );
-                    } else {
-                      id = mediaPropertyStore.CreateSectionItem({
-                        page: location.pathname,
-                        mediaPropertyId,
-                        sectionId,
-                        ...args
-                      });
-                    }
+                        });
+                      }
 
-                    modals.closeAll();
+                      modals.closeAll();
 
-                    resolve(id);
-                  }}
-                />
+                      resolve(id);
+                    }}
+                  />
+                </div>
             });
           });
         }}
@@ -416,6 +474,7 @@ const SectionFilters = observer(() => {
     path: UrlJoin("/public/asset_metadata/info/sections", sectionId, "select")
   };
 
+  const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
   return (
     <Group noWrap align="top" pr={50}>
       <Container m={0} p={0} miw={uiStore.inputWidth}>
@@ -439,6 +498,41 @@ const SectionFilters = observer(() => {
           options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
           field="tags"
         />
+        <Inputs.MultiSelect
+          {...inputProps}
+          {...l10n.sections.filters.attributes}
+          clearable
+          searchable
+          options={
+            Object.keys(attributes).map(attributeId => ({
+              label: attributes[attributeId].title || "Attribute",
+              value: attributeId
+            }))
+          }
+          field="attributes"
+        />
+
+        {
+          (section?.select?.attributes || []).map(attributeId => {
+            const attribute = attributes[attributeId];
+
+            if(!attribute) { return; }
+
+            return (
+              <Inputs.Select
+                componentProps={{mt: "md"}}
+                key={`attribute-${attributeId}`}
+                {...inputProps}
+                path={UrlJoin(inputProps.path, "attribute_values")}
+                field={attributeId}
+                label={attribute.title || "Attribute"}
+                searchable
+                defaultValue=""
+                options={attributes[attributeId].tags || []}
+              />
+            );
+          })
+        }
 
         <Inputs.Select
           {...inputProps}

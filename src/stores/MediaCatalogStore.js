@@ -3,6 +3,7 @@ import {AddActions} from "@/stores/helpers/Actions.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import Clone from "lodash/clone";
 import {
+  MediaCatalogAttributeBaseSpec,
   MediaCatalogCollectionSpec,
   MediaCatalogMediaGallerySpec,
   MediaCatalogMediaImageSpec,
@@ -23,8 +24,7 @@ class MediaCatalogStore {
     "Image",
     "Gallery",
     "Ebook",
-    "HTML",
-    "Link"
+    "HTML"
   ];
 
   ID_PREFIXES = {
@@ -36,7 +36,7 @@ class MediaCatalogStore {
     "Gallery": "mgal",
     "media_lists": "mlst",
     "media_collections": "mcol",
-    "media_catalog": "mcat"
+    "attribute": "attr"
   };
 
   IMAGE_ASPECT_RATIOS = {
@@ -115,6 +115,12 @@ class MediaCatalogStore {
         );
       }
 
+      select.attributes.forEach(attributeId => {
+        content = content.filter(mediaItem =>
+          mediaItem.attributes?.[attributeId] === select.attribute_values[attributeId]
+        );
+      });
+
       return content;
     };
 
@@ -133,7 +139,6 @@ class MediaCatalogStore {
         type: this.rootStore.typeInfo.mediaCatalog
       },
       callback: async ({objectId, writeToken}) => {
-        const id = `${this.ID_PREFIXES["media_catalog"]}${objectId.replace("iq__", "")}`;
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -144,7 +149,7 @@ class MediaCatalogStore {
               asset_metadata: {
                 info: {
                   ...MediaCatalogSpec,
-                  id,
+                  id: objectId,
                   name,
                   title: name
                 }
@@ -260,14 +265,41 @@ class MediaCatalogStore {
     });
   }
 
-  MediaItemCategory({type="media", mediaCatalogId, id, title}) {
+  CreateAttribute({page, mediaCatalogId, id, title}) {
+    if(!id) { throw Error("ID must be specified"); }
+
+    const spec = Clone(MediaCatalogAttributeBaseSpec);
+
+    spec.id = id;
+    spec.title = title || spec.title;
+
+    this.AddField({
+      objectId: mediaCatalogId,
+      page,
+      path: "/public/asset_metadata/info/attributes",
+      field: id,
+      value: spec,
+      category: this.MediaItemCategory({
+        category: "attribute_label",
+        mediaCatalogId,
+        type: "attributes",
+        id,
+        title: spec.title
+      }),
+      label: spec.title
+    });
+
+    return id;
+  }
+
+  MediaItemCategory({type="media", mediaCatalogId, category, id, title}) {
     return () => {
       title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "title"}) || title;
 
-      let category =
-        type === "media" ? "media_item_label" :
+      category = category ||
+        (type === "media" ? "media_item_label" :
           type === "media_lists" ? "media_list_label" :
-            "media_collection_label";
+            "media_collection_label");
 
       return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories[category], { label: title });
     };

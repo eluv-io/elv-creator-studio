@@ -75,6 +75,7 @@ export const MediaPropertyFilterSpec = {
   media_types: [],
   tags: [],
   attributes: [],
+  attribute_values: {},
   schedule: "", // live, upcoming, past, time_range
   start_time: undefined,
   end_time: undefined,
@@ -99,21 +100,33 @@ export const MediaPropertySectionItemMediaSpec = {
 
 export const MediaPropertySectionItemFilterSpec = {
   ...MediaPropertySectionItemBaseSpec,
+  type: "filter_link",
   select: MediaPropertyFilterSpec
 };
 
 export const MediaPropertySectionItemPageLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
+  type: "page_link",
   page_id: "",
+};
+
+export const MediaPropertySectionItemPropertyLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "property_link",
+  property_id: "",
+  property_page_id: "",
 };
 
 export const MediaPropertySectionItemSubpropertyLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
-  subproperty_id: ""
+  type: "subproperty_link",
+  subproperty_id: "",
+  subproperty_page_id: "",
 };
 
 export const MediaPropertySectionItemMarketplaceLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
+  type: "marketplace_link",
   marketplace: undefined,
   marketplace_sku: ""
 };
@@ -174,9 +187,11 @@ export const MediaPropertySpec = {
   name: "",
   description: "",
   image: undefined,
+  header_logo: undefined,
   subproperties: [],
   media_catalogs: [],
   associated_marketplaces: [],
+  attributes: [],
   sections: {},
   pages: {
     main: {

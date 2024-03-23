@@ -43,7 +43,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
       objectId: mediaCatalogId,
       listPath: galleryPath,
       id: galleryItemId,
-      labelField: "name",
+      labelField: "label",
       l10n: l10n.categories.gallery_item_label
     })
   };
@@ -51,7 +51,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
   return (
     <PageContent
       backLink={location.pathname.split("/").slice(0, -2).join("/")}
-      title={`${pageTitle} - ${galleryItem.name || galleryItem.id}`}
+      title={`${pageTitle} - ${galleryItem.label || galleryItem.id}`}
       section="mediaCatalog"
       useHistory
     >
@@ -61,17 +61,10 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
         field="id"
         hidden
       />
-      <Inputs.SingleImageInput
+      <Inputs.Text
         {...inputProps}
-        {...l10n.media.gallery_item.image}
-        field="image"
-        aspectRatio={mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.image_aspect_ratio]?.ratio}
-      />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.media.gallery_item.image_aspect_ratio}
-        field="image_aspect_ratio"
-        options={aspectRatioOptions}
+        {...l10n.media.label}
+        field="label"
       />
       <Inputs.Text
         {...inputProps}
@@ -88,12 +81,42 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
         {...l10n.media.gallery_item.description}
         field="description"
       />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.media.gallery_item.thumbnail_aspect_ratio}
+        field="thumbnail_aspect_ratio"
+        defaultValue="Square"
+        options={aspectRatioOptions}
+      />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.media.gallery_item.images}
+        fields={[
+          {
+            field: "thumbnail",
+            aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.thumbnail_aspect_ratio]?.ratio,
+            baseSize: 125,
+            ...l10n.media.gallery_item.thumbnail
+          },
+          { field: "image", baseSize: 125, ...l10n.media.gallery_item.image }
+        ]}
+      />
       <Inputs.FabricBrowser
         {...inputProps}
         {...l10n.media.gallery_item.video}
         field="video"
         previewable
       />
+      {
+        !galleryItem.video ? null :
+          <Inputs.ImageInput
+            {...inputProps}
+            {...l10n.media.gallery_item.poster_image}
+            fields={[
+              { field: "poster_image", aspectRatio: 16/9 }
+            ]}
+          />
+      }
     </PageContent>
   );
 });
@@ -155,7 +178,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
         <>
           <Inputs.File
             {...inputProps}
-            {...l10n.media.media_file}
+            {...l10n.media.ebook_file}
             subcategory={l10n.categories.media}
             field="media_file"
             extensions={["epub"]}
@@ -170,7 +193,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
         <>
           <Inputs.File
             {...inputProps}
-            {...l10n.media.media_file}
+            {...l10n.media.html_file}
             subcategory={l10n.categories.media}
             field="media_file"
             extensions={["html"]}
@@ -261,23 +284,27 @@ const MediaConfiguration = observer(({mediaItem}) => {
           <Inputs.CollectionTable
             {...inputProps}
             {...l10n.media.gallery_media}
-            subcategoryFnParams={{fields: ["name", "id"], l10n: l10n.categories.gallery_item_label}}
+            subcategoryFnParams={{fields: ["label", "title", "id"], l10n: l10n.categories.gallery_item_label}}
             field="gallery"
             idField="id"
             routePath="gallery"
             columns={[
               {
-                label: l10n.media.gallery_item.columns.name,
+                label: l10n.media.gallery_item.columns.label,
                 field: "title",
                 render: galleryItem => (
                   <Group noWrap>
-                    <AspectRatio
-                      w={100}
-                      ratio={mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.image_aspect_ratio]?.ratio}
-                    >
-                      <Image src={ScaleImage(galleryItem.image?.url, 400)} alt={galleryItem.name} withPlaceholder />
-                    </AspectRatio>
-                    <Text>{galleryItem.name || galleryItem.id}</Text>
+                    {
+                      !galleryItem.thumbnail ? null :
+                        <AspectRatio
+                          w={75}
+                          h={75}
+                          ratio={mediaCatalogStore.IMAGE_ASPECT_RATIOS[galleryItem.thumbnail_aspect_ratio]?.ratio}
+                        >
+                          <Image src={ScaleImage(galleryItem.thumbnail?.url, 400)} alt={galleryItem.label} withPlaceholder />
+                        </AspectRatio>
+                    }
+                    <Text>{galleryItem.label || galleryItem.title || galleryItem.id}</Text>
                   </Group>
                 )
               },

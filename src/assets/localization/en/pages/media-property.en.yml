@@ -60,6 +60,9 @@ form:
     image:
       label: Image
       description: Portrait (2:3)
+    header_logo:
+      label: Header Logo
+
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
@@ -175,6 +178,9 @@ form:
       tags:
         label: Tags
         description: Content matching all of the specified tags
+      attributes:
+        label: Attributes
+        description: Specify attributes to filter by
       schedule:
         label: Schedule
         description: Live content matching the specified time period
@@ -191,6 +197,7 @@ form:
         label: Label must be specified
         media_items: One more more media items must be specified
         page: Page must be specified
+        property: Property must be specified
         subproperty: Subproperty must be specified
         marketplace: Marketplace must be specified
     type:
@@ -214,8 +221,14 @@ form:
       description: If checked, this item will be presented in the section according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item when displayed in this section.
     page:
       label: Page
+    property:
+      label: Property
+    property_page:
+      label: Property Page
     subproperty:
       label: Subproperty
+    subproperty_page:
+      label: Subproperty Page
     marketplace:
       label: Marketplace
     marketplace_sku:
