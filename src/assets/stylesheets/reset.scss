@@ -51,6 +51,18 @@ button {
   }
 }
 
+em {
+  font-style: italic;
+}
+
+s {
+  text-decoration: line-through;
+}
+
+u {
+  text-decoration: underline;
+}
+
 /* revert for bug in Chromium browsers
    - fix for the content editable attribute will work properly. */
 :where([contenteditable]){

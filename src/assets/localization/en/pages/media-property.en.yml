@@ -1,0 +1,237 @@
+nav:
+  list: Media Properties
+  overview: Overview
+  general: General
+  pages: Pages
+  sections: Page Sections
+  section: Page Section
+  section_item: Page Section Item
+form:
+  categories:
+    media_properties: Media Properties
+    media_property: Media Property
+    media_property_label: Media Property '{label}'
+    general: General Settings
+    info: Media Property Info
+    layout: Layout
+    header: Header
+    pages: Pages
+    page: Page
+    page_label: Page '{label}'
+    page_header: Header
+    page_sections: Sections
+    sections: Page Sections
+    section: Page Section
+    section_label: Page Section '{label}'
+    section_presentation: Section Presentation
+    section_content: Section Content
+    section_filters: Section Filters
+    section_item: Section Item
+    section_item_label: Section Item `{label}`
+    section_item_presentation: Section Item Presentation
+  create:
+    create: Create New {type}
+    name:
+      label: Name
+    slug:
+      label: Slug
+    validation:
+      name: Name must be specified
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+    image:
+      label: Image
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
+  general:
+    slug:
+      label: Property Slug
+    title:
+      label: Display Title
+    page_title:
+      label: Page Title
+      description: The title of the page in the browser
+    image:
+      label: Image
+      description: Portrait (2:3)
+    header_logo:
+      label: Header Logo
+
+    media_catalogs:
+      label: Media Catalogs
+      description: Media from these catalogs will be available in this property
+    subproperties:
+      label: Subproperties
+      description: Other properties within this property
+    associated_marketplaces:
+      label: Associated Marketplaces
+  pages:
+    create:
+      create: Create New Page
+      label:
+        label: Label
+      validation:
+        label: Label must be specified
+    pages:
+      label: Pages
+      description: Create a page in your property to display content
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    header:
+      position:
+        label: Header Content Position
+      title:
+        label: Title
+      description:
+        label: Description
+      description_rich_text:
+        label: Description (Rich Text)
+      logo:
+        label: Logo
+      background_image:
+        label: Background Image
+      background_image_desktop:
+        label: Desktop (16:9)
+      background_image_mobile:
+        label: Mobile
+    sections:
+      label: Sections
+      description: Lay out your page by specifying a list of sections
+      fieldLabel: Section
+  sections:
+    create:
+      create: Create New Page Section
+      label:
+        label: Label
+      type:
+        label: Type
+        description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
+      validation:
+        label: Label must be specified
+    modal:
+      title: Select Page Sections
+    sections:
+      label: Page Content Sections
+      description: Define groups of content that can be displayed on pages
+    type:
+      label: Type
+      description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    display:
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
+      description:
+        label: Description
+      description_rich_text:
+        label: Description Rich Text
+      display_format:
+        label: Display Format
+      display_limit:
+        label: Display Limit
+        description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+      justification:
+        label: Justification
+        description: Horizontal alignment of this section
+      content_display_text:
+        label: Content Display Text
+        description: Choose which text fields will be shown for items in this section
+      aspect_ratio:
+        label: Aspect Ratio
+        description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type of the item.
+      background_image:
+        label: Background Image
+        description: Displayed on the 'view all' page for the section
+      background_image_desktop:
+        label: Desktop (16:9)
+      background_image_mobile:
+        label: Mobile
+    section_content:
+      label: Section Content
+      fieldLabel: Section Item
+    filters:
+      media_catalog:
+        label: Media Catalog
+        description: Limit the displayed content to a specific media catalog
+      content_type:
+        label: Content Type
+        description: Content of the specified type
+      media_types:
+        label: Media Types
+        description: Content with the specified media type(s)
+      tags:
+        label: Tags
+        description: Content matching all of the specified tags
+      attributes:
+        label: Attributes
+        description: Specify attributes to filter by
+      schedule:
+        label: Schedule
+        description: Live content matching the specified time period
+      start_time:
+        label: Start Time
+        description: Live content starting after the specified time
+      end_time:
+        label: End Time
+        description: Live content starting before the specified time
+  section_items:
+    create:
+      create: Add Item to Page Section
+      validation:
+        label: Label must be specified
+        media_items: One more more media items must be specified
+        page: Page must be specified
+        property: Property must be specified
+        subproperty: Subproperty must be specified
+        marketplace: Marketplace must be specified
+    type:
+      label: Type
+    label:
+      label: Label
+    select_media:
+      label: Select Media
+    media_items:
+      label: Media Item(s)
+    media_item:
+      label: Media Item
+    expand_list:
+      label: Expand Media List
+      description: By default, media lists are shown as a link to the list. Select this to instead show links to each media item with the list.
+    expand_collection:
+      label: Expand Media Collection
+      description: By default, media collections are shown as a link to the collection. Select this to instead show links to each media list within the collection.
+    use_media_settings:
+      label: Use Media Presentation Settings
+      description: If checked, this item will be presented in the section according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item when displayed in this section.
+    page:
+      label: Page
+    property:
+      label: Property
+    property_page:
+      label: Property Page
+    subproperty:
+      label: Subproperty
+    subproperty_page:
+      label: Subproperty Page
+    marketplace:
+      label: Marketplace
+    marketplace_sku:
+      label: Marketplace Item (optional)
+      description: Link to a specific item page
+

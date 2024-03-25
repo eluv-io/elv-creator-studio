@@ -1,0 +1,249 @@
+nav:
+  list: Media Catalogs
+  overview: Overview
+  general: General
+  media: Media
+  media_lists: Media Lists
+  media_collections: Media Collections
+  tags: Tags and Attributes
+form:
+  categories:
+    media_catalogs: Media Catalogs
+    media_catalog: Media Catalog
+    media_catalog_label: Media Catalog '{label}'
+    general: General Settings
+    info: Media Catalog Info
+    tags_and_attributes: Tags and Attributes
+    tags: Tags
+    attributes: Attributes
+    attribute_label: Attribute '{label}'
+    media: Media
+    media_item: Media Item
+    media_item_label: Media Item '{label}'
+    media_lists: Media Lists
+    media_list: Media List
+    media_list_label: Media List '{label}'
+    media_collections: Media Collections
+    media_collection: Media Collection
+    media_collection_label: Media Collection '{label}'
+    associated_media: Associated Media
+    viewed_settings: Viewed Settings
+    gallery_settings: Gallery Settings
+    gallery_item: Gallery Item
+    gallery_item_label: Gallery Item '{label}'
+  type:
+    label: Content Type
+  type_descriptions:
+    media:
+      Media Items are individual viewable media, such as videos, images, ebooks, etc.
+    associated_media:
+      Media bundled with this media item, such as trailers, images, etc.
+    media_lists:
+      Media Lists are ordered lists of media
+    media_collections: |
+      Media Collections are ordered lists of media lists
+  create:
+    create: Create New {type}
+    name: Name
+    validation:
+      name: Name must be specified
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+    image:
+      label: Image
+  tags:
+    tags:
+      label: Tags
+      description: Define tags to assign to your media
+      fieldLabel: Tag
+    create:
+      title: Add New Tag
+      tag:
+        label: Tag
+      validation: Tag must be specified
+    alphabetize: Alphabetize Tags
+  attributes:
+    attributes:
+      label: Attributes
+      description: Define attribute categories to assign to your media
+      fieldLabel: Attribute
+    title:
+      label: Title
+    tags:
+      label: Tags
+      description: Define the possible values for this attribute
+      fieldLabel: Tag
+    create:
+      form_title: Add New Attribute
+      title:
+        label: Title
+      id:
+        label: ID
+      validation:
+        id: Attribute ID must be specified
+        title: Label must be specified
+        id_unique: Attribute ID must be unique
+  media:
+    list:
+      columns:
+        label: Label
+        title: Title
+        media_type: Media Type
+        media: Media
+        media_lists: Media Lists
+      filters:
+        filter: Filter
+        media_type: Media Type
+        tags: Tags
+    create:
+      create: Create New Media Item
+      validation:
+        title: Title must be specified
+    modal:
+      media: Select Media
+      media_lists: Select Media Lists
+      media_collections: Select Media Collections
+    id:
+      label: Media ID
+    type:
+      label: Type
+    media_lists:
+      label: Media Lists
+      fieldLabel: Media List
+    media:
+      label: Media
+      fieldLabel: Media Item
+    media_type:
+      label: Media Type
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    title:
+      label: Display Title
+    catalog_title:
+      label: Catalog Title
+      description: For alphabetical sorting (e.g. The Best Movie -> Best Movie, The)
+    image:
+      label: Image
+      description: 16/9 Aspect Ratio
+    thumbnail_images:
+      label: Thumbnail Images
+      description: Different aspect ratios may be used in different presentations of this content
+    image_portrait:
+      label: Portrait (2:3)
+    image_square:
+      label: Square (1:1)
+    image_landscape:
+      label: Landscape (16:9)
+    background_image:
+      label: Background Image
+    background_image_desktop:
+      label: Desktop (16:9)
+    background_image_mobile:
+      label: Mobile
+    headers:
+      label: Headers
+      description: Short text that will appear above the title, e.g. content rating, release year, duration
+      fieldLabel: Header
+    subtitle:
+      label: Subtitle
+    description:
+      label: Description
+    description_rich_text:
+      label: Description (Rich Text)
+    tags:
+      label: Tags
+      description: Configure available tags on the 'Tags and Attributes' page
+    attributes:
+      label: Attributes
+      description: Configure available attributes on the 'Tags and Attributes' page
+    media_link:
+      label: Video
+    live_video:
+      label: Live Video
+      description: Check this box if the video content is live
+    offerings:
+      label: Offerings
+      description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
+      fieldLabel: Offering
+    start_time:
+      label: Start Time
+      description: Approximate start time of this live video
+    end_time:
+      label: End Time
+      description: Approximate end time of this live video
+    override_settings_when_viewed:
+      label: Use different settings when viewed
+      description: If specified, you can show a different title, description, etc. to use when this media is being viewed
+    viewed_settings:
+      label: Viewed Settings
+      description: These options will be used when the media item is being viewed
+    poster_image:
+      label: Video Poster Image
+      description: Displayed in the video player before playback is started
+    image_aspect_ratio:
+      label: Image Orientation
+    full_image:
+      label: Full Image
+      description: The full image file. If not specified, the thumbnail with the specified aspect ratio will be used instead
+    ebook_file:
+      label: EBook File
+      description: Select the file to display.
+    html_file:
+      label: HTML File
+      description: Select the file to display.
+    link:
+      label: External Link
+    authorized_link:
+      label: Authorized Link
+      description: If specified, user authentication will be added to the URL parameters of the external link
+    parameters:
+      label: Parameters
+      description: URL parameters to add when displaying the HTML file
+      fieldLabel: Parameter
+    key:
+      label: Key
+    value:
+      label: Value
+    gallery:
+      background_image:
+        label: Gallery Background Image
+      background_image_mobile:
+        label: Gallery Background Image (Mobile)
+      controls:
+        label: Gallery Controls
+    gallery_media:
+      label: Gallery Media
+      fieldLabel: Gallery Media Item
+    gallery_item:
+      columns:
+        label: Label
+        type: Type
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
+      description:
+        label: Description
+      images:
+        label: Images
+        description: "Note: If thumbnail and full image are the same, only thumbnail is necessary"
+      thumbnail:
+        label: Thumbnail
+      image:
+        label: Full Image
+      thumbnail_aspect_ratio:
+        label: Thumbnail Aspect Ratio
+      video:
+        label: Video
+        description: Optional
+      poster_image:
+        label: Video Poster Image
+        description: Displayed in the video player before playback is started
+
+

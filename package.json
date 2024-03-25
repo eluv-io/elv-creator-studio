@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "serve": "rm -rf node_modules/.vite; vite",
+    "serve-db": "firebase emulators:start",
     "build": "rm -rf dist/* ; vite build",
     "preview": "vite preview",
     "lint": "npm-run-all -s lint-js-fix lint-scss-fix",
@@ -14,7 +15,7 @@
   },
   "dependencies": {
     "@eluvio/elv-client-js": "^4.0.69",
-    "@eluvio/elv-player-js": "^1.0.116",
+    "@eluvio/elv-player-js": "git+https://github.com/eluv-io/elv-player-js#ui-rewrite",
     "@emotion/react": "^11.11.1",
     "@hello-pangea/dnd": "^16.3.0",
     "@mantine/core": "^6.0.17",
@@ -37,7 +38,7 @@
     "dayjs": "^1.11.9",
     "firebase": "^10.1.0",
     "lodash": "^4.17.21",
-    "mantine-datatable": "^2.9.7",
+    "mantine-datatable": "^6.0.8",
     "markdown-it": "^13.0.1",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",

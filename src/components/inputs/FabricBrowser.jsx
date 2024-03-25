@@ -182,7 +182,7 @@ const ObjectBrowser = observer(({label, libraryId, Back, Submit}) => {
 const LibraryBrowser = observer(({label, Submit}) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
 
   useEffect(() => {

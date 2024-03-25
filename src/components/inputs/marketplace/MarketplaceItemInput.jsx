@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react-lite";
-import {Box, Text, Group, Paper, Stack} from "@mantine/core";
-import Inputs, {ConfirmDelete} from "./Inputs.jsx";
-import {rootStore, marketplaceStore, uiStore} from "@/stores";
+import {Box, Text, Group, Paper, Stack, Select} from "@mantine/core";
+import Inputs, {ConfirmDelete} from "../Inputs.jsx";
+import {rootStore, marketplaceStore, uiStore} from "@/stores/index.js";
 import {IconButton, ItemImage, LocalizeString} from "@/components/common/Misc.jsx";
-import {useLocation} from "react-router-dom";
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import {IconGripVertical, IconX} from "@tabler/icons-react";
 
@@ -37,17 +36,16 @@ const SelectedItem = observer(({
   index,
   item,
   componentProps={},
-  dragHandleProps={}
+  dragHandleProps={},
+  Remove
 }) => {
-  const location = useLocation();
-
   return (
     <Paper
       {...componentProps}
       p={3}
       withBorder
     >
-      <Group pl={single ? 0 : "xs"} pr={25} spacing="sm" style={{position: "relative"}}>
+      <Group pl={single ? 0 : "xs"} pr={35} spacing="sm" style={{position: "relative"}} noWrap>
         {
           single ? null :
             <div style={{cursor: "grab"}} {...dragHandleProps}>
@@ -66,14 +64,15 @@ const SelectedItem = observer(({
           style={{position: "absolute", top: 5, right: 5}}
           icon={<IconX size={15} />}
           onClick={() => {
-            ConfirmDelete({
-              itemName: item.label || item.value,
-              onConfirm: () => {
-                single ?
-                  store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
-                  store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
-              }
-            });
+            Remove ? Remove() :
+              ConfirmDelete({
+                itemName: item.label || item.value,
+                onConfirm: () => {
+                  single ?
+                    store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
+                    store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
+                }
+              });
           }}
         />
       </Group>
@@ -81,29 +80,34 @@ const SelectedItem = observer(({
   );
 });
 
-const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, Component, ...props}) => {
-  const [marketplaceId, setMarketplaceId] = useState(marketplaceSlug ? undefined : objectId);
+const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, marketplaceId, Component, ...props}) => {
+  const [resolvedMarketplaceId, setResolvedMarketplaceId] = useState(marketplaceId || (marketplaceSlug ? undefined : objectId));
 
   useEffect(() => {
     marketplaceStore.LoadMarketplaces()
       .then(() => {
+        if(marketplaceId) {
+          marketplaceStore.LoadMarketplace({marketplaceId});
+          return;
+        }
+
         const selectedMarketplace = marketplaceStore.allMarketplaces?.find(marketplace => marketplace.marketplaceSlug === marketplaceSlug);
 
         if(!selectedMarketplace) {
           return;
         }
 
-        setMarketplaceId(selectedMarketplace.objectId);
+        setResolvedMarketplaceId(selectedMarketplace.objectId);
         marketplaceStore.LoadMarketplace({marketplaceId: selectedMarketplace.objectId});
       });
-  }, [marketplaceSlug]);
+  }, [marketplaceSlug, marketplaceId]);
 
-  const items = marketplaceStore.marketplaces[marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
+  const items = marketplaceStore.marketplaces[resolvedMarketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [];
 
   const options = items
     .map(item =>
       ({
-        image: <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={40} height={40} />,
+        image: <ItemImage marketplaceId={resolvedMarketplaceId} item={item} scale={200} width={40} height={40} />,
         label: item.name || item.sku,
         value: item.sku
       })
@@ -131,35 +135,43 @@ const MarketplaceItemSelectComponent = observer(({
   label,
   description,
   hint,
-  options
+  options,
+  componentProps={},
+
+  useBasicInput,
+  inputProps={},
 }) => {
-  const selectedSKU = store.GetMetadata({objectId, path, field}) || "";
+  const selectedSKU = typeof inputProps?.value !== "undefined" ? inputProps.value : store.GetMetadata({objectId, path, field}) || "";
   const selectedItem = options.find(item => item.value === selectedSKU);
 
   return (
-    <Paper withBorder p="xl" pt="sm" mb="md" maw={uiStore.inputWidth}>
-      <Inputs.Select
-        store={store}
-        objectId={objectId}
-        path={path}
-        field={field}
-        category={category}
-        subcategory={subcategory}
-        label={label}
-        description={description}
-        hint={hint}
-        searchable
-        itemComponent={ItemSelectComponent}
-        options={options}
-        componentProps={{
-          mb: "xs",
-          itemComponent: ItemSelectComponent,
-          // Allow filtering by name or sku
-          filter: (filter, item) =>
-            item.label?.toLowerCase().includes(filter?.toLowerCase()) ||
-            item.value?.toLowerCase().includes(filter?.toLowerCase())
-        }}
-      />
+    <Paper withBorder p="xl" pt="sm" mb="md" maw={uiStore.inputWidth} {...componentProps}>
+      {
+        useBasicInput ?
+          <Select data={options} mb="xs" searchable {...inputProps} /> :
+          <Inputs.Select
+            store={store}
+            objectId={objectId}
+            path={path}
+            field={field}
+            category={category}
+            subcategory={subcategory}
+            label={label}
+            description={description}
+            hint={hint}
+            searchable
+            itemComponent={ItemSelectComponent}
+            options={options}
+            componentProps={{
+              mb: "xs",
+              itemComponent: ItemSelectComponent,
+              // Allow filtering by name or sku
+              filter: (filter, item) =>
+                item.label?.toLowerCase().includes(filter?.toLowerCase()) ||
+                item.value?.toLowerCase().includes(filter?.toLowerCase())
+            }}
+          />
+      }
       {
         !selectedItem ? null :
           <Stack p={0} spacing="xs">
@@ -171,6 +183,7 @@ const MarketplaceItemSelectComponent = observer(({
               path={path}
               field={field}
               item={selectedItem}
+              Remove={!useBasicInput ? null : () => inputProps.onChange("")}
             />
           </Stack>
       }
@@ -192,7 +205,6 @@ const MarketplaceItemMultiselectComponent = observer(({
   items,
   options
 }) => {
-  const location = useLocation();
   const selectedSKUs = store.GetMetadata({objectId, path, field}) || [];
 
   const itemList = selectedSKUs.map((sku, index) => {

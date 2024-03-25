@@ -1,10 +1,10 @@
-import EluvioPlayer, {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {InitializeEluvioPlayer, EluvioPlayerParameters} from "@eluvio/elv-player-js";
 import {useRef, useEffect} from "react";
 import {rootStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
-const Video = observer(({videoLink, videoHash, animation, playerOptions={}, className=""}) => {
+const Video = observer(({videoLink, videoHash, animation, playerOptions={}, aspectRatio=16/9, className=""}) => {
   const targetRef = useRef();
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Video = observer(({videoLink, videoHash, animation, playerOptions={}, clas
         };
       }
 
-      playerPromise = new EluvioPlayer(
+      playerPromise = InitializeEluvioPlayer(
         targetRef.current,
         {
           clientOptions: {
@@ -40,6 +40,7 @@ const Video = observer(({videoLink, videoHash, animation, playerOptions={}, clas
             }
           },
           playerOptions: {
+            backgroundColor: "black",
             watermark: EluvioPlayerParameters.watermark.OFF,
             ...controls,
             ...playerOptions
@@ -58,7 +59,7 @@ const Video = observer(({videoLink, videoHash, animation, playerOptions={}, clas
     };
   }, [targetRef, videoLink, videoHash, playerOptions, animation]);
 
-  return <div className={className} ref={targetRef} />;
+  return <div style={{aspectRatio}} className={className} ref={targetRef} />;
 });
 
 export default Video;

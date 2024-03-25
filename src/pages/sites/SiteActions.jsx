@@ -6,7 +6,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 
-import {MarketplaceItemSelect} from "@/components/inputs/MarketplaceItemInput";
+import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 
 const SiteActions = observer(() => {
   const { siteId } = useParams();

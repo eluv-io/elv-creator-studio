@@ -7,9 +7,19 @@ import {FormatChangeList} from "@/stores/helpers/Changelist.js";
 // Store for handling writing content, modification actions and undo/redo functionality
 class EditStore {
   type;
-  writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
+  //writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
+  writeInfo = {};
   actions = {};
   showSaveModal = false;
+
+  types = {
+    "tenant": { storeKey: "tenantStore"},
+    "marketplace": { storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"},
+    "site": { storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"},
+    "item_template": { storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"},
+    "media_catalog": { storeKey: "mediaCatalogStore", namePath: "/public/asset_metadata/info/name"},
+    "media_property": { storeKey: "mediaPropertyStore", namePath: "/public/asset_metadata/info/name"}
+  };
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -18,7 +28,9 @@ class EditStore {
   }
 
   get hasUnsavedChanges() {
-    return this.ChangeLists().find(({changeList}) => !!changeList.string);
+    return Object.values(this.types).find(({storeKey}) =>
+      this.rootStore[storeKey].HasUnsavedChanges()
+    );
   }
 
   Initialize() {
@@ -50,6 +62,7 @@ class EditStore {
           const name = store.GetMetadata({objectId, path: namePath}) || objectId;
           return {
             type,
+            typeName: this.rootStore.l10n.components.save_modal.types[type] || type,
             storeKey,
             name,
             objectId,
@@ -61,12 +74,9 @@ class EditStore {
         .filter(a => a);
     };
 
-    return [
-      ...GetChangeList({type: "tenant", storeKey: "tenantStore"}),
-      ...GetChangeList({type: "marketplace", storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"}),
-      ...GetChangeList({type: "site", storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"}),
-      ...GetChangeList({type: "item_template", storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"})
-    ];
+    return Object.keys(this.types)
+      .map(type => GetChangeList({type, ...this.types[type]}))
+      .flat();
   }
 
   ToggleSaveModal(show) {
@@ -84,7 +94,7 @@ class EditStore {
 
       try {
         this.rootStore.uiStore.SetLoading(true);
-        this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.type} ${item.name}`);
+        this.rootStore.uiStore.SetLoadingMessage(`Saving ${item.typeName} ${item.name}`);
 
         const libraryId = yield this.rootStore.LibraryId({objectId});
         const writeToken = yield this.InitializeWrite({objectId});

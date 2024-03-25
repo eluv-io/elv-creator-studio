@@ -10,12 +10,10 @@ class FabricBrowserStore {
   }
 
   LoadLibraries = flow(function * () {
-    this.rootStore.DebugTimeStart({key: "Load Libraries"});
-
     const libraryIds = yield this.client.ContentLibraries();
 
     // Find properties library
-    let libraries = {};
+    let libraries = {...this.libraries};
     yield Promise.all(
       libraryIds.map(async libraryId => {
         if(this.libraries[libraryId]) { return; }
@@ -41,8 +39,6 @@ class FabricBrowserStore {
     );
 
     this.libraries = libraries;
-
-    this.rootStore.DebugTimeEnd({key: "Load Libraries"});
   });
 
   LoadObjects = flow(function * ({libraryId, sortStatus, filter}) {

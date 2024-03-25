@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, siteStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MarketplaceItemSelect} from "@/components/inputs/MarketplaceItemInput.jsx";
+import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Image, Title} from "@mantine/core";
 

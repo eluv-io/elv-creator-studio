@@ -1,4 +1,4 @@
-import {flow, toJS} from "mobx";
+import {flow, runInAction, toJS} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
@@ -21,6 +21,12 @@ export const ACTIONS = {
   TOGGLE_FIELD: {
     stackable: false
   },
+  ADD_FIELD: {
+    stackable: false
+  },
+  REMOVE_FIELD: {
+    stackable: false
+  },
   SET_DEFAULT: {
     invisible: true,
     stackable: false
@@ -41,6 +47,9 @@ export const ACTIONS = {
     stackable: false
   },
   REMOVE_LIST_ELEMENT: {
+    stackable: false
+  },
+  CUSTOM: {
     stackable: false
   }
 };
@@ -169,6 +178,82 @@ const SetBatchMetadata = function({
   });
 };
 
+const AddField = function({
+  objectId,
+  page,
+  path,
+  field,
+  value,
+  category,
+  subcategory,
+  label
+}) {
+  if(!objectId) {
+    this.DebugLog({message: "Add Field: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  this.ApplyAction({
+    objectId,
+    page,
+    path: UrlJoin(path, field),
+    actionType: "ADD_FIELD",
+    category,
+    subcategory,
+    label,
+    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value),
+    Undo: () => {
+      const metadata = { ...this.GetMetadata({objectId, path}) };
+      delete metadata[field];
+      return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
+    },
+    Write: async (objectParams) => await this.client.ReplaceMetadata({
+      ...objectParams,
+      metadataSubtree: UrlJoin(path, field),
+      metadata: value
+    })
+  });
+};
+
+const RemoveField = function({
+  objectId,
+  page,
+  path,
+  field,
+  category,
+  subcategory,
+  label
+}) {
+  if(!objectId) {
+    this.DebugLog({message: "Remove Field: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+
+  const originalValue = this.GetMetadata({objectId, path, field});
+
+  this.ApplyAction({
+    objectId,
+    page,
+    path: UrlJoin(path, field),
+    actionType: "REMOVE_FIELD",
+    category,
+    subcategory,
+    label,
+    Apply: () => {
+      const metadata = { ...this.GetMetadata({objectId, path}) };
+      delete metadata[field];
+      return Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadata);
+    },
+    Undo: () => Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], originalValue),
+    Write: async (objectParams) => await this.client.DeleteMetadata({
+      ...objectParams,
+      metadataSubtree: UrlJoin(path, field)
+    })
+  });
+};
+
 // Set a default value of a field that will not be subject to the undo/redo flow
 const SetDefaultValue = function({objectId, path, field, category, subcategory, label, value, json=false}) {
   this.SetMetadata({actionType: "SET_DEFAULT", objectId, page: "__set-default", path, field, category, subcategory, label, value, json});
@@ -186,7 +271,8 @@ const SetLink = flow(function * ({
   linkPath="/public/asset_metadata",
   category,
   subcategory,
-  label
+  label,
+  autoUpdate
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -208,15 +294,18 @@ const SetLink = flow(function * ({
     }
 
     writeValue = {
-      ".": {
-        "auto_update": {
-          "tag": "latest"
-        }
-      },
       "/": objectId === linkObjectId ?
         UrlJoin("./", linkType, linkPath) :
         UrlJoin("/qfab", targetHash, linkType, linkPath)
     };
+
+    if(autoUpdate) {
+      writeValue["."] = {
+        "auto_update": {
+          "tag": "latest"
+        }
+      };
+    }
 
     if(linkType === "meta") {
       // Metadata links should contain resolved metadata
@@ -324,6 +413,17 @@ const ListAction = function({
         });
       }
 
+      // If subcategory is a function, resolve it now before item is removed
+      if(typeof subcategory === "function") {
+        subcategory = subcategory({
+          actionType,
+          info: {
+            index,
+            newIndex
+          },
+        });
+      }
+
       newList = originalList.filter((_, i) => i !== index);
       break;
     case "MOVE_LIST_ELEMENT":
@@ -383,6 +483,7 @@ const RemoveListElement = function({objectId, page, path, field, index, ...args}
 const ApplyAction = function ({
   id,
   actionType,
+  changelistLabel,
   objectId,
   page,
   path,
@@ -402,7 +503,7 @@ const ApplyAction = function ({
 
   const { stackable } = ACTIONS[actionType];
 
-  Apply();
+  runInAction(() => Apply());
 
   if(stackable) {
     let stackableActions = [];
@@ -436,6 +537,7 @@ const ApplyAction = function ({
   actionStack.push({
     id,
     actionType,
+    changelistLabel,
     objectId,
     page,
     basePath,
@@ -477,7 +579,7 @@ const UndoAction = flow(function * ({objectId, page}) {
 
   if(!action) { return; }
 
-  yield action.Undo();
+  yield runInAction(async () => await action.Undo());
 
   // Remove undone action from action stack
   this.actionStack[objectId] = this.actionStack[objectId].slice(0, -1);
@@ -492,7 +594,7 @@ const RedoAction = flow(function * ({objectId, page}) {
 
   if(!action) { return; }
 
-  yield action.Apply();
+  yield runInAction(async () => await action.Apply());
 
   // Remove undone action from redo stack
   this.redoStack[objectId] = this.redoStack[objectId].slice(0, -1);
@@ -543,6 +645,12 @@ const SetListFieldIds = function({objectId, path, idField="id", category, label}
   });
 };
 
+const HasUnsavedChanges = function() {
+  return !!Object.values(this.actionStack).find(actions =>
+    actions?.length > 0 && actions?.find(action => action.actionType !== "SET_DEFAULT")
+  );
+};
+
 export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.objectsMapKey = objectsMapKey;
   storeClass.prototype.actionStack = {};
@@ -551,6 +659,8 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.GetMetadata = GetMetadata;
   storeClass.prototype.SetMetadata = SetMetadata;
   storeClass.prototype.SetBatchMetadata = SetBatchMetadata;
+  storeClass.prototype.AddField = AddField;
+  storeClass.prototype.RemoveField = RemoveField;
   storeClass.prototype.SetDefaultValue = SetDefaultValue;
   storeClass.prototype.SetLink = SetLink;
   storeClass.prototype.ListAction = ListAction;
@@ -568,4 +678,6 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.ClearActions = ClearActions;
 
   storeClass.prototype.SetListFieldIds = SetListFieldIds;
+
+  storeClass.prototype.HasUnsavedChanges = HasUnsavedChanges;
 };

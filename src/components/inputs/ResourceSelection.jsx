@@ -9,6 +9,8 @@ export const MarketplaceSelect = observer(({
   allowNone,
   tenantSlugField="tenant_slug",
   marketplaceIdField="marketplace_id",
+  marketplaceSlugField="marketplace_slug",
+  multiselect,
   ...props
 }) => {
   useEffect(() => {
@@ -38,12 +40,26 @@ export const MarketplaceSelect = observer(({
     });
   }
 
-  return (
-    <Inputs.Select
-      {...props}
-      options={marketplaces}
-      defaultValue={props.defaultValue || defaultFirst ? marketplaces[0]?.value : undefined}
-      defaultOnBlankString={props.defaultOnBlankString || defaultFirst}
-    />
-  );
+  if(multiselect) {
+    return (
+      <Inputs.MultiSelect
+        {...props}
+        options={marketplaces}
+        primaryValueField={marketplaceSlugField}
+      />
+    );
+  } else {
+    return (
+      <Inputs.Select
+        {...props}
+        options={marketplaces}
+        defaultValue={props.defaultValue || defaultFirst ? marketplaces[0]?.value : undefined}
+        defaultOnBlankString={props.defaultOnBlankString || defaultFirst}
+      />
+    );
+  }
+});
+
+export const MarketplaceMultiselect = observer(({...props}) => {
+  return <MarketplaceSelect {...props} multiselect />;
 });

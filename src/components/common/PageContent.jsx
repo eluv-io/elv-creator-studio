@@ -7,9 +7,23 @@ import {rootStore, uiStore} from "@/stores";
 import {IconArrowBackUp} from "@tabler/icons-react";
 import {IconButton} from "@/components/common/Misc";
 
-const PageContent = observer(({title, subtitle, section, useHistory, backLink, children}) => {
+const PageContent = observer(({
+  title,
+  subtitle,
+  section,
+  useHistory,
+  backLink,
+  action,
+  children
+}) => {
   return (
-    <Container p="md" pb={200} fluid>
+    <Container p="md" pb={200} fluid style={{position: "relative"}}>
+      {
+        !action ? null :
+          <Group style={{position: "absolute", right: 50}}>
+            { action }
+          </Group>
+      }
       {
         !title ? null :
           <Title order={2} mb={subtitle ? 0 : "xl"} maw={uiStore.inputWidthWide}>

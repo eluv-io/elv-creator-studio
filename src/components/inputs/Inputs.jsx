@@ -33,7 +33,7 @@ import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {GenerateUUID, ParseDate} from "@/helpers/Misc";
+import {CategoryFn, GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "@/components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
@@ -59,6 +59,7 @@ import {
   IconLink,
   IconUnlink
 } from "@tabler/icons-react";
+import {DataTable} from "mantine-datatable";
 
 export const Confirm = ({title, text, onConfirm, ...modalProps}) => {
   modals.openConfirmModal({
@@ -97,6 +98,7 @@ const MultiSelect = observer(({
   objectId,
   path,
   field,
+  primaryValueField, // If options are objects, use this field to determine the canonical value
   category,
   subcategory,
   label,
@@ -112,7 +114,11 @@ const MultiSelect = observer(({
 }) => {
   const location = useLocation();
 
-  const values = value || store.GetMetadata({objectId, path, field}) || [];
+  let values = value || store.GetMetadata({objectId, path, field}) || [];
+
+  if(primaryValueField) {
+    values = values.map(value => value[primaryValueField]);
+  }
 
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
@@ -140,12 +146,19 @@ const MultiSelect = observer(({
     );
   }
 
+  // Remove additionalOptions from list passed to component
+  const inputOptions = options.map(option =>
+    option.label ?
+      ({label: option.label, value: option.value}) :
+      option
+  );
+
   return (
     <MantineMultiSelect
       mb="md"
       disabled={disabled}
       searchable={searchable}
-      data={options}
+      data={inputOptions}
       {...componentProps}
       placeholder={placeholder}
       label={<InputLabel label={label} hint={hint} />}
@@ -170,6 +183,17 @@ const MultiSelect = observer(({
         const addedValues = newValues.filter(value => !values.includes(value));
         addedValues.forEach(newValue => {
           const option = options.find(option => option === newValue || option?.value === newValue);
+
+          if(primaryValueField) {
+            newValue = {
+              [primaryValueField]: newValue,
+            };
+
+            (option.additionalValues || []).forEach(({field, value}) =>
+              newValue[field] = value
+            );
+          }
+
           store.InsertListElement({
             objectId,
             page: location.pathname,
@@ -265,6 +289,13 @@ const Input = observer(({
       value = value || "";
       Component = Textarea;
       componentProps.minRows = componentProps.minRows || 3;
+      componentProps.styles = {
+        ...(componentProps.styles || {}),
+        input: {
+          ...(componentProps?.styles?.input || {}),
+          resize: "vertical"
+        }
+      };
       break;
     case "number":
       // Additional options: min, max, step
@@ -288,7 +319,11 @@ const Input = observer(({
     case "select":
       Component = Select;
       componentProps.searchable = searchable;
-      componentProps.data = [...options];
+      componentProps.data = options.map(option =>
+        option.label ?
+          ({label: option.label, value: option.value}) :
+          option
+      );
       break;
     case "date":
       Component = DatePickerInput;
@@ -314,8 +349,7 @@ const Input = observer(({
         icon={<IconX size={15} />}
         onClick={() => store.SetMetadata({
           objectId,
-          page:
-          location.pathname,
+          page: location.pathname,
           path,
           field,
           value: type === "number" ? undefined : "",
@@ -672,6 +706,8 @@ const SingleImageInput = observer(({
   field,
   url=false,
   noResizePreview,
+  aspectRatio=1,
+  baseSize=150,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -687,6 +723,15 @@ const SingleImageInput = observer(({
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
   }
 
+  let width, height;
+  if(aspectRatio < 1) {
+    width = baseSize;
+    height = width / aspectRatio;
+  } else {
+    height = baseSize;
+    width = height * aspectRatio;
+  }
+
   return (
     <>
       <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
@@ -696,17 +741,17 @@ const SingleImageInput = observer(({
               <Image
                 mb="xs"
                 withPlaceholder
-                height={150}
-                width={150}
+                height={height}
+                width={width}
                 src={imageUrl}
                 alt={label}
                 fit="contain"
                 placeholder={<IconPhotoX size={35} />}
-                styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
+                styles={ theme => ({ image: { padding: 0, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
               />
               </HoverCard.Target>
               <MantineInput.Wrapper
-                maw={150}
+                maw={width}
                 label={<InputLabel centered label={label} hint={hint} />}
                 description={description}
                 labelProps={{style: { width: "100%", textAlign: "center "}}}
@@ -717,8 +762,8 @@ const SingleImageInput = observer(({
             <Image
               mb="xs"
               withPlaceholder
-              height={400}
-              width={400}
+              height={height * 2}
+              width={width * 2}
               src={ScaleImage(imageUrl, 1000)}
               alt={label}
               fit="contain"
@@ -956,9 +1001,11 @@ export const FabricBrowserInput = observer(({
   previewable,
   previewIsAnimation,
   previewOptions={},
+  previewAspectRatio,
   GetName,
   GetImage,
   fabricBrowserProps={},
+  autoUpdate=true,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -1006,7 +1053,8 @@ export const FabricBrowserInput = observer(({
                 linkObjectId: target.objectId,
                 category,
                 subcategory,
-                label
+                label,
+                autoUpdate
               });
             }}
           />
@@ -1123,7 +1171,12 @@ export const FabricBrowserInput = observer(({
               {
                 !showPreview ? null :
                   <Paper mt="sm">
-                    <Video videoLink={value} animation={previewIsAnimation} playerOptions={previewOptions} />
+                    <Video
+                      videoLink={value}
+                      animation={previewIsAnimation}
+                      playerOptions={previewOptions}
+                      aspectRatio={previewAspectRatio}
+                    />
                   </Paper>
               }
             </Paper>
@@ -1155,11 +1208,11 @@ const ImageInput = observer(({
       description={description}
       hint={hint}
       h="max-content"
-      w="100%"
+      w="max-content"
       maw={uiStore.inputWidth}
       {...componentProps}
     >
-      <Group my="md" pt="sm" position="center">
+      <Group my="md" position="center">
         {
           fields.map((field) =>
             <SingleImageInput
@@ -1174,8 +1227,10 @@ const ImageInput = observer(({
               hint={field.hint}
               field={field.field}
               actionLabel={field.label || label}
+              aspectRatio={field.aspectRatio}
               mb={0}
               url={field.url}
+              baseSize={field.baseSize}
             />
           )
         }
@@ -1248,7 +1303,7 @@ const ListInputs = observer(({
         field={index.toString()}
         category={category}
         subcategory={subcategory}
-        label={fieldLabel}
+        //label={fieldLabel}
         actionLabel={actionLabel}
         componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
         {...inputProps}
@@ -1313,18 +1368,38 @@ const List = observer(({
   fieldLabel,
   fields=[],
   newItemSpec={},
+  sortable=true,
   renderItem,
   showBottomAddButton,
   inputProps={},
   narrow,
+  simpleList,
+  children,
+  filterable,
+  Filter,
+  AddItem,
   ...componentProps
 }) => {
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
+
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
-  const simpleList = !renderItem && (!fields || fields.length === 0);
+  simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
 
   const items = values.map((value, index) => {
-    const id = (idField === "index" ? index.toString() : value[idField]) || "";
+    const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+
+    if(
+      filterable &&
+      debouncedFilter &&
+      !(
+        (Filter && Filter({value, filter: debouncedFilter})) ||
+        (value?.toString() || "").toLowerCase().includes(debouncedFilter.toLowerCase())
+      )
+    ) {
+      return null;
+    }
 
     return (
       <Draggable key={`draggable-item-${id || index}`} index={index} draggableId={`item-${id}`}>
@@ -1338,8 +1413,17 @@ const List = observer(({
             key={`list-item-${id}`}
             {...provided.draggableProps}
           >
-            <Group align="start" style={{position: "relative"}} px={40}>
-              <div style={{cursor: "grab", position: "absolute", top: simpleList ? 5 : 0, left: 0}} {...provided.dragHandleProps}>
+            <Group align="start" style={{position: "relative"}} pr={40} pl={sortable ? 40 : 0}>
+              <div
+                style={{
+                  display: sortable ? "block" : "none",
+                  cursor: "grab",
+                  position: "absolute",
+                  top: simpleList ? 5 : 0,
+                  left: 0
+                }}
+                {...provided.dragHandleProps}
+              >
                 <IconGripVertical/>
               </div>
               <Container p={0} m={0} fluid w="100%" maw="unset">
@@ -1363,7 +1447,7 @@ const List = observer(({
 
               <IconButton
                 label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
-                style={{position: "absolute", top: simpleList ? 5 : 0, right: 0}}
+                style={{position: "absolute", top: 0, right: 0}}
                 Icon={IconX}
                 onClick={() => {
                   ConfirmDelete({
@@ -1393,69 +1477,88 @@ const List = observer(({
     <IconButton
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
-      onClick={() =>
+      onClick={async () => {
+        let value = simpleList ? "" : newItemSpec;
+        if(AddItem) {
+          value = await AddItem();
+        }
+
         store.InsertListElement({
           objectId,
           page: location.pathname,
           path,
           field,
-          value: simpleList ? "" : newItemSpec,
+          value,
           category,
           subcategory,
           label: actionLabel || fieldLabel
-        })
-      }
+        });
+      }}
     />
   );
 
   showBottomAddButton = showBottomAddButton || items.length >= 5;
 
   return (
-    <InputWrapper
-      label={label}
-      description={description}
-      hint={hint}
-      maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
-      {...componentProps}
-      w="max-content"
-      miw={`min(100%, ${uiStore.inputWidth}px)`}
-    >
-      <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
-        <DragDropContext
-          onDragEnd={({source, destination}) =>
-            store.MoveListElement({
-              objectId,
-              page: location.pathname,
-              path,
-              field,
-              index: source.index,
-              newIndex: destination.index,
-              category,
-              subcategory,
-              label: actionLabel || fieldLabel
-            })
+    <>
+      {
+        !filterable ? null :
+          <TextInput
+            label={rootStore.l10n.components.inputs.filter}
+            mb="xs"
+            value={filter}
+            onChange={event => setFilter(event.target.value)}
+            maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
+            {...componentProps}
+          />
+      }
+      <InputWrapper
+        label={label}
+        description={description}
+        hint={hint}
+        maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
+        w="max-content"
+        miw={`min(100%, ${uiStore.inputWidth}px)`}
+        {...componentProps}
+      >
+        <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
+          { children }
+          <DragDropContext
+            onDragEnd={({source, destination}) =>
+              store.MoveListElement({
+                objectId,
+                page: location.pathname,
+                path,
+                field,
+                index: source.index,
+                newIndex: destination.index,
+                category,
+                subcategory,
+                label: actionLabel || fieldLabel
+              })
+            }
+          >
+            <Droppable droppableId="simple-list" direction="vertical">
+              {provided => (
+                <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
+                  { items }
+                  { provided.placeholder }
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+            {addButton}
+          </Group>
+          {
+            !showBottomAddButton ? null :
+              <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+                {addButton}
+              </Group>
           }
-        >
-          <Droppable droppableId="simple-list" direction="vertical">
-            {provided => (
-              <Stack p={0} spacing="xs" {...provided.droppableProps} ref={provided.innerRef}>
-                { items }
-                { provided.placeholder }
-              </Stack>
-            )}
-          </Droppable>
-        </DragDropContext>
-        <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
-          {addButton}
-        </Group>
-        {
-          !showBottomAddButton ? null :
-            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
-              {addButton}
-            </Group>
-        }
-      </Container>
-    </InputWrapper>
+        </Container>
+      </InputWrapper>
+    </>
   );
 });
 
@@ -1470,13 +1573,18 @@ const CollectionTableRows = observer(({
   actionLabel,
   columns=[],
   fieldLabel,
-  idField="index",
+  idField=".",
+  nameField,
+  GetName,
   values,
-  routePath=""
+  routePath="",
+  editable=true,
+  Actions
 }) => {
   return (
     values.map((value, index) => {
-      const id = (idField === "index" ? index.toString() : value[idField]) || "";
+      const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+      const name = (GetName && GetName(value)) || nameField && value[nameField];
 
       return (
         <Draggable key={`draggable-item-${id || index}}`} index={index} draggableId={`item-${id}`}>
@@ -1500,21 +1608,28 @@ const CollectionTableRows = observer(({
               )}
               <td style={{width: "100px"}}>
                 <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
+                  {
+                    !Actions ? null :
+                      Actions(value)
+                  }
+                  {
+                    !editable ? null :
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: name || fieldLabel})}
+                        component={Link}
+                        to={UrlJoin(location.pathname, routePath || "", id)}
+                        color="blue.5"
+                        Icon={IconEdit}
+                      />
+                  }
                   <IconButton
-                    label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: fieldLabel})}
-                    component={Link}
-                    to={UrlJoin(location.pathname, routePath || "", id)}
-                    color="blue.5"
-                    Icon={IconEdit}
-                  />
-                  <IconButton
-                    label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
+                    label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: name || fieldLabel})}
                     color="red.5"
                     Icon={IconTrashX}
                     onClick={() => {
                       ConfirmDelete({
-                        listItem: true,
-                        itemName: fieldLabel,
+                        listItem: !name,
+                        itemName: name || fieldLabel,
                         onConfirm: () => store.RemoveListElement({
                           objectId,
                           page: location.pathname,
@@ -1523,8 +1638,8 @@ const CollectionTableRows = observer(({
                           index,
                           category,
                           subcategory,
-                          label: actionLabel || fieldLabel,
-                          useLabel: false
+                          label: name || actionLabel || fieldLabel,
+                          useLabel: !!name
                         })
                       });
                     }}
@@ -1546,6 +1661,7 @@ const CollectionTable = observer(({
   field,
   categoryFnParams,
   category,
+  subcategoryFnParams,
   subcategory,
   label,
   description,
@@ -1555,9 +1671,14 @@ const CollectionTable = observer(({
   fieldLabel,
   newItemSpec={},
   idField="index",
+  nameField,
+  GetName,
   routePath="",
   filterable,
-  Filter
+  Filter,
+  editable=true,
+  AddItem,
+  Actions
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1571,16 +1692,11 @@ const CollectionTable = observer(({
     values;
 
   if(categoryFnParams) {
-    category = (action) => {
-      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
-      let label = categoryFnParams.fields
-        .map(labelField =>
-          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
-        )
-        .filter(f => f)[0];
+    category = CategoryFn({store, objectId, path, field, params: categoryFnParams});
+  }
 
-      return LocalizeString(categoryFnParams.l10n, { label });
-    };
+  if(subcategoryFnParams) {
+    subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
   }
 
   // Only show bottom add button if there are a lot of entries
@@ -1589,9 +1705,18 @@ const CollectionTable = observer(({
     <IconButton
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
-      onClick={() => {
+      onClick={async () => {
+        if(AddItem) {
+          const id = await AddItem();
+
+          if(id) {
+            navigate(UrlJoin(location.pathname, routePath || "", id));
+          }
+          return;
+        }
+
         let id = values.length.toString();
-        let newEntry = { ...newItemSpec };
+        let newEntry = {...newItemSpec};
 
         if(idField !== "index") {
           id = GenerateUUID();
@@ -1676,8 +1801,12 @@ const CollectionTable = observer(({
                     columns={columns}
                     values={filteredValues}
                     idField={idField}
+                    nameField={nameField}
+                    GetName={GetName}
                     fieldLabel={fieldLabel}
                     routePath={routePath}
+                    editable={editable}
+                    Actions={Actions}
                   />
                   {containerProvided.placeholder}
                 </tbody>
@@ -1685,6 +1814,175 @@ const CollectionTable = observer(({
             </Droppable>
           </Table>
         </DragDropContext>
+        <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
+          {addButton}
+        </Group>
+        {
+          !showBottomAddButton ? null :
+            <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
+              {addButton}
+            </Group>
+        }
+      </Container>
+    </InputWrapper>
+  );
+});
+
+
+// A table for 'reference' lists (key->value instead of array)
+const ReferenceTable = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  fieldLabel,
+  description,
+  hint,
+  columns=[],
+  routePath="",
+  pageSize=50,
+  nameField="name",
+  filterable,
+  filterFields=[],
+  Filter,
+  excludedKeys=[],
+  editable=true,
+  selectedRecords,
+  setSelectedRecords,
+  AddItem,
+  protectedKeys=[]
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const map = store.GetMetadata({objectId, path, field}) || {};
+  const values = Object.keys(map)
+    .filter(key => !excludedKeys.includes(key))
+    .map(key => map[key]);
+
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter] = useDebouncedValue(filter, 200);
+  const [sortStatus, setSortStatus] = useState({columnAccessor: nameField, direction: "asc"});
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedFilter]);
+
+  let filteredValues = values;
+  if(filterable) {
+    filteredValues = Filter ?
+      values.filter(value => Filter({filter: debouncedFilter, value})) :
+      values.filter(value => !!filterFields.find(field => (value[field]?.toLowerCase() || "").includes(debouncedFilter.toLowerCase())));
+  }
+
+  filteredValues = filteredValues.sort(
+    SortTable({
+      sortStatus,
+      // Keep special items at the top
+      AdditionalCondition: protectedKeys.length === 0 ? undefined :
+        (a, b) =>
+          protectedKeys.includes(a.id) ?
+            protectedKeys.includes(b.id) ? undefined : -1 :
+            protectedKeys.includes(b.id) ? 1 : undefined
+    })
+  );
+
+  const pagedValues = filteredValues.slice((page - 1) * pageSize, ((page - 1) * pageSize) + pageSize);
+
+  // Only show bottom add button if there are a lot of entries
+  const showBottomAddButton = values.length >= 10;
+
+  let addButton;
+  if(editable && AddItem) {
+    addButton = (
+      <IconButton
+        label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+        Icon={IconPlus}
+        onClick={async () => {
+          const newKey = await AddItem();
+
+          if(newKey) {
+            navigate(UrlJoin(location.pathname, routePath || "", newKey));
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
+      <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
+        {
+          !filterable ? null :
+            <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
+        }
+        <Paper maw={uiStore.inputWidthWide}>
+          <DataTable
+            minHeight={filteredValues.length === 0 ? 200 : 0}
+            withBorder
+            highlightOnHover
+            idAccessor="id"
+            records={pagedValues}
+            sortStatus={sortStatus}
+            onSortStatusChange={setSortStatus}
+            totalRecords={filteredValues.length}
+            recordsPerPage={pageSize}
+            page={values.length > pageSize ? page : undefined}
+            onPageChange={page => setPage(page)}
+            selectedRecords={selectedRecords}
+            onSelectedRecordsChange={setSelectedRecords}
+            columns={[
+              ...columns,
+              !editable ? null :
+              {
+                accessor: "id",
+                width: 120,
+                title: "",
+                render: item => {
+                  const itemName = item[nameField] || fieldLabel;
+
+                  return (
+                    <Group position="right">
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
+                        component={Link}
+                        to={UrlJoin(location.pathname, routePath || "", item.id)}
+                        color="blue.5"
+                        Icon={IconEdit}
+                      />
+                      <IconButton
+                        disabled={protectedKeys.includes(item.id)}
+                        label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
+                        color="red.5"
+                        Icon={IconTrashX}
+                        onClick={() => {
+                          ConfirmDelete({
+                            itemName: itemName,
+                            onConfirm: () => {
+                              store.RemoveField({
+                                objectId,
+                                page,
+                                path: UrlJoin(path, field),
+                                field: item.id,
+                                category,
+                                subcategory,
+                                label: itemName
+                              });
+                            }
+                          });
+                        }}
+                      />
+                    </Group>
+                  );
+                }
+              }
+            ].filter(column => column)}
+          />
+        </Paper>
         <Group position="right" style={{position: "absolute", top: 5, right: 0}}>
           {addButton}
         </Group>
@@ -1725,6 +2023,7 @@ export default {
   ImageInput,
   List,
   CollectionTable,
+  ReferenceTable,
   FabricBrowser: FabricBrowserInput,
   File: FileInput,
   InputWrapper

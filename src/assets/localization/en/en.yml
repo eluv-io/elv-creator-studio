@@ -1,6 +1,8 @@
 components:
   nav:
     home: Home
+    media_properties: Media Properties
+    media_catalogs: Media Catalogs
     marketplaces: Marketplaces
     sites: Sites
     item_templates: Item Templates
@@ -27,6 +29,7 @@ components:
     add: Add {item}
     select_file: Select file for {item}
     edit: Edit {item}
+    navigate_to: Navigate to {item}
     confirm: Confirm
     remove: Remove {item}
     remove_confirm: Are you sure you want to remove {item}?
@@ -34,6 +37,7 @@ components:
     show_editor: Show Editor
     hide_editor: Hide Editor
     clear: Clear this field
+    filter: Filter
     actions:
       modify_field: Modify {field}
       add_item: Add item to {field}
@@ -48,6 +52,7 @@ components:
     validation:
       invalid_url: Invalid URL
       invalid_address: Invalid Address
+      invalid_slug: URL slugs may only contain letters, numbers and hyphens (-).
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory
@@ -99,11 +104,15 @@ components:
       site: Site
       marketplace: Marketplace
       item_template: Item Template
+      media_catalog: Media Catalog
+      media_property: Media Property
 
 stores:
   initialization:
     loading:
       initializing: Initializing
+      types: Initializing Content Types
+      scanning: Scanning for Content
       properties: Running Initial Setup - Discovering Properties
       templates: Running Initial Setup - Discovering Templates
       media: Running Initial Setup - Discovering Media
@@ -119,6 +128,8 @@ actions:
   TOGGLE_FIELD: Toggle '{label}'
   TOGGLE_FIELD_ON: Toggle '{label}' On
   TOGGLE_FIELD_OFF: Toggle '{label}' Off
+  ADD_FIELD: Add {label}
+  REMOVE_FIELD: Remove '{label}'
   SET_LINK: Modify '{label}' link
   UPDATE_LINK: Update '{label}' link
   REMOVE_LINK: Remove '{label}' link
@@ -128,4 +139,5 @@ actions:
   REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list
   MOVE_LIST_ELEMENT: Move '{label}' list position
   MOVE_LIST_ELEMENT_UNLABELLED: Move list position
+  CUSTOM: <Custom Action>
 

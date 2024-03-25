@@ -13,7 +13,7 @@ class SiteStore {
   }
 
   LoadSites = flow(function * () {
-    if(this.allSites?.length > 0) { return; }
+    if(this.allSites) { return; }
 
     this.allSites = yield this.rootStore.databaseStore.GetCollection({collection: "sites"});
   });
