@@ -53,15 +53,28 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
     setRecords(
       selectedFiles
         .map(file => ({
-          ...file,
-          ...(fileStatus[file.filename] || {})
-        }))
+            ...file,
+            ...(fileStatus[file.filepath.replace(/^\//, "")] || {})
+          })
+        )
         .map(record => ({
           ...record,
           total: record.total || record.size,
           progress: (record.uploaded || 0) / (record.total || record.size) * 100
         }))
-        .sort(SortTable({sortStatus}))
+        .sort(
+          // By default, surface currently uploading to the top of the list
+          sortStatus.columnAccessor === "progress" && sortStatus.direction === "desc" ?
+            (a, b) => {
+              if(a.progress >= 100) {
+                return 1;
+              } else if(b.progress >= 100) {
+                return -1;
+              }
+
+              return a.progress < b.progress;
+            } : SortTable({sortStatus})
+        )
     );
   }, [selectedFiles, fileStatus, sortStatus]);
 
@@ -69,28 +82,37 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
     return null ;
   }
 
+  const completedUploads = records.filter(record => record.progress >= 100).length;
+  const completedSize = records.reduce((total, record) => total + (record.uploaded || 0), 0);
+  const totalSize = records.reduce((total, record) => total + (record.total || 0), 0);
   return (
-    <DataTable
-      highlightOnHover
-      idAccessor="filename"
-      height={Math.max(250, uiStore.viewportHeight / 2)}
-      records={records}
-      sortStatus={sortStatus}
-      onSortStatusChange={setSortStatus}
-      columns={[
-        { accessor: "filename", title: rootStore.l10n.components.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
-        { accessor: "size", title: rootStore.l10n.components.file_browser.columns.size, sortable: true, render: ({total, size}) => PrettyBytes(total || size), width: 100 },
-        {
-          accessor: "uploaded",
-          sortable: true,
-          title: rootStore.l10n.components.file_browser.columns.progress,
-          width: 150,
-          render: ({progress}) => {
-            return <Progress value={progress} />;
+    <>
+      <Group position="apart" mb="md">
+        <Text fz="sm" italic fw={600}>Uploading {completedUploads} / {records.length}</Text>
+        <Text fz="sm" italic fw={600}>{PrettyBytes(completedSize)} / {PrettyBytes(totalSize)} ({(completedSize / (totalSize || 1) * 100).toFixed(1)}%)</Text>
+      </Group>
+      <DataTable
+        highlightOnHover
+        idAccessor="filename"
+        height={Math.max(250, uiStore.viewportHeight / 3)}
+        records={records}
+        sortStatus={sortStatus}
+        onSortStatusChange={setSortStatus}
+        columns={[
+          { accessor: "filename", title: rootStore.l10n.components.file_browser.columns.filename, sortable: true, render: ({filename}) => <Text style={{wordWrap: "anywhere"}}>{filename}</Text> },
+          { accessor: "size", title: rootStore.l10n.components.file_browser.columns.size, sortable: true, render: ({total, size}) => PrettyBytes(total || size), width: 100 },
+          {
+            accessor: "uploaded",
+            sortable: true,
+            title: rootStore.l10n.components.file_browser.columns.progress,
+            width: 150,
+            render: ({progress}) => {
+              return <Progress value={progress} />;
+            }
           }
-        }
-      ]}
-    />
+        ]}
+      />
+    </>
   );
 });
 
@@ -171,7 +193,7 @@ const UploadForm = observer(({objectId, path, Close}) => {
         {
           selectedFiles.length === 0 ? null :
             <Container mt={50}>
-              <UploadStatus selectedFiles={selectedFiles} fileStatus={fileStatus} />
+              <UploadStatus path={path} selectedFiles={selectedFiles} fileStatus={fileStatus} />
             </Container>
         }
         <Group position="right" mt={50}>

@@ -146,12 +146,19 @@ const MultiSelect = observer(({
     );
   }
 
+  // Remove additionalOptions from list passed to component
+  const inputOptions = options.map(option =>
+    option.label ?
+      ({label: option.label, value: option.value}) :
+      option
+  );
+
   return (
     <MantineMultiSelect
       mb="md"
       disabled={disabled}
       searchable={searchable}
-      data={options}
+      data={inputOptions}
       {...componentProps}
       placeholder={placeholder}
       label={<InputLabel label={label} hint={hint} />}
@@ -312,7 +319,11 @@ const Input = observer(({
     case "select":
       Component = Select;
       componentProps.searchable = searchable;
-      componentProps.data = [...options];
+      componentProps.data = options.map(option =>
+        option.label ?
+          ({label: option.label, value: option.value}) :
+          option
+      );
       break;
     case "date":
       Component = DatePickerInput;

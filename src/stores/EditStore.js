@@ -7,7 +7,8 @@ import {FormatChangeList} from "@/stores/helpers/Changelist.js";
 // Store for handling writing content, modification actions and undo/redo functionality
 class EditStore {
   type;
-  writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
+  //writeInfo = StorageHandler.get({type: "local",  key: "write-info", json: true, b64: true}) || {};
+  writeInfo = {};
   actions = {};
   showSaveModal = false;
 
