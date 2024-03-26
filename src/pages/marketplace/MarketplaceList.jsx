@@ -51,6 +51,7 @@ const MarketplaceCard = observer(({marketplace, fullMarketplace}) => {
 const MarketplaceList = observer(() => {
   return (
     <AsyncWrapper
+      key="marketplaces"
       loadingMessage="Loading Marketplaces"
       Load={async () => await marketplaceStore.LoadMarketplaces({force: true})}
     >

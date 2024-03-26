@@ -23,6 +23,7 @@ const SectionLayout = observer(({links=[], backLink, loadingMessage, Load}) => {
         !Load ?
           <Outlet/> :
           <AsyncWrapper
+            key="sections"
             loadingMessage={loadingMessage}
             Load={async () => Load(params)}
           >

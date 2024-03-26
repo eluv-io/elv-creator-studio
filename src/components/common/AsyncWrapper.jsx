@@ -21,7 +21,7 @@ const AsyncWrapper = observer(({children, loadingMessage, Load}) => {
         clearTimeout(timeout);
       });
 
-  }, [loadingMessage, Load]);
+  }, []);
 
   return !loaded ? null :
     typeof children === "function" ? children() : children;

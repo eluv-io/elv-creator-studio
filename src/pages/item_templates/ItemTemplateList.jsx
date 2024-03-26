@@ -56,6 +56,7 @@ const ItemTemplateList = observer(() => {
 
   return (
     <AsyncWrapper
+      key="item-templates"
       loadingMessage="Loading Item Templates"
       Load={async () => await itemTemplateStore.LoadItemTemplates()}
     >

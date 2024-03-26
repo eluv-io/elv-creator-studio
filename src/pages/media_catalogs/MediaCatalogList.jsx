@@ -104,7 +104,8 @@ const MediaCatalogList = observer(() => {
   const l10n = rootStore.l10n.pages.media_catalog.form;
   return (
     <AsyncWrapper
-      loadingMessage="Loading MediaCatalogs"
+      key="media-catalogs"
+      loadingMessage="Loading Media Catalogs"
       Load={async () => await mediaCatalogStore.LoadMediaCatalogs()}
     >
       <PageContent

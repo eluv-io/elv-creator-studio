@@ -51,6 +51,7 @@ const SiteCard = observer(({site, fullSite}) => {
 const SiteList = observer(() => {
   return (
     <AsyncWrapper
+      key="sites"
       loadingMessage="Loading Sites"
       Load={async () => await siteStore.LoadSites()}
     >

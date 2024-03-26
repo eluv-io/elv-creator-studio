@@ -115,7 +115,8 @@ const MediaPropertyList = observer(() => {
   const l10n = rootStore.l10n.pages.media_property.form;
   return (
     <AsyncWrapper
-      loadingMessage="Loading MediaProperties"
+      key="media-properties"
+      loadingMessage="Loading Media Properties"
       Load={async () => await mediaPropertyStore.LoadMediaProperties()}
     >
       <PageContent
