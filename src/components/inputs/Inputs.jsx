@@ -735,7 +735,7 @@ const SingleImageInput = observer(({
   return (
     <>
       <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
-        <HoverCard shadow="xl" openDelay={imageUrl ? 500 : 100000}>
+        <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
           <UnstyledButton onClick={() => setShowFileBrowser(true)}>
             <HoverCard.Target>
               <Image

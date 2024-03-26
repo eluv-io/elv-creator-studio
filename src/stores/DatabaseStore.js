@@ -4,9 +4,12 @@ import * as FS from "firebase/firestore/lite";
 import UrlJoin from "url-join";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
+const DATABASE_VERSION = 1;
+
 class DatabaseStore {
   firebase;
   firestore;
+  appName = EluvioConfiguration.dev ? "creatorStudio-dev" : "creatorStudio";
 
   get client() {
     return this.rootStore.client;
@@ -117,8 +120,11 @@ class DatabaseStore {
 
     // Problem: The only reliable way to determine the 'right' tenant ID is by finding the properties library
     const tenantInfo = yield this.GetDocument({collection: "tenant", document: "info"});
+    const dbInfo = yield this.GetDocument({collection: "database", document: "info"});
 
-    if(tenantInfo && !force) {
+    const isOldDB = !dbInfo || dbInfo.version < DATABASE_VERSION;
+
+    if(tenantInfo && !isOldDB && !force) {
       this.rootStore.DebugLog({message: "Database already set up - skipping", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
       return;
     }
@@ -499,7 +505,10 @@ class DatabaseStore {
         await this.WriteDocument({batch, collection: "templates", document: template.objectId, content: template});
       })
     );
+
+    yield this.WriteDocument({batch, collection: "database", document: "info",  content: { version: DATABASE_VERSION, created: new Date().toISOString() }});
     yield batch.commit();
+
 
     /*
     batch = FS.writeBatch(this.firestore);
@@ -738,7 +747,7 @@ class DatabaseStore {
 
   GetCollection = flow(function * ({collection, conditions}) {
     try {
-      let ref = FS.collection(this.firestore, "tenants", this.rootStore.tenantId, collection);
+      let ref = FS.collection(this.firestore, "apps", this.appName, "tenants", this.rootStore.tenantId, collection);
       if(conditions && conditions.length > 0) {
         ref = FS.query(ref, FS.where(...conditions));
       }
@@ -756,7 +765,7 @@ class DatabaseStore {
 
   GetDocument = flow(function * ({collection, document}) {
     try {
-      const ref = FS.doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
+      const ref = FS.doc(this.firestore, "apps", this.appName, "tenants", this.rootStore.tenantId, collection, document);
       const results = yield FS.getDoc(ref);
 
       if(results.exists()) {
@@ -770,11 +779,13 @@ class DatabaseStore {
   WriteDocument = flow(function * ({batch, collection, document, content}) {
     try {
       this.rootStore.DebugLog({
-        message: `${batch ? "(batch) " : ""} Writing ${UrlJoin("tenants", this.rootStore.tenantId, collection, document)}`,
+        message: `${batch ? "(batch) " : ""} Writing ${UrlJoin("apps", this.appName, "tenants", this.rootStore.tenantId, collection, document)}`,
         level: this.logLevels.DEBUG_LEVEL_INFO
       });
 
-      const ref = FS.doc(this.firestore, "tenants", this.rootStore.tenantId, collection, document);
+      content.updated = new Date().toISOString();
+
+      const ref = FS.doc(this.firestore, "apps", this.appName, "tenants", this.rootStore.tenantId, collection, document);
       if(batch) {
         batch.set(ref, content);
       } else {
