@@ -30,16 +30,6 @@ const MediaCatalogGeneralSettings = observer(() => {
     >
       <Inputs.Text
         {...inputProps}
-        {...l10n.common.id}
-        disabled
-        subcategory={l10n.categories.info}
-        path="/public/asset_metadata/info"
-        field="id"
-        defaultValue={`${mediaCatalogStore.ID_PREFIXES["media_catalog"]}${GenerateUUID()}`}
-      />
-
-      <Inputs.Text
-        {...inputProps}
         {...l10n.common.name}
         subcategory={l10n.categories.info}
         path="/public/asset_metadata/info"
