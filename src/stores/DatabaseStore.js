@@ -74,6 +74,7 @@ class DatabaseStore {
     let typeIds = {};
 
     const allTypes = yield this.client.ContentTypes();
+    const tenantContractId = yield this.client.userProfileClient.TenantContractId();
 
     yield Promise.all(
       Object.keys(typeNames).map(async key => {
@@ -108,6 +109,35 @@ class DatabaseStore {
               }
             }
           });
+
+          const permissions = [
+            { group: "tenant_admin", permission: "manage" },
+            { group: "tenant_users", permission: "access" },
+            { group: "content_admin", permission: "manage" }
+          ];
+
+          await Promise.all(
+            permissions.map(async ({group, permission}) => {
+              try {
+                const groupAddress = await this.client.CallContractMethod({
+                  contractAddress: this.client.utils.HashToAddress(tenantContractId),
+                  methodName: "groupsMapping",
+                  methodArgs: [group, 0],
+                  formatArguments: true,
+                });
+
+                if(groupAddress) {
+                  await this.client.AddContentObjectGroupPermission({
+                    objectId: typeIds[key],
+                    groupAddress: groupAddress,
+                    permission
+                  });
+                }
+              } catch(error) {
+                this.rootStore.DebugLog({message: `Unable to find group ${group} for type permissions`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+              }
+            })
+          );
         }
       })
     );

@@ -117,6 +117,8 @@ stores:
       templates: Running Initial Setup - Discovering Templates
       media: Running Initial Setup - Discovering Media
       saving: Running Initial Setup - Saving
+    errors:
+      tenant_id_missing: Current account does not have tenant contract ID set - Please set the tenant ID in the user's profile
 
 actions:
   SET_DEFAULT: Set Default Value for `{label}`

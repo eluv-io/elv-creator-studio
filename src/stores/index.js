@@ -107,6 +107,17 @@ class RootStore {
 
     this.tenantId = yield this.client.userProfileClient.TenantContractId();
 
+    if(!this.tenantId) {
+      this.uiStore.SetLoadingMessage(this.l10n.stores.initialization.errors.tenant_id_missing);
+
+      this.DebugLog({
+        error: this.l10n.stores.initialization.errors.tenant_id_missing,
+        level: this.logLevels.DEBUG_LEVEL_ERROR
+      });
+
+      return;
+    }
+
     yield this.databaseStore.Initialize();
     yield this.tenantStore.Initialize();
     yield this.editStore.Initialize();
