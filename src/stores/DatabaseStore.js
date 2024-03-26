@@ -3,6 +3,7 @@ import {initializeApp} from "firebase/app";
 import * as FS from "firebase/firestore/lite";
 import UrlJoin from "url-join";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
+import {GenerateUUID} from "@/helpers/Misc.js";
 
 const DATABASE_VERSION = 1;
 
@@ -57,6 +58,37 @@ class DatabaseStore {
     }
   });
 
+  AddGroupPermissions = flow(function * ({objectId}) {
+    const permissions = [
+      { group: "tenant_admin", permission: "manage" },
+      { group: "tenant_users", permission: "access" },
+      { group: "content_admin", permission: "manage" }
+    ];
+
+    yield Promise.all(
+      permissions.map(async ({group, permission}) => {
+        try {
+          const groupAddress = await this.client.CallContractMethod({
+            contractAddress: this.client.utils.HashToAddress(this.rootStore.tenantId),
+            methodName: "groupsMapping",
+            methodArgs: [group, 0],
+            formatArguments: true,
+          });
+
+          if(groupAddress) {
+            await this.client.AddContentObjectGroupPermission({
+              objectId,
+              groupAddress: groupAddress,
+              permission
+            });
+          }
+        } catch(error) {
+          this.rootStore.DebugLog({message: `Unable to find group ${group} for object permissions`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+        }
+      })
+    );
+  });
+
   InitializeTypes = flow(function * () {
     this.rootStore.DebugLog({message: "Initializing Types", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
@@ -74,7 +106,6 @@ class DatabaseStore {
     let typeIds = {};
 
     const allTypes = yield this.client.ContentTypes();
-    const tenantContractId = yield this.client.userProfileClient.TenantContractId();
 
     yield Promise.all(
       Object.keys(typeNames).map(async key => {
@@ -110,39 +141,63 @@ class DatabaseStore {
             }
           });
 
-          const permissions = [
-            { group: "tenant_admin", permission: "manage" },
-            { group: "tenant_users", permission: "access" },
-            { group: "content_admin", permission: "manage" }
-          ];
-
-          await Promise.all(
-            permissions.map(async ({group, permission}) => {
-              try {
-                const groupAddress = await this.client.CallContractMethod({
-                  contractAddress: this.client.utils.HashToAddress(tenantContractId),
-                  methodName: "groupsMapping",
-                  methodArgs: [group, 0],
-                  formatArguments: true,
-                });
-
-                if(groupAddress) {
-                  await this.client.AddContentObjectGroupPermission({
-                    objectId: typeIds[key],
-                    groupAddress: groupAddress,
-                    permission
-                  });
-                }
-              } catch(error) {
-                this.rootStore.DebugLog({message: `Unable to find group ${group} for type permissions`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-              }
-            })
-          );
+          await this.AddGroupPermissions({objectId: typeIds[key]});
         }
       })
     );
 
     return typeIds;
+  });
+
+  InitializeTenantObject = flow(function * ({propertiesLibraryId, typeId}) {
+    const {id} = yield this.client.CreateAndFinalizeContentObject({
+      libraryId: propertiesLibraryId,
+      options: {
+        type: typeId
+      },
+      callback: async ({objectId, writeToken}) => {
+        await this.client.ReplaceMetadata({
+          libraryId: propertiesLibraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: "public",
+          metadata: {
+            "asset_metadata": {
+              "info": {
+                "branding": {},
+                "name": "Tenant",
+                "open_id": {
+                  "issuer_id": "",
+                  "issuer_url": ""
+                },
+                "tenant_id": this.rootStore.tenantId,
+                "token": {
+                  "leaderboard_excludes": [],
+                  "min_list_price": null,
+                  "owners": [],
+                  "revenue_addr": "",
+                  "royalty": null,
+                  "royalty_addr": ""
+                }
+              },
+              "marketplaces": {},
+              "sites": {},
+              "media_properties": {},
+              "media_catalogs": {},
+              "slug": GenerateUUID(),
+              "title": "Tenant",
+            },
+            "content_spec": "Tenant",
+            "description": "",
+            "name": "Tenant"
+          }
+        });
+      }
+    });
+
+    yield this.client.SetPermission({objectId: id, permission: "listable"});
+
+    yield this.AddGroupPermissions({objectId: id});
   });
 
   ScanContent = flow(function * ({force}={}) {
@@ -173,7 +228,7 @@ class DatabaseStore {
           metadataSubtree: "public"
         });
 
-        if(metadata?.name?.toLowerCase()?.includes("- properties")) {
+        if(metadata?.name?.toLowerCase()?.includes("properties")) {
           propertiesLibraryId = libraryId;
           break;
         }
@@ -265,8 +320,13 @@ class DatabaseStore {
     });
 
     if(!content.tenant) {
-      this.DebugLog({message: "Unable to find tenant object", level: this.logLevels.DEBUG_LEVEL_ERROR});
-      return;
+      this.DebugLog({message: "Unable to find tenant object, creating", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+      this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.creating_tenant);
+
+      // Tenant not set: Create tenant object and restart
+      yield this.InitializeTenantObject({propertiesLibraryId, typeId: typeIds.tenant});
+
+      return this.ScanContent({force});
     }
 
     this.rootStore.DebugLog({message: "Determining slugs for properties", level: this.logLevels.DEBUG_LEVEL_MEDIUM});

@@ -114,7 +114,7 @@ const UnlinkButton = ({type, record}) => {
 
 const DeploymentStatus = observer(({mode}) => {
   const [deploying, setDeploying] = useState(false);
-  const tenant = tenantStore[`${mode}Tenant`];
+  const tenant = tenantStore[`${mode}Tenant`] || {};
 
   const l10n = rootStore.l10n.pages.tenant.form;
   const deployed = tenantStore[`${mode}TenantDeployed`];

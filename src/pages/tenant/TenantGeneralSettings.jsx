@@ -47,7 +47,6 @@ const TenantGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.tenant_slug}
         subcategory={l10n.categories.info}
-        disabled
         path="/public/asset_metadata"
         field="slug"
         defaultValue={tenantStore.tenantInfo?.tenantSlug}

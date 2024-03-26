@@ -39,7 +39,7 @@ const HeaderLinkConfiguration = observer(({type}) => {
         defaultValue={false}
       />
       {
-        info.header_links[type]?.hide ? null :
+        info.header_links?.[type]?.hide ? null :
           <>
             <Inputs.Text
               {...inputProps}
@@ -58,7 +58,7 @@ const HeaderLinkConfiguration = observer(({type}) => {
               defaultValue={false}
             />
             {
-              info.header_links[type]?.hide_icon ? null :
+              info.header_links?.[type]?.hide_icon ? null :
                 <Inputs.SingleImageInput
                   {...inputProps}
                   {...l10n.general.header_icon}

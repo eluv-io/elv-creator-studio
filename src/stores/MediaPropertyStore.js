@@ -223,12 +223,14 @@ class MediaPropertyStore {
             }
           }
         });
-
-        await this.client.SetPermission({objectId, writeToken, permission: "listable"});
       }
     });
 
     const objectId = response.id;
+
+    yield this.client.SetPermission({objectId, permission: "listable"});
+
+    yield this.rootStore.databaseStore.AddGroupPermissions({objectId});
 
     yield Promise.all([
       this.UpdateDatabaseRecord({objectId}),

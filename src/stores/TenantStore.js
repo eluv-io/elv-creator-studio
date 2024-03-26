@@ -24,11 +24,11 @@ class TenantStore {
   }
 
   get productionTenantDeployed() {
-    return this.latestTenant.versionHash === this.productionTenant.versionHash;
+    return this.latestTenant.versionHash === this.productionTenant?.versionHash;
   }
 
   get stagingTenantDeployed() {
-    return this.latestTenant.versionHash === this.stagingTenant.versionHash;
+    return this.latestTenant.versionHash === this.stagingTenant?.versionHash;
   }
 
   async MarketplaceStatus() {
@@ -48,8 +48,8 @@ class TenantStore {
         }
 
         const latestHash = ExtractHashFromLink(tenantStore.latestTenant.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
-        const productionHash = ExtractHashFromLink(tenantStore.productionTenant.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
-        const stagingHash = ExtractHashFromLink(tenantStore.stagingTenant.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
+        const productionHash = ExtractHashFromLink(tenantStore.productionTenant?.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
+        const stagingHash = ExtractHashFromLink(tenantStore.stagingTenant?.metadata.public.asset_metadata.marketplaces[marketplace.marketplaceSlug]);
 
         return {
           name,
@@ -91,8 +91,8 @@ class TenantStore {
         }
 
         const latestHash = ExtractHashFromLink(tenantStore.latestTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
-        const productionHash = ExtractHashFromLink(tenantStore.productionTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
-        const stagingHash = ExtractHashFromLink(tenantStore.stagingTenant.metadata.public.asset_metadata.sites[site.siteSlug]);
+        const productionHash = ExtractHashFromLink(tenantStore.productionTenant?.metadata.public.asset_metadata.sites[site.siteSlug]);
+        const stagingHash = ExtractHashFromLink(tenantStore.stagingTenant?.metadata.public.asset_metadata.sites[site.siteSlug]);
 
         return {
           name,

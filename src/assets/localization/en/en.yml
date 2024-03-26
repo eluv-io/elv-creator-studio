@@ -113,6 +113,7 @@ stores:
       initializing: Initializing
       types: Initializing Content Types
       scanning: Scanning for Content
+      creating_tenant: Running Initial Setup - Initializing Tenant
       properties: Running Initial Setup - Discovering Properties
       templates: Running Initial Setup - Discovering Templates
       media: Running Initial Setup - Discovering Media
