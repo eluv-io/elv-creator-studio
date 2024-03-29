@@ -8,6 +8,7 @@ import {
   MediaPropertySectionItemMediaSpec,
   MediaPropertySectionItemPageLinkSpec,
   MediaPropertySectionItemPropertyLinkSpec,
+  MediaPropertySectionItemPurchaseSpec,
   MediaPropertySectionItemSubpropertyLinkSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
@@ -31,6 +32,7 @@ class MediaPropertyStore {
 
   SECTION_CONTENT_TYPES = {
     "media": "Media",
+    "item_purchase": "Item Purchase",
     "filter": "Filtered View",
     "page_link": "Page Link",
     "property_link": "Property Link",
@@ -313,6 +315,9 @@ class MediaPropertyStore {
         spec.media_id = mediaItemId;
         spec.media_type = mediaItem?.type;
         spec.expand = expand;
+        break;
+      case "item_purchase":
+        spec = Clone(MediaPropertySectionItemPurchaseSpec);
         break;
       case "filter":
         spec = Clone(MediaPropertySectionItemFilterSpec);

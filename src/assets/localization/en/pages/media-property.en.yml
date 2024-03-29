@@ -29,6 +29,7 @@ form:
     section_item: Section Item
     section_item_label: Section Item `{label}`
     section_item_presentation: Section Item Presentation
+    purchase_item: Purchase Item
   create:
     create: Create New {type}
     name:
@@ -219,6 +220,13 @@ form:
     use_media_settings:
       label: Use Media Presentation Settings
       description: If checked, this item will be presented in the section according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item when displayed in this section.
+    banner_images:
+      label: Banner Images
+      description: Banner images span the whole page width
+    banner_image:
+      label: Banner Image (Desktop)
+    banner_image_mobile:
+      label: Banner Image (Mobile)
     page:
       label: Page
     property:
@@ -234,4 +242,20 @@ form:
     marketplace_sku:
       label: Marketplace Item (optional)
       description: Link to a specific item page
+    purchasable_items:
+      label: Purchasable Items
+      fieldLabel: Item
+    purchasable_item:
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
+      description:
+        label: Description
+      marketplace:
+        label: Marketplace
+      marketplace_sku:
+        label: Item
+
+
 

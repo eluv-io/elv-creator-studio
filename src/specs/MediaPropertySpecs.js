@@ -87,7 +87,11 @@ export const MediaPropertySectionItemBaseSpec = {
   label: "",
   description: "",
   type: "media", // Filter link, page link, property link
-  display: MediaCatalogBaseSpec
+  display: {
+    ...MediaCatalogBaseSpec,
+    banner_image: undefined,
+    banner_image_mobile: undefined
+  }
 };
 
 export const MediaPropertySectionItemMediaSpec = {
@@ -127,6 +131,20 @@ export const MediaPropertySectionItemSubpropertyLinkSpec = {
 export const MediaPropertySectionItemMarketplaceLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
   type: "marketplace_link",
+  marketplace: undefined,
+  marketplace_sku: ""
+};
+
+export const MediaPropertySectionItemPurchaseSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "item_purchase",
+  items: []
+};
+
+export const MediaPropertySectionItemPurchaseItemSpec = {
+  id: undefined,
+  title: "",
+  description: "",
   marketplace: undefined,
   marketplace_sku: ""
 };

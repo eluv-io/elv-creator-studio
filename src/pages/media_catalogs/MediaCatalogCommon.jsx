@@ -246,7 +246,7 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
               Object.keys(info.attributes).map(attributeId => {
                 const attribute = info.attributes[attributeId];
                 return (
-                  <Inputs.Select
+                  <Inputs.MultiSelect
                     componentProps={{mt: "md"}}
                     key={`attribute-${attributeId}`}
                     {...inputProps}
@@ -256,10 +256,7 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
                     subcategory={l10n.categories.attributes}
                     label={attribute.title || "Attribute"}
                     defaultValue=""
-                    options={[
-                      {label: "<None>", value: ""},
-                      ...(info.attributes[attributeId].tags || [])
-                    ]}
+                    options={info.attributes[attributeId].tags || []}
                   />
                 );
               })

@@ -13,6 +13,7 @@ import {MarketplaceItemSelect} from "@/components/inputs/marketplace/Marketplace
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 import {useEffect} from "react";
+import {MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
 
 const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inputProps, l10n}) => {
   const pages = Object.keys(mediaProperty.pages);
@@ -133,7 +134,7 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
   }
 });
 
-const SectionItemPresentation = observer(({mediaPropertyId, inputProps, mediaItem}) => {
+const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inputProps, mediaItem}) => {
   // These fields mirror catalog media configuration
   const l10n = rootStore.l10n.pages.media_catalog.form;
 
@@ -166,18 +167,24 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, mediaIte
         field="headers"
       />
 
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.media.description}
-        field="description"
-        placeholder={mediaItem?.description}
-      />
+      {
+        /*
 
-      <Inputs.RichText
-        {...inputProps}
-        {...l10n.media.description_rich_text}
-        field="description_rich_text"
-      />
+          <Inputs.TextArea
+            {...inputProps}
+            {...l10n.media.description}
+            field="description"
+            placeholder={mediaItem?.description}
+          />
+
+          <Inputs.RichText
+            {...inputProps}
+            {...l10n.media.description_rich_text}
+            field="description_rich_text"
+          />
+
+         */
+      }
 
       <Inputs.MultiSelect
         {...inputProps}
@@ -190,17 +197,20 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, mediaIte
         placeholder={mediaItem?.tags?.join(", ") || ""}
       />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.media.thumbnail_images}
-        componentProps={{maw: uiStore.inputWidthWide}}
-        fields={[
-          { ...l10n.media.image_portrait, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Portrait"]?.ratio, field: "thumbnail_image_portrait" },
-          { ...l10n.media.image_square, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Square"]?.ratio, field: "thumbnail_image_square" },
-          { ...l10n.media.image_landscape, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "thumbnail_image_landscape" }
-        ]}
-        altTextField="thumbnail_alt_text"
-      />
+      {
+        sectionDisplay === "banner" ? null :
+          <Inputs.ImageInput
+            {...inputProps}
+            {...l10n.media.thumbnail_images}
+            componentProps={{maw: uiStore.inputWidthWide}}
+            fields={[
+              { ...l10n.media.image_portrait, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Portrait"]?.ratio, field: "thumbnail_image_portrait" },
+              { ...l10n.media.image_square, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Square"]?.ratio, field: "thumbnail_image_square" },
+              { ...l10n.media.image_landscape, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "thumbnail_image_landscape" }
+            ]}
+            altTextField="thumbnail_alt_text"
+          />
+      }
     </>
   );
 });
@@ -297,6 +307,68 @@ const MediaPropertySectionItem = observer(() => {
       />
 
       {
+        sectionItem.type !== "item_purchase" ? null :
+          <Inputs.List
+            {...inputProps}
+            {...l10n.section_items.purchasable_items}
+            newItemSpec={MediaPropertySectionItemPurchaseItemSpec}
+            field="items"
+            maw="100%"
+            renderItem={props => {
+              return (
+                <>
+                  <Inputs.UUID
+                    {...props}
+                    hidden
+                    field="id"
+                  />
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.section_items.purchasable_item.title}
+                    subcategory={l10n.categories.purchase_item}
+                    field="title"
+                  />
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.section_items.purchasable_item.subtitle}
+                    subcategory={l10n.categories.purchase_item}
+                    field="subtitle"
+                  />
+                  <Inputs.TextArea
+                    {...props}
+                    {...l10n.section_items.purchasable_item.description}
+                    subcategory={l10n.categories.purchase_item}
+                    field="description"
+                  />
+                  <MarketplaceSelect
+                    {...props}
+                    {...l10n.section_items.purchasable_item.marketplace}
+                    subcategory={l10n.categories.purchase_item}
+                    path={UrlJoin(props.path, "/marketplace")}
+                    field="marketplace_slug"
+                    defaultFirst
+                  />
+                  <MarketplaceItemSelect
+                    {...props}
+                    {...l10n.section_items.purchasable_item.marketplace_sku}
+                    subcategory={l10n.categories.purchase_item}
+                    marketplaceSlug={props.item?.marketplace?.marketplace_slug}
+                    field="marketplace_sku"
+                    componentProps={{
+                      withBorder: false,
+                      p: 0,
+                      pt: 0,
+                      pb: 0,
+                      mb:0
+                    }}
+                  />
+                </>
+              );
+            }}
+          />
+      }
+
+      {
         sectionItem.expand ? null :
           <>
             <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_presentation}</Title>
@@ -317,6 +389,20 @@ const MediaPropertySectionItem = observer(() => {
                   mediaPropertyId={mediaPropertyId}
                   inputProps={inputProps}
                   mediaItem={mediaItem}
+                  sectionDisplay={section.display?.display_format}
+                />
+            }
+            {
+              section.display?.display_format !== "banner" ? null :
+                <Inputs.ImageInput
+                  {...inputProps}
+                  {...l10n.section_items.banner_images}
+                  componentProps={{maw: uiStore.inputWidthWide}}
+                  fields={[
+                    { ...l10n.section_items.banner_image, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image" },
+                    { ...l10n.section_items.banner_image_mobile, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image_mobile" }
+                  ]}
+                  altTextField="banner_alt_text"
                 />
             }
           </>

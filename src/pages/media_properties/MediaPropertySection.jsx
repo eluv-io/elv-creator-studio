@@ -216,6 +216,11 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
           />
         </>
       );
+
+      break;
+    case "item_purchase":
+      formContent = null;
+      break;
   }
 
   return (
@@ -279,7 +284,7 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   );
 });
 
-export const SectionItemTitle = observer(({sectionItem, aspectRatio}) => {
+export const SectionItemTitle = observer(({sectionItem, aspectRatio, banner}) => {
   sectionItem = mediaPropertyStore.GetResolvedSectionItem({sectionItem});
 
   const mediaLabel = (
@@ -292,10 +297,12 @@ export const SectionItemTitle = observer(({sectionItem, aspectRatio}) => {
   return (
     <Group noWrap>
       <MediaItemImage
-        mediaItem={sectionItem.display}
+        imageUrl={banner ? sectionItem?.banner_image?.url : undefined}
+        mediaItem={banner ? undefined : sectionItem.display}
         scale={400}
         width={50}
         height={50}
+        banner={banner}
         fit="contain"
         position="left"
         aspectRatio={aspectRatio}
@@ -389,7 +396,12 @@ const SectionContentList = observer(() => {
           {
             label: l10n.sections.label.label,
             field: "label",
-            render: sectionItem => <SectionItemTitle sectionItem={sectionItem} aspectRatio={section.display.aspect_ratio} />
+            render: sectionItem =>
+              <SectionItemTitle
+                sectionItem={sectionItem}
+                aspectRatio={section.display.aspect_ratio}
+                banner={section.display?.display_format === "banner"}
+              />
               //sectionItem.label :
               //<Text italic>{mediaPropertyStore.GetSectionItemLabel({mediaPropertyId, sectionId, sectionItemId: sectionItem.id})}</Text>
           },
@@ -692,6 +704,20 @@ const MediaPropertySection = observer(() => {
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.display_format}
+        defaultValue="Carousel"
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="display_format"
+        options={[
+          { label: "Carousel", value: "carousel" },
+          { label: "Grid", value: "grid" },
+          { label: "Banner", value: "banner" }
+        ]}
+      />
+
       <Inputs.Text
         {...inputProps}
         {...l10n.sections.display.title}
@@ -726,81 +752,72 @@ const MediaPropertySection = observer(() => {
 
       <Inputs.Select
         {...inputProps}
-        {...l10n.sections.display.display_format}
-        defaultValue="Carousel"
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        field="display_format"
-        options={[
-          { label: "Carousel", value: "carousel" },
-          { label: "Grid", value: "grid" },
-          { label: "Feature", value: "feature" }
-        ]}
-      />
-
-      <Inputs.Integer
-        {...inputProps}
-        {...l10n.sections.display.display_limit}
-        min={0}
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        field="display_limit"
-      />
-
-      <Inputs.Select
-        {...inputProps}
         {...l10n.sections.display.justification}
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         defaultValue="left"
         field="justification"
         options={[
-          { label: "Left", value: "left" },
-          { label: "Center", value: "center" },
-          { label: "Right", value: "right" },
+          {label: "Left", value: "left"},
+          {label: "Center", value: "center"},
+          {label: "Right", value: "right"},
         ]}
       />
 
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.display.content_display_text}
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        defaultValue="all"
-        field="content_display_text"
-        options={[
-          { label: "Title, Subtitle and Headers", value: "all" },
-          { label: "Title and Subtitle", value: "titles" },
-          { label: "Title Only", value: "title" },
-          { label: "No Text", value: "none" }
-        ]}
-      />
+      {
+        !["carousel", "grid"].includes(section.display?.display_format) ? null :
+          <>
+            <Inputs.Integer
+              {...inputProps}
+              {...l10n.sections.display.display_limit}
+              min={0}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="display_limit"
+            />
 
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.display.aspect_ratio}
-        defaultValue=""
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        field="aspect_ratio"
-        options={
-          [
-            { label: "Default", value: "" },
-            ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
-              .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
-          ]
-        }
-      />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.content_display_text}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              defaultValue="all"
+              field="content_display_text"
+              options={[
+                {label: "Title, Subtitle and Headers", value: "all"},
+                {label: "Title and Subtitle", value: "titles"},
+                {label: "Title Only", value: "title"},
+                {label: "No Text", value: "none"}
+              ]}
+            />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.sections.display.background_image}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        fields={[
-          { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 125 },
-          { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2/3, baseSize: 125 },
-        ]}
-      />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.aspect_ratio}
+              defaultValue=""
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="aspect_ratio"
+              options={
+                [
+                  {label: "Default", value: ""},
+                  ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
+                    .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
+                ]
+              }
+            />
+
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.sections.display.background_image}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              fields={[
+                { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 125 },
+                { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2/3, baseSize: 125 },
+              ]}
+            />
+          </>
+      }
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>
 

@@ -120,6 +120,10 @@ const MultiSelect = observer(({
     values = values.map(value => value[primaryValueField]);
   }
 
+  if(!Array.isArray(values)) {
+    values = [];
+  }
+
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
 
   if(clearable) {

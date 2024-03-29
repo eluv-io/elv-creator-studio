@@ -117,7 +117,7 @@ class MediaCatalogStore {
 
       select.attributes.forEach(attributeId => {
         content = content.filter(mediaItem =>
-          mediaItem.attributes?.[attributeId] === select.attribute_values[attributeId]
+          mediaItem.attributes?.[attributeId]?.includes(select.attribute_values[attributeId])
         );
       });
 

@@ -34,8 +34,8 @@ export const MediaItemImageUrl = ({mediaItem, aspectRatio}) => {
   }
 };
 
-export const MediaItemImage = ({mediaItem, aspectRatio, scale, ...componentProps}) => {
-  const imageUrl = MediaItemImageUrl({mediaItem, aspectRatio});
+export const MediaItemImage = ({imageUrl, mediaItem, aspectRatio, scale, ...componentProps}) => {
+  imageUrl = imageUrl || MediaItemImageUrl({mediaItem, aspectRatio});
 
   return (
     <Image
