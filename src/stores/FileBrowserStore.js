@@ -5,6 +5,7 @@ import {DownloadFromUrl} from "@/helpers/Misc";
 
 class FileBrowserStore {
   files = {};
+  objectNames = {};
   imageTypes = ["gif", "jpg", "jpeg", "png", "svg", "webp"];
 
   activeUploadJobs = {};
@@ -37,6 +38,7 @@ class FileBrowserStore {
 
         if(file?.["."]?.type === "directory") {
           return {
+            objectId,
             type: "directory",
             filename,
             fullPath: UrlJoin(path, filename)
@@ -44,6 +46,7 @@ class FileBrowserStore {
         } else if(file?.["."]) {
           const ext = filename.includes(".") ? filename.split(".").slice(-1)[0].toLowerCase() : "";
           return {
+            objectId,
             type: this.imageTypes.includes(ext) ? "image" : "file",
             filename,
             fullPath: UrlJoin(path, filename),
@@ -61,13 +64,20 @@ class FileBrowserStore {
     const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
 
-    this.files[objectId] = (yield this.client.ContentObjectMetadata({
+    const metadata = (yield this.client.ContentObjectMetadata({
       libraryId,
       objectId,
       writeToken,
-      metadataSubtree: "files",
+      metadataSubtree: "/",
+      select: [
+        "files",
+        "public/name"
+      ],
       produceLinkUrls: true
     })) || {};
+
+    this.files[objectId] = metadata.files;
+    this.objectNames[objectId] = metadata.public?.name || objectId;
   });
 
   CreateDirectory = flow(function * ({objectId, path, filename}) {

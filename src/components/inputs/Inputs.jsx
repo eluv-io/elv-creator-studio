@@ -722,7 +722,7 @@ const SingleImageInput = observer(({
 
   let imageUrl;
   if(url) {
-    imageUrl = imageMetadata;
+    imageUrl = typeof imageMetadata === "string" ? imageMetadata : undefined;
   } else if(imageMetadata) {
     imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
   }
@@ -802,41 +802,43 @@ const SingleImageInput = observer(({
             />
         }
       </Paper>
-      <FileBrowser
-        url={url}
-        title={LocalizeString(rootStore.l10n.components.inputs.select_file, { item: label })}
-        objectId={objectId}
-        extensions="image"
-        opened={showFileBrowser}
-        Submit={({publicUrl, fullPath}) => {
-          if(url) {
-            store.SetMetadata({
-              page: location.pathname,
-              objectId,
-              path,
-              field,
-              value: publicUrl,
-              category,
-              subcategory,
-              label: actionLabel || label
-            });
-          } else {
-            store.SetLink({
-              page: location.pathname,
-              objectId,
-              path,
-              field,
-              linkObjectId: objectId,
-              linkType: "files",
-              linkPath: fullPath,
-              category,
-              subcategory,
-              label: actionLabel || label
-            });
-          }
-        }}
-        Close={() => setShowFileBrowser(false)}
-      />
+      {
+        !showFileBrowser ? null :
+          <FileBrowser
+            url={url}
+            title={LocalizeString(rootStore.l10n.components.inputs[label ? "select_file_label" : "select_file"], {item: label})}
+            objectId={objectId}
+            extensions="image"
+            Submit={record => {
+              if(url) {
+                store.SetMetadata({
+                  page: location.pathname,
+                  objectId,
+                  path,
+                  field,
+                  value: record.publicUrl,
+                  category,
+                  subcategory,
+                  label: actionLabel || label
+                });
+              } else {
+                store.SetLink({
+                  page: location.pathname,
+                  objectId,
+                  path,
+                  field,
+                  linkObjectId: record.objectId,
+                  linkType: "files",
+                  linkPath: record.fullPath,
+                  category,
+                  subcategory,
+                  label: actionLabel || label
+                });
+              }
+            }}
+            Close={() => setShowFileBrowser(false)}
+          />
+      }
     </>
   );
 });
@@ -872,13 +874,13 @@ export const FileInput = observer(({
             extensions={extensions}
             title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             Close={() => setShowBrowser(false)}
-            Submit={async ({publicUrl, fullPath}) => {
+            Submit={async record => {
               if(url) {
                 await store.SetMetadata({
                   objectId,
                   path,
                   field,
-                  value: publicUrl,
+                  value: record.publicUrl,
                   category,
                   subcategory,
                   label
@@ -888,9 +890,9 @@ export const FileInput = observer(({
                   objectId,
                   path,
                   field,
-                  linkObjectId: objectId,
+                  linkObjectId: record.objectId,
                   linkType: "files",
-                  linkPath: fullPath,
+                  linkPath: record.fullPath,
                   category,
                   subcategory,
                   label

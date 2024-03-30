@@ -23,14 +23,6 @@ export const ScaleImage = (url, width) => {
 };
 
 export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWriteToken=false, path="", auth, resolve=true, width}) => {
-  if(versionHash) {
-    objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
-  } else {
-    // Ensure library ID is loaded for this object
-    rootStore.LibraryId({objectId});
-    libraryId = libraryId || rootStore.libraryIds[objectId];
-  }
-
   let url = new URL(
     rootStore.network === "main" ?
       "https://main.net955305.contentfabric.io" :
@@ -55,6 +47,16 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWrite
   }
 
   if(versionHash) {
+    objectId = rootStore.utils.DecodeVersionHash(versionHash).objectId;
+  } else {
+    // Ensure library ID is loaded for this object
+    rootStore.LibraryId({objectId});
+    libraryId = libraryId || rootStore.libraryIds[objectId];
+  }
+
+  if(path?.startsWith("/qfab")) {
+    urlPath = UrlJoin(urlPath, path.replace(/^\/qfab/, "q"));
+  } else if(versionHash) {
     urlPath = UrlJoin(urlPath, "q", writeToken || versionHash, path);
   } else {
     urlPath = UrlJoin(urlPath, "qlibs", libraryId, "q", writeToken || objectId, path);

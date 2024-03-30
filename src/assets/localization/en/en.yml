@@ -27,7 +27,8 @@ components:
     advanced_settings: Advanced Settings
   inputs:
     add: Add {item}
-    select_file: Select file for {item}
+    select_file: Select File
+    select_file_label: Select file for {item}
     edit: Edit {item}
     navigate_to: Navigate to {item}
     confirm: Confirm
@@ -56,6 +57,7 @@ components:
   file_browser:
     browse_files: Browse Files
     create_directory: Create Directory
+    select_object: Select Object
     download: Download {filename}
     rename: Rename {filename}
     delete: Delete {filename}
@@ -67,6 +69,7 @@ components:
     upload_instructions_drag: Drag files here
     upload_instructions_click: or click to select files
     directory_back: Back to previous directory
+    browsing: Browsing '{label}'
     allowed_extensions: "Allowed Extensions: {extensions}"
     columns:
       actions: Actions

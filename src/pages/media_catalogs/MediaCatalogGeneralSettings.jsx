@@ -3,7 +3,6 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {GenerateUUID} from "@/helpers/Misc.js";
 
 const MediaCatalogGeneralSettings = observer(() => {
   const { mediaCatalogId } = useParams();

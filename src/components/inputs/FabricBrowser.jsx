@@ -153,7 +153,7 @@ const ObjectBrowser = observer(({label, libraryId, Back, Submit}) => {
         <DirectSelectionButton label={label} Submit={Submit} />
       </Group>
       <DataTable
-        height={uiStore.viewportHeight - 400}
+        height={Math.max(250, uiStore.viewportHeight - 350)}
         fetching={loading}
         idAccessor="objectId"
         sortStatus={sortStatus}
@@ -202,7 +202,7 @@ const LibraryBrowser = observer(({label, Submit}) => {
         <DirectSelectionButton label={label} Submit={Submit} />
       </Group>
       <DataTable
-        height={uiStore.viewportHeight - 400}
+        height={Math.max(250, uiStore.viewportHeight - 350)}
         fetching={loading}
         withBorder
         idAccessor="libraryId"

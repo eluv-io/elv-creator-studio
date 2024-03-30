@@ -10,6 +10,7 @@ const DATABASE_VERSION = 1;
 class DatabaseStore {
   firebase;
   firestore;
+  // eslint-disable-next-line no-undef
   appName = EluvioConfiguration.dev ? "creatorStudio-dev" : "creatorStudio";
 
   get client() {
@@ -315,6 +316,9 @@ class DatabaseStore {
         case "mediaProperty":
           object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
           content.mediaProperties[object.objectId] = object;
+          break;
+        default:
+          this.DebugLog({message: `Unknown type ${object.metadata?.public?.name} (${object.objectId}, type ${object.typeId})`, level: this.logLevels.DEBUG_LEVEL_INFO});
           break;
       }
     });

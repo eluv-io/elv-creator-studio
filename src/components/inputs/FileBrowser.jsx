@@ -26,6 +26,7 @@ import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
 import {ConfirmDelete} from "./Inputs.jsx";
 import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
+import FabricBrowser from "@/components/inputs/FabricBrowser.jsx";
 
 import {
   IconArrowBackUp as IconBackArrow,
@@ -94,7 +95,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
       <DataTable
         highlightOnHover
         idAccessor="filename"
-        height={Math.max(250, uiStore.viewportHeight / 3)}
+        height={Math.max(250, uiStore.viewportHeight - 500)}
         records={records}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
@@ -546,6 +547,8 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [selectedObjectId, setSelectedObjectId] = useState(objectId);
+  const [showFabricBrowser, setShowFabricBrowser] = useState(false);
 
   if(extensions === "image") {
     extensions = fileBrowserStore.imageTypes;
@@ -556,116 +559,147 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
   const pathTokens = path.replace(/^\//, "").split("/");
 
   return (
-    <Modal opened={opened} onClose={Close} centered size={1000} title={title} padding="xl">
-      { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
-      <Container px={0}>
-        <Group mb="xs" align="center" spacing="xs">
-          <IconButton
-            label={rootStore.l10n.components.file_browser.directory_back}
-            disabled={path === "/"}
-            variant="transparent"
-            Icon={IconBackArrow}
-            tooltipProps={{position: "bottom"}}
-            onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}
+    <>
+      {
+        !showFabricBrowser ? null :
+          <FabricBrowser
+            Submit={({objectId}) => {
+              setSelectedRecords([]);
+              setPath("/");
+              setFilter("");
+              setSelectedObjectId(objectId);
+            }}
+            Close={() => setShowFabricBrowser(false)}
           />
-          {
-            pathTokens.map((token, index) =>
-              <Group spacing="xs" key={`path-token-${token}-${index}`}>
-                <Text>/</Text>
-                <UnstyledButton onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, index + 1)))}>
-                  <Text fw={index === pathTokens.length - 1 ? 600 : 400} color="blue.5">
-                    {token}
-                  </Text>
-                </UnstyledButton>
-              </Group>
-            )
-          }
-        </Group>
-        <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+      }
+      <Modal opened={opened} onClose={Close} centered size={1000} title={title} padding="xl">
+        { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
         <Container px={0}>
-          <FileBrowserTable
-            objectId={objectId}
-            multiple={multiple}
-            extensions={extensions}
-            path={path}
-            filter={debouncedFilter}
-            setPath={setPath}
-            selectedRecords={selectedRecords}
-            setSelectedRecords={setSelectedRecords}
-          />
-        </Container>
-        {
-          extensions.length === 0 ? null :
-            <Group position="right" mt="xs" pr="xs">
-              <Text color="dimmed" fz="xs" italic>
-                { LocalizeString(rootStore.l10n.components.file_browser.allowed_extensions, {extensions: extensions.join(", ")})}
-              </Text>
-            </Group>
-        }
-        {
-          !multiple || selectedRecords.length === 0 ? null :
-            <Container my="xs" p={0}>
-              <Text mb="sm">Selected Files:</Text>
-              <Container p={0}>
-                {
-                  selectedRecords.map(({fullPath}) =>
-                    <Group key={`selected-file-${fullPath}`} spacing="xs">
-                      <IconButton
-                        label={LocalizeString(rootStore.l10n.components.file_browser.remove_selection, {filename: fullPath})}
-                        Icon={IconX}
-                        onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}
-                      />
-                      <Code bg="transparent" style={{whiteSpace: "pre-wrap", wordBreak: "break-all"}} maw={800}>
-                        { fullPath }
-                      </Code>
-                    </Group>
-                  )
-                }
+          <Group mb="xs" align="center" spacing="xs">
+            <IconButton
+              label={rootStore.l10n.components.file_browser.directory_back}
+              disabled={path === "/"}
+              variant="transparent"
+              Icon={IconBackArrow}
+              tooltipProps={{position: "bottom"}}
+              onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, -1)))}
+            />
+            {
+              pathTokens.map((token, index) =>
+                <Group spacing="xs" key={`path-token-${token}-${index}`}>
+                  <Text>/</Text>
+                  <UnstyledButton onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, index + 1)))}>
+                    <Text fw={index === pathTokens.length - 1 ? 600 : 400} color="blue.5">
+                      {token}
+                    </Text>
+                  </UnstyledButton>
+                </Group>
+              )
+            }
+          </Group>
+          <TextInput mb="md" label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
+          <Container px={0}>
+            <FileBrowserTable
+              objectId={selectedObjectId}
+              multiple={multiple}
+              extensions={extensions}
+              path={path}
+              filter={debouncedFilter}
+              setPath={setPath}
+              selectedRecords={selectedRecords}
+              setSelectedRecords={setSelectedRecords}
+            />
+          </Container>
+          <Group position="apart" mt="xs" px={5}>
+            {
+              !fileBrowserStore.files[selectedObjectId] ? <div /> :
+                <Text fz="xs" color="dimmed" fw={600}>
+                  { LocalizeString(rootStore.l10n.components.file_browser.browsing, {label: fileBrowserStore.objectNames[selectedObjectId] || selectedObjectId})}
+                </Text>
+            }
+            {
+              extensions.length === 0 ? null :
+                <Text color="dimmed" fz="xs" italic>
+                  { LocalizeString(rootStore.l10n.components.file_browser.allowed_extensions, {extensions: extensions.join(", ")})}
+                </Text>
+            }
+          </Group>
+          {
+            !multiple || selectedRecords.length === 0 ? null :
+              <Container my="xs" p={0}>
+                <Text mb="sm">Selected Files:</Text>
+                <Container p={0}>
+                  {
+                    selectedRecords.map(({fullPath}) =>
+                      <Group key={`selected-file-${fullPath}`} spacing="xs">
+                        <IconButton
+                          label={LocalizeString(rootStore.l10n.components.file_browser.remove_selection, {filename: fullPath})}
+                          Icon={IconX}
+                          onClick={() => setSelectedRecords(selectedRecords.filter(record => record.fullPath !== fullPath))}
+                        />
+                        <Code bg="transparent" style={{whiteSpace: "pre-wrap", wordBreak: "break-all"}} maw={800}>
+                          { fullPath }
+                        </Code>
+                      </Group>
+                    )
+                  }
+                </Container>
               </Container>
-            </Container>
-        }
-        <Group mt="xl" position="apart">
-          <Group>
-            <Button variant="light" onClick={() => setShowUploadForm(true)}>
-              { rootStore.l10n.components.actions.upload }
-            </Button>
-            <Button
-              variant="light"
-              onClick={() =>
-                modals.open({
-                  title: rootStore.l10n.components.file_browser.create_directory,
-                  centered: true,
-                  children:
-                    <CreateDirectoryForm Create={async ({filename}) => await fileBrowserStore.CreateDirectory({objectId, path, filename})} />
-                })
-              }
-            >
-              { rootStore.l10n.components.file_browser.create_directory }
-            </Button>
-          </Group>
-          <Group>
-            <Button variant="subtle" w={200} onClick={Close}>
-              { rootStore.l10n.components.actions.cancel }
-            </Button>
-            <Button
-              w={200}
-              disabled={selectedRecords.length === 0}
-              onClick={() => {
-                const records = selectedRecords.map(record => ({
-                  ...record,
-                  publicUrl: FabricUrl({objectId, path: UrlJoin("files", record.fullPath), noWriteToken: true})
-                }));
+          }
+          <Group mt="xl" position="apart">
+            <Group>
+              <Button variant="light" onClick={() => setShowUploadForm(true)}>
+                { rootStore.l10n.components.actions.upload }
+              </Button>
+              <Button
+                variant="light"
+                onClick={() =>
+                  modals.open({
+                    title: rootStore.l10n.components.file_browser.create_directory,
+                    centered: true,
+                    children:
+                      <CreateDirectoryForm
+                        Create={async ({filename}) =>
+                          await fileBrowserStore.CreateDirectory({objectId: selectedObjectId, path, filename})
+                        }
+                      />
+                  })
+                }
+              >
+                { rootStore.l10n.components.file_browser.create_directory }
+              </Button>
+              <Button variant="light" onClick={() => setShowFabricBrowser(true)}>
+                { rootStore.l10n.components.file_browser.select_object }
+              </Button>
+            </Group>
+            <Group>
+              <Button variant="subtle" w={200} onClick={Close}>
+                { rootStore.l10n.components.actions.cancel }
+              </Button>
+              <Button
+                w={200}
+                disabled={selectedRecords.length === 0}
+                onClick={() => {
+                  const records = selectedRecords.map(record => ({
+                    ...record,
+                    publicUrl: FabricUrl({
+                      objectId: record.objectId,
+                      path: UrlJoin("files", record.fullPath),
+                      noWriteToken: true
+                    })
+                  }));
 
-                Submit(multiple ? records : records[0]);
-                Close();
-              }}
-            >
-              { rootStore.l10n.components.actions.submit }
-            </Button>
+                  Submit(multiple ? records : records[0]);
+                  Close();
+                }}
+              >
+                { rootStore.l10n.components.actions.submit }
+              </Button>
+            </Group>
           </Group>
-        </Group>
-      </Container>
-    </Modal>
+        </Container>
+      </Modal>
+    </>
   );
 });
 
