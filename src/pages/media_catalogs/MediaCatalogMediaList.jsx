@@ -25,7 +25,7 @@ const MediaCatalogMediaList = observer(() => {
   return (
     <PageContent
       title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories[type]} - ${mediaItem.label}`}
-      backLink={UrlJoin("/media-catalogs", mediaCatalogId, type)}
+      backLink={UrlJoin("/media-catalogs", mediaCatalogId, "media-lists")}
       section="mediaCatalog"
       useHistory
     >

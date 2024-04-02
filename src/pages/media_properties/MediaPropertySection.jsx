@@ -508,6 +508,7 @@ const SectionFilters = observer(() => {
           {...inputProps}
           {...l10n.sections.filters.tags}
           clearable
+          searchable
           options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
           field="tags"
         />
