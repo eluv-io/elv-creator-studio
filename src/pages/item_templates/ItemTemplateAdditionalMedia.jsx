@@ -1,14 +1,72 @@
 import {observer} from "mobx-react-lite";
-import {useParams} from "react-router-dom";
-import {rootStore, itemTemplateStore, uiStore} from "@/stores";
+import {useNavigate, useParams} from "react-router-dom";
+import {rootStore, itemTemplateStore, uiStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {AspectRatio, Group, Image, Text, Title} from "@mantine/core";
+import {AspectRatio, Button, Container, Group, Image, Select, Text, Title} from "@mantine/core";
 import {ScaleImage} from "@/helpers/Fabric";
 import {MediaItemSpec} from "@/specs/MediaSpecs.js";
 import {ItemTemplateMediaCollectionSpec, ItemTemplateMediaSectionSpec} from "@/specs/ItemTemplateSpecs.js";
 import UrlJoin from "url-join";
 import {AnnotatedText, ListItemCategory} from "@/components/common/Misc.jsx";
+import {useEffect, useState} from "react";
+import {useForm} from "@mantine/form";
+import {modals} from "@mantine/modals";
+
+
+const MigrateMediaForm = ({Migrate}) => {
+  const [creating, setCreating] = useState(false);
+  const mediaCatalogs = (mediaCatalogStore.allMediaCatalogs || []).map(({name, objectId}) => ({
+    label: name,
+    value: objectId
+  }));
+
+  const form = useForm({
+    initialValues: {
+      mediaCatalogId: mediaCatalogs[0]?.value,
+    },
+    validate: {
+      mediaCatalogId: value => value ? null : "Please select a media catalog"
+    }
+  });
+
+  return (
+    <Container p={0}>
+      <form
+        onSubmit={form.onSubmit(values => {
+          setCreating(true);
+          Migrate({mediaCatalogId: values.mediaCatalogId})
+            .catch(error => {
+              rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+              setCreating(false);
+            })
+            .then(() => {
+              modals.closeAll();
+            });
+        })}
+      >
+        <Select
+          withinPortal
+          data-autofocus
+          label="Media Catalog"
+          mb="md"
+          data={mediaCatalogs}
+          defaultValue={mediaCatalogs[0]?.objectId}
+          {...form.getInputProps("mediaCatalogId")}
+        />
+        <Group mt="md">
+          <Button
+            w="100%"
+            loading={creating}
+            type="submit"
+          >
+            { rootStore.l10n.components.actions.submit }
+          </Button>
+        </Group>
+      </form>
+    </Container>
+  );
+};
 
 const ItemTemplateAdditionalMediaList = observer(({containerType}) => {
   const { itemTemplateId, sectionId, collectionId } = useParams();
@@ -308,9 +366,13 @@ const ItemTemplateAdditionalMediaSections = observer(() => {
   );
 });
 
-
 const ItemTemplateAdditionalMedia = observer(() => {
+  const navigate = useNavigate();
   const { itemTemplateId } = useParams();
+
+  useEffect(() => {
+    mediaCatalogStore.LoadMediaCatalogs();
+  }, []);
 
   const itemTemplate = itemTemplateStore.itemTemplates[itemTemplateId];
 
@@ -383,6 +445,32 @@ const ItemTemplateAdditionalMedia = observer(() => {
             <ItemTemplateAdditionalMediaSections />
           </>
       }
+      <Button
+        onClick={() => {
+          modals.open({
+            title: l10n.additional_media.migrate,
+            centered: true,
+            children:
+              <MigrateMediaForm
+                type={info.additional_media_type || "List"}
+                Migrate={async ({mediaCatalogId}) => {
+                  await mediaCatalogStore.MigrateItemTemplateMedia({
+                    type: info.additional_media_type || "List",
+                    itemTemplateId,
+                    mediaCatalogId,
+                    itemTemplateName: info.display_name || itemTemplate.display_name
+                  });
+
+                  modals.closeAll();
+
+                  navigate(UrlJoin("/media-catalogs", mediaCatalogId, "media") + `?filter=${encodeURIComponent(info.display_name || itemTemplate.display_name)}`);
+                }}
+              />
+          });
+        }}
+      >
+        { l10n.additional_media.migrate }
+      </Button>
     </PageContent>
   );
 });

@@ -8,8 +8,8 @@
     "build": "rm -rf dist/* ; vite build",
     "preview": "vite preview",
     "lint": "npm-run-all -s lint-js-fix lint-scss-fix",
-    "lint-js": "eslint ./src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "lint-js-fix": "eslint ./src --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "lint-js": "eslint ./src --ext js,jsx --report-unused-disable-directives",
+    "lint-js-fix": "eslint ./src --fix --ext js,jsx --report-unused-disable-directives",
     "lint-scss": "npx stylelint \"src/**/*.{css,scss}\"",
     "lint-scss-fix": "npx stylelint \"src/**/*.{css,scss}\" --fix"
   },

@@ -77,11 +77,11 @@ const ItemTemplateList = observer(() => {
                 sortable: true,
                 title: l10n.list.columns.name,
                 render: itemTemplate => (
-                  <Group>
-                    <Image width={60} height={60} fit="contain" src={ScaleImage(itemTemplate.image, 400)} alt={itemTemplate.name} withPlaceholder />
+                  <Group noWrap>
+                    <Image width={60} height={60} miw={60} fit="contain" src={ScaleImage(itemTemplate.image, 400)} alt={itemTemplate.name} withPlaceholder />
                     <Stack spacing={0}>
                       <Text>
-                        <Group spacing={5} align="top">
+                        <Group spacing={5} align="top" noWrap>
                           {itemTemplate.name}
                           {
                             !itemTemplate.test ? null :

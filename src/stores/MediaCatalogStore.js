@@ -1,10 +1,10 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import Clone from "lodash/clone";
 import {
   MediaCatalogAttributeBaseSpec,
-  MediaCatalogCollectionSpec,
+  MediaCatalogCollectionSpec, MediaCatalogGalleryItemSpec,
   MediaCatalogMediaGallerySpec,
   MediaCatalogMediaImageSpec,
   MediaCatalogMediaListSpec,
@@ -14,6 +14,8 @@ import {
 } from "@/specs/MediaCatalogSpecs.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
+import {mediaCatalogStore} from "@/stores/index.js";
+import Set from "lodash/set.js";
 
 class MediaCatalogStore {
   allMediaCatalogs;
@@ -306,6 +308,199 @@ class MediaCatalogStore {
       return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories[category], { label: title });
     };
   }
+
+  MigrateItemTemplateMedia = flow(function * ({itemTemplateId, mediaCatalogId, type, itemTemplateName}) {
+    yield this.LoadMediaCatalog({mediaCatalogId});
+    yield this.rootStore.itemTemplateStore.LoadItemTemplate({itemTemplateId});
+
+    let itemTemplate = this.rootStore.itemTemplateStore.itemTemplates[itemTemplateId];
+    itemTemplate = itemTemplate?.metadata.public.asset_metadata.nft;
+
+    let templateMedia = [];
+
+    if(type === "List") {
+      templateMedia = Clone(itemTemplate.additional_media || []);
+    } else {
+      templateMedia = Clone(itemTemplate.additional_media_sections.featured_media || []);
+
+      itemTemplate.additional_media_sections.sections.forEach((_, sectionIndex) =>
+        itemTemplate.additional_media_sections.sections[sectionIndex].collections.forEach((_, collectionIndex) =>
+          itemTemplate.additional_media_sections.sections[sectionIndex].collections[collectionIndex].media.forEach(mediaItem =>
+            templateMedia.push(Clone(mediaItem))
+          )
+        )
+      );
+    }
+
+    const GetImageAspectRatio = async url => {
+      if(!url) { return; }
+
+      return await new Promise((resolve) =>{
+        url = new URL(url);
+        url.searchParams.set("width", "100");
+
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+          const ratio = image.naturalWidth / image.naturalHeight;
+          const diff = ratio - 1;
+
+          resolve(
+            Math.abs(diff) < 0.1 ? "Square" :
+              diff > 0 ? "Landscape" : "Portrait"
+          );
+        };
+        image.onerror = () => resolve();
+      });
+    };
+
+    const itemTemplateHash = yield this.client.LatestVersionHash({objectId: itemTemplateId});
+    const Migrate = async (withUrls) => {
+      const MigrateRelativeLink = link => {
+        if(!link) { return; }
+
+        if(typeof link === "string" && link.startsWith("https")) {
+          const linkUrl = link;
+          let linkPath = decodeURIComponent(link).split("/q/")[1];
+          link = { "/": UrlJoin("/qfab", linkPath) };
+
+          if(withUrls) {
+            link.url = linkUrl;
+          }
+        } else {
+          link = Clone(link);
+
+          if(link?.["/"]?.startsWith("./")) {
+            link["/"] = `/qfab/${itemTemplateHash}/${link["/"].replace("./", "")}`;
+          }
+
+          if(!withUrls) {
+            delete link.url;
+          }
+        }
+
+        return link;
+      };
+
+      let media = {};
+      await this.client.utils.LimitedMap(
+        5,
+        templateMedia,
+        async mediaItem => {
+          let mediaType = mediaItem.media_type;
+          if(mediaType === "Live Video") {
+            type = "Video";
+          }
+          if(mediaType === "Audio") {
+            type = "Video";
+          }
+          if(mediaType === "Media Reference") {
+            return;
+          }
+
+          const id = `${this.ID_PREFIXES[mediaType]}${mediaItem.id || GenerateUUID()}`;
+
+          let spec;
+          if(mediaType === "Video") {
+            spec = Clone(MediaCatalogMediaVideoSpec);
+          } else if(mediaType === "Image") {
+            spec = Clone(MediaCatalogMediaImageSpec);
+          } else if(mediaType === "Gallery") {
+            spec = Clone(MediaCatalogMediaGallerySpec);
+          } else {
+            spec = MediaCatalogMediaOtherSpec({mediaType});
+          }
+
+          const imageLink = MigrateRelativeLink(mediaItem.image);
+          const imageAspectRatio = await GetImageAspectRatio(mediaItem.image) || mediaItem.image_aspect_ratio;
+
+          media[id] = {
+            ...spec,
+            media_catalog_id: mediaCatalogId,
+            id,
+            type: "media",
+            media_type: mediaType,
+            label: `${mediaItem.name} (${itemTemplateName})`,
+            title: mediaItem.name,
+            catalog_title: mediaItem.name,
+            subtitle: mediaItem.subtitle_1 || "",
+            description: mediaItem.descripton_text || "",
+            description_rich_text: mediaItem.descripton || "",
+            thumbnail_image_landscape: imageAspectRatio === "Landscape" ? imageLink : null,
+            thumbnail_image_square: imageAspectRatio === "Square" ? imageLink : null,
+            thumbnail_image_portrait: imageAspectRatio === "Portrait" ? imageLink : null,
+            authorized_link: !!mediaItem.authorized_link,
+            offerings: mediaItem.offerings || [],
+            parameters: mediaItem.parameters || [],
+            poster_image: MigrateRelativeLink(mediaItem.poster_image),
+            start_time: mediaItem.start_time,
+            end_time: mediaItem.end_time,
+            media_link: MigrateRelativeLink(mediaItem.media_link),
+            media_file: MigrateRelativeLink(mediaItem.media_file),
+            live: mediaItem.media_type === "Live Video",
+            url: mediaItem.link,
+          };
+
+          if(mediaType === "Gallery") {
+            media[id].background_image = MigrateRelativeLink(mediaItem.background_image);
+            media[id].background_image_mobile = MigrateRelativeLink(mediaItem.background_image_mobile);
+            media[id].gallery = await this.client.utils.LimitedMap(
+              5,
+              mediaItem.gallery || [],
+              async galleryItem => ({
+                ...MediaCatalogGalleryItemSpec,
+                id: GenerateUUID(),
+                title: galleryItem.name || "",
+                label: galleryItem.name || "",
+                description: galleryItem.description || "",
+                thumbnail: MigrateRelativeLink(galleryItem.image),
+                thumbnail_aspect_ratio: await GetImageAspectRatio(galleryItem.image?.url) ||
+                  (galleryItem.image_aspect_ratio === "Wide" ? "Landscape" :
+                    galleryItem.image_aspect_ratio === "Tall" ? "Portrait" :
+                      "Square"),
+                video: MigrateRelativeLink(galleryItem.video)
+              })
+            );
+          }
+        }
+      );
+
+      return media;
+    };
+
+    // Keep link URLs in local metadata, but do not save to fabric
+    const mediaWithUrls = yield Migrate(true);
+    const media = yield Migrate(false);
+
+    const originalCatalogMedia = Clone(this.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.media);
+
+    mediaCatalogStore.ApplyAction({
+      objectId: mediaCatalogId,
+      actionType: "CUSTOM",
+      changelistLabel: LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.migrate_media_from_template_label, {label: itemTemplateName}),
+      label: LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories.migrate_media_from_template_label, {label: itemTemplateName}),
+      category: this.rootStore.l10n.pages.media_catalog.form.categories.media,
+      page: location.pathname,
+      Apply: () => {
+        Object.keys(mediaWithUrls).forEach(mediaId =>
+          Set(this.mediaCatalogs[mediaCatalogId].metadata, ["public", "asset_metadata", "info", "media", mediaId], mediaWithUrls[mediaId])
+        );
+      },
+      Undo: () => Set(this.mediaCatalogs[mediaCatalogId].metadata, ["public", "asset_metadata", "info", "media"], originalCatalogMedia),
+      Write: async (objectParams) => {
+        await this.client.utils.LimitedMap(
+          5,
+          Object.keys(media),
+          async mediaId =>
+            await mediaCatalogStore.client.ReplaceMetadata({
+              ...objectParams,
+              metadataSubtree: UrlJoin("/public/asset_metadata/info/media", mediaId),
+              metadata: toJS(media[mediaId])
+            })
+        );
+      }
+    });
+  });
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadMediaCatalog({mediaCatalogId: objectId, force: true});

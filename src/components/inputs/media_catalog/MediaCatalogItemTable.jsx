@@ -32,6 +32,7 @@ export const MediaItemTitle = observer(({mediaItem}) => {
         scale={400}
         width={40}
         height={40}
+        miw={40}
         fit="contain"
         position="left"
         style={{objectPosition: "left" }}
@@ -73,6 +74,7 @@ const MediaCatalogItemTable = observer(({
   mediaCatalogId,
   mediaCatalogIds=[],
   excludedMediaIds=[],
+  initialFilter,
   initialTagFilter,
   initialMediaTypeFilter,
   selectedRecords,
@@ -82,20 +84,22 @@ const MediaCatalogItemTable = observer(({
   disableActions
 }) => {
   let settingsCache = mediaCatalogItemTableSettingsCache;
-  if(settingsCache.pathname !== location.pathname || settingsCache.search !== location.search) {
+  if(settingsCache.pathname !== location.pathname) {
     mediaCatalogItemTableSettingsCache = {};
     settingsCache = undefined;
   }
 
-  initialTagFilter = initialTagFilter || new URLSearchParams(window.location.search).get("tags")?.split(",");
-  initialMediaTypeFilter = initialMediaTypeFilter || new URLSearchParams(window.location.search).get("media_type");
+  const urlParams = new URLSearchParams(location.search);
+  initialFilter = decodeURIComponent(urlParams.get("filter") || "");
+  initialTagFilter = decodeURIComponent(initialTagFilter || urlParams.get("tags") || "")?.split(",").filter(tag => tag);
+  initialMediaTypeFilter = decodeURIComponent(initialMediaTypeFilter || urlParams.get("media_type") || "");
 
   const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(mediaCatalogId || settingsCache?.mediaCatalogId || mediaCatalogIds[0]);
   const [selectedContentType, setSelectedContentType] = useState(type || settingsCache?.type || "media");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(perPage);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "label", direction: "asc"});
-  const [filter, setFilter] = useState(settingsCache?.filter || "");
+  const [filter, setFilter] = useState(initialFilter || settingsCache?.filter || "");
   const [mediaTypeFilter, setMediaTypefilter] = useState((settingsCache ? settingsCache.mediaType : initialMediaTypeFilter) || "");
   const [tagFilter, setTagFilter] = useState((settingsCache ? settingsCache.tags : initialTagFilter) || []);
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -150,6 +154,7 @@ const MediaCatalogItemTable = observer(({
         mediaItem.id?.toLowerCase()?.includes(debouncedFilter.toLowerCase())
       )
       .sort(SortTable({sortStatus}));
+
   const mediaItemIds = mediaItems.map(mediaItem => mediaItem.id);
 
   const allRecordsSelected =

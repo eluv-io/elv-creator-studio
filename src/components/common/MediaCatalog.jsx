@@ -58,7 +58,7 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, ...c
 
   return (
     <Paper withBorder p={sizes[size].p} key={`media-item-${mediaItem.id}`} maw={uiStore.inputWidth} {...componentProps}>
-      <Group style={{position: "relative"}}>
+      <Group style={{position: "relative"}} noWrap>
         <MediaItemImage
           aspectRatio={aspectRatio}
           mediaItem={mediaItem}

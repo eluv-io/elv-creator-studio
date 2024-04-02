@@ -290,6 +290,7 @@ form:
       description: Displayed on the redemption results page
       placeholder: To access your reward, scan the QR code below or visit the URL and enter the code.
   additional_media:
+    migrate: Migrate Media to Catalog
     additional_media_type:
       label: Additional Media Type
       description: "Additional media may be organized in two ways: a simple list of items, or a list of 'sections', each containing a list of collections of media items, along with the option of 'featured' media"

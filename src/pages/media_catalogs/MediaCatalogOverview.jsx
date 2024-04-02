@@ -17,7 +17,7 @@ const MediaCatalogOverview = observer(() => {
           <Group align="top" noWrap spacing="xl">
             <Image
               width={250}
-              height={250}
+              height={140}
               withPlaceholder
               fit="contain"
               src={metadata?.info?.image?.url}

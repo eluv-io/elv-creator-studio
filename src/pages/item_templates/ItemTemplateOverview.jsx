@@ -30,7 +30,7 @@ const ItemTemplateOverview = observer(() => {
             />
             <Container p={0} m={0} maw={400}>
               <Title order={4}>
-                <Group align="top" spacing="sm">
+                <Group align="top" spacing="xs" noWrap>
                   { metadata?.nft?.name || itemTemplate?.name }
                   {
                     !metadata?.nft?.test ? null :
