@@ -495,7 +495,7 @@ class MediaCatalogStore {
             await mediaCatalogStore.client.ReplaceMetadata({
               ...objectParams,
               metadataSubtree: UrlJoin("/public/asset_metadata/info/media", mediaId),
-              metadata: toJS(media[mediaId])
+              metadata: JSON.parse(JSON.stringify(media[mediaId]))
             })
         );
       }
