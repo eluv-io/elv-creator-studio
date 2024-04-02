@@ -72,12 +72,12 @@ const SideNav = observer(({links, backLink}) => {
                   </NavLink>
               }
               {
-                links.map(({navRoute, label, path}) =>
+                links.map(({root, navRoute, label, path}) =>
                   !navRoute ? null :
                     <NavLink
                       to={path}
                       key={`nav-link-${path}`}
-                      className={S("link", location.pathname.endsWith(path) ? "link--active" : "")}
+                      className={({isActive}) => S("link", (!root && isActive) || activeLocation?.path === path ? "link--active" : "")}
                     >
                       {label}
                     </NavLink>
