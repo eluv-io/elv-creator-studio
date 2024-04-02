@@ -107,6 +107,11 @@ class MediaCatalogStore {
         });
       }
 
+      if(select.date) {
+        const baseDate = select.date.split("T")[0];
+        content = content.filter(mediaItem => mediaItem.date && mediaItem.date.split("T")[0] === baseDate);
+      }
+
       if(select.content_type === "media" && select.media_types?.length > 0) {
         content = content.filter(mediaItem => select.media_types.includes(mediaItem.media_type));
       }

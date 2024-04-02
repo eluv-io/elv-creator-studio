@@ -235,6 +235,12 @@ const MediaConfiguration = observer(({mediaItem}) => {
           {
             !mediaItem.live_video ? null :
               <>
+                <Inputs.Date
+                  {...inputProps}
+                  {...l10n.media.date}
+                  subcategory={l10n.categories.media}
+                  field="date"
+                />
                 <Inputs.DateTime
                   {...inputProps}
                   {...l10n.media.start_time}

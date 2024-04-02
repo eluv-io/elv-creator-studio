@@ -17,7 +17,7 @@ const PageContent = observer(({
   children
 }) => {
   return (
-    <Container p="md" pb={200} fluid style={{position: "relative"}}>
+    <Container p="md" pb={200} pr={50} fluid style={{position: "relative"}}>
       {
         !action ? null :
           <Group style={{position: "absolute", right: 50}}>

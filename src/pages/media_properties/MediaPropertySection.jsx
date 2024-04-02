@@ -576,6 +576,11 @@ const SectionFilters = observer(() => {
             (section.select.media_types.length === 1 && section.select.media_types[0] !== "Video")
           ) ? null :
             <>
+              <Inputs.Date
+                {...inputProps}
+                {...l10n.sections.filters.date}
+                field="date"
+              />
               <Inputs.Select
                 {...inputProps}
                 {...l10n.sections.filters.schedule}

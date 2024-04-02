@@ -123,6 +123,7 @@ const MediaPropertyList = observer(() => {
         title={rootStore.l10n.pages.media_property.form.categories.media_properties}
         action={
           <Button
+            variant="light"
             onClick={() =>
               modals.open({
                 title: LocalizeString(l10n.create.create, {type: l10n.categories.media_property}),

@@ -76,6 +76,7 @@ export const MediaPropertyFilterSpec = {
   tags: [],
   attributes: [],
   attribute_values: {},
+  date: undefined,
   schedule: "", // live, upcoming, past, time_range
   start_time: undefined,
   end_time: undefined,

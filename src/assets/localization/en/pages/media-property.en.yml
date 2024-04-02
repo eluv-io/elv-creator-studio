@@ -184,7 +184,10 @@ form:
         description: Specify attributes to filter by
       schedule:
         label: Schedule
-        description: Live content matching the specified time period
+        description: Live content matching the specified time period based on start/end times
+      date:
+        label: Date
+        description: Filter by a specific date
       start_time:
         label: Start Time
         description: Live content starting after the specified time

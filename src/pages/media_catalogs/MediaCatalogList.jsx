@@ -112,6 +112,7 @@ const MediaCatalogList = observer(() => {
         title={rootStore.l10n.pages.media_catalog.form.categories.media_catalogs}
         action={
           <Button
+            variant="light"
             onClick={() =>
               modals.open({
                 title: LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}),
