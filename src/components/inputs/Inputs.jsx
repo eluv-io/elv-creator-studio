@@ -969,7 +969,7 @@ export const FileInput = observer(({
                       url ?
                         <Text
                           fz="xs"
-                          color="blue.5"
+                          color="purple.6"
                           component="a"
                           target="_blank"
                           rel="noreferrer"
@@ -1085,7 +1085,7 @@ export const FabricBrowserInput = observer(({
                     rootStore.l10n.components.fabric_browser.link_at_latest
                 }
                 Icon={updatable ? IconUnlink : IconLink}
-                color="blue.5"
+                color="purple.6"
                 onClick={() => {
                   Confirm({
                     text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
@@ -1126,7 +1126,7 @@ export const FabricBrowserInput = observer(({
                       label={rootStore.l10n.components.fabric_browser[showPreview ? "hide_preview" : "show_preview"]}
                       icon={showPreview ? <IconPlayerPause size={15}/> : <IconPlayerPlay size={15}/>}
                       onClick={() => setShowPreview(!showPreview)}
-                      color={showPreview ? "red.7" : "blue.5"}
+                      color={showPreview ? "red.7" : "purple.6"}
                     />
                 }
                 <IconButton
@@ -1624,7 +1624,7 @@ const CollectionTableRows = observer(({
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: name || fieldLabel})}
                         component={Link}
                         to={UrlJoin(location.pathname, routePath || "", id)}
-                        color="blue.5"
+                        color="purple.6"
                         Icon={IconEdit}
                       />
                   }
@@ -1957,7 +1957,7 @@ const ReferenceTable = observer(({
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
                         component={Link}
                         to={UrlJoin(location.pathname, routePath || "", item.id)}
-                        color="blue.5"
+                        color="purple.6"
                         Icon={IconEdit}
                       />
                       <IconButton

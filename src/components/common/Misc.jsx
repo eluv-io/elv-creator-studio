@@ -4,7 +4,7 @@ import {rootStore} from "@/stores";
 import {FabricUrl} from "@/helpers/Fabric.js";
 
 export const LinkButton = (props) => {
-  return <Button component={Link} {...props} />;
+  return <Button component={Link} variant="outline" {...props} />;
 };
 
 export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
@@ -39,13 +39,16 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
   );
 };
 
-export const TooltipIcon = ({label, Icon, size, alt, color, tooltipProps={}}) => {
+export const TooltipIcon = ({label, Icon, icon, size, alt, color, tooltipProps={}}) => {
   return (
     <Group h={size} position="center" align="center">
       <Tooltip {...tooltipProps} height={2} label={label}>
-        <Box h={size} sx={theme => ({color: theme.colors[color][5] })}>
-          <Icon size={size} alt={alt || label} />
-        </Box>
+        {
+          icon ? icon :
+            <Box h={size} sx={theme => ({color: theme.colors[color][5]})}>
+              <Icon size={size} alt={alt || label}/>
+            </Box>
+        }
       </Tooltip>
     </Group>
   );

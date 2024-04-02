@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Navigate, Routes, Route} from "react-router-dom";
 import TenantRoutes from "@/pages/tenant/TenantRoutes.jsx";
 import MarketplaceRoutes from "@/pages/marketplace/MarketplaceRoutes.jsx";
 import ScrollToTop from "@/components/common/ScrollToTop.jsx";
@@ -18,6 +18,9 @@ const AppRoutes = observer(() => {
       <ItemTemplateRoutes rootPath="/item-templates/" />
       <MediaCatalogRoutes rootPath="/media-catalogs/" />
       <MediaPropertyRoutes rootPath="/media-properties/" />
+      <Routes>
+        <Route path="/" element={<Navigate to="/tenant" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 });

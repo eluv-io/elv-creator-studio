@@ -82,7 +82,7 @@ export const MarketplaceItem = observer(() => {
             <Group align="center" spacing="xs">
               <IconButton
                 label={l10n.item.item_template.view_template}
-                color="blue.5"
+                color="purple.6"
                 component={Link}
                 to={UrlJoin("/item-templates", itemTemplateId)}
                 Icon={IconTemplate}

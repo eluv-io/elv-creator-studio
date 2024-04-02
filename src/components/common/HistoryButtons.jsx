@@ -56,7 +56,7 @@ const HistoryButtons = observer(({section}) => {
   const redoActions = store.RedoQueue({objectId, page});
 
   return (
-    <Affix position={{bottom: 20, right: 20}}>
+    <Affix position={{bottom: 20, right: 20}} style={{zIndex: 10}}>
       <Group>
         <IconButton
           label={
@@ -65,7 +65,7 @@ const HistoryButtons = observer(({section}) => {
           }
           Icon={IconUndo}
           variant="filled"
-          color="blue.5"
+          color="purple.6"
           disabled={undoActions.length === 0}
           onClick={() => store.UndoAction({objectId, page})}
         />
@@ -76,7 +76,7 @@ const HistoryButtons = observer(({section}) => {
           }
           Icon={IconRedo}
           variant="filled"
-          color="blue.5"
+          color="purple.6"
           disabled={redoActions.length === 0}
           onClick={() => store.RedoAction({objectId, page})}
         />

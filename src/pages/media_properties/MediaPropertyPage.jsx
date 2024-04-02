@@ -152,7 +152,7 @@ const MediaPropertyPage = observer(() => {
             label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info.sections[sectionId]?.label || sectionId })}
             component={Link}
             to={UrlJoin("/media-properties/", mediaPropertyId, "sections", sectionId)}
-            color="blue.5"
+            color="purple.6"
             Icon={IconExternalLink}
           />
         ]}

@@ -113,7 +113,7 @@ const ItemTemplateList = observer(() => {
                     label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemTemplate.name})}
                     component={Link}
                     to={UrlJoin(location.pathname, itemTemplate.objectId)}
-                    color="blue.5"
+                    color="purple.6"
                     Icon={IconEdit}
                   />
                 )

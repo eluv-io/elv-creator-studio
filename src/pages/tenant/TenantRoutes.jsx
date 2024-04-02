@@ -9,9 +9,9 @@ import TenantTheme from "./TenantTheme.jsx";
 
 const TenantRoutes = observer(({rootPath}) => {
   const routes = [
-    { root: true, navRoute: true, label: rootStore.l10n.pages.tenant.nav.overview, path: "/", Component: <TenantOverview /> },
-    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/general", Component: <TenantGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.theme, path: "/theme", Component: <TenantTheme /> },
+    { root: true, navRoute: true, label: rootStore.l10n.pages.tenant.nav.overview, path: "/tenant", Component: <TenantOverview /> },
+    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/tenant/general", Component: <TenantGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.theme, path: "/tenant/theme", Component: <TenantTheme /> },
   ]
     .map(route => ({
       ...route,

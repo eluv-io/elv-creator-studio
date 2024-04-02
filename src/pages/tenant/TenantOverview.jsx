@@ -9,10 +9,11 @@ import {
   Group,
   Container,
   Button,
-  Image
+  Image,
+  Stack
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
-import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import UrlJoin from "url-join";
 import {Link} from "react-router-dom";
 import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
@@ -20,41 +21,37 @@ import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 import {
   IconUnlink,
   IconLinkOff,
-  IconLink,
-  IconInputSearch,
-  IconWorldUpload,
-  IconWorldOff
+  IconWorldUpload
 } from "@tabler/icons-react";
 
-const DeployedIcon = ({deployed, isLink}) =>
-  <TooltipIcon
-    label={rootStore.l10n.pages.tenant.form.overview[
-      isLink ?
+const DeployStatus = ({linked=true, deployed, isLink}) => {
+  const label = rootStore.l10n.pages.tenant.form.overview[
+    !linked ? "not_linked" :
+      (isLink ?
         (deployed ? "link_deployed" : "link_not_deployed") :
-        (deployed ? "deployed" : "not_deployed")
-      ]
-    }
-    Icon={
-      isLink ?
-        (deployed ? IconLink : IconLinkOff) :
-        (deployed ? IconWorldUpload : IconWorldOff)
-    }
-    size={20}
-    color={deployed ? "green" : "red"}
-  />;
+        (deployed ? "deployed" : "not_deployed"))
+    ];
+
+  return (
+    <Group align="center" spacing="xs" noWrap>
+      <div style={{height: 8, width: 8, minWidth: 8, borderRadius: "100%", backgroundColor: !linked ? "#AAA" : (deployed ? "#00CC00" : "#CC0000")}} />
+      <Text fz="xs">{ label }</Text>
+    </Group>
+  );
+};
 
 const UpdateLinkButton = ({type, record}) => {
   const [loading, setLoading] = useState(false);
 
   const l10n = rootStore.l10n.pages.tenant.form.overview;
-  const linked = !!record.latestHash;
+  const linked = !!record?.latestHash;
   return (
     <IconButton
       label={LocalizeString(linked ? l10n.update_link_label : l10n.add_link_label, {name: record.name})}
       variant="transparent"
       disabled={record.latestDeployed}
       loading={loading}
-      color="blue.5"
+      color="purple.6"
       Icon={IconUnlink}
       onClick={() =>
         Confirm({
@@ -120,20 +117,25 @@ const DeploymentStatus = observer(({mode}) => {
   const deployed = tenantStore[`${mode}TenantDeployed`];
 
   return (
-    <Paper withBorder p="xl" pt="md" mb="md">
+    <Paper withBorder p="xl" pt="md" mb="md" maw={uiStore.inputWidthWide}>
       <Group position="apart" align="center">
-        <Title order={6}>{ l10n.overview[mode] }</Title>
-        <DeployedIcon deployed={deployed} />
-      </Group>
-      <Text fz={10} color="dimmed">{ tenant.versionHash }</Text>
-
-      {
-        deployed ? null :
-          <Group mt={50} position="right">
-            <Button
-              loading={deploying}
-              miw={150}
-              onClick={async () => {
+        <Stack spacing={0}>
+          <Title order={6} fw={500}>{ l10n.overview[mode] }</Title>
+          <Text maw={300} truncate fz={10} color="dimmed">{ tenant.versionHash }</Text>
+        </Stack>
+        <DeployStatus deployed={deployed} />
+        <IconButton
+          disabled={deployed}
+          Icon={IconWorldUpload}
+          loading={deploying}
+          label={l10n.overview.deploy}
+          color="#00CC00"
+          onClick={() =>
+            Confirm({
+              title: l10n.overview.deploy,
+              text: l10n.overview.deploy_confirm,
+              itemName: mode,
+              onConfirm: async () => {
                 try {
                   setDeploying(true);
 
@@ -141,44 +143,42 @@ const DeploymentStatus = observer(({mode}) => {
                 } finally {
                   setDeploying(false);
                 }
-              }}
-            >
-              { l10n.overview.deploy }
-            </Button>
-          </Group>
-      }
+              }
+            })
+          }
+        />
+      </Group>
     </Paper>
   );
 });
 
-const Sites = observer(() => {
-  const [sites, setSites] = useState(undefined);
+const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
+  const [items, setItems] = useState(undefined);
 
   useEffect(() => {
-    tenantStore.SiteStatus()
-      .then(sites => setSites(sites));
+    Load()
+      .then(content => setItems(content));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
 
   const l10n = rootStore.l10n.pages.tenant.form;
 
   return (
-    <Container p={0} m={0} maw={uiStore.inputWidthWide}>
+    <Container p={0} m={0} maw={1200}>
       <DataTable
         minHeight={150}
-        withBorder
-        withColumnBorders
-        fetching={!sites}
+        fetching={!items}
         idAccessor="slug"
-        records={sites || []}
+        records={items || []}
         columns={[
           {
             accessor: "name",
-            title: l10n.sites.site,
+            title: l10n[type].singular,
+            width: 400,
             render: record => (
-              <Link to={UrlJoin("/sites", record.siteId)}>
-                <Group spacing="lg" pl="xs">
-                  <Image py="sm" width={150} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
+              <Link to={UrlJoin(path, record[`${type}Id`])}>
+                <Group spacing="lg" noWrap>
+                  <Image py="sm" width={60} height={60 / aspectRatio} miw={60} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
                   <Container p={0} m={0}>
                     <Text>{ record.name }</Text>
                     <Text fz={11} color="dimmed">{ record.slug }</Text>
@@ -188,30 +188,24 @@ const Sites = observer(() => {
             )
           },
           {
-            accessor: "status",
-            width: 175,
-            title: l10n.overview.status,
+            accessor: "record.latestDeployed",
+            title: l10n.overview.status.link,
+            render: record => <DeployStatus linked={!!record.latestHash} deployed={record.latestDeployed} isLink />
+          },
+          {
+            accessor: "record.productionDeployed",
+            title: l10n.overview.status.production,
             render: record => (
-              record.latestHash ?
-                // Linked
-                <Container p={0} m={0}>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.link}:</Text>
-                    <DeployedIcon deployed={record.latestDeployed} isLink />
-                  </Group>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.production}:</Text>
-                    <DeployedIcon deployed={record.productionDeployed} />
-                  </Group>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.staging}:</Text>
-                    <DeployedIcon deployed={record.stagingDeployed} />
-                  </Group>
-                </Container> :
-                <Group spacing="xs">
-                  <IconLinkOff size={20} color="red" />
-                  <Text fw={500}>{ l10n.overview.not_linked}</Text>
-                </Group>
+              !record.latestHash ? null :
+                <DeployStatus linked={!!record.latestHash} deployed={record.productionDeployed} />
+            )
+          },
+          {
+            accessor: "record.stagingDeployed",
+            title: l10n.overview.status.staging,
+            render: record => (
+              !record.latestHash ? null :
+                <DeployStatus linked={!!record.latestHash} deployed={record.stagingDeployed} />
             )
           },
           {
@@ -220,94 +214,10 @@ const Sites = observer(() => {
             width: 120,
             render: record => (
               <Group position="center" align="center" spacing={5}>
-                <UpdateLinkButton type="site" record={record} />
+                <UpdateLinkButton type={type} record={record} />
                 {
                   !record.latestHash ? null :
-                    <UnlinkButton type="site" record={record}/>
-                }
-              </Group>
-            )
-          }
-        ]}
-
-      />
-    </Container>
-  );
-});
-
-const Marketplaces = observer(() => {
-  const [marketplaces, setMarketplaces] = useState(undefined);
-
-  useEffect(() => {
-    tenantStore.MarketplaceStatus()
-      .then(marketplaces => setMarketplaces(marketplaces));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
-
-  const l10n = rootStore.l10n.pages.tenant.form;
-
-  return (
-    <Container p={0} m={0} maw={uiStore.inputWidthWide}>
-      <DataTable
-        minHeight={150}
-        withBorder
-        withColumnBorders
-        fetching={!marketplaces}
-        idAccessor="slug"
-        records={marketplaces || []}
-        columns={[
-          {
-            accessor: "name",
-            title: l10n.marketplaces.marketplace,
-            render: record => (
-              <Link to={UrlJoin("/marketplaces", record.marketplaceId)}>
-                <Group spacing="lg">
-                  <Image py="sm" width={100} height={100} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
-                  <Container p={0} m={0}>
-                    <Text>{ record.name }</Text>
-                    <Text fz={11} color="dimmed">{ record.slug }</Text>
-                  </Container>
-                </Group>
-              </Link>
-            )
-          },
-          {
-            accessor: "status",
-            width: 175,
-            title: l10n.overview.status,
-            render: record => (
-              record.latestHash ?
-                // Linked
-                <Container p={0} m={0}>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.link}:</Text>
-                    <DeployedIcon deployed={record.latestDeployed} isLink />
-                  </Group>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.production}:</Text>
-                    <DeployedIcon deployed={record.productionDeployed} />
-                  </Group>
-                  <Group align="center" h={25} position="apart">
-                    <Text fw={500}>{l10n.overview.staging}:</Text>
-                    <DeployedIcon deployed={record.stagingDeployed} />
-                  </Group>
-                </Container> :
-                <Group spacing="xs">
-                  <IconLinkOff size={20} color="red" />
-                  <Text fw={500}>{ l10n.overview.not_linked}</Text>
-                </Group>
-            )
-          },
-          {
-            accessor: "actions",
-            textAlignment: "center",
-            width: 120,
-            render: record => (
-              <Group position="center" align="center" spacing={5}>
-                <UpdateLinkButton type="marketplace" record={record} />
-                {
-                  !record.latestHash ? null :
-                    <UnlinkButton type="marketplace" record={record}/>
+                    <UnlinkButton type={type} record={record}/>
                 }
               </Group>
             )
@@ -328,48 +238,46 @@ const TenantOverview = observer(() => {
 
   return (
     <PageContent>
-      <Container p={0} m={0} maw={uiStore.inputWidth}>
+      <Container p={0} m={0} maw={1200}>
         <Group w="100%" position="apart">
           <Title order={3}>{ metadata.info?.name }</Title>
-          <Group spacing="xl">
-            <Title order={6} color="dimmed">{ metadata.slug }</Title>
-            <IconButton
-              label={rootStore.l10n.components.actions.scan_content}
-              color="blue.5"
-              Icon={IconInputSearch}
-              onClick={async () => {
-                uiStore.SetLoading(true);
-                uiStore.SetLoadingMessage(rootStore.l10n.stores.initialization.loading.scanning);
+          <Button
+            color="purple.6"
+            variant="outline"
+            onClick={async () => {
+              uiStore.SetLoading(true);
+              uiStore.SetLoadingMessage(rootStore.l10n.stores.initialization.loading.scanning);
 
-                try {
-                  await databaseStore.ScanContent({force: true});
-                } catch(error) {
-                  rootStore.DebugLog({
-                    message: "Failed to scan for content:",
-                    error,
-                    level: rootStore.logLevels.DEBUG_LEVEL_ERROR
-                  });
-                } finally {
-                  uiStore.SetLoading(false);
-                }
-              }}
-            />
-          </Group>
+              try {
+                await databaseStore.ScanContent({force: true});
+              } catch(error) {
+                rootStore.DebugLog({
+                  message: "Failed to scan for content:",
+                  error,
+                  level: rootStore.logLevels.DEBUG_LEVEL_ERROR
+                });
+              } finally {
+                uiStore.SetLoading(false);
+              }
+            }}
+          >
+            {rootStore.l10n.components.actions.scan_content}
+          </Button>
         </Group>
-        <Text fz="xs" color="dimmed">{ metadata.info.tenant_id }</Text>
+        <Text fz="xs" color="dimmed">{ tenantStore.tenantSlug }</Text>
         <Text fz="xs" color="dimmed">{ tenantStore.tenantObjectId }</Text>
 
-        <Title order={3} mt={50} mb="md">{ l10n.overview.status }</Title>
+        <Title order={3} mt={50} fw={500} mb="md">{ l10n.overview.deployment }</Title>
 
         <DeploymentStatus mode="production" />
         <DeploymentStatus mode="staging" />
       </Container>
 
-      <Title order={3} mt={50} mb="md">{ l10n.sites.sites }</Title>
-      <Sites />
+      <Title fw={500} order={3} mt={50} mb="md">{ l10n.marketplace.plural }</Title>
+      <StatusTable type="marketplace" path="/marketplaces" Load={async () => await tenantStore.MarketplaceStatus()} />
 
-      <Title order={3} mt={50} mb="md">{ l10n.marketplaces.marketplaces }</Title>
-      <Marketplaces />
+      <Title fw={500} order={3} mt={50} mb="md">{ l10n.site.plural }</Title>
+      <StatusTable type="site" path="/sites" aspectRatio={16/9} Load={async () => await tenantStore.SiteStatus()} />
     </PageContent>
   );
 });

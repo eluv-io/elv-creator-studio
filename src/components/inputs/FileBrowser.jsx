@@ -302,7 +302,7 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
   const [progress, setProgress] = useState(0);
 
   const commonProps = {
-    color: "blue.5",
+    color: "purple.6",
     label: LocalizeString(rootStore.l10n.components.file_browser.download, {filename})
   };
 
@@ -314,7 +314,7 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
           !downloading ? <IconFileDownload /> :
             progress >= 100 ?
               <IconDownloadCompleted /> :
-              <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "blue.5"}]}/>
+              <RingProgress size={30} thickness={4} rootColor="gray.5" sections={[{value: progress, color: "purple.6"}]}/>
         }
         sx={{"&[data-loading]::before": { backgroundColor: "rgba(0,0,0,0)"}}}
         onClick={async () => {
@@ -589,7 +589,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
                 <Group spacing="xs" key={`path-token-${token}-${index}`}>
                   <Text>/</Text>
                   <UnstyledButton onClick={() => setPath(UrlJoin("/", ...pathTokens.slice(0, index + 1)))}>
-                    <Text fw={index === pathTokens.length - 1 ? 600 : 400} color="blue.5">
+                    <Text fw={index === pathTokens.length - 1 ? 600 : 400} color="purple.6">
                       {token}
                     </Text>
                   </UnstyledButton>

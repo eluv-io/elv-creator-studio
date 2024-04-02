@@ -91,7 +91,7 @@ const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
           { fullMediaCatalogMetadata?.info?.branding?.description || mediaCatalog.description || "" }
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
-          <LinkButton radius="md" style={{ flex: 1 }} to={UrlJoin("/media-catalogs", mediaCatalog.objectId)}>
+          <LinkButton style={{ flex: 1 }} to={UrlJoin("/media-catalogs", mediaCatalog.objectId)}>
             Manage
           </LinkButton>
         </Group>

@@ -14,7 +14,11 @@ form:
     leaderboard_excludes: Leaderboard Excluded Addresses
   overview:
     slug: Slug
-    status: Deployment Status
+    deployment: Deployment Status
+    status:
+      link: Link Status
+      staging: Staging Deployment
+      production: Production Deployment
     link: Link
     production: Production
     staging: Staging
@@ -24,6 +28,7 @@ form:
     link_not_deployed: Previous Version Linked
     not_linked: Not Linked
     deploy: Deploy
+    deploy_confirm: Are you sure you want to deploy your changes?
     add_link: Add Link
     add_link_label: Add Link to {name}
     add_link_label_confirm: Are you sure you want to link {name}?
@@ -33,12 +38,12 @@ form:
     remove_link: Remove Link
     remove_link_label: Remove Link to {name}
     remove_link_confirm: Are you sure you want to remove the link to {name}?
-  sites:
-    sites: Sites
-    site: Site
-  marketplaces:
-    marketplaces: Marketplaces
-    marketplace: Marketplace
+  site:
+    plural: Sites
+    singular: Site
+  marketplace:
+    plural: Marketplaces
+    singular: Marketplace
 
   general:
     name:

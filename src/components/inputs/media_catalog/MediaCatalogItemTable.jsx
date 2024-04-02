@@ -325,7 +325,7 @@ const MediaCatalogItemTable = observer(({
                   label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.label})}
                   component={Link}
                   to={UrlJoin(location.pathname, mediaItem.id)}
-                  color="blue.5"
+                  color="purple.6"
                   Icon={IconEdit}
                 />
                 <IconButton

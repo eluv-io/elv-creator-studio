@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {AppShell} from "@mantine/core";
+import {Flex} from "@mantine/core";
 import {Outlet, useParams} from "react-router-dom";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import SideNav from "@/components/common/SideNav.jsx";
@@ -15,22 +15,25 @@ const SectionLayout = observer(({links=[], backLink, loadingMessage, Load}) => {
   });
 
   return (
-    <AppShell
-      header={<AppHeader />}
-      navbar={<SideNav links={links} backLink={backLink} />}
-    >
-      {
-        !Load ?
-          <Outlet/> :
-          <AsyncWrapper
-            key="sections"
-            loadingMessage={loadingMessage}
-            Load={async () => Load(params)}
-          >
-            {() => <Outlet/>}
-          </AsyncWrapper>
-      }
-    </AppShell>
+    <Flex className="page-container">
+      <SideNav links={links} backLink={backLink} />
+      <div style={{flexGrow: "1"}}>
+        <AppHeader />
+        <div className="page-content">
+          {
+            !Load ?
+              <Outlet/> :
+              <AsyncWrapper
+                key="sections"
+                loadingMessage={loadingMessage}
+                Load={async () => Load(params)}
+              >
+                {() => <Outlet/>}
+              </AsyncWrapper>
+          }
+        </div>
+      </div>
+    </Flex>
   );
 });
 
