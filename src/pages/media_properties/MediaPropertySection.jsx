@@ -299,7 +299,7 @@ export const SectionItemTitle = observer(({sectionItem, aspectRatio, banner}) =>
       <MediaItemImage
         imageUrl={banner ? sectionItem?.banner_image?.url : undefined}
         mediaItem={banner ? undefined : sectionItem.display}
-        scale={400}
+        scale={150}
         width={60}
         height={60}
         miw={60}

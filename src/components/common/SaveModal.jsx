@@ -36,7 +36,7 @@ const ModifiedItem = observer(({
           <Text fz="xs" fw={400} color="dimmed">{item.objectId}</Text>
         </Stack>
       }
-      error={error?.toString()}
+      error={error ? rootStore.l10n.components.save_modal.error : undefined}
       withBorder
       p="xl"
       pt="md"

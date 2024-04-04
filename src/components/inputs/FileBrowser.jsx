@@ -679,7 +679,9 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
               <Button
                 w={200}
                 disabled={selectedRecords.length === 0}
-                onClick={() => {
+                onClick={async () => {
+                  await rootStore.VersionHash({objectId: selectedObjectId});
+
                   const records = selectedRecords.map(record => ({
                     ...record,
                     publicUrl: FabricUrl({

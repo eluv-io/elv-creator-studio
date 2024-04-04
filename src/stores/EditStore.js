@@ -147,6 +147,7 @@ class EditStore {
         yield store.Reload({objectId});
       } catch(error) {
         this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+        this.DiscardWriteToken({objectId});
         errors[objectId] = error;
       }
     }

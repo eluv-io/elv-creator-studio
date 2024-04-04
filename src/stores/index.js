@@ -41,6 +41,8 @@ class RootStore {
   tenantInfo;
   typeInfo;
 
+  versionHashes = {};
+
   debugLevel = parseInt(StorageHandler.get({type: "local", key: "debug-level"}) || 0);
 
   logLevels = {
@@ -144,6 +146,16 @@ class RootStore {
     }
 
     return this.libraryIds[objectId];
+  });
+
+  VersionHash = flow(function * ({objectId, versionHash}) {
+    if(versionHash) {
+      objectId = this.utils.DecodeVersionHash(versionHash).objectId;
+    }
+
+    this.versionHashes[objectId] = yield this.client.LatestVersionHash({objectId});
+
+    return this.versionHashes[objectId];
   });
 
   DebugLog({message, error, level=this.logLevels.DEBUG_LEVEL_INFO}) {

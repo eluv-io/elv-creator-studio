@@ -102,6 +102,7 @@ components:
   save_modal:
     title: Save Changes
     changelist: Change List
+    error: There was an error saving this object
     types:
       tenant: Tenant
       site: Site

@@ -54,6 +54,12 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWrite
     libraryId = libraryId || rootStore.libraryIds[objectId];
   }
 
+  if(objectId && !versionHash) {
+    // Ensure version hash is loaded for this object
+    rootStore.VersionHash({objectId});
+    versionHash = rootStore.versionHashes[objectId];
+  }
+
   if(path?.startsWith("/qfab")) {
     urlPath = UrlJoin(urlPath, path.replace(/^\/qfab/, "q"));
   } else if(versionHash) {

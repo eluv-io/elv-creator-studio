@@ -29,7 +29,7 @@ export const MediaItemTitle = observer(({mediaItem}) => {
     <Group noWrap>
       <MediaItemImage
         mediaItem={mediaItem}
-        scale={400}
+        scale={100}
         width={40}
         height={40}
         miw={40}

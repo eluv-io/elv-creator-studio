@@ -40,7 +40,7 @@ export const MediaItemImage = ({imageUrl, mediaItem, aspectRatio, scale, ...comp
   return (
     <Image
       {...componentProps}
-      src={!scale ? imageUrl : ScaleImage(imageUrl, 400)}
+      src={!scale ? imageUrl : ScaleImage(imageUrl, scale)}
       withPlaceholder
     />
   );
@@ -62,7 +62,7 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, ...c
         <MediaItemImage
           aspectRatio={aspectRatio}
           mediaItem={mediaItem}
-          scale={400}
+          scale={200}
           width={sizes[size].img}
           height={sizes[size].img}
           fit="contain"

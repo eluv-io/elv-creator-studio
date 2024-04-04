@@ -361,16 +361,24 @@ class MediaCatalogStore {
 
     const itemTemplateHash = yield this.client.LatestVersionHash({objectId: itemTemplateId});
     const Migrate = async (withUrls) => {
-      const MigrateRelativeLink = link => {
+      const MigrateRelativeLink = async link => {
         if(!link) { return; }
 
         if(typeof link === "string" && link.startsWith("https")) {
-          const linkUrl = link;
-          let linkPath = decodeURIComponent(link).split("/q/")[1];
-          link = { "/": UrlJoin("/qfab", linkPath) };
+          const url = new URL(link);
+
+          let linkPath = decodeURIComponent(url.pathname).split("/q/")[1];
+
+          let [versionHash, ...pathComponents] = linkPath.split("/");
+
+          if(versionHash.startsWith("iq__")) {
+            versionHash = this.rootStore.versionHashes[versionHash] || await this.rootStore.VersionHash({objectId: versionHash});
+          }
+
+          link = { "/": UrlJoin("/qfab", versionHash, ...pathComponents) };
 
           if(withUrls) {
-            link.url = linkUrl;
+            link.url = url.toString();
           }
         } else {
           link = Clone(link);
@@ -416,7 +424,7 @@ class MediaCatalogStore {
             spec = MediaCatalogMediaOtherSpec({mediaType});
           }
 
-          const imageLink = MigrateRelativeLink(mediaItem.image);
+          const imageLink = await MigrateRelativeLink(mediaItem.image);
           const imageAspectRatio = await GetImageAspectRatio(mediaItem.image) || mediaItem.image_aspect_ratio;
 
           media[id] = {
@@ -437,18 +445,18 @@ class MediaCatalogStore {
             authorized_link: !!mediaItem.authorized_link,
             offerings: mediaItem.offerings || [],
             parameters: mediaItem.parameters || [],
-            poster_image: MigrateRelativeLink(mediaItem.poster_image),
+            poster_image: await MigrateRelativeLink(mediaItem.poster_image),
             start_time: mediaItem.start_time,
             end_time: mediaItem.end_time,
-            media_link: MigrateRelativeLink(mediaItem.media_link),
-            media_file: MigrateRelativeLink(mediaItem.media_file),
+            media_link: await MigrateRelativeLink(mediaItem.media_link),
+            media_file: await  MigrateRelativeLink(mediaItem.media_file),
             live: mediaItem.media_type === "Live Video",
             url: mediaItem.link,
           };
 
           if(mediaType === "Gallery") {
-            media[id].background_image = MigrateRelativeLink(mediaItem.background_image);
-            media[id].background_image_mobile = MigrateRelativeLink(mediaItem.background_image_mobile);
+            media[id].background_image = await MigrateRelativeLink(mediaItem.background_image);
+            media[id].background_image_mobile = await MigrateRelativeLink(mediaItem.background_image_mobile);
             media[id].gallery = await this.client.utils.LimitedMap(
               5,
               mediaItem.gallery || [],
@@ -458,12 +466,12 @@ class MediaCatalogStore {
                 title: galleryItem.name || "",
                 label: galleryItem.name || "",
                 description: galleryItem.description || "",
-                thumbnail: MigrateRelativeLink(galleryItem.image),
+                thumbnail: await MigrateRelativeLink(galleryItem.image),
                 thumbnail_aspect_ratio: await GetImageAspectRatio(galleryItem.image?.url) ||
                   (galleryItem.image_aspect_ratio === "Wide" ? "Landscape" :
                     galleryItem.image_aspect_ratio === "Tall" ? "Portrait" :
                       "Square"),
-                video: MigrateRelativeLink(galleryItem.video)
+                video: await MigrateRelativeLink(galleryItem.video)
               })
             );
           }

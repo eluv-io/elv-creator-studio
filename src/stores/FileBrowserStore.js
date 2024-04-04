@@ -64,6 +64,9 @@ class FileBrowserStore {
     const libraryId = yield this.rootStore.LibraryId({objectId});
     const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
 
+    // Ensure version hash is loaded so static urls can be generated
+    this.rootStore.VersionHash({objectId});
+
     const metadata = (yield this.client.ContentObjectMetadata({
       libraryId,
       objectId,

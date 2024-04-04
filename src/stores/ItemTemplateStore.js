@@ -39,10 +39,6 @@ class ItemTemplateStore {
           libraryId: libraryId,
           objectId: itemTemplateId,
           metadataSubtree: "public",
-          resolveLinks: true,
-          linkDepthLimit: 1,
-          resolveIgnoreErrors: true,
-          resolveIncludeSource: true,
           produceLinkUrls: true
         }))
       }
