@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useNavigate, useParams} from "react-router-dom";
-import {rootStore, itemTemplateStore, uiStore, mediaCatalogStore} from "@/stores";
+import {rootStore, itemTemplateStore, mediaCatalogStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {AspectRatio, Button, Container, Group, Image, Select, Text, Title} from "@mantine/core";
@@ -372,6 +372,7 @@ const ItemTemplateAdditionalMedia = observer(() => {
 
   useEffect(() => {
     mediaCatalogStore.LoadMediaCatalogs();
+    mediaPropertyStore.LoadMediaProperties();
   }, []);
 
   const itemTemplate = itemTemplateStore.itemTemplates[itemTemplateId];
@@ -387,6 +388,62 @@ const ItemTemplateAdditionalMedia = observer(() => {
     path: "/public/asset_metadata/nft"
   };
 
+  let mediaConfiguration;
+  if(info.additional_media_type === "List") {
+    mediaConfiguration = (
+      <>
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.additional_media.additional_media_display}
+          field="additional_media_display"
+          defaultValue="Media"
+          options={[
+            "Media",
+            "Album"
+          ]}
+        />
+        {
+          info.additional_media_display !== "Media" ? null :
+            <>
+              <Inputs.Checkbox
+                {...inputProps}
+                {...l10n.additional_media.show_autoplay}
+                field="show_autoplay"
+                defaultValue={false}
+              />
+            </>
+        }
+        <ItemTemplateAdditionalMediaList containerType="list" />
+      </>
+    );
+  } else if(info.additional_media_type === "Sections") {
+    mediaConfiguration = (
+      <>
+        <Title order={3} mt={50} mb="md">{l10n.categories.featured_media}</Title>
+        <ItemTemplateAdditionalMediaList containerType="featured" />
+
+        <Title order={3} mt={50} mb="md">{l10n.categories.additional_media_sections}</Title>
+        <ItemTemplateAdditionalMediaSections />
+      </>
+    );
+  } else {
+    const mediaProperties = (mediaPropertyStore.allMediaProperties || []).map(({name, objectId}) => ({
+      label: name,
+      value: objectId
+    }));
+
+    mediaConfiguration = (
+      <>
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.additional_media.bundled_property}
+          field="bundled_property_id"
+          options={mediaProperties}
+        />
+      </>
+    );
+  }
+
   return (
     <PageContent
       title={`${info.display_name || itemTemplate.display_name || "Item Template"} - ${l10n.categories.additional_media}`}
@@ -400,77 +457,42 @@ const ItemTemplateAdditionalMedia = observer(() => {
         field="additional_media_type"
         defaultValue="List"
         options={[
+          { label: "Bundled Media Property", value: "property" },
           "List",
           "Sections"
         ]}
       />
-      <Inputs.Code
-        {...inputProps}
-        {...l10n.additional_media.custom_gallery_css}
-        type="css"
-        field="custom_gallery_css"
-        maw={uiStore.inputWidth}
-      />
+      { mediaConfiguration }
       {
-        info.additional_media_type === "List" ?
-          <>
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.additional_media.additional_media_display}
-              field="additional_media_display"
-              defaultValue="Media"
-              options={[
-                "Media",
-                "Album"
-              ]}
-            />
-            {
-              info.additional_media_display !== "Media" ? null :
-                <>
-                  <Inputs.Checkbox
-                    {...inputProps}
-                    {...l10n.additional_media.show_autoplay}
-                    field="show_autoplay"
-                    defaultValue={false}
+        !["List", "Sections"].includes(info.additional_media_type) ? null :
+          <Button
+            mt="xl"
+            onClick={() => {
+              modals.open({
+                title: l10n.additional_media.migrate,
+                centered: true,
+                children:
+                  <MigrateMediaForm
+                    type={info.additional_media_type || "List"}
+                    Migrate={async ({mediaCatalogId}) => {
+                      await mediaCatalogStore.MigrateItemTemplateMedia({
+                        type: info.additional_media_type || "List",
+                        itemTemplateId,
+                        mediaCatalogId,
+                        itemTemplateName: info.display_name || itemTemplate.display_name
+                      });
+
+                      modals.closeAll();
+
+                      navigate(UrlJoin("/media-catalogs", mediaCatalogId, "media") + `?filter=${encodeURIComponent(info.display_name || itemTemplate.display_name)}`);
+                    }}
                   />
-                </>
-            }
-            <ItemTemplateAdditionalMediaList containerType="list" />
-          </> :
-          <>
-            <Title order={3} mt={50} mb="md">{l10n.categories.featured_media}</Title>
-            <ItemTemplateAdditionalMediaList containerType="featured" />
-
-            <Title order={3} mt={50} mb="md">{l10n.categories.additional_media_sections}</Title>
-            <ItemTemplateAdditionalMediaSections />
-          </>
+              });
+            }}
+          >
+            {l10n.additional_media.migrate}
+          </Button>
       }
-      <Button
-        onClick={() => {
-          modals.open({
-            title: l10n.additional_media.migrate,
-            centered: true,
-            children:
-              <MigrateMediaForm
-                type={info.additional_media_type || "List"}
-                Migrate={async ({mediaCatalogId}) => {
-                  await mediaCatalogStore.MigrateItemTemplateMedia({
-                    type: info.additional_media_type || "List",
-                    itemTemplateId,
-                    mediaCatalogId,
-                    itemTemplateName: info.display_name || itemTemplate.display_name
-                  });
-
-                  modals.closeAll();
-
-                  navigate(UrlJoin("/media-catalogs", mediaCatalogId, "media") + `?filter=${encodeURIComponent(info.display_name || itemTemplate.display_name)}`);
-                }}
-              />
-          });
-        }}
-      >
-        { l10n.additional_media.migrate }
-      </Button>
     </PageContent>
   );
 });

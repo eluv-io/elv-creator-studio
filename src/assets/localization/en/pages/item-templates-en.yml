@@ -333,6 +333,9 @@ form:
       label: Media
     media_id:
       label: Media ID
+    bundled_property:
+      label: Media Property
+      description: Choose the media property to associate with this item
   reference_images:
     reference_images:
       label: Reference Images

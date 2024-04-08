@@ -991,8 +991,6 @@ export const FileInput = observer(({
   );
 });
 
-
-
 export const FabricBrowserInput = observer(({
   store,
   objectId,
@@ -1004,6 +1002,7 @@ export const FabricBrowserInput = observer(({
   customLabel,
   description,
   hint,
+  linkPath,
   previewable,
   previewIsAnimation,
   previewOptions={},
@@ -1056,6 +1055,7 @@ export const FabricBrowserInput = observer(({
                 objectId,
                 path,
                 field,
+                linkPath,
                 linkObjectId: target.objectId,
                 category,
                 subcategory,
