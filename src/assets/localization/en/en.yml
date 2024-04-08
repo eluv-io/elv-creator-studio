@@ -6,6 +6,7 @@ components:
     marketplaces: Marketplaces
     sites: Sites
     item_templates: Item Templates
+    permission_sets: Permission Sets
   actions:
     back: Back
     back_to: Back to {target}
@@ -110,6 +111,7 @@ components:
       item_template: Item Template
       media_catalog: Media Catalog
       media_property: Media Property
+      permission_set: Permission Set
 
 stores:
   initialization:

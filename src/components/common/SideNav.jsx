@@ -12,7 +12,8 @@ import {
   IconArrowBackUp,
   IconTemplate,
   IconPlaylist,
-  IconBrandPagekit
+  IconBrandPagekit,
+  IconLockOpen
 } from "@tabler/icons-react";
 
 
@@ -24,6 +25,7 @@ const mainLinks = [
   { label: rootStore.l10n.components.nav.media_catalogs, icon: <IconPlaylist />, path: "/media-catalogs"},
   { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBuildingStore />, path: "/marketplaces"},
   { label: rootStore.l10n.components.nav.item_templates, icon: <IconTemplate />, path: "/item-templates"},
+  { label: rootStore.l10n.components.nav.permission_sets, icon: <IconLockOpen />, path: "/permission-sets"},
   { label: rootStore.l10n.components.nav.sites, icon: <IconAppWindow />, path: "/sites"}
 ];
 

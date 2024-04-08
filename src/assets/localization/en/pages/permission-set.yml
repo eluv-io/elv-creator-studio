@@ -1,0 +1,35 @@
+nav:
+  list: Permission Sets
+  overview: Overview
+  general: General
+form:
+  categories:
+    general: General Settings
+    permission_sets: Permission Sets
+    permission_set: Permission Set
+    permission_set_label: Permission Set '{label}'
+    permission_items: Permission Items
+    permission_item: Permission Item
+    permission_item_label: Permission Item '{label}'
+  create:
+    create: Create New Permission Set
+    name:
+      label: Name
+    validation:
+      name: Name must be specified
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+    image:
+      label: Image
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
+  general:
+    image:
+      label: Image
+      description: Square

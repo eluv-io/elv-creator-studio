@@ -205,10 +205,6 @@ class MediaCatalogStore {
           libraryId: libraryId,
           objectId: mediaCatalogId,
           metadataSubtree: "public",
-          resolveLinks: true,
-          linkDepthLimit: 1,
-          resolveIgnoreErrors: true,
-          resolveIncludeSource: true,
           produceLinkUrls: true
         }))
       }

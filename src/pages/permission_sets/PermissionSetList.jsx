@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
-import {rootStore, mediaCatalogStore} from "@/stores";
+import {rootStore, permissionSetStore} from "@/stores";
 import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton, LocalizeString} from "@/components/common/Misc";
@@ -21,13 +21,16 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {modals} from "@mantine/modals";
 import {useForm} from "@mantine/form";
 
-const CreateMediaCatalogForm = ({Create}) => {
+const CreatePermissionSetForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
 
   const form = useForm({
-    initialValues: { name: "" },
+    initialValues: {
+      name: "",
+      slug: ""
+    },
     validate: {
-      name: value => value ? null : rootStore.l10n.pages.media_catalog.form.create.validation.name
+      name: value => value ? null : rootStore.l10n.pages.permission_set.form.create.validation.name
     }
   });
 
@@ -47,8 +50,9 @@ const CreateMediaCatalogForm = ({Create}) => {
         })}
       >
         <TextInput
+          mb="md"
           data-autofocus
-          label={rootStore.l10n.pages.media_catalog.form.create.name}
+          {...rootStore.l10n.pages.permission_set.form.create.name}
           {...form.getInputProps("name")}
         />
         <Group mt="md">
@@ -65,17 +69,17 @@ const CreateMediaCatalogForm = ({Create}) => {
   );
 };
 
-const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
-  const fullMediaCatalogMetadata = fullMediaCatalog?.metadata?.public?.asset_metadata || {};
-  const name = fullMediaCatalogMetadata?.info?.name || mediaCatalog.name;
+const PermissionSetCard = observer(({permissionSet, fullPermissionSet}) => {
+  const fullPermissionSetMetadata = fullPermissionSet?.metadata?.public?.asset_metadata || {};
+  const name = fullPermissionSetMetadata?.info?.name || permissionSet.name;
   const image =
-    ScaleImage(fullMediaCatalogMetadata?.info?.image?.url, 400) ||
-    FabricUrl({...mediaCatalog, path: "/meta/public/asset_metadata/info/image", width: 400});
+    ScaleImage(fullPermissionSetMetadata?.info?.image?.url, 400) ||
+    FabricUrl({...permissionSet, path: "/meta/public/asset_metadata/info/image", width: 400});
 
   return (
     <Card withBorder radius="md" p="md" style={{display: "flex", flexDirection: "column"}}>
       <Card.Section p="xl">
-        <AspectRatio ratio={16/9}>
+        <AspectRatio ratio={2/3}>
           <Image src={image} alt={name} withPlaceholder />
         </AspectRatio>
       </Card.Section>
@@ -85,13 +89,13 @@ const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
           { name }
         </Text>
         <Code fz="xs" p={0} bg="transparent">
-          { mediaCatalog.objectId }
+          { permissionSet.objectId }
         </Code>
         <Text fz="sm" mt={20} lineClamp={3}>
-          { fullMediaCatalogMetadata?.info?.description || mediaCatalog.description || "" }
+          { fullPermissionSetMetadata?.info?.description || permissionSet.description || "" }
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
-          <LinkButton style={{ flex: 1 }} to={UrlJoin("/media-catalogs", mediaCatalog.objectId)}>
+          <LinkButton style={{ flex: 1 }} to={UrlJoin("/permission-sets", permissionSet.objectId)}>
             Manage
           </LinkButton>
         </Group>
@@ -100,31 +104,31 @@ const MediaCatalogCard = observer(({mediaCatalog, fullMediaCatalog}) => {
   );
 });
 
-const MediaCatalogList = observer(() => {
-  const l10n = rootStore.l10n.pages.media_catalog.form;
+const PermissionSetList = observer(() => {
+  const l10n = rootStore.l10n.pages.permission_set.form;
   return (
     <AsyncWrapper
-      key="media-catalogs"
-      loadingMessage="Loading Media Catalogs"
-      Load={async () => await mediaCatalogStore.LoadMediaCatalogs()}
+      key="permission-sets"
+      loadingMessage="Loading Permission Sets"
+      Load={async () => await permissionSetStore.LoadPermissionSets()}
     >
       <PageContent
-        title={rootStore.l10n.pages.media_catalog.form.categories.media_catalogs}
+        title={rootStore.l10n.pages.permission_set.form.categories.permission_sets}
         action={
           <Button
             variant="light"
             onClick={() =>
               modals.open({
-                title: LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}),
+                title: LocalizeString(l10n.create.create, {type: l10n.categories.permission_set}),
                 centered: true,
                 children:
-                  <CreateMediaCatalogForm
-                    Create={async ({name}) => await mediaCatalogStore.CreateMediaCatalog({name})}
+                  <CreatePermissionSetForm
+                    Create={async ({name}) => await permissionSetStore.CreatePermissionSet({name})}
                   />
               })
             }
           >
-            { LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}) }
+            { LocalizeString(l10n.create.create, {type: l10n.categories.permission_set}) }
           </Button>
         }
       >
@@ -139,8 +143,8 @@ const MediaCatalogList = observer(() => {
           ]}
         >
           {
-            (mediaCatalogStore.allMediaCatalogs || []).map(mediaCatalog =>
-              <MediaCatalogCard key={`mediaCatalog-${mediaCatalog.objectId}`} mediaCatalog={mediaCatalog} fullMediaCatalog={mediaCatalogStore.mediaCatalogs[mediaCatalog.objectId]} />
+            (permissionSetStore.allPermissionSets || []).map(permissionSet =>
+              <PermissionSetCard key={`permissionSet-${permissionSet.objectId}`} permissionSet={permissionSet} fullPermissionSet={permissionSetStore.permissionSets[permissionSet.objectId]} />
             )
           }
         </SimpleGrid>
@@ -149,4 +153,4 @@ const MediaCatalogList = observer(() => {
   );
 });
 
-export default MediaCatalogList;
+export default PermissionSetList;

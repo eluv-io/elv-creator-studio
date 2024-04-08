@@ -18,6 +18,7 @@ import MediaCatalogStore from "@/stores/MediaCatalogStore.js";
 import MediaPropertyStore from "@/stores/MediaPropertyStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
+import PermissionSetStore from "@/stores/PermissionSetStore.js";
 
 configure({
   enforceActions: "always",
@@ -68,6 +69,7 @@ class RootStore {
     this.itemTemplateStore = new ItemTemplateStore(this);
     this.mediaCatalogStore = new MediaCatalogStore(this);
     this.mediaPropertyStore = new MediaPropertyStore(this);
+    this.permissionSetStore = new PermissionSetStore(this);
 
     this.Initialize();
   }
@@ -205,5 +207,6 @@ export const siteStore = rootStore.siteStore;
 export const itemTemplateStore = rootStore.itemTemplateStore;
 export const mediaCatalogStore = rootStore.mediaCatalogStore;
 export const mediaPropertyStore = rootStore.mediaPropertyStore;
+export const permissionSetStore = rootStore.permissionSetStore;
 
 window.rootStore = rootStore;

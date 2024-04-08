@@ -12,7 +12,7 @@ import {
   siteStore,
   itemTemplateStore,
   mediaCatalogStore,
-  mediaPropertyStore
+  mediaPropertyStore, permissionSetStore
 } from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {ActionToString} from "@/stores/helpers/Changelist.js";
@@ -47,6 +47,10 @@ const HistoryButtons = observer(({section}) => {
     case "mediaProperty":
       store = mediaPropertyStore;
       objectId = params.mediaPropertyId;
+      break;
+    case "permissionSet":
+      store = permissionSetStore;
+      objectId = params.permissionSetId;
       break;
     default:
       rootStore.DebugLog({message: `History Buttons: Unknown section type '${section}'`, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});

@@ -7,6 +7,7 @@ import ItemTemplateLocalization from "./pages/item-templates-en.yml";
 import MediaLocalization from "./pages/media-en.yml";
 import MediaCatalogLocalization from "./pages/media-catalog-en.yml";
 import MediaPropertyLocalization from "./pages/media-property.en.yml";
+import PermissionSetLocalization from "./pages/permission-set.yml";
 
 Localization.pages = {
   tenant: TenantLocalization,
@@ -15,7 +16,8 @@ Localization.pages = {
   item_template: ItemTemplateLocalization,
   media: MediaLocalization,
   media_catalog: MediaCatalogLocalization,
-  media_property: MediaPropertyLocalization
+  media_property: MediaPropertyLocalization,
+  permission_set: PermissionSetLocalization
 };
 
 export default Localization;

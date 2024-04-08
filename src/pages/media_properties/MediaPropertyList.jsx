@@ -99,7 +99,7 @@ const MediaPropertyCard = observer(({mediaProperty, fullMediaProperty}) => {
           { mediaProperty.objectId }
         </Code>
         <Text fz="sm" mt={20} lineClamp={3}>
-          { fullMediaPropertyMetadata?.info?.branding?.description || mediaProperty.description || "" }
+          { fullMediaPropertyMetadata?.info?.description || mediaProperty.description || "" }
         </Text>
         <Group mt="xl" style={{display: "flex", flexGrow: 1, alignItems: "flex-end"}}>
           <LinkButton style={{ flex: 1 }} to={UrlJoin("/media-properties", mediaProperty.objectId)}>

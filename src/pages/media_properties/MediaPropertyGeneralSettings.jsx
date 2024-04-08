@@ -26,7 +26,7 @@ const MediaPropertyGeneralSettings = observer(() => {
 
   return (
     <PageContent
-      title={`${info.name || mediaProperty.name || "MediaProperty"} - General`}
+      title={`${info.name || mediaProperty.name || "Media Property"} - General`}
       section="mediaProperty"
       useHistory
     >

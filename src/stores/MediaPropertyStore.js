@@ -77,10 +77,6 @@ class MediaPropertyStore {
           libraryId: libraryId,
           objectId: mediaPropertyId,
           metadataSubtree: "public",
-          resolveLinks: true,
-          linkDepthLimit: 1,
-          resolveIgnoreErrors: true,
-          resolveIncludeSource: true,
           produceLinkUrls: true
         }))
       }

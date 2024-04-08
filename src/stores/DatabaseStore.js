@@ -101,7 +101,8 @@ class DatabaseStore {
       template: "Template",
       mezzanine: "Title",
       mediaCatalog: "Media Catalog",
-      mediaProperty: "Media Property"
+      mediaProperty: "Media Property",
+      permissionSet: "Permission Set"
     };
 
     let typeIds = {};
@@ -285,7 +286,8 @@ class DatabaseStore {
       sites: {},
       templates: {},
       mediaCatalogs: {},
-      mediaProperties: {}
+      mediaProperties: {},
+      permisisonSets: {}
     };
 
     const typeIds = yield this.InitializeTypes();
@@ -316,6 +318,10 @@ class DatabaseStore {
         case "mediaProperty":
           object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
           content.mediaProperties[object.objectId] = object;
+          break;
+        case "permissionSet":
+          object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
+          content.permisisonSets[object.objectId] = object;
           break;
         default:
           this.DebugLog({message: `Unknown type ${object.metadata?.public?.name} (${object.objectId}, type ${object.typeId})`, level: this.logLevels.DEBUG_LEVEL_INFO});
@@ -371,6 +377,12 @@ class DatabaseStore {
     yield Promise.all(
       Object.keys(content.mediaProperties).map(async mediaPropertyId => {
         content.mediaProperties[mediaPropertyId].tenantSlug = tenantSlug;
+      })
+    );
+
+    yield Promise.all(
+      Object.keys(content.permisisonSets).map(async permissionSetId => {
+        content.permisisonSets[permissionSetId].tenantSlug = tenantSlug;
       })
     );
 
@@ -585,6 +597,15 @@ class DatabaseStore {
         delete mediaProperty.metadata;
 
         await this.WriteDocument({batch, collection: "mediaProperties", document: mediaProperty.objectId, content: mediaProperty});
+      })
+    );
+
+    yield Promise.all(
+      Object.values(content.permisisonSets).map(async permissionSet => {
+        permissionSet = { ...permissionSet };
+        delete permissionSet.metadata;
+
+        await this.WriteDocument({batch, collection: "permissionSets", document: permissionSet.objectId, content: permissionSet});
       })
     );
 
@@ -838,6 +859,35 @@ class DatabaseStore {
       content: object
     });
   });
+
+  SavePermissionSet = flow(function * ({batch, permissionSetId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: permissionSetId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: permissionSetId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    let object = {
+      libraryId,
+      objectId: permissionSetId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug || "",
+      propertySlug: metadata.public?.asset_metadata?.info?.slug || "",
+      name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
+      description: metadata.public?.asset_metadata?.info?.description || "",
+      id: metadata.public?.asset_metadata?.info?.id
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "permissionSets",
+      document: permissionSetId,
+      content: object
+    });
+  });
+
 
   GetCollection = flow(function * ({collection, conditions}) {
     try {
