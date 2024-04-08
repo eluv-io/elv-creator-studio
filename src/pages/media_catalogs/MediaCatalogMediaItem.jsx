@@ -255,6 +255,32 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 />
               </>
           }
+          {
+            mediaItem.live_video ? null :
+              <Inputs.Checkbox
+                {...inputProps}
+                {...l10n.media.clip}
+                field="clip"
+              />
+          }
+          {
+            !mediaItem.clip || mediaItem.live_video ? null :
+              <>
+                <Inputs.Number
+                  {...inputProps}
+                  {...l10n.media.clip_start_time}
+                  field="clip_start_time"
+                  min={0}
+                  max={mediaItem.clip_end_time}
+                />
+                <Inputs.Number
+                  {...inputProps}
+                  {...l10n.media.clip_end_time}
+                  field="clip_end_time"
+                  min={mediaItem.clip_start_time || 0}
+                />
+              </>
+          }
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.poster_image}

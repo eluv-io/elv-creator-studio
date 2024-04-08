@@ -168,6 +168,15 @@ form:
     live_video:
       label: Live Video
       description: Check this box if the video content is live
+    clip:
+      label: Clip Video
+      description: If specified, this video will be clipped to the specified start and end times
+    clip_start_time:
+      label: Clip Start Time (Seconds)
+      description: If blank, clip will start from beginning of the original video
+    clip_end_time:
+      label: Clip End Time (Seconds)
+      description: If blank, clip will play to the end of the original video
     offerings:
       label: Offerings
       description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
