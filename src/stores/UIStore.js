@@ -14,6 +14,7 @@ class UIStore {
 
   inputWidth = 600;
   inputWidthWide = 800;
+  inputWidthExtraWide=1000;
 
   constructor(rootStore) {
     makeAutoObservable(this);

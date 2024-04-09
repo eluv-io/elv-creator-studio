@@ -4,12 +4,19 @@ const PermissionItemBaseSpec = {
   title: "",
   subtitle: "",
   description: "",
-  image: undefined,
-  permissions: {}
+  permissions: {},
+  display: {
+    title: "",
+    subtitle: "",
+    headers: [],
+    description: "",
+    thumbnail_image_portrait: undefined
+  }
 };
 
 export const PermissionItemOwnedSpec = {
   ...PermissionItemBaseSpec,
+  type: "owned_item",
   marketplace_id: undefined,
   marketplace_sku: undefined
 };

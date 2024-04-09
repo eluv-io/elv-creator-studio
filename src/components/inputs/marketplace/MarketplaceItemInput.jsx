@@ -35,6 +35,7 @@ const SelectedItem = observer(({
   label,
   index,
   item,
+  disabled,
   componentProps={},
   dragHandleProps={},
   Remove
@@ -57,24 +58,45 @@ const SelectedItem = observer(({
           <Text fz="sm">{item.label || item.value}</Text>
           <Text fz="xs" color="dimmed">{item.value}</Text>
         </div>
-        <IconButton
-          label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: item.name || item.sku})}
-          variant="transparent"
-          tabIndex={-1}
-          style={{position: "absolute", top: 5, right: 5}}
-          icon={<IconX size={15} />}
-          onClick={() => {
-            Remove ? Remove() :
-              ConfirmDelete({
-                itemName: item.label || item.value,
-                onConfirm: () => {
-                  single ?
-                    store.SetMetadata({objectId, page: location.pathname, path, field, value: "", category, subcategory, label}) :
-                    store.RemoveListElement({objectId, page: location.pathname, path, field, index, category, subcategory, label: item.name || item.sku});
-                }
-              });
-          }}
-        />
+        {
+          disabled ? null :
+            <IconButton
+              label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: item.name || item.sku})}
+              variant="transparent"
+              tabIndex={-1}
+              style={{position: "absolute", top: 5, right: 5}}
+              icon={<IconX size={15}/>}
+              onClick={() => {
+                Remove ? Remove() :
+                  ConfirmDelete({
+                    itemName: item.label || item.value,
+                    onConfirm: () => {
+                      single ?
+                        store.SetMetadata({
+                          objectId,
+                          page: location.pathname,
+                          path,
+                          field,
+                          value: "",
+                          category,
+                          subcategory,
+                          label
+                        }) :
+                        store.RemoveListElement({
+                          objectId,
+                          page: location.pathname,
+                          path,
+                          field,
+                          index,
+                          category,
+                          subcategory,
+                          label: item.name || item.sku
+                        });
+                    }
+                  });
+              }}
+            />
+        }
       </Group>
     </Paper>
   );
@@ -87,6 +109,7 @@ const MarketplaceItemSelectWrapper = observer(({objectId, marketplaceSlug, marke
     marketplaceStore.LoadMarketplaces()
       .then(() => {
         if(marketplaceId) {
+          setResolvedMarketplaceId(marketplaceId);
           marketplaceStore.LoadMarketplace({marketplaceId});
           return;
         }
@@ -137,7 +160,7 @@ const MarketplaceItemSelectComponent = observer(({
   hint,
   options,
   componentProps={},
-
+  disabled,
   useBasicInput,
   inputProps={},
 }) => {
@@ -148,8 +171,9 @@ const MarketplaceItemSelectComponent = observer(({
     <Paper withBorder p="xl" pt="sm" mb="md" maw={uiStore.inputWidth} {...componentProps}>
       {
         useBasicInput ?
-          <Select data={options} mb="xs" searchable {...inputProps} /> :
+          <Select data={options} mb="xs" searchable disabled={disabled} {...inputProps} /> :
           <Inputs.Select
+            disabled={disabled}
             store={store}
             objectId={objectId}
             path={path}
@@ -176,6 +200,7 @@ const MarketplaceItemSelectComponent = observer(({
         !selectedItem ? null :
           <Stack p={0} spacing="xs">
             <SelectedItem
+              disabled={disabled}
               single
               key={`item-${selectedSKU}`}
               store={store}
@@ -203,6 +228,7 @@ const MarketplaceItemMultiselectComponent = observer(({
   description,
   hint,
   items,
+  disabled,
   options
 }) => {
   const selectedSKUs = store.GetMetadata({objectId, path, field}) || [];
@@ -216,6 +242,7 @@ const MarketplaceItemMultiselectComponent = observer(({
       <Draggable key={`draggable-item-${sku}`} index={index} draggableId={`item-${sku}`}>
         {(itemProvided, snapshot) => (
           <SelectedItem
+            disabled={disabled}
             key={`item-${sku}`}
             store={store}
             objectId={objectId}
@@ -241,6 +268,7 @@ const MarketplaceItemMultiselectComponent = observer(({
   return (
     <Paper withBorder p="xl" pt="md" mb="md" maw={uiStore.inputWidth}>
       <Inputs.MultiSelect
+        disabled={disabled}
         store={store}
         objectId={objectId}
         path={path}

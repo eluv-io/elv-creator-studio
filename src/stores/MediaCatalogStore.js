@@ -209,6 +209,13 @@ class MediaCatalogStore {
         }))
       }
     };
+
+    yield this.rootStore.permissionSetStore.LoadPermissionSets();
+    yield Promise.all(
+      this.rootStore.permissionSetStore.allPermissionSets.map(async ({objectId}) =>
+        await this.rootStore.permissionSetStore.LoadPermissionSet({permissionSetId: objectId})
+      )
+    );
   });
 
   CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {

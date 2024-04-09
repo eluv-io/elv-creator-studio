@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaCatalogStore} from "@/stores";
+import {rootStore, mediaCatalogStore, permissionSetStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 
@@ -42,15 +42,27 @@ const MediaCatalogGeneralSettings = observer(() => {
         path="/public/asset_metadata/info"
         field="description"
       />
-
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.permission_sets}
+        subcategory={l10n.general.permission_sets.label}
+        field="permission_sets"
+        options={
+          (permissionSetStore.allPermissionSets || []).map(permissionSet => ({
+            label: permissionSet.name,
+            value: permissionSet.objectId
+          }))
+        }
+      />
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.common.image}
         subcategory={l10n.categories.info}
         fields={[
-          { field: "image", ...l10n.common.image },
+          { field: "image", ...l10n.common.image, aspectRatio: 16/9 },
         ]}
       />
+
     </PageContent>
   );
 });

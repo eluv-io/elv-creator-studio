@@ -20,6 +20,20 @@ class PermissionSetStore {
     makeAutoObservable(this);
   }
 
+  get allPermissionItems() {
+    let allPermissionItems = {};
+    Object.keys(this.permissionSets).forEach(permissionSetId => {
+      const permissionItems = this.permissionSets[permissionSetId].metadata?.public?.asset_metadata?.info?.permission_items || {};
+      Object.keys(permissionItems).forEach(permissionItemId =>
+        allPermissionItems[permissionItemId] = ({
+          ...permissionItems[permissionItemId],
+          permissionSetId
+      }));
+    });
+
+    return allPermissionItems;
+  }
+
   LoadPermissionSets = flow(function * (force=false) {
     if(this.allPermissionSets && !force) { return; }
 
@@ -102,12 +116,20 @@ class PermissionSetStore {
     return objectId;
   });
 
-  CreatePermissionItem({page, permissionSetId, label}) {
+  CreatePermissionItem({page, permissionSetId, label, type="owned_item", marketplaceId, marketplaceSKU}) {
     let id = `${this.ID_PREFIXES["permission_item_owned"]}${GenerateUUID()}`;
 
     const spec = Clone(PermissionItemOwnedSpec);
     spec.id = id;
     spec.label = label || spec.label;
+
+    const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+    spec.marketplace = {
+      marketplace_id: marketplaceId,
+      tenant_slug: marketplace.tenantSlug,
+      marketplace_slug: marketplace.marketplaceSlug
+    };
+    spec.marketplace_sku = marketplaceSKU;
 
     this.AddField({
       objectId: permissionSetId,

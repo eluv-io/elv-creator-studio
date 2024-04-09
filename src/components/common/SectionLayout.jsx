@@ -17,7 +17,7 @@ const SectionLayout = observer(({links=[], backLink, loadingMessage, Load}) => {
   return (
     <Flex className="page-container">
       <SideNav links={links} backLink={backLink} />
-      <div style={{flexGrow: "1"}}>
+      <div style={{flexGrow: "1", overflow: "hidden"}}>
         <AppHeader />
         <div className="page-content">
           {

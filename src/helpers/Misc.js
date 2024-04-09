@@ -143,15 +143,15 @@ export const StorageHandler = ({
   }
 });
 
-export const ScrollTo = ({top=0, target, behavior="smooth"}) => {
+export const ScrollTo = ({top=0, target, container, behavior="smooth"}) => {
   if(target) {
     top = target.getBoundingClientRect().top + window.scrollY + top;
   }
 
   // Mobile has a bug that prevents scroll top from working
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    window.scrollTo(0, top);
+    (container || window).scrollTo(0, top);
   } else {
-    window.scrollTo({top, behavior});
+    (container || window).scrollTo({top, behavior});
   }
 };

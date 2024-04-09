@@ -20,7 +20,7 @@ import {SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
 import {IconEdit, IconTrashX} from "@tabler/icons-react";
 import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
-import {MediaItemImage} from "@/components/common/MediaCatalog";
+import {MediaItemImage, MediaItemPermissionIcon} from "@/components/common/MediaCatalog";
 
 export const MediaItemTitle = observer(({mediaItem}) => {
   if(!mediaItem) { return null; }
@@ -314,6 +314,13 @@ const MediaCatalogItemTable = observer(({
                 <Text fz="xs">{mediaItem.media_lists?.length || 0}</Text>
               )
             },
+          {
+            accessor: "public",
+            width: 120,
+            textAlignment: "center",
+            title: l10n.media.list.columns.permissions,
+            render: mediaItem => <MediaItemPermissionIcon mediaItem={mediaItem} />
+          },
           {
             accessor: "id",
             width: 120,

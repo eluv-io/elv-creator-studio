@@ -42,7 +42,7 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
 export const TooltipIcon = ({label, Icon, icon, size, alt, color, tooltipProps={}}) => {
   return (
     <Group h={size} position="center" align="center">
-      <Tooltip {...tooltipProps} height={2} label={label}>
+      <Tooltip {...tooltipProps} height={2} label={label} style={{whiteSpace: "pre-wrap"}}>
         {
           icon ? icon :
             <Box h={size} sx={theme => ({color: theme.colors[color][5]})}>

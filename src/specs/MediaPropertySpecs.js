@@ -69,6 +69,32 @@ Property
 
 import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+/*
+Hide
+Disable
+Show Page
+Purchase Gate
+ */
+
+export const MediaPropertyPermissionItemSpec = {
+  permission_item_id: undefined
+};
+
+const MediaPropertySectionPermissionSpec = {
+  permissions: {
+    behavior: "hide",
+    required_permissions: []
+  }
+};
+
+const MediaPropertyPermissionSpec = {
+  permissions: {
+    behavior: "hide",
+    alternate_page: undefined,
+    required_permissions: []
+  }
+};
+
 export const MediaPropertyFilterSpec = {
   media_catalog: "",
   content_type: "",
@@ -92,7 +118,8 @@ export const MediaPropertySectionItemBaseSpec = {
     ...MediaCatalogBaseSpec,
     banner_image: undefined,
     banner_image_mobile: undefined
-  }
+  },
+  ...MediaPropertySectionPermissionSpec
 };
 
 export const MediaPropertySectionItemMediaSpec = {
@@ -168,7 +195,8 @@ export const MediaPropertySectionBaseSpec = {
     content_display_text: "titles",
     background_image: undefined,
     background_image_mobile: undefined
-  }
+  },
+  ...MediaPropertySectionPermissionSpec
 };
 
 export const MediaPropertySectionManualSpec = {
@@ -197,7 +225,8 @@ export const MediaPropertyPageSpec = {
     background_image: undefined,
     background_image_mobile: undefined,
     sections: [],
-  }
+  },
+  ...MediaPropertyPermissionSpec,
 };
 
 export const MediaPropertySpec = {
@@ -210,8 +239,10 @@ export const MediaPropertySpec = {
   subproperties: [],
   media_catalogs: [],
   associated_marketplaces: [],
+  permission_sets: [],
   attributes: [],
   sections: {},
+  permission_behavior: "hide",
   pages: {
     main: {
       ...MediaPropertyPageSpec,
@@ -219,5 +250,6 @@ export const MediaPropertySpec = {
       slug: "main",
       label: "Main Page"
     }
-  }
+  },
+  ...MediaPropertyPermissionSpec,
 };

@@ -1,11 +1,13 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
+import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {Group} from "@mantine/core";
+import {Group, Title} from "@mantine/core";
+import UrlJoin from "url-join";
+import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -114,6 +116,60 @@ const MediaPropertyGeneralSettings = observer(() => {
           ]}
         />
       </Group>
+
+      <Title order={3} mt={50} mb="md">{l10n.categories.permissions}</Title>
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.permission_sets}
+        subcategory={l10n.categories.permissions}
+        field="permission_sets"
+        options={
+          (permissionSetStore.allPermissionSets || []).map(permissionSet => ({
+            label: permissionSet.name,
+            value: permissionSet.objectId
+          }))
+        }
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="hide"
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        options={[
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
+        ]}
+      />
+      {
+        info?.permissions?.behavior !== "show_alternate_page" ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.alternate_page}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="alternate_page"
+              options={Object.keys(info.pages || {}).map(pageId => ({
+                label: info.pages[pageId].label,
+                value: pageId
+              }))}
+            />
+            <PermissionItemSelect
+              multiple
+              permissionSetIds={info.permission_sets || []}
+              {...inputProps}
+              {...l10n.general.required_permissions}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="required_permissions"
+            />
+          </>
+      }
     </PageContent>
   );
 });

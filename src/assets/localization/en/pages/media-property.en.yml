@@ -13,6 +13,7 @@ form:
     media_property_label: Media Property '{label}'
     general: General Settings
     info: Media Property Info
+    permissions: Permission Settings
     layout: Layout
     header: Header
     pages: Pages
@@ -28,6 +29,7 @@ form:
     section_filters: Section Filters
     section_item: Section Item
     section_item_label: Section Item `{label}`
+    section_item_content: Section Item Content
     section_item_presentation: Section Item Presentation
     purchase_item: Purchase Item
   create:
@@ -63,7 +65,6 @@ form:
       description: Portrait (2:3)
     header_logo:
       label: Header Logo
-
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
@@ -72,6 +73,26 @@ form:
       description: Other properties within this property
     associated_marketplaces:
       label: Associated Marketplaces
+    permission_sets:
+      label: Permission Sets
+      description: Select permission sets to associate with this property
+    permission_behavior:
+      label: Permission Behavior
+      description: Specify the default behavior for content that is not accessible due to permissions
+      hint: |
+        Hide: Inaccessible content will be hidden 
+        
+        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
+        
+        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+        
+        Show Alternate Page: An alternate page will be shown to users who do not have the specified permissions
+    alternate_page:
+      label: Alternate Page
+      description: If the user doesn't at least one of the specified permissions, this page will be shown
+    required_permissions:
+      label: Required Permissions
+      description: If the user doesn't at least one of these permissions, the alternate page will be shown
   pages:
     create:
       create: Create New Page
@@ -109,6 +130,19 @@ form:
       label: Sections
       description: Lay out your page by specifying a list of sections
       fieldLabel: Section
+    permission_behavior:
+      label: Permission Behavior
+      description: Specify the default behavior for content that is not accessible due to permissions
+      hint: |
+        Default: Use property-level setting 
+        
+        Hide: Inaccessible content will be hidden 
+        
+        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
+        
+        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+        
+        Show Alternate Page: An alternate page will be shown to users who do not have the specified permissions
   sections:
     create:
       create: Create New Page Section
@@ -194,6 +228,24 @@ form:
       end_time:
         label: End Time
         description: Live content starting before the specified time
+    permission_behavior:
+      label: Permission Behavior
+      description: Specify the default behavior for content that is not accessible due to permissions
+      hint: |
+        Default: Use page-level setting 
+        
+        Hide: Inaccessible content will be hidden 
+        
+        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
+        
+        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+    permissions:
+      label: Permissions
+      description: If specified, a user must have access to at least one of the following permissions to access this section
+      fieldLabel: Permission
+    invert_permissions:
+      label: Invert Permissions
+      description: If specified, this content will *only* be accessible if the user does not have any of the specified permissions. May be used, for example, to promote items only to users who don't already own them.
   section_items:
     create:
       create: Add Item to Page Section
@@ -259,6 +311,25 @@ form:
         label: Marketplace
       marketplace_sku:
         label: Item
+    permission_behavior:
+      label: Permission Behavior
+      description: Specify the default behavior for content that is not accessible due to permissions
+      hint: |
+        Default: Use section-level setting 
+        
+        Hide: Inaccessible content will be hidden 
+        
+        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
+        
+        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+    permissions:
+      label: Permissions
+      description: If specified, a user must have access to at least one of the following permissions to access this item
+      fieldLabel: Permission
+    invert_permissions:
+      label: Invert Permissions
+      description: If specified, this content will *only* be accessible if the user does not have any of the specified permissions. May be used, for example, to promote an item only to users who don't already own it.
+
 
 
 

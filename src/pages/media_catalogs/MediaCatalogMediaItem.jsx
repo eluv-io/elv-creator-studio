@@ -7,8 +7,7 @@ import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {
   MediaCatalogCommonFields,
-  MediaCatalogViewedSettings,
-  MediaItemSubList
+  MediaCatalogViewedSettings
 } from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
@@ -405,7 +404,7 @@ const MediaCatalogMediaItem = observer(() => {
       {
         ["Link"].includes(mediaItem.media_type) ? null :
           <>
-            <Title order={3} mt={50} mb="md">{l10n.categories.viewed_settings}</Title>
+            <Title order={5} mt="xl" mb="md">{l10n.categories.viewed_settings}</Title>
             <MediaCatalogViewedSettings type="media" mediaId={mediaItemId} />
           </>
       }
@@ -414,12 +413,15 @@ const MediaCatalogMediaItem = observer(() => {
       <MediaConfiguration mediaItem={mediaItem} />
 
       {
+        /*
         ["Link"].includes(mediaItem.media_type) ? null :
           <>
             <Title order={3} mt={50}>{ l10n.categories.associated_media }</Title>
             <Title order={6} color="dimmed" mb="xl">{l10n.type_descriptions.associated_media}</Title>
             <MediaItemSubList type="media" mediaId={mediaItemId}/>
           </>
+
+         */
       }
     </PageContent>
   );

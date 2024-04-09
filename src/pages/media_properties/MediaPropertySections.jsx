@@ -8,6 +8,7 @@ import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
 import {Button, Container, Group, Modal, Paper, Select, TextInput, Text} from "@mantine/core";
+import {MediaPropertySectionPermissionIcon} from "@/components/common/MediaCatalog";
 
 const CreateSectionForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
@@ -107,6 +108,7 @@ export const MediaPropertySectionsTable = observer(({
       setSelectedRecords={setSelectedRecords}
       excludedKeys={excludedSectionIds}
       editable={editable}
+      width="ExtraWide"
       AddItem={async () => {
         return new Promise((resolve) => {
           modals.open({
@@ -150,7 +152,14 @@ export const MediaPropertySectionsTable = observer(({
           title: l10n.sections.display.display_format.label,
           render: section => <Text>{ section.display?.display_format?.capitalize() || "" }</Text>,
           width: 175
-        }
+        },
+        {
+          accessor: "permissions",
+          title: l10n.sections.permissions.label,
+          textAlignment: "center",
+          render: section => <MediaPropertySectionPermissionIcon sectionOrSectionItem={section} />,
+          width: 125
+        },
       ]}
     />
   );

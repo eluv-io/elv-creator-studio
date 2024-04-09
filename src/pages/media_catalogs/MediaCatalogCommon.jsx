@@ -7,7 +7,64 @@ import UrlJoin from "url-join";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaCatalogItemSelectionModal, MediaItemTitle} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {useState} from "react";
-import {Paper, Text} from "@mantine/core";
+import {Paper, Text, Title} from "@mantine/core";
+import {MediaCatalogPermissionSpec} from "@/specs/MediaCatalogSpecs.js";
+import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
+
+export const MediaCatalogPermissionSettings = observer(({type, mediaId}) => {
+  const {mediaCatalogId} = useParams();
+
+  const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
+  const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
+  const mediaItem = info?.[type]?.[mediaId];
+
+  if(!mediaCatalog || !mediaItem) {
+    return null;
+  }
+
+  const l10n = rootStore.l10n.pages.media_catalog.form;
+  const inputProps = {
+    store: mediaCatalogStore,
+    objectId: mediaCatalogId,
+    category: mediaCatalogStore.MediaItemCategory({type, mediaCatalogId, id: mediaId}),
+    subcategory: l10n.categories.permissions,
+    path: UrlJoin("/public/asset_metadata/info/", type, mediaId)
+  };
+
+  return (
+    <>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.permissions.public}
+        path={UrlJoin("/public/asset_metadata/info/", type, mediaId)}
+        field="public"
+      />
+      {
+        mediaItem.public || (info.permission_sets || []).length === 0 ? null :
+          <>
+            <Inputs.List
+              {...inputProps}
+              {...l10n.permissions.permissions}
+              field="permissions"
+              fieldLabel={l10n.permissions.permission.label}
+              newItemSpec={MediaCatalogPermissionSpec}
+              renderItem={(props) =>
+                <>
+                  <PermissionItemSelect
+                    permissionSetIds={info?.permission_sets}
+                    defaultFirst
+                    {...props}
+                    {...l10n.permissions.permission_item}
+                    field="permission_item_id"
+                  />
+                </>
+              }
+            />
+          </>
+      }
+    </>
+  );
+});
 
 export const MediaItemSubList = observer(({type, mediaId}) => {
   const [showSelectionModal, setShowSelectionModal] = useState(false);
@@ -165,6 +222,11 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
         {...l10n.media.label}
         field="label"
       />
+
+      <Title order={3} mt={50} mb="md">{ l10n.categories.permissions }</Title>
+      <MediaCatalogPermissionSettings type={type} mediaId={mediaId} />
+
+      <Title mt={50} mb="md" order={3}>{l10n.categories.display}</Title>
 
       <Inputs.Text
         {...inputProps}

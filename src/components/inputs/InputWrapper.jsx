@@ -6,7 +6,7 @@ import {uiStore} from "@/stores/index.js";
 // Icon with hint tooltip on hover
 const HintIcon = ({hint, componentProps={}}) => {
   return (
-    <Tooltip label={hint} multiline maw={350} w="max-content" withArrow position="top-start" events={{ hover: true, focus: true, touch: false }}>
+    <Tooltip label={hint} multiline style={{whiteSpace: "pre-wrap"}} maw={350} w="max-content" withArrow position="top-start" events={{ hover: true, focus: true, touch: false }}>
       <Group {...componentProps} style={{cursor: "help", ...(componentProps?.style || {})}}>
         <IconQuestionMark alt={hint} size={12} color="#228be6" />
       </Group>

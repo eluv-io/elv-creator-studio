@@ -1,3 +1,7 @@
+export const MediaCatalogPermissionSpec = {
+  permission_item_id: undefined
+};
+
 export const MediaCatalogGalleryItemSpec = {
   id: undefined,
   label: "<New Gallery Item>",
@@ -25,7 +29,9 @@ export const MediaCatalogBaseSpec = {
   thumbnail_image_square: undefined,
   thumbnail_image_landscape: undefined,
   tags: [],
-  attributes: {}
+  attributes: {},
+  public: false,
+  permissions: []
 };
 
 export const MediaCatalogAttributeBaseSpec = {
@@ -117,6 +123,7 @@ export const MediaCatalogSpec = {
   name: "",
   description: "",
   image: undefined,
+  permission_sets: [],
   tags: [],
   media: {},
   media_lists: {},

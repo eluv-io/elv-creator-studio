@@ -14,6 +14,7 @@ import {MarketplaceSelect} from "@/components/inputs/ResourceSelection";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 import {useEffect} from "react";
 import {MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
+import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
 const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inputProps, l10n}) => {
   const pages = Object.keys(mediaProperty.pages);
@@ -42,7 +43,7 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
             disabled
             {...l10n.section_items.media_item}
           >
-            <MediaItemCard mediaItem={mediaItem} size="md" mb="md" withLink />
+            <MediaItemCard mediaItem={mediaItem} size="md" mb="md" withLink showPermissions />
           </MantineInput.Wrapper>
           {
             mediaItem.type === "media" ? null :
@@ -297,7 +298,48 @@ const MediaPropertySectionItem = observer(() => {
         }
         field="type"
       />
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.section_items.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="default"
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        options={[
+          { label: "Default", value: "default" },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          }))
+        ]}
+      />
+
+      {
+        (info.permission_sets || []).length === 0 ? null :
+          <>
+            <PermissionItemSelect
+              {...l10n.section_items.permissions}
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="permission_item_ids"
+              multiple
+              permissionSetIds={info?.permission_sets}
+              defaultFirst
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.section_items.invert_permissions}
+              subcategory={l10n.categories.permissions}
+              defaultValue={false}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="invert_permissions"
+            />
+          </>
+      }
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_content}</Title>
       <SectionItemOptions
         mediaProperty={info}
         sectionItem={sectionItem}
@@ -305,6 +347,8 @@ const MediaPropertySectionItem = observer(() => {
         l10n={l10n}
         inputProps={inputProps}
       />
+
+
 
       {
         sectionItem.type !== "item_purchase" ? null :

@@ -11,6 +11,7 @@ import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
+import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
 const MediaPropertyPage = observer(() => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
@@ -133,8 +134,54 @@ const MediaPropertyPage = observer(() => {
         ]}
       />
 
-      <Title order={3} mb="md" mt={50}>{l10n.categories.sections}</Title>
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.pages.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="default"
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        options={[
+          { label: "Default", value: "default" },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
+        ]}
+      />
+      {
+        page?.permissions?.behavior !== "show_alternate_page" ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.alternate_page}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="alternate_page"
+              options={Object.keys(info.pages || {})
+                .filter(id => id !== pageId)
+                .map(pageId => ({
+                label: info.pages[pageId].label,
+                value: pageId
+              }))}
+            />
+            <PermissionItemSelect
+              multiple
+              permissionSetIds={info.permission_sets || []}
+              {...inputProps}
+              {...l10n.general.required_permissions}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="required_permissions"
+            />
+          </>
+      }
+
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.sections}</Title>
 
       <Inputs.CollectionTable
         {...inputProps}

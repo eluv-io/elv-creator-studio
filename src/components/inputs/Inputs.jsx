@@ -1309,7 +1309,7 @@ const ListInputs = observer(({
         field={index.toString()}
         category={category}
         subcategory={subcategory}
-        //label={fieldLabel}
+        label={fieldLabel}
         actionLabel={actionLabel}
         componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
         {...inputProps}
@@ -1858,6 +1858,7 @@ const ReferenceTable = observer(({
   editable=true,
   selectedRecords,
   setSelectedRecords,
+  width="Wide",
   AddItem,
   protectedKeys=[]
 }) => {
@@ -1868,6 +1869,7 @@ const ReferenceTable = observer(({
   const values = Object.keys(map)
     .filter(key => !excludedKeys.includes(key))
     .map(key => map[key]);
+  const maxWidth = uiStore[`inputWidth${width}`];
 
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -1920,13 +1922,13 @@ const ReferenceTable = observer(({
   }
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={maxWidth} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
         {
           !filterable ? null :
             <TextInput mb="md" value={filter} onChange={event => setFilter(event.target.value)} placeholder="Filter" />
         }
-        <Paper maw={uiStore.inputWidthWide}>
+        <Paper maw={maxWidth}>
           <DataTable
             minHeight={filteredValues.length === 0 ? 200 : 0}
             withBorder

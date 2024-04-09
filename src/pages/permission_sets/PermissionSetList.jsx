@@ -79,7 +79,7 @@ const PermissionSetCard = observer(({permissionSet, fullPermissionSet}) => {
   return (
     <Card withBorder radius="md" p="md" style={{display: "flex", flexDirection: "column"}}>
       <Card.Section p="xl">
-        <AspectRatio ratio={2/3}>
+        <AspectRatio ratio={1}>
           <Image src={image} alt={name} withPlaceholder />
         </AspectRatio>
       </Card.Section>

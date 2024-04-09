@@ -4,7 +4,10 @@ import {rootStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import {MediaCatalogCommonFields, MediaItemSubList} from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
+import {
+  MediaCatalogCommonFields,
+  MediaItemSubList
+} from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
 
 const MediaCatalogMediaList = observer(() => {
   const { mediaCatalogId, mediaListId } = useParams();

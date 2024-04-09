@@ -40,6 +40,12 @@ class MediaPropertyStore {
     "marketplace_link": "Marketplace Link"
   };
 
+  PERMISSION_BEHAVIORS = {
+    "hide": "Hide",
+    "disable": "Show Disabled",
+    "show_purchase": "Show Purchase Options"
+  };
+
   constructor(rootStore) {
     this.rootStore = rootStore;
 
@@ -63,10 +69,17 @@ class MediaPropertyStore {
 
     yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
     yield this.rootStore.marketplaceStore.LoadMarketplaces();
+    yield this.rootStore.permissionSetStore.LoadPermissionSets();
 
     yield Promise.all(
       this.rootStore.mediaCatalogStore.allMediaCatalogs.map(async ({objectId}) =>
         await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: objectId})
+      )
+    );
+
+    yield Promise.all(
+      this.rootStore.permissionSetStore.allPermissionSets.map(async ({objectId}) =>
+        await this.rootStore.permissionSetStore.LoadPermissionSet({permissionSetId: objectId})
       )
     );
 

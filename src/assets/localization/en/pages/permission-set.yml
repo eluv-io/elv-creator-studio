@@ -2,6 +2,7 @@ nav:
   list: Permission Sets
   overview: Overview
   general: General
+  permission_items: Permission Items
 form:
   categories:
     general: General Settings
@@ -11,6 +12,7 @@ form:
     permission_items: Permission Items
     permission_item: Permission Item
     permission_item_label: Permission Item '{label}'
+    permission_item_display: Display
   create:
     create: Create New Permission Set
     name:
@@ -24,6 +26,8 @@ form:
       label: Description
     id:
       label: ID
+    label:
+      label: Label
     image:
       label: Image
     slug:
@@ -33,3 +37,44 @@ form:
     image:
       label: Image
       description: Square
+  permission_items:
+    create:
+      title: Create Permission Item
+      label:
+        label: Label
+        description: For internal reference, not displayed
+      type:
+        label: Permission Type
+      marketplace:
+        label: Marketplace
+      marketplace_sku:
+        label: Marketplace Item
+        description: Select an item to associate with these permissions
+      validation:
+        label: Label must be specified
+        marketplace_id: Marketplace must be specified
+        marketplace_sku: Marketplace item must be specified
+    permission_items:
+      label: Permission Items
+  permission_item:
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    marketplace:
+      label: Marketplace
+    marketplace_sku:
+      label: Marketplace Item
+    display:
+      title:
+        label: Display Title
+      headers:
+        label: Headers
+        description: Short text that will appear above the title, e.g. content rating, release year, duration
+        fieldLabel: Header
+      subtitle:
+        label: Subtitle
+      description:
+        label: Description

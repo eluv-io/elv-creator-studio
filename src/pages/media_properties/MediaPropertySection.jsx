@@ -23,8 +23,9 @@ import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
-import {MediaItemCard, MediaItemImage} from "@/components/common/MediaCatalog.jsx";
+import {MediaItemCard, MediaItemImage, MediaPropertySectionPermissionIcon} from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
+import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
 const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
@@ -426,7 +427,14 @@ const SectionContentList = observer(() => {
                 </Text>
               );
             }
-          }
+          },
+          {
+            accessor: "permissions",
+            label: l10n.sections.permissions.label,
+            centered: true,
+            render: sectionItem => <MediaPropertySectionPermissionIcon sectionOrSectionItem={sectionItem} />,
+            width: 125
+          },
         ]}
       />
     );
@@ -454,6 +462,7 @@ const AutomaticSectionContentPreview = observer(({mediaPropertyId, sectionId, as
               aspectRatio={aspectRatio || "Canonical"}
               size="sm"
               withLink
+              showPermissions
             />
           )
         }
@@ -709,6 +718,46 @@ const MediaPropertySection = observer(() => {
         field="description"
       />
 
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="default"
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        options={[
+          { label: "Default", value: "default" },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          }))
+        ]}
+      />
+
+      {
+        (info.permission_sets || []).length === 0 ? null :
+          <>
+            <PermissionItemSelect
+              {...l10n.sections.permissions}
+              {...inputProps}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="permission_item_ids"
+              multiple
+              permissionSetIds={info?.permission_sets}
+              defaultFirst
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.sections.invert_permissions}
+              subcategory={l10n.categories.permissions}
+              defaultValue={false}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="invert_permissions"
+            />
+          </>
+      }
+
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
       <Inputs.Select
@@ -807,7 +856,6 @@ const MediaPropertySection = observer(() => {
               field="aspect_ratio"
               options={
                 [
-                  {label: "Default", value: ""},
                   ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
                     .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
                 ]
@@ -825,6 +873,7 @@ const MediaPropertySection = observer(() => {
             />
           </>
       }
+
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>
 
