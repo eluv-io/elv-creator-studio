@@ -1683,12 +1683,14 @@ const CollectionTable = observer(({
   filterable,
   Filter,
   editable=true,
+  width="Wide",
   AddItem,
   Actions
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   let values = store.GetMetadata({objectId, path, field}) || [];
+  const maxWidth = uiStore[`inputWidth${width}`];
 
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -1749,7 +1751,7 @@ const CollectionTable = observer(({
   const showDragHandle = !debouncedFilter;
 
   return (
-    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={uiStore.inputWidthWide} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
+    <InputWrapper label={label} description={description} hint={hint} m={0} mb="xl" maw={maxWidth} wrapperProps={{descriptionProps: {style: {paddingRight: "50px"}}}}>
       <Container p={0} m={0} pb={showBottomAddButton ? 50 : "md"} mt="lg">
         {
           !filterable ? null :

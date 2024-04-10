@@ -304,15 +304,16 @@ const MediaPropertySectionItem = observer(() => {
         {...inputProps}
         {...l10n.section_items.permission_behavior}
         subcategory={l10n.categories.permissions}
-        defaultValue="default"
+        defaultValue=""
         path={UrlJoin(inputProps.path, "permissions")}
         field="behavior"
         options={[
-          { label: "Default", value: "default" },
+          { label: "Default", value: "" },
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
-          }))
+          })),
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"}
         ]}
       />
 
@@ -327,14 +328,6 @@ const MediaPropertySectionItem = observer(() => {
               multiple
               permissionSetIds={info?.permission_sets}
               defaultFirst
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.section_items.invert_permissions}
-              subcategory={l10n.categories.permissions}
-              defaultValue={false}
-              path={UrlJoin(inputProps.path, "permissions")}
-              field="invert_permissions"
             />
           </>
       }

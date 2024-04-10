@@ -141,33 +141,48 @@ const MediaPropertyGeneralSettings = observer(() => {
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
-          })),
-          { label: "Show Alternate Page", value: "show_alternate_page" }
+          }))
         ]}
       />
+      <PermissionItemSelect
+        multiple
+        {...inputProps}
+        {...l10n.general.property_permissions}
+        permissionSetIds={info.permission_sets}
+        path={UrlJoin(inputProps.path, "permissions")}
+        subcategory={l10n.categories.permissions}
+        defaultValue=""
+        field="property_permissions"
+      />
       {
-        info?.permissions?.behavior !== "show_alternate_page" ? null :
+        (info.permissions?.property_permissions || []).length === 0 ? null :
           <>
             <Inputs.Select
               {...inputProps}
-              {...l10n.general.alternate_page}
-              subcategory={l10n.categories.permissions}
+              {...l10n.general.permission_behavior}
+              subcategory={l10n.categories.property_permissions}
               path={UrlJoin(inputProps.path, "permissions")}
-              field="alternate_page"
-              options={Object.keys(info.pages || {}).map(pageId => ({
-                label: info.pages[pageId].label,
-                value: pageId
-              }))}
+              field="property_permissions_behavior"
+              defaultValue="show_purchase"
+              options={[
+                { label: "Show Purchase Options", value: "show_purchase" },
+                { label: "Show Alternate Page", value: "show_alternate_page" }
+              ]}
             />
-            <PermissionItemSelect
-              multiple
-              permissionSetIds={info.permission_sets || []}
-              {...inputProps}
-              {...l10n.general.required_permissions}
-              subcategory={l10n.categories.permissions}
-              path={UrlJoin(inputProps.path, "permissions")}
-              field="required_permissions"
-            />
+            {
+              info?.permissions?.property_permissions_behavior !== "show_alternate_page" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.alternate_page}
+                  subcategory={l10n.categories.permissions}
+                  path={UrlJoin(inputProps.path, "permissions")}
+                  field="alternate_page_id"
+                  options={Object.keys(info.pages || {}).map(pageId => ({
+                    label: info.pages[pageId].label,
+                    value: pageId
+                  }))}
+                />
+            }
           </>
       }
     </PageContent>

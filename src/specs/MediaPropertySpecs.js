@@ -76,22 +76,18 @@ Show Page
 Purchase Gate
  */
 
-export const MediaPropertyPermissionItemSpec = {
-  permission_item_id: undefined
-};
-
 const MediaPropertySectionPermissionSpec = {
   permissions: {
     behavior: "hide",
-    required_permissions: []
+    permission_item_ids: []
   }
 };
 
 const MediaPropertyPermissionSpec = {
   permissions: {
     behavior: "hide",
-    alternate_page: undefined,
-    required_permissions: []
+    alternate_page_id: undefined,
+    permission_item_ids: []
   }
 };
 
@@ -226,7 +222,7 @@ export const MediaPropertyPageSpec = {
     background_image_mobile: undefined,
     sections: [],
   },
-  ...MediaPropertyPermissionSpec,
+  ...MediaPropertySectionPermissionSpec,
 };
 
 export const MediaPropertySpec = {

@@ -23,7 +23,12 @@ import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable";
-import {MediaItemCard, MediaItemImage, MediaPropertySectionPermissionIcon} from "@/components/common/MediaCatalog.jsx";
+import {
+  MediaItemCard,
+  MediaItemImage,
+  MediaItemPermissionIcon,
+  MediaPropertySectionPermissionIcon
+} from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
@@ -352,6 +357,7 @@ const SectionContentList = observer(() => {
         routePath="content"
         field="content"
         idField="id"
+        width="ExtraWide"
         AddItem={async () => {
           return new Promise((resolve) => {
             modals.open({
@@ -434,6 +440,15 @@ const SectionContentList = observer(() => {
             centered: true,
             render: sectionItem => <MediaPropertySectionPermissionIcon sectionOrSectionItem={sectionItem} />,
             width: 125
+          },
+          {
+            accessor: "media_permissions",
+            label: l10n.sections.media_permissions.label,
+            centered: true,
+            render: sectionItem =>
+              sectionItem.type !== "media" || !sectionItem.media_id ? null :
+                <MediaItemPermissionIcon mediaItem={mediaPropertyStore.GetMediaItem({mediaItemId: sectionItem.media_id})} />,
+            width: 150
           },
         ]}
       />
@@ -723,15 +738,16 @@ const MediaPropertySection = observer(() => {
         {...inputProps}
         {...l10n.sections.permission_behavior}
         subcategory={l10n.categories.permissions}
-        defaultValue="default"
+        defaultValue=""
         path={UrlJoin(inputProps.path, "permissions")}
         field="behavior"
         options={[
-          { label: "Default", value: "default" },
+          { label: "Default", value: "" },
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
-          }))
+          })),
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"}
         ]}
       />
 
@@ -746,14 +762,6 @@ const MediaPropertySection = observer(() => {
               multiple
               permissionSetIds={info?.permission_sets}
               defaultFirst
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.sections.invert_permissions}
-              subcategory={l10n.categories.permissions}
-              defaultValue={false}
-              path={UrlJoin(inputProps.path, "permissions")}
-              field="invert_permissions"
             />
           </>
       }

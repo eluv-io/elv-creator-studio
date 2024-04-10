@@ -77,7 +77,7 @@ form:
       label: Permission Sets
       description: Select permission sets to associate with this property
     permission_behavior:
-      label: Permission Behavior
+      label: Default Permission Behavior
       description: Specify the default behavior for content that is not accessible due to permissions
       hint: |
         Hide: Inaccessible content will be hidden 
@@ -85,14 +85,15 @@ form:
         Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
         
         Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
-        
-        Show Alternate Page: An alternate page will be shown to users who do not have the specified permissions
+    property_permissions:
+      label: Property Permissions
+      description: If specified, the user must have one or more of these permissions to access this property
+    property_permission_behavior:
+      label: Property Permission Behavior
+      description: Specify what happens if the user does not have access to this property
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
-    required_permissions:
-      label: Required Permissions
-      description: If the user doesn't at least one of these permissions, the alternate page will be shown
   pages:
     create:
       create: Create New Page
@@ -130,19 +131,6 @@ form:
       label: Sections
       description: Lay out your page by specifying a list of sections
       fieldLabel: Section
-    permission_behavior:
-      label: Permission Behavior
-      description: Specify the default behavior for content that is not accessible due to permissions
-      hint: |
-        Default: Use property-level setting 
-        
-        Hide: Inaccessible content will be hidden 
-        
-        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
-        
-        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
-        
-        Show Alternate Page: An alternate page will be shown to users who do not have the specified permissions
   sections:
     create:
       create: Create New Page Section
@@ -239,13 +227,14 @@ form:
         Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
         
         Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+        
+        Show If Not Authorized: This section and content within it will only be shown if the user is not authorized. Useful for showing preview content or purchase options only to users who haven't yet purchased, for example.
     permissions:
       label: Permissions
       description: If specified, a user must have access to at least one of the following permissions to access this section
       fieldLabel: Permission
-    invert_permissions:
-      label: Invert Permissions
-      description: If specified, this content will *only* be accessible if the user does not have any of the specified permissions. May be used, for example, to promote items only to users who don't already own them.
+    media_permissions:
+      label: Media Permissions
   section_items:
     create:
       create: Add Item to Page Section
@@ -322,14 +311,12 @@ form:
         Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
         
         Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+        
+        Show If Not Authorized: This item will only be shown if the user is not authorized. Useful for showing preview content or purchase options only to users who haven't yet purchased, for example.
     permissions:
       label: Permissions
       description: If specified, a user must have access to at least one of the following permissions to access this item
       fieldLabel: Permission
-    invert_permissions:
-      label: Invert Permissions
-      description: If specified, this content will *only* be accessible if the user does not have any of the specified permissions. May be used, for example, to promote an item only to users who don't already own it.
-
 
 
 
