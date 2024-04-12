@@ -159,7 +159,7 @@ const MediaPropertyGeneralSettings = observer(() => {
           <>
             <Inputs.Select
               {...inputProps}
-              {...l10n.general.permission_behavior}
+              {...l10n.general.property_permission_behavior}
               subcategory={l10n.categories.property_permissions}
               path={UrlJoin(inputProps.path, "permissions")}
               field="property_permissions_behavior"
