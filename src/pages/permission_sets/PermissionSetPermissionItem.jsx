@@ -44,6 +44,12 @@ const PermissionSetPermissionItem = observer(() => {
       section="permissionSet"
       useHistory
     >
+      <Inputs.UUID
+        {...inputProps}
+        {...l10n.permission_item.id}
+        field="id"
+        disabled
+      />
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.label}

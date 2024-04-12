@@ -78,14 +78,14 @@ Purchase Gate
 
 const MediaPropertySectionPermissionSpec = {
   permissions: {
-    behavior: "hide",
+    behavior: "",
     permission_item_ids: []
   }
 };
 
 const MediaPropertyPermissionSpec = {
   permissions: {
-    behavior: "hide",
+    behavior: "",
     alternate_page_id: undefined,
     permission_item_ids: []
   }
@@ -187,7 +187,7 @@ export const MediaPropertySectionBaseSpec = {
     display_format: "carousel",
     display_limit: undefined,
     justification: "left",
-    aspect_ratio: "",
+    aspect_ratio: "Landscape",
     content_display_text: "titles",
     background_image: undefined,
     background_image_mobile: undefined

@@ -38,10 +38,11 @@ export const MediaItemTitle = observer(({mediaItem}) => {
         style={{objectPosition: "left" }}
       />
       <Stack spacing={2}>
-        <Text fz={12} fw={500} mb={2}>
-          <Group spacing={5} align="top">
-            { mediaItem.label || mediaItem.id }
-          </Group>
+        <Text fz={12} fw={500}>
+          { mediaItem.label || mediaItem.id }
+        </Text>
+        <Text fz={11} fw={400} mb={2} color="dimmed">
+          { mediaItem.id }
         </Text>
         <Group spacing={3}>
           {

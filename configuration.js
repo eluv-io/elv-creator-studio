@@ -13,5 +13,12 @@ const EluvioConfiguration = {
     "authDomain": `${firebaseProjectId}.firebaseapp.com`,
     "databaseURL": `https://${firebaseProjectId}.firebaseio.com`,
     "storageBucket": `${firebaseProjectId}.appspot.com`
-  }
+  },
+  "firebase-config": {
+    "apiKey": "AIzaSyB-klmTxRJ8HL_lPVahq584KVs1xmrcI0A",
+    "projectId": "production-web-apps-c0c6b",
+    "authDomain": "production-web-apps-c0c6b.firebaseapp.com",
+    "databaseURL": "https://production-web-apps-c0c6b.firebaseio.com",
+    "storageBucket": "production-web-apps-c0c6b.appspot.com"
+  },
 };

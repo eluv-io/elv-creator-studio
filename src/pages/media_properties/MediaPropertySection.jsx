@@ -747,9 +747,24 @@ const MediaPropertySection = observer(() => {
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
           })),
-          { label: "Show If Not Authorized", value: "show_if_unauthorized"}
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"},
+          { label: "Show Alternate Page", value: "show_alternate_page"}
         ]}
       />
+      {
+        section.permissions?.behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="alternate_page_id"
+            options={Object.keys(info.pages || {}).map(pageId => ({
+              label: info.pages[pageId].label,
+              value: pageId
+            }))}
+          />
+      }
 
       {
         (info.permission_sets || []).length === 0 ? null :
@@ -858,7 +873,7 @@ const MediaPropertySection = observer(() => {
             <Inputs.Select
               {...inputProps}
               {...l10n.sections.display.aspect_ratio}
-              defaultValue=""
+              defaultValue="Landscape"
               subcategory={l10n.categories.section_presentation}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
               field="aspect_ratio"

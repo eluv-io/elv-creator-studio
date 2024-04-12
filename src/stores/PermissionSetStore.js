@@ -52,12 +52,6 @@ class PermissionSetStore {
     yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
     yield this.rootStore.marketplaceStore.LoadMarketplaces();
 
-    yield Promise.all(
-      this.rootStore.mediaCatalogStore.allMediaCatalogs.map(async ({objectId}) =>
-        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: objectId})
-      )
-    );
-
     this.permissionSets[permissionSetId] = {
       ...info,
       metadata: {

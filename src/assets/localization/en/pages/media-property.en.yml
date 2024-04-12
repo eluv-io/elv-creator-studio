@@ -177,7 +177,7 @@ form:
         description: Choose which text fields will be shown for items in this section
       aspect_ratio:
         label: Aspect Ratio
-        description: Specify the image aspect ratio to use when displaying content in this section. By default, the aspect ratio used will depend on the content type of the item.
+        description: Specify the image aspect ratio to use when displaying content in this section. When set to 'mixed', the aspect ratio used will depend on the content type and the available thumbnails for the item.
       background_image:
         label: Background Image
         description: Displayed on the 'view all' page for the section
