@@ -3,7 +3,7 @@ import Inputs from "@/components/inputs/Inputs";
 import {permissionSetStore} from "@/stores/index.js";
 
 const PermissionItemSelect = observer(({permissionSetIds=[], defaultFirst, multiple=false, ...inputProps}) => {
-  const permissionItems = Object.values(permissionSetStore.allPermissionItems || {})
+  let permissionItems = Object.values(permissionSetStore.allPermissionItems || {})
     .filter(permissionItem => permissionSetIds.includes(permissionItem.permissionSetId))
     .map(permissionItem => ({
       label: permissionItem.label || permissionItem.id,
@@ -19,6 +19,10 @@ const PermissionItemSelect = observer(({permissionSetIds=[], defaultFirst, multi
         {...inputProps}
       />
     );
+  }
+
+  if(!defaultFirst) {
+    permissionItems.unshift({label: "<Select Permission Item>", value: ""});
   }
 
   return (

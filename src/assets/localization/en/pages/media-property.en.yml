@@ -290,6 +290,9 @@ form:
       label: Purchasable Items
       fieldLabel: Item
     purchasable_item:
+      permission_item_id:
+        label: Permission Item
+        description: Specify an existing permission item to purchase
       title:
         label: Title
       subtitle:

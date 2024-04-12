@@ -359,46 +359,58 @@ const MediaPropertySectionItem = observer(() => {
                     hidden
                     field="id"
                   />
-                  <Inputs.Text
+                  <PermissionItemSelect
+                    {...l10n.section_items.purchasable_item.permission_item_id}
                     {...props}
-                    {...l10n.section_items.purchasable_item.title}
-                    subcategory={l10n.categories.purchase_item}
-                    field="title"
+                    defaultValue=""
+                    field="permission_item_id"
+                    permissionSetIds={info?.permission_sets}
                   />
-                  <Inputs.Text
-                    {...props}
-                    {...l10n.section_items.purchasable_item.subtitle}
-                    subcategory={l10n.categories.purchase_item}
-                    field="subtitle"
-                  />
-                  <Inputs.TextArea
-                    {...props}
-                    {...l10n.section_items.purchasable_item.description}
-                    subcategory={l10n.categories.purchase_item}
-                    field="description"
-                  />
-                  <MarketplaceSelect
-                    {...props}
-                    {...l10n.section_items.purchasable_item.marketplace}
-                    subcategory={l10n.categories.purchase_item}
-                    path={UrlJoin(props.path, "/marketplace")}
-                    field="marketplace_slug"
-                    defaultFirst
-                  />
-                  <MarketplaceItemSelect
-                    {...props}
-                    {...l10n.section_items.purchasable_item.marketplace_sku}
-                    subcategory={l10n.categories.purchase_item}
-                    marketplaceSlug={props.item?.marketplace?.marketplace_slug}
-                    field="marketplace_sku"
-                    componentProps={{
-                      withBorder: false,
-                      p: 0,
-                      pt: 0,
-                      pb: 0,
-                      mb:0
-                    }}
-                  />
+                  {
+                    props.item.permission_item_id ? null :
+                      <>
+                        <Inputs.Text
+                          {...props}
+                          {...l10n.section_items.purchasable_item.title}
+                          subcategory={l10n.categories.purchase_item}
+                          field="title"
+                        />
+                        <Inputs.Text
+                          {...props}
+                          {...l10n.section_items.purchasable_item.subtitle}
+                          subcategory={l10n.categories.purchase_item}
+                          field="subtitle"
+                        />
+                        <Inputs.TextArea
+                          {...props}
+                          {...l10n.section_items.purchasable_item.description}
+                          subcategory={l10n.categories.purchase_item}
+                          field="description"
+                        />
+                        <MarketplaceSelect
+                          {...props}
+                          {...l10n.section_items.purchasable_item.marketplace}
+                          subcategory={l10n.categories.purchase_item}
+                          path={UrlJoin(props.path, "/marketplace")}
+                          field="marketplace_slug"
+                          defaultFirst
+                        />
+                        <MarketplaceItemSelect
+                          {...props}
+                          {...l10n.section_items.purchasable_item.marketplace_sku}
+                          subcategory={l10n.categories.purchase_item}
+                          marketplaceSlug={props.item?.marketplace?.marketplace_slug}
+                          field="marketplace_sku"
+                          componentProps={{
+                            withBorder: false,
+                            p: 0,
+                            pt: 0,
+                            pb: 0,
+                            mb:0
+                          }}
+                        />
+                      </>
+                    }
                 </>
               );
             }}
