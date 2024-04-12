@@ -63,6 +63,10 @@ form:
       label: Subtitle 2
     id_format:
       label: ID Display Format
+    collection_image:
+      label: Collection Image
+    collection_name:
+      label: Collection Name
     style_variant:
       label: Style Variant
       description: "If specified, this will be added to the HTML container class when this item is displayed (e.g. 'card-container--variant-(variant)', 'featured-item__icon-container--variant-(variant)' 'feature-gallery__icon-container--variant-(variant)'). These classes can be used for defining custom CSS for this item when displayed in your marketplace."

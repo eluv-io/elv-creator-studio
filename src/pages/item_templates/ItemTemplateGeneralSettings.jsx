@@ -190,6 +190,18 @@ const ItemTemplateGeneralSettings = observer(() => {
           { label: "Ordinal / Cap", value: "ordinal/cap" }
         ]}
       />
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.general.collection_image}
+        subcategory={l10n.categories.info}
+        field="collection_image"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.collection_name}
+        subcategory={l10n.categories.info}
+        field="collection_name"
+      />
       <Inputs.Text
         {...inputProps}
         {...l10n.general.style_variant}
