@@ -89,13 +89,6 @@ const PermissionSetPermissionItem = observer(() => {
         field="subtitle"
       />
 
-      <Inputs.List
-        {...inputProps}
-        {...l10n.permission_item.display.headers}
-        subcategory={l10n.categories.permission_item_display}
-        field="headers"
-      />
-
       <Inputs.TextArea
         {...inputProps}
         {...l10n.permission_item.display.description}

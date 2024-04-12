@@ -216,6 +216,49 @@ class MediaCatalogStore {
         await this.rootStore.permissionSetStore.LoadPermissionSet({permissionSetId: objectId})
       )
     );
+
+    // TODO: Remove
+    Object.keys(this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media || {}).forEach(mediaId => {
+      const mediaItem = this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media?.[mediaId] || {};
+      if(typeof mediaItem.public === "undefined" && typeof mediaItem.permissions === "undefined") {
+        this.SetDefaultValue({
+          objectId: mediaCatalogId,
+          path: UrlJoin("/public/asset_metadata/info/media", mediaId),
+          field: "public",
+          category: "Set Public",
+          label: "Set Public",
+          value: true
+        });
+      }
+    });
+
+    Object.keys(this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media_lists || {}).forEach(mediaId => {
+      const mediaItem = this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media_lists?.[mediaId] || {};
+      if(typeof mediaItem.public === "undefined" && typeof mediaItem.permissions === "undefined") {
+        this.SetDefaultValue({
+          objectId: mediaCatalogId,
+          path: UrlJoin("/public/asset_metadata/info/media_lists", mediaId),
+          field: "public",
+          category: "Set Public",
+          label: "Set Public",
+          value: true
+        });
+      }
+    });
+
+    Object.keys(this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media_collections || {}).forEach(mediaId => {
+      const mediaItem = this.mediaCatalogs[mediaCatalogId].metadata.public?.asset_metadata?.info?.media_collections?.[mediaId] || {};
+      if(typeof mediaItem.public === "undefined" && typeof mediaItem.permissions === "undefined") {
+        this.SetDefaultValue({
+          objectId: mediaCatalogId,
+          path: UrlJoin("/public/asset_metadata/info/media_collections", mediaId),
+          field: "public",
+          category: "Set Public",
+          label: "Set Public",
+          value: true
+        });
+      }
+    });
   });
 
   CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {

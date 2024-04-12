@@ -36,6 +36,7 @@ export const MediaCatalogPermissionSettings = observer(({type, mediaId}) => {
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.permissions.public}
+        defaultValue={false}
         path={UrlJoin("/public/asset_metadata/info/", type, mediaId)}
         field="public"
       />
