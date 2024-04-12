@@ -112,11 +112,25 @@ const SetMetadata = function({
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
-      ...objectParams,
-      metadataSubtree: fullPath,
-      metadata: toJS(parsedValue || value)
-    })
+    Write: async (objectParams) => {
+      value = toJS(parsedValue || value);
+
+      if(!value && typeof value === "boolean") {
+        await this.client.MergeMetadata({
+          ...objectParams,
+          metadataSubtree: path,
+          metadata: {
+            [field]: false
+          }
+        });
+      } else {
+        await this.client.ReplaceMetadata({
+          ...objectParams,
+          metadataSubtree: fullPath,
+          metadata: value
+        });
+      }
+    }
   });
 };
 
