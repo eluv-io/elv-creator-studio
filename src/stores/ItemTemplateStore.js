@@ -85,44 +85,100 @@ class ItemTemplateStore {
   }
 
   PostSave = flow(function * ({libraryId, objectId}) {
+    const versionHash = yield this.client.LatestVersionHash({objectId});
+    const embedUrl = yield this.SelfEmbedUrl({objectId});
+    const tokenURI = FabricUrl({
+      versionHash,
+      path: "/meta/public/asset_metadata/nft",
+      noWriteToken: true
+    });
+
+    const metadata = yield this.client.ContentObjectMetadata({
+      versionHash,
+      metadataSubtree: "/public/asset_metadata/nft"
+    });
+
     // Generate new self-referential URLs
     yield this.client.EditAndFinalizeContentObject({
       libraryId,
       objectId,
-      commitMessage: "Update self-referential URLs",
+      commitMessage: "Build /public/nft and Update self-referential URLs",
       callback: async ({writeToken}) => {
-        const embedUrl = await this.SelfEmbedUrl({objectId});
-        await this.client.ReplaceMetadata({
+        // See elv-live-js - NftMake
+        await this.client.MergeMetadata({
           libraryId,
           objectId,
           writeToken,
-          metadataSubtree: "/public/asset_metadata/nft/embed_url",
-          metadata: embedUrl
+          metadataSubtree: "/public/nft",
+          metadata: {
+            test: metadata.test,
+            name: metadata.name,
+            display_name: metadata.display_name,
+            description: metadata.description,
+            edition_name: metadata.edition_name,
+            rich_text: metadata.rich_text,
+            copyright: metadata.copyright,
+            created_at: metadata.created_at,
+            creator: metadata.creator,
+            image: metadata.image,
+            playable: metadata.playable,
+            style: metadata.style,
+            collection_name: metadata.collection_name,
+            collection_image: metadata.collection_image,
+
+            address: metadata.address,
+            total_supply: metadata.total_supply,
+            template_id: metadata.template_id,
+            id_format: metadata.id_format,
+
+            embed_url: embedUrl,
+            external_url: embedUrl,
+            token_uri: tokenURI,
+
+            marketplace_attributes: {
+              opensea: {
+                youtube_url: embedUrl
+              }
+            }
+          }
         });
+
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
           writeToken,
-          metadataSubtree: "/public/asset_metadata/nft/external_url",
-          metadata: embedUrl
+          metadataSubtree: "/public/nft/attributes",
+          metadata: [
+            {
+              trait_type: "Creator",
+              value: "Eluvio NFT Central",
+            },
+            {
+              trait_type: "Total Minted Supply",
+              value: metadata.total_supply?.toString(),
+            },
+            {
+              trait_type: "Content Fabric Hash",
+              value: versionHash,
+            }
+          ]
         });
-        await this.client.ReplaceMetadata({
+
+        await this.client.MergeMetadata({
           libraryId,
           objectId,
           writeToken,
-          metadataSubtree: "/public/asset_metadata/nft/marketplace_attributes/opensea/youtube_url",
-          metadata: embedUrl
-        });
-        await this.client.ReplaceMetadata({
-          libraryId,
-          objectId,
-          writeToken,
-          metadataSubtree: "/public/asset_metadata/nft/token_uri",
-          metadata: FabricUrl({
-            versionHash: await this.client.LatestVersionHash({objectId}),
-            path: "/meta/public/asset_metadata/nft",
-            noWriteToken: true
-          })
+          metadataSubtree: "/public/asset_metadata/nft",
+          metadata: {
+            embed_url: embedUrl,
+            external_url: embedUrl,
+            token_uri: tokenURI,
+            marketplace_attributes: {
+              opensea: {
+                youtube_url: embedUrl
+              }
+            }
+          }
         });
       }
     });
