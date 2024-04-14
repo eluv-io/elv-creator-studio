@@ -46,7 +46,7 @@ const PermissionSetPermissionItem = observer(() => {
     >
       <Inputs.UUID
         {...inputProps}
-        {...l10n.permission_item.id}
+        {...l10n.common.id}
         field="id"
         disabled
       />

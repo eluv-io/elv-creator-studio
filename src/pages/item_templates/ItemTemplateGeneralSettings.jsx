@@ -195,6 +195,7 @@ const ItemTemplateGeneralSettings = observer(() => {
         {...l10n.general.collection_image}
         subcategory={l10n.categories.info}
         field="collection_image"
+        url
       />
       <Inputs.Text
         {...inputProps}
