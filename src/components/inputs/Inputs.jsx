@@ -333,13 +333,13 @@ const Input = observer(({
       Component = DatePickerInput;
       componentProps.valueFormat = "LL";
       clearable = true;
-      value = ParseDate(value);
+      value = ParseDate(value) || null;
       break;
     case "datetime":
       Component = DateTimePicker;
       componentProps.valueFormat = "LLL ZZ";
       clearable = true;
-      value = ParseDate(value);
+      value = ParseDate(value) || null;
       break;
   }
 

@@ -69,7 +69,7 @@ export const MediaCatalogMediaVideoSpec = {
   catalog_title: "<New Video>",
   media_type: "Video",
   media_link: undefined,
-  live: false,
+  live_video: false,
   date: undefined,
   start_time: undefined,
   end_time: undefined,
