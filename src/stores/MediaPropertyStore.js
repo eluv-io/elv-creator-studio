@@ -202,7 +202,14 @@ class MediaPropertyStore {
         this.rootStore.mediaCatalogStore.GetFilteredContent({mediaCatalogId, select: section.select})
       )
         .flat()
-        .sort((a, b) => a.catalog_title < b.catalog_title ? -1 : 1)
+        .sort((a, b) => {
+          if(a.live_video && b.live_video) {
+            // Sort live content by start time
+            return a.start_time < b.start_time ? -1 : 1;
+          } else {
+            return a.catalog_title < b.catalog_title ? -1 : 1;
+          }
+        })
     );
   }
 

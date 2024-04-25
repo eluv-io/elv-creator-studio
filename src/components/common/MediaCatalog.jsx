@@ -6,6 +6,7 @@ import {IconButton, TooltipIcon} from "@/components/common/Misc.jsx";
 import {Link} from "react-router-dom";
 import {IconExternalLink, IconLock, IconLockOpen, IconWorld, IconWorldOff} from "@tabler/icons-react";
 import {observer} from "mobx-react-lite";
+import {ParseDate} from "@/helpers/Misc";
 
 export const MediaItemImageUrl = ({mediaItem, aspectRatio}) => {
   switch(aspectRatio) {
@@ -120,6 +121,7 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, show
           mediaItem={mediaItem}
           scale={200}
           width={sizes[size].img}
+          miw={sizes[size].img}
           height={sizes[size].img}
           fit="contain"
           position="left"
@@ -129,7 +131,13 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, show
           <Text fz={sizes[size].fz1} fw={600}>
             { mediaItem.label }
           </Text>
-          <Text fz={sizes[size].fz2}>
+          {
+            mediaItem.type !== "media" || !mediaItem.live_video || !mediaItem.start_time ? null :
+              <Text fz={sizes[size].fz2}>
+                { ParseDate(mediaItem.start_time).toLocaleString() }
+              </Text>
+          }
+          <Text color="dimmed" fz={sizes[size].fz2}>
             {
               mediaItem.type === "collection" ?
                 "Media Collection" :

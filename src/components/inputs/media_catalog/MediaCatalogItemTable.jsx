@@ -16,7 +16,7 @@ import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {DataTable} from "mantine-datatable";
 import {useEffect, useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
-import {SortTable} from "@/helpers/Misc.js";
+import {ParseDate, SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
 import {IconEdit, IconTrashX} from "@tabler/icons-react";
 import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
@@ -41,9 +41,15 @@ export const MediaItemTitle = observer(({mediaItem}) => {
         <Text fz={12} fw={500}>
           { mediaItem.label || mediaItem.id }
         </Text>
-        <Text fz={11} fw={400} mb={2} color="dimmed">
+        <Text fz={11} fw={400} color="dimmed">
           { mediaItem.id }
         </Text>
+        {
+          mediaItem.type !== "media" || !mediaItem.live_video || !mediaItem.start_time ? null :
+            <Text fz={11} fw={400} color="dimmed">
+              { ParseDate(mediaItem.start_time).toLocaleString() }
+            </Text>
+        }
         <Group spacing={3}>
           {
             mediaItem.tags?.map(tag =>

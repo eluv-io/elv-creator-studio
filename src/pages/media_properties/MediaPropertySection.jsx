@@ -466,9 +466,10 @@ const AutomaticSectionContentPreview = observer(({mediaPropertyId, sectionId, as
   }
 
   return (
-    <>
+    <Paper shadow="sm" withBorder py="md" px={5} h="max-content" mt="md" w={uiStore.inputWidth}>
+      <Title order={4} align="center">Section Content Preview</Title>
       <Text align="center" fz="xs" mb="sm">{content.length} Matching Items</Text>
-      <Stack spacing={5}>
+      <Stack spacing={5} mah={550} px="sm" style={{overflowY: "auto", overflowX: "visible", overscrollBehavior: "none"}}>
         {
           content.map(mediaItem =>
             <MediaItemCard
@@ -482,7 +483,7 @@ const AutomaticSectionContentPreview = observer(({mediaPropertyId, sectionId, as
           )
         }
       </Stack>
-    </>
+    </Paper>
   );
 });
 
@@ -513,7 +514,7 @@ const SectionFilters = observer(() => {
 
   const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
   return (
-    <Group noWrap align="top" pr={50}>
+    <>
       <Container m={0} p={0} miw={uiStore.inputWidth}>
         <Inputs.Select
           {...inputProps}
@@ -646,19 +647,15 @@ const SectionFilters = observer(() => {
           { showContentPreview ? "Hide Content Preview" : "Show Content Preview" }
         </Button>
       </Container>
-
       {
         !showContentPreview ? null :
-          <Paper withBorder py="md" h="max-content" mt={-50} w={uiStore.inputWidth} p="sm">
-            <Title order={4} align="center">Section Content Preview</Title>
-            <AutomaticSectionContentPreview
-              mediaPropertyId={mediaPropertyId}
-              sectionId={sectionId}
-              aspectRatio={section.display.aspect_ratio}
-            />
-          </Paper>
+          <AutomaticSectionContentPreview
+            mediaPropertyId={mediaPropertyId}
+            sectionId={sectionId}
+            aspectRatio={section.display.aspect_ratio}
+          />
       }
-    </Group>
+    </>
   );
 });
 

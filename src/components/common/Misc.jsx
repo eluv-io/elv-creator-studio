@@ -25,6 +25,7 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
   return (
     <Tooltip
       {...tooltipProps}
+      withinPortal
       label={label}
       events={{ hover: true, focus: true, touch: false }}
     >
