@@ -35,7 +35,7 @@ const ItemTemplateAttribute = observer(({item, ...props}) => {
     });
 
     setAttributeType(item.type);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [item, attributeType, props.path, props.objectId]);
 
   if(!item) { return null; }

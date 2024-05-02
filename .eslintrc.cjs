@@ -15,6 +15,7 @@ module.exports = {
   settings: { react: { version: '18.2' } },
   plugins: ['react-refresh'],
   rules: {
+    "react-hooks/exhaustive-deps": 0,
     "react/prop-types": 0,
     "semi": ["error", "always", { "omitLastInOneLineClassBody": true }],
     "react-refresh/only-export-components": [

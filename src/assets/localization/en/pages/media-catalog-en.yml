@@ -158,6 +158,11 @@ form:
     thumbnail_images:
       label: Thumbnail Images
       description: Different aspect ratios may be used in different presentations of this content
+    icons:
+      label: Icons
+      description: These icon images will be displayed to the left of the title on the media page, as well as on the countdown for live content
+    icon:
+      label: Icon
     image_portrait:
       label: Portrait (2:3)
     image_square:
@@ -200,6 +205,9 @@ form:
     clip_end_time:
       label: Clip End Time (Seconds)
       description: If blank, clip will play to the end of the original video
+    player_profile:
+      label: Player Profile
+      description: Select the default player profile to use for this content
     offerings:
       label: Offerings
       description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary

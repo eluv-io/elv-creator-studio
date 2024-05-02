@@ -291,6 +291,26 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
           />
       }
 
+      {
+        type !== "media" ? null :
+          <Inputs.List
+            {...inputProps}
+            {...l10n.media.icons}
+            shrink
+            field="icons"
+            renderItem={props =>
+              <Inputs.ImageInput
+                {...props}
+                {...l10n.media.icon}
+                altTextField="alt_text"
+                fields={[
+                  { field: "icon", aspectRatio: 1, baseSize: 100 }
+                ]}
+              />
+            }
+          />
+      }
+
 
       <Inputs.MultiSelect
         {...inputProps}

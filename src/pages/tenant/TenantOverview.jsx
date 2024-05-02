@@ -158,7 +158,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
   useEffect(() => {
     Load()
       .then(content => setItems(content));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
 
   const l10n = rootStore.l10n.pages.tenant.form;

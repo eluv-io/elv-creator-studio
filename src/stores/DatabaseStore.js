@@ -122,28 +122,31 @@ class DatabaseStore {
         } else {
           // Create type
           this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+          this.rootStore.DebugLog({message: allTypes, level: this.logLevels.DEBUG_LEVEL_ERROR});
 
-          typeIds[key] = await this.client.CreateContentType({
-            metadata: {
-              "bitcode_flags": "abrmaster",
-              "bitcode_format": "builtin",
-              "description": "",
-              "name": name,
-              "public": {
+          if(await window.confirm(`Should content type ${name} be created?`)) {
+            typeIds[key] = await this.client.CreateContentType({
+              metadata: {
+                "bitcode_flags": "abrmaster",
+                "bitcode_format": "builtin",
                 "description": "",
-                "eluv.manageApp": "default",
                 "name": name,
-                "title_configuration": {
-                  "profile": {
-                    "name": `Eluvio ${name}`,
-                    "version": "1.0"
+                "public": {
+                  "description": "",
+                  "eluv.manageApp": "default",
+                  "name": name,
+                  "title_configuration": {
+                    "profile": {
+                      "name": `Eluvio ${name}`,
+                      "version": "1.0"
+                    }
                   }
                 }
               }
-            }
-          });
+            });
 
-          await this.AddGroupPermissions({objectId: typeIds[key]});
+            await this.AddGroupPermissions({objectId: typeIds[key]});
+          }
         }
       })
     );
@@ -152,6 +155,10 @@ class DatabaseStore {
   });
 
   InitializeTenantObject = flow(function * ({propertiesLibraryId, typeId}) {
+    if(!(yield window.confirm("Should tenant object be created?"))) {
+      throw Error("Shouldn't create tenant");
+    }
+
     const {id} = yield this.client.CreateAndFinalizeContentObject({
       libraryId: propertiesLibraryId,
       options: {

@@ -12,6 +12,7 @@ class UIStore {
 
   showSideNav = false;
 
+  inputWidthNarrow = 400;
   inputWidth = 600;
   inputWidthWide = 800;
   inputWidthExtraWide=1000;

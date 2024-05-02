@@ -7,7 +7,7 @@
     "serve-db": "firebase emulators:start",
     "build": "rm -rf dist/* ; vite build",
     "preview": "vite preview",
-    "lint": "npm-run-all -s lint-js-fix lint-scss-fix",
+    "lint": "npm-run-all -s -c lint-js-fix lint-scss-fix",
     "lint-js": "eslint ./src --ext js,jsx --report-unused-disable-directives",
     "lint-js-fix": "eslint ./src --fix --ext js,jsx --report-unused-disable-directives",
     "lint-scss": "npx stylelint \"src/**/*.{css,scss}\"",

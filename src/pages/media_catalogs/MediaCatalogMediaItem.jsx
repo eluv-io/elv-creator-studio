@@ -280,6 +280,17 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 />
               </>
           }
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.media.player_profile}
+            field="player_profile"
+            defaultValue=""
+            options={[
+              { label: "Default", value: ""},
+              { label: "Low Latency Live", value: "LOW_LATENCY" },
+              { label: "Ultra Low Latency Live", value: "ULTRA_LOW_LATENCY" },
+            ]}
+          />
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.poster_image}

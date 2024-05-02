@@ -73,6 +73,7 @@ export const MediaCatalogMediaVideoSpec = {
   date: undefined,
   start_time: undefined,
   end_time: undefined,
+  player_profile: undefined,
   offerings: [],
   associated_media: [],
   override_settings_when_viewed: false,

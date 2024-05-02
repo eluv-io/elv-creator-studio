@@ -14,6 +14,8 @@ form:
     general: General Settings
     info: Media Property Info
     permissions: Permission Settings
+    search: Search Settings
+    advanced_search: Advanced Search Settings
     layout: Layout
     header: Header
     pages: Pages
@@ -94,6 +96,31 @@ form:
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
+    search:
+      category_attribute:
+        label: Search Category Attribute
+        description: Select an attribute by which to group search results
+      primary_attribute:
+        label: Primary Search Attribute
+        description: If specified, this attribute will be available for selection at the top of the search results page
+      enable_advanced_search:
+        label: Enable Advanced Search
+      advanced_search_options:
+        label: Advanced Search Options
+        description: Configure which options are available in advanced search
+      advanced:
+        type:
+          label: Type
+        title:
+          label: Title
+        attribute:
+          label: Attribute
+        tags:
+          label: Tags
+        tag_display:
+          label: Tag Display
+          description: Choose whether this option should be displayed as a select component (only one tag selectable) or a list of checkboxes (multiple selectable)
+
   pages:
     create:
       create: Create New Page

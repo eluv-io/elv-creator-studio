@@ -397,7 +397,11 @@ const ListAction = function({
   const fullPath = UrlJoin(path, field);
   const pathComponents = fullPath.replace(/^\//, "").replace(/\/$/, "").split("/");
 
-  const originalList = this.GetMetadata({objectId, path, field}) || [];
+  let originalList = this.GetMetadata({objectId, path, field}) || [];
+
+  if(!Array.isArray(originalList)) {
+    originalList = [];
+  }
 
   let newList;
   switch(actionType) {

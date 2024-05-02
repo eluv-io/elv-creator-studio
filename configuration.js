@@ -7,6 +7,7 @@ const EluvioConfiguration = {
   "version": "local",
   "dev": true,
   "firebase-local": true,
+  /*
   "firebase-config": {
     "apiKey": "AIzaSyB-klmTxRJ8HL_lPVahq584KVs1xmrcI0A",
     "projectId": firebaseProjectId,
@@ -14,6 +15,7 @@ const EluvioConfiguration = {
     "databaseURL": `https://${firebaseProjectId}.firebaseio.com`,
     "storageBucket": `${firebaseProjectId}.appspot.com`
   },
+     */
   "firebase-config": {
     "apiKey": "AIzaSyB-klmTxRJ8HL_lPVahq584KVs1xmrcI0A",
     "projectId": "production-web-apps-c0c6b",
@@ -21,4 +23,6 @@ const EluvioConfiguration = {
     "databaseURL": "https://production-web-apps-c0c6b.firebaseio.com",
     "storageBucket": "production-web-apps-c0c6b.appspot.com"
   },
+
+
 };

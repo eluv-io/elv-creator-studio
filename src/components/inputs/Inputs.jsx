@@ -116,12 +116,12 @@ const MultiSelect = observer(({
 
   let values = value || store.GetMetadata({objectId, path, field}) || [];
 
-  if(primaryValueField) {
-    values = values.map(value => value[primaryValueField]);
-  }
-
   if(!Array.isArray(values)) {
     values = [];
+  }
+
+  if(primaryValueField) {
+    values = values.map(value => value[primaryValueField]);
   }
 
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
@@ -736,14 +736,16 @@ const SingleImageInput = observer(({
     width = height * aspectRatio;
   }
 
+  const hasText = !!label || !!description || !!hint;
+
   return (
     <>
-      <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative"}} {...componentProps}>
+      <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
         <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
           <UnstyledButton onClick={() => setShowFileBrowser(true)}>
             <HoverCard.Target>
               <Image
-                mb="xs"
+                mb={hasText ? "xs" : 0}
                 withPlaceholder
                 height={height}
                 width={width}
@@ -754,13 +756,16 @@ const SingleImageInput = observer(({
                 styles={ theme => ({ image: { padding: 0, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
               />
               </HoverCard.Target>
-              <MantineInput.Wrapper
-                maw={width}
-                label={<InputLabel centered label={label} hint={hint} />}
-                description={description}
-                labelProps={{style: { width: "100%", textAlign: "center "}}}
-                descriptionProps={{style: { width: "100%", textAlign: "center "}}}
-              />
+            {
+              !hasText ? null :
+                <MantineInput.Wrapper
+                  maw={width}
+                  label={<InputLabel centered label={label} hint={hint}/>}
+                  description={description}
+                  labelProps={{style: {width: "100%", textAlign: "center "}}}
+                  descriptionProps={{style: {width: "100%", textAlign: "center "}}}
+                />
+            }
           </UnstyledButton>
           <HoverCard.Dropdown bg="gray.1" p="xl" >
             <Image
@@ -1255,7 +1260,7 @@ const ImageInput = observer(({
             hint={rootStore.l10n.components.inputs.alt_text.hint}
             path={path}
             field={altTextField}
-            componentProps={{minRows: 2}}
+            componentProps={{minRows: 1}}
           />
       }
     </InputWrapper>
@@ -1384,6 +1389,7 @@ const List = observer(({
   filterable,
   Filter,
   AddItem,
+  shrink=false,
   ...componentProps
 }) => {
   const [filter, setFilter] = useState("");
@@ -1432,7 +1438,7 @@ const List = observer(({
               >
                 <IconGripVertical/>
               </div>
-              <Container p={0} m={0} fluid w="100%" maw="unset">
+              <Container p={0} m={0} fluid w={shrink ? "max-content" : "100%"} maw="unset">
                 <ListInputs
                   type={type}
                   Component={Component}
@@ -1523,8 +1529,8 @@ const List = observer(({
         description={description}
         hint={hint}
         maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
-        w="max-content"
-        miw={`min(100%, ${uiStore.inputWidth}px)`}
+        w="min-content"
+        miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
         {...componentProps}
       >
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">

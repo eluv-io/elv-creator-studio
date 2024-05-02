@@ -72,7 +72,7 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
 
   useEffect(() => {
     form.getInputProps("marketplaceSKU").onChange("");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [form.values.marketplaceId]);
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
 
     form.getInputProps("propertyPageId").onChange("main");
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [form.values.type, form.values.propertyId, form.values.subpropertyId]);
 
   let formContent, property;

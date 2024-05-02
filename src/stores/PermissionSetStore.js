@@ -110,7 +110,7 @@ class PermissionSetStore {
     return objectId;
   });
 
-  CreatePermissionItem({page, permissionSetId, label, type="owned_item", marketplaceId, marketplaceSKU}) {
+  CreatePermissionItem({page, permissionSetId, label, marketplaceId, marketplaceSKU}) {
     let id = `${this.ID_PREFIXES["permission_item_owned"]}${GenerateUUID()}`;
 
     const spec = Clone(PermissionItemOwnedSpec);
