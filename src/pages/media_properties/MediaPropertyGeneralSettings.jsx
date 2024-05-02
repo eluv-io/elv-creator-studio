@@ -193,9 +193,10 @@ const MediaPropertyGeneralSettings = observer(() => {
       <Title order={3} mt={50} mb="md">{l10n.categories.search}</Title>
       <Inputs.Select
         {...inputProps}
-        {...l10n.general.search.category_attribute}
-        path={UrlJoin(inputProps.path, "search")}
+        {...l10n.general.search.primary_filter}
         subcategory={l10n.categories.search}
+        path={UrlJoin(inputProps.path, "search")}
+        field="primary_filter"
         searchable
         defaultValue=""
         options={[
@@ -206,15 +207,15 @@ const MediaPropertyGeneralSettings = observer(() => {
             value: attributeId
           })))
         ]}
-        field="category_attribute"
       />
       <Inputs.Select
         {...inputProps}
-        {...l10n.general.search.primary_attribute}
+        {...l10n.general.search.secondary_filter}
         subcategory={l10n.categories.search}
+        path={UrlJoin(inputProps.path, "search")}
+        field="secondary_filter"
         searchable
         defaultValue=""
-        path={UrlJoin(inputProps.path, "search")}
         options={[
           {label: "None", value: ""},
           {label: "Media Type", value: "__media-type"},
@@ -223,23 +224,40 @@ const MediaPropertyGeneralSettings = observer(() => {
             value: attributeId
           })))
         ]}
-        field="primary_attribute"
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.search.group_by}
+        subcategory={l10n.categories.search}
+        path={UrlJoin(inputProps.path, "search")}
+        field="group_by"
+        searchable
+        defaultValue=""
+        options={[
+          {label: "None", value: ""},
+          {label: "Media Type", value: "__media-type"},
+          {label: "Date (Live Content Only)", value: "__date"},
+          ...(Object.keys(attributes).map(attributeId => ({
+            label: attributes[attributeId].title || "Attribute",
+            value: attributeId
+          })))
+        ]}
       />
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.general.search.enable_advanced_search}
-        path={UrlJoin(inputProps.path, "search")}
         subcategory={l10n.categories.search}
-        defaultValue={false}
+        path={UrlJoin(inputProps.path, "search")}
         field="enable_advanced_search"
+        defaultValue={false}
       />
       {
         !info.search?.enable_advanced_search ? null :
           <Inputs.List
             {...inputProps}
             {...l10n.general.search.advanced_search_options}
-            path={UrlJoin(inputProps.path, "search")}
             subcategory={l10n.categories.search}
+            path={UrlJoin(inputProps.path, "search")}
             field="advanced_search_options"
             newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
             renderItem={(props) =>

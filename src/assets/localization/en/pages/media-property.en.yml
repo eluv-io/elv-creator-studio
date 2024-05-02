@@ -97,12 +97,15 @@ form:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
     search:
-      category_attribute:
-        label: Search Category Attribute
-        description: Select an attribute by which to group search results
-      primary_attribute:
-        label: Primary Search Attribute
-        description: If specified, this attribute will be available for selection at the top of the search results page
+      primary_filter:
+        label: Primary Filter
+        description: If specified, this filter will be available for selection at the top of the search results page
+      secondary_filter:
+        label: Secondary Filter
+        description: If specified, this filter will be available for selection at the top of the search results page
+      group_by:
+        label: Group By
+        description: If specified, search results will be grouped by this attribute
       enable_advanced_search:
         label: Enable Advanced Search
       advanced_search_options:
