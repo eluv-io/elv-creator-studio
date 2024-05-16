@@ -244,6 +244,14 @@ const MediaPropertyGeneralSettings = observer(() => {
       />
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.general.search.hide_if_unauthenticated}
+        subcategory={l10n.categories.search}
+        path={UrlJoin(inputProps.path, "search")}
+        field="hide_if_unauthenticated"
+        defaultValue={false}
+      />
+      <Inputs.Checkbox
+        {...inputProps}
         {...l10n.general.search.enable_advanced_search}
         subcategory={l10n.categories.search}
         path={UrlJoin(inputProps.path, "search")}

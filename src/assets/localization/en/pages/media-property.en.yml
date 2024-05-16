@@ -99,6 +99,9 @@ form:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
     search:
+      hide_if_unauthenticated:
+        label: Hide Search if Not Logged In
+        description: If checked, search will not be available to users who are not signed in
       primary_filter:
         label: Primary Filter
         description: If specified, this filter will be available for selection at the top of the search results page
