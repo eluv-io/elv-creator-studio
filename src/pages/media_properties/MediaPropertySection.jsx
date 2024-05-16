@@ -72,7 +72,6 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
 
   useEffect(() => {
     form.getInputProps("marketplaceSKU").onChange("");
-     
   }, [form.values.marketplaceId]);
 
   useEffect(() => {
@@ -86,8 +85,6 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
     );
 
     form.getInputProps("propertyPageId").onChange("main");
-
-     
   }, [form.values.type, form.values.propertyId, form.values.subpropertyId]);
 
   let formContent, property;
@@ -674,6 +671,8 @@ const MediaPropertySection = observer(() => {
     return null;
   }
 
+  const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
+
   const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
     store: mediaPropertyStore,
@@ -769,6 +768,7 @@ const MediaPropertySection = observer(() => {
             <PermissionItemSelect
               {...l10n.sections.permissions}
               {...inputProps}
+              subcategory={l10n.categories.permissions}
               path={UrlJoin(inputProps.path, "permissions")}
               field="permission_item_ids"
               multiple
@@ -841,11 +841,33 @@ const MediaPropertySection = observer(() => {
       />
 
       {
+        section.display?.display_format !== "grid" || !section.display?.aspect_ratio ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.sections.display.display_limit_type}
+            subcategory={l10n.categories.section_presentation}
+            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+            field="display_limit_type"
+            defaultValue="items"
+            options={[
+              { label: "Number of Items", value: "items" },
+              { label: "Number of Rows", value: "rows" }
+            ]}
+          />
+      }
+
+      {
         !["carousel", "grid"].includes(section.display?.display_format) ? null :
           <>
             <Inputs.Integer
               {...inputProps}
-              {...l10n.sections.display.display_limit}
+              {...(
+                section.display?.display_format === "grid" &&
+                !!section.display?.aspect_ratio &&
+                section.display?.display_limit_type === "rows" ?
+                  l10n.sections.display.display_limit_rows :
+                  l10n.sections.display.display_limit
+              )}
               min={0}
               subcategory={l10n.categories.section_presentation}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
@@ -893,6 +915,57 @@ const MediaPropertySection = observer(() => {
             />
           </>
       }
+
+      <Title order={3} mt={50} mb="md">{l10n.categories.section_full_content_page}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.primary_filter}
+        subcategory={l10n.categories.section_full_content_page}
+        field="primary_filter"
+        searchable
+        defaultValue=""
+        options={[
+          {label: "None", value: ""},
+          {label: "Media Type", value: "__media-type"},
+          ...(Object.keys(attributes).map(attributeId => ({
+            label: attributes[attributeId].title || "Attribute",
+            value: attributeId
+          })))
+        ]}
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.secondary_filter}
+        subcategory={l10n.categories.section_full_content_page}
+        field="secondary_filter"
+        searchable
+        defaultValue=""
+        options={[
+          {label: "None", value: ""},
+          {label: "Media Type", value: "__media-type"},
+          ...(Object.keys(attributes).map(attributeId => ({
+            label: attributes[attributeId].title || "Attribute",
+            value: attributeId
+          })))
+        ]}
+      />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.group_by}
+        subcategory={l10n.categories.section_full_content_page}
+        field="group_by"
+        searchable
+        defaultValue=""
+        options={[
+          {label: "None", value: ""},
+          {label: "Media Type", value: "__media-type"},
+          {label: "Date (Live Content Only)", value: "__date"},
+          ...(Object.keys(attributes).map(attributeId => ({
+            label: attributes[attributeId].title || "Attribute",
+            value: attributeId
+          })))
+        ]}
+      />
 
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>

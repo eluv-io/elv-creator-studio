@@ -40,7 +40,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.slug}
         defaultValue={Slugify(info.name)}
-        disabled
         subcategory={l10n.categories.info}
         field="slug"
       />

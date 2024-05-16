@@ -33,6 +33,7 @@ form:
     section_item_label: Section Item `{label}`
     section_item_content: Section Item Content
     section_item_presentation: Section Item Presentation
+    section_full_content_page: Full Section Content Page
     purchase_item: Purchase Item
   create:
     create: Create New {type}
@@ -57,6 +58,7 @@ form:
   general:
     slug:
       label: Property Slug
+      description: "Warning: This value should not be changed after deployment as it will invalidate existing URLs to this property"
     title:
       label: Display Title
     page_title:
@@ -196,9 +198,15 @@ form:
         label: Description Rich Text
       display_format:
         label: Display Format
+      display_limit_type:
+        label: Display Limit Type
+        description: For display limit setting, choose whether to limit by number of items or by number of rows
       display_limit:
         label: Display Limit
         description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+      display_limit_rows:
+        label: Display Limit (Rows)
+        description: You may limit the maximum number of rows of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
       justification:
         label: Justification
         description: Horizontal alignment of this section
@@ -215,6 +223,15 @@ form:
         label: Desktop (16:9)
       background_image_mobile:
         label: Mobile
+      primary_filter:
+        label: Primary Filter
+        description: If specified, this filter will be available for selection at the top of the section content page
+      secondary_filter:
+        label: Secondary Filter
+        description: If specified, this filter will be available for selection at the top of the section content page
+      group_by:
+        label: Group By
+        description: If specified, section content will be grouped by this attribute
     section_content:
       label: Section Content
       fieldLabel: Section Item

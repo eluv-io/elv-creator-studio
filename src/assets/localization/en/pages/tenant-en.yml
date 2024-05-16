@@ -23,7 +23,8 @@ form:
     production: Production
     staging: Staging
     deployed: Latest Version Deployed
-    not_deployed: Previous Version Deployed
+    previous_deployed: Previous Version Deployed
+    not_deployed: Not Deployed
     link_deployed: Latest Version Linked
     link_not_deployed: Previous Version Linked
     not_linked: Not Linked
@@ -38,6 +39,9 @@ form:
     remove_link: Remove Link
     remove_link_label: Remove Link to {name}
     remove_link_confirm: Are you sure you want to remove the link to {name}?
+  mediaProperty:
+    plural: Media Properties
+    singular: Media Property
   site:
     plural: Sites
     singular: Site

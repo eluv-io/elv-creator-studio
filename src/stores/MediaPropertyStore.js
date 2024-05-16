@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
   MediaPropertyPageSpec,
@@ -466,6 +466,68 @@ class MediaPropertyStore {
       metadataSubtree: "/public/asset_metadata/info/slug_map",
       metadata: slugs
     });
+  });
+
+  BeforeDeploy = flow(function * ({objectId}) {
+    yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
+
+    let modified = false;
+    const catalogs = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalogs || [];
+    let catalogLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
+    yield Promise.all(catalogs.map(async catalogId => {
+      const catalogHash = await this.client.LatestVersionHash({objectId: catalogId});
+
+      if(!catalogLinks?.[catalogId]?.["/"]?.includes(catalogHash)) {
+        modified = true;
+        catalogLinks[catalogId] = {
+          "/": UrlJoin("/qfab", catalogHash, "meta", "public", "asset_metadata", "info")
+        };
+      }
+    }));
+
+    const permissionSets = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_sets || [];
+    let permissionSetLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links || {};
+    yield Promise.all(permissionSets.map(async permissionSetId => {
+      const permissionSetHash = await this.client.LatestVersionHash({objectId: permissionSetId});
+
+      if(!permissionSetLinks?.[permissionSetId]?.["/"]?.includes(permissionSetHash)) {
+        modified = true;
+        permissionSetLinks[permissionSetId] = {
+          "/": UrlJoin("/qfab", permissionSetHash, "meta", "public", "asset_metadata", "info")
+        };
+      }
+    }));
+
+    if(!modified) {
+      return;
+    }
+
+    const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId});
+
+    const writeParams = {
+      libraryId: yield this.rootStore.LibraryId({objectId}),
+      objectId: objectId,
+      writeToken
+    };
+
+    yield this.client.ReplaceMetadata({
+      ...writeParams,
+      metadataSubtree: "/public/asset_metadata/info/media_catalog_links",
+      metadata: { ...toJS(catalogLinks) }
+    });
+
+    yield this.client.ReplaceMetadata({
+      ...writeParams,
+      metadataSubtree: "/public/asset_metadata/info/permission_set_links",
+      metadata: { ...toJS(permissionSetLinks) }
+    });
+
+    const response = yield this.rootStore.editStore.Finalize({
+      objectId,
+      commitMessage: "Update media catalog and permission set links"
+    });
+
+    return response.hash;
   });
 
   UpdateDatabaseRecord = flow(function * ({objectId}) {

@@ -357,6 +357,12 @@ class DatabaseStore {
       content.marketplaces[marketplaceId].marketplaceSlug = content.marketplaces[marketplaceId].metadata.public.asset_metadata.slug;
     });
 
+
+    Object.keys(content.mediaProperties).forEach(mediaPropertyId => {
+      content.mediaProperties[mediaPropertyId].tenantSlug = tenantSlug;
+      content.mediaProperties[mediaPropertyId].mediaPropertySlug = content.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.slug;
+    });
+
     yield Promise.all(
       Object.keys(content.sites).map(async siteId => {
         content.sites[siteId].tenantSlug = tenantSlug;
@@ -853,7 +859,7 @@ class DatabaseStore {
       libraryId,
       objectId: mediaPropertyId,
       tenantSlug: this.rootStore.tenantInfo.tenantSlug || "",
-      propertySlug: metadata.public?.asset_metadata?.info?.slug || "",
+      mediaPropertySlug: metadata.public?.asset_metadata?.info?.slug || "",
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
       description: metadata.public?.asset_metadata?.info?.description || "",
       id: metadata.public?.asset_metadata?.info?.id

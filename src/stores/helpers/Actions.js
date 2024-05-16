@@ -139,6 +139,7 @@ const SetBatchMetadata = function({
   objectId,
   page,
   path,
+  field,
   values,
   category,
   subcategory,
@@ -151,15 +152,15 @@ const SetBatchMetadata = function({
 
   const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
 
-  const originalValues = values.map(({field}) => ({
-    field,
-    value: this.GetMetadata({objectId, path: UrlJoin(path, field)})
+  const originalValues = values.map(value => ({
+    field: value.field,
+    value: this.GetMetadata({objectId, path: UrlJoin(path, value.field)})
   }));
 
   this.ApplyAction({
     objectId,
     page,
-    path,
+    path: UrlJoin(path, field),
     actionType,
     category,
     subcategory,
@@ -169,22 +170,22 @@ const SetBatchMetadata = function({
       inverted
     },
     Apply: () => {
-      values.forEach(({field, value}) =>
-        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value)
+      values.forEach(value =>
+        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, value.field], value.value)
       );
     },
     Undo: () => {
-      originalValues.forEach(({field, value}) => {
-        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, field], value);
+      originalValues.forEach(value => {
+        Set(this[this.objectsMapKey][objectId].metadata, [...pathComponents, value.field], value.value);
       });
     },
     Write: async (objectParams) => {
       await Promise.all(
-        values.map(async ({field, value}) => {
+        values.map(async value => {
           await this.client.ReplaceMetadata({
             ...objectParams,
-            metadataSubtree: UrlJoin(path, field),
-            metadata: toJS(value)
+            metadataSubtree: UrlJoin(path, value.field),
+            metadata: toJS(value.value)
           });
         })
       );

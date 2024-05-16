@@ -24,12 +24,12 @@ import {
   IconWorldUpload
 } from "@tabler/icons-react";
 
-const DeployStatus = ({linked=true, deployed, isLink}) => {
+const DeployStatus = ({linked=true, deployed, hash, isLink}) => {
   const label = rootStore.l10n.pages.tenant.form.overview[
     !linked ? "not_linked" :
       (isLink ?
         (deployed ? "link_deployed" : "link_not_deployed") :
-        (deployed ? "deployed" : "not_deployed"))
+        (deployed ? "deployed" : hash ? "previous_deployed" : "not_deployed"))
     ];
 
   return (
@@ -64,7 +64,7 @@ const UpdateLinkButton = ({type, record}) => {
                 type,
                 name: record.name,
                 slug: record.slug,
-                versionHash: record[type === "site" ? "siteHash" : "marketplaceHash"]
+                versionHash: record.versionHash
               });
             } catch(error) {
               rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
@@ -96,7 +96,12 @@ const UnlinkButton = ({type, record}) => {
           onConfirm: async () => {
             setLoading(true);
             try {
-              await tenantStore.RemoveLink({type, name: record.name, slug: record.slug});
+              await tenantStore.RemoveLink({
+                type,
+                name: record.name,
+                slug: record.slug,
+                versionHash: record.versionHash
+              });
             } catch(error) {
               rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
             } finally {
@@ -123,7 +128,7 @@ const DeploymentStatus = observer(({mode}) => {
           <Title order={6} fw={500}>{ l10n.overview[mode] }</Title>
           <Text maw={300} truncate fz={10} color="dimmed">{ tenant.versionHash }</Text>
         </Stack>
-        <DeployStatus deployed={deployed} />
+        <DeployStatus deployed={deployed} hash={tenantStore[`${mode}Tenant`]?.versionHash} />
         <IconButton
           disabled={deployed}
           Icon={IconWorldUpload}
@@ -158,7 +163,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
   useEffect(() => {
     Load()
       .then(content => setItems(content));
-   
+
   }, [tenantStore.latestTenant, tenantStore.productionTenant, tenantStore.stagingTenant]);
 
   const l10n = rootStore.l10n.pages.tenant.form;
@@ -176,7 +181,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             title: l10n[type].singular,
             width: 400,
             render: record => (
-              <Link to={UrlJoin(path, record[`${type}Id`])}>
+              <Link to={UrlJoin(path, record.objectId)}>
                 <Group spacing="lg" noWrap>
                   <Image py="sm" width={60} height={60 / aspectRatio} miw={60} fit="contain" src={record.imageUrl} alt={record.name} withPlaceholder />
                   <Container p={0} m={0}>
@@ -197,7 +202,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             title: l10n.overview.status.production,
             render: record => (
               !record.latestHash ? null :
-                <DeployStatus linked={!!record.latestHash} deployed={record.productionDeployed} />
+                <DeployStatus linked={!!record.latestHash} deployed={record.productionDeployed} hash={record.productionHash} />
             )
           },
           {
@@ -205,7 +210,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             title: l10n.overview.status.staging,
             render: record => (
               !record.latestHash ? null :
-                <DeployStatus linked={!!record.latestHash} deployed={record.stagingDeployed} />
+                <DeployStatus linked={!!record.latestHash} deployed={record.stagingDeployed} hash={record.stagingHash} />
             )
           },
           {
@@ -272,6 +277,9 @@ const TenantOverview = observer(() => {
         <DeploymentStatus mode="production" />
         <DeploymentStatus mode="staging" />
       </Container>
+
+      <Title fw={500} order={3} mt={50} mb="md">{ l10n.mediaProperty.plural }</Title>
+      <StatusTable type="mediaProperty" path="/media-properties" Load={async () => await tenantStore.MediaPropertyStatus()} />
 
       <Title fw={500} order={3} mt={50} mb="md">{ l10n.marketplace.plural }</Title>
       <StatusTable type="marketplace" path="/marketplaces" Load={async () => await tenantStore.MarketplaceStatus()} />
