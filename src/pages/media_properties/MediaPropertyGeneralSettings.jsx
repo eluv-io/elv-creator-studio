@@ -178,8 +178,8 @@ const MediaPropertyGeneralSettings = observer(() => {
           </>
       }
 
-      <Title order={3} mt={50} mb="md">{l10n.categories.meta_tags}</Title>
-      <Title order={6} mb="md">{l10n.categories.meta_tags.meta_tags_description}</Title>
+      <Title order={3} mt={50}>{l10n.categories.meta_tags}</Title>
+      <Title order={6} fw={500} color="dimmed" maw={500} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
 
       <Inputs.Text
         {...inputProps}
