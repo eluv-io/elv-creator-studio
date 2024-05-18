@@ -8,7 +8,6 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Group, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaPropertyAdvancedSearchOptionSpec} from "@/specs/MediaPropertySpecs.js";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -26,9 +25,6 @@ const MediaPropertyGeneralSettings = observer(() => {
     category: l10n.categories.general,
     path: "/public/asset_metadata/info"
   };
-
-  const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
-  const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId});
 
   return (
     <PageContent
@@ -56,13 +52,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         {...l10n.general.title}
         subcategory={l10n.categories.info}
         field="title"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.general.page_title}
-        subcategory={l10n.categories.info}
-        field="page_title"
       />
 
       <Inputs.MultiSelect
@@ -189,149 +178,58 @@ const MediaPropertyGeneralSettings = observer(() => {
           </>
       }
 
-      <Title order={3} mt={50} mb="md">{l10n.categories.search}</Title>
-      <Inputs.Select
+      <Title order={3} mt={50} mb="md">{l10n.categories.meta_tags}</Title>
+      <Title order={6} mb="md">{l10n.categories.meta_tags.meta_tags_description}</Title>
+
+      <Inputs.Text
         {...inputProps}
-        {...l10n.general.search.primary_filter}
-        subcategory={l10n.categories.search}
-        path={UrlJoin(inputProps.path, "search")}
-        field="primary_filter"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
+        {...l10n.general.meta_tags.site_name}
+        path={UrlJoin(inputProps.path, "meta_tags")}
+        subcategory={l10n.categories.meta_tags}
+        placeholder="Eluvio Media wallet"
+        field="site_name"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.meta_tags.title}
+        path={UrlJoin(inputProps.path, "meta_tags")}
+        subcategory={l10n.categories.meta_tags}
+        field="title"
+      />
+
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.general.meta_tags.description}
+        path={UrlJoin(inputProps.path, "meta_tags")}
+        subcategory={l10n.categories.meta_tags}
+        field="description"
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.meta_tags.image}
+        path={UrlJoin(inputProps.path, "meta_tags")}
+        subcategory={l10n.categories.meta_tags}
+        altTextField="image_alt"
+        fields={[
+          { field: "image", url: true, aspectRatio: 1.91 / 1}
         ]}
       />
-      <Inputs.Select
+
+      <Inputs.SingleImageInput
         {...inputProps}
-        {...l10n.general.search.secondary_filter}
-        subcategory={l10n.categories.search}
-        path={UrlJoin(inputProps.path, "search")}
-        field="secondary_filter"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
+        {...l10n.general.meta_tags.favicon}
+        path={UrlJoin(inputProps.path, "meta_tags")}
+        subcategory={l10n.categories.meta_tags}
+        field="favicon"
+        url
+        aspectRatio={1}
+        baseSize={125}
+        fields={[
+          { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
         ]}
       />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.search.group_by}
-        subcategory={l10n.categories.search}
-        path={UrlJoin(inputProps.path, "search")}
-        field="group_by"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          {label: "Date (Live Content Only)", value: "__date"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
-        ]}
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.search.hide_if_unauthenticated}
-        subcategory={l10n.categories.search}
-        path={UrlJoin(inputProps.path, "search")}
-        field="hide_if_unauthenticated"
-        defaultValue={false}
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.search.enable_advanced_search}
-        subcategory={l10n.categories.search}
-        path={UrlJoin(inputProps.path, "search")}
-        field="enable_advanced_search"
-        defaultValue={false}
-      />
-      {
-        !info.search?.enable_advanced_search ? null :
-          <Inputs.List
-            {...inputProps}
-            {...l10n.general.search.advanced_search_options}
-            subcategory={l10n.categories.search}
-            path={UrlJoin(inputProps.path, "search")}
-            field="advanced_search_options"
-            newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
-            renderItem={(props) =>
-              <>
-                <Inputs.Select
-                  {...props}
-                  {...l10n.general.search.advanced.type}
-                  subcategory={l10n.categories.advanced_search}
-                  options={[
-                    { label: "Tags", value: "tags" },
-                    { label: "Attribute", value: "attribute" },
-                    { label: "Media Type", value: "media_type" },
-                    { label: "Date", value: "date" }
-                  ]}
-                  field="type"
-                />
-                <Inputs.Text
-                  {...props}
-                  {...l10n.general.search.advanced.title}
-                  subcategory={l10n.categories.advanced_search}
-                  field="title"
-                />
-                {
-                  props.item.type !== "attribute" ? null :
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.general.search.advanced.attribute}
-                      subcategory={l10n.categories.advanced_search}
-                      searchable
-                      defaultValue={Object.keys(attributes)[0]}
-                      options={[
-                        ...(Object.keys(attributes).map(attributeId => ({
-                          label: attributes[attributeId].title || "Attribute",
-                          value: attributeId
-                        })))
-                      ]}
-                      field="attribute"
-                    />
-                }
-                {
-                  props.item.type !== "tags" ? null :
-                    <>
-                      <Inputs.MultiSelect
-                        {...props}
-                        {...l10n.general.search.advanced.tags}
-                        subcategory={l10n.categories.advanced_search}
-                        searchable
-                        options={tags}
-                        field="tags"
-                      />
-                      <Inputs.Select
-                        {...props}
-                        {...l10n.general.search.advanced.tag_display}
-                        subcategory={l10n.categories.advanced_search}
-                        defaultValue="select"
-                        options={[
-                          { label: "Select", value: "select" },
-                          { label: "Checkboxes", value: "checkboxes"}
-                        ]}
-                        field="tag_display"
-                      />
-                    </>
-                }
-              </>
-            }
-          />
-      }
     </PageContent>
   );
 });

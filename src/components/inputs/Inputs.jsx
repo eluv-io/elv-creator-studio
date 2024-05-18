@@ -810,6 +810,7 @@ const SingleImageInput = observer(({
       {
         !showFileBrowser ? null :
           <FileBrowser
+            store={store}
             url={url}
             title={LocalizeString(rootStore.l10n.components.inputs[label ? "select_file_label" : "select_file"], {item: label})}
             objectId={objectId}
@@ -875,6 +876,7 @@ export const FileInput = observer(({
         !showBrowser ? null :
           <FileBrowser
             {...fileBrowserProps}
+            store={store}
             objectId={objectId}
             extensions={extensions}
             title={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}

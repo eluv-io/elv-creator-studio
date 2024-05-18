@@ -6,7 +6,7 @@ import {DownloadFromUrl} from "@/helpers/Misc";
 class FileBrowserStore {
   files = {};
   objectNames = {};
-  imageTypes = ["gif", "jpg", "jpeg", "png", "svg", "webp"];
+  imageTypes = ["gif", "ico", "jpg", "jpeg", "png", "svg", "webp"];
 
   activeUploadJobs = {};
   uploadStatus = {};
@@ -180,6 +180,42 @@ class FileBrowserStore {
       this.DebugLog({message: "Download failed", error, level: this.logLevels.DEBUG_LEVEL_ERROR});
     }
   }
+
+  Save = flow(function * ({store, objectId, selectedObjectId}) {
+    const writeToken = this.rootStore.editStore.writeInfo[objectId]?.writeToken;
+    const selectedObjectWriteToken = objectId !== selectedObjectId && this.rootStore.editStore.writeInfo[selectedObjectId]?.writeToken;
+
+    if(!writeToken && !selectedObjectWriteToken) {
+      return;
+    }
+
+    try {
+      this.rootStore.uiStore.SetLoading(true);
+      this.rootStore.uiStore.SetLoadingMessage("Saving file updates");
+
+      if(writeToken) {
+        yield this.rootStore.editStore.Finalize({objectId, commitMessage: "Update files"});
+      }
+
+      if(selectedObjectWriteToken) {
+        yield this.rootStore.editStore.Finalize({objectId: selectedObjectId, commitMessage: "Update files"});
+      }
+
+      if(store.UpdateDatabaseRecord) {
+        yield store.UpdateDatabaseRecord({objectId});
+      }
+
+      // Ensure version hashes are updated
+      yield this.rootStore.VersionHash({objectId});
+      if(selectedObjectId) {
+        yield this.rootStore.VersionHash({objectId: selectedObjectId});
+      }
+    } catch(error) {
+      this.DebugLog({message: "Save failed", error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+    }
+
+    this.rootStore.uiStore.SetLoading(false);
+  });
 
   get client() {
     return this.rootStore.client;

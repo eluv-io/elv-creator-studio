@@ -195,6 +195,7 @@ class EditStore {
 
     if(!writeInfo) {
       this.DebugLog({message: "No write token present for " + objectId, level: this.logLevels.DEBUG_LEVEL_ERROR});
+      return;
     }
 
     const response = yield this.client.FinalizeContentObject({

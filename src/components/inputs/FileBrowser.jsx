@@ -43,8 +43,6 @@ import {
   IconUpload
 } from "@tabler/icons-react";
 
-
-
 // Table showing the status of file uploads in the upload form
 const UploadStatus = observer(({selectedFiles, fileStatus}) => {
   const [records, setRecords] = useState([]);
@@ -95,7 +93,7 @@ const UploadStatus = observer(({selectedFiles, fileStatus}) => {
       <DataTable
         highlightOnHover
         idAccessor="filename"
-        height={Math.max(250, uiStore.viewportHeight - 500)}
+        height={Math.max(250, uiStore.viewportHeight - 600)}
         records={records}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
@@ -541,7 +539,7 @@ const FileBrowserTable = observer(({
   );
 });
 
-const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
+const FileBrowser = observer(({store, objectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
   const [path, setPath] = useState("/");
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
@@ -549,6 +547,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [selectedObjectId, setSelectedObjectId] = useState(objectId);
   const [showFabricBrowser, setShowFabricBrowser] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   if(extensions === "image") {
     extensions = fileBrowserStore.imageTypes;
@@ -572,7 +571,7 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
             Close={() => setShowFabricBrowser(false)}
           />
       }
-      <Modal opened={opened} onClose={Close} centered size={1000} title={title} padding="xl">
+      <Modal opened={opened} withCloseButton={false} onClose={() => {}} centered size={1000} title={title} padding="xl">
         { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
         <Container px={0}>
           <Group mb="xs" align="center" spacing="xs">
@@ -673,26 +672,51 @@ const FileBrowser = observer(({objectId, multiple, title, extensions=[], opened=
               </Button>
             </Group>
             <Group>
-              <Button variant="subtle" w={200} onClick={Close}>
+              <Button
+                loading={saving === "cancel"}
+                variant="subtle"
+                w={200}
+                onClick={async () => {
+                  try {
+                    setSaving("cancel");
+                    await fileBrowserStore.Save({store, objectId, selectedObjectId});
+
+                    Close();
+                  } catch(error) {
+                    fileBrowserStore.DebugLog({error});
+                    setSaving(false);
+                  }
+                }}
+              >
                 { rootStore.l10n.components.actions.cancel }
               </Button>
               <Button
+                loading={saving === "submit"}
                 w={200}
                 disabled={selectedRecords.length === 0}
                 onClick={async () => {
-                  await rootStore.VersionHash({objectId: selectedObjectId});
+                  try {
+                    setSaving("submit");
 
-                  const records = selectedRecords.map(record => ({
-                    ...record,
-                    publicUrl: FabricUrl({
-                      objectId: record.objectId,
-                      path: UrlJoin("files", record.fullPath),
-                      noWriteToken: true
-                    })
-                  }));
+                    await fileBrowserStore.Save({store, objectId, selectedObjectId});
 
-                  Submit(multiple ? records : records[0]);
-                  Close();
+                    await rootStore.VersionHash({objectId: selectedObjectId});
+
+                    const records = selectedRecords.map(record => ({
+                      ...record,
+                      publicUrl: FabricUrl({
+                        objectId: record.objectId,
+                        path: UrlJoin("files", record.fullPath),
+                        noWriteToken: true
+                      })
+                    }));
+
+                    Submit(multiple ? records : records[0]);
+                    Close();
+                  } catch(error) {
+                    fileBrowserStore.DebugLog({error});
+                    setSaving(false);
+                  }
                 }}
               >
                 { rootStore.l10n.components.actions.submit }

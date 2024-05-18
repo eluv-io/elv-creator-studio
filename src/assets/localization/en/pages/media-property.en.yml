@@ -2,6 +2,7 @@ nav:
   list: Media Properties
   overview: Overview
   general: General
+  search: Search
   pages: Pages
   sections: Page Sections
   section: Page Section
@@ -14,6 +15,7 @@ form:
     general: General Settings
     info: Media Property Info
     permissions: Permission Settings
+    meta_tags: Search and Social Preview
     search: Search Settings
     advanced_search: Advanced Search Settings
     layout: Layout
@@ -98,6 +100,20 @@ form:
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
+    meta_tags:
+      meta_tags_description: This information will be used to populate search results and social media link previews for your site
+      site_name:
+        label: Site Name
+      title:
+        label: Title
+      description:
+        label: Description
+      image:
+        label: Image
+        description: 1.91:1 Aspect Ratio (1200px x 630px)
+      favicon:
+        label: Favicon
+        description: Icon appearing next to page title in browser tab. 16x16 Square
     search:
       hide_if_unauthenticated:
         label: Hide Search if Not Logged In
