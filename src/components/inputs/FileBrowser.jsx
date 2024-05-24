@@ -20,7 +20,7 @@ import {useEffect, useState} from "react";
 import {rootStore, fileBrowserStore, uiStore} from "@/stores";
 import {DataTable} from "mantine-datatable";
 import PrettyBytes from "pretty-bytes";
-import {IconButton, LocalizeString} from "@/components/common/Misc";
+import {CopyIconButton, IconButton, LocalizeString} from "@/components/common/Misc";
 import {SortTable} from "@/helpers/Misc";
 import UrlJoin from "url-join";
 import {useDebouncedValue} from "@mantine/hooks";
@@ -40,7 +40,7 @@ import {
   IconPhoto,
   IconTrashX as IconDelete,
   IconX,
-  IconUpload
+  IconUpload, IconLink
 } from "@tabler/icons-react";
 
 // Table showing the status of file uploads in the upload form
@@ -346,6 +346,17 @@ const DownloadFileButton = ({objectId, path, filename, url, encrypted}) => {
   );
 };
 
+const CopyFileLinkButton = ({filename, url}) => {
+  return (
+    <CopyIconButton
+      color="blue.6"
+      label={LocalizeString(rootStore.l10n.components.file_browser.copy_link, {filename})}
+      Icon={IconLink}
+      text={url}
+    />
+  );
+};
+
 const DeleteFileButton = ({filename, Delete}) => {
   const [deleting, setDeleting] = useState(false);
 
@@ -484,7 +495,7 @@ const FileBrowserTable = observer(({
           accessor: "actions",
           title: rootStore.l10n.components.file_browser.columns.actions,
           textAlignment: "center",
-          render: ({type, filename, url, fullPath, encrypted}) => {
+          render: ({type, filename, url, publicUrl, fullPath, encrypted}) => {
             return (
               <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
                 {
@@ -513,13 +524,22 @@ const FileBrowserTable = observer(({
                 }
                 {
                   type === "directory" ? null :
-                    <DownloadFileButton
-                      objectId={objectId}
-                      path={path}
-                      filename={filename}
-                      encrypted={encrypted}
-                      url={url}
-                    />
+                    <>
+                      <DownloadFileButton
+                        objectId={objectId}
+                        path={path}
+                        filename={filename}
+                        encrypted={encrypted}
+                        url={url}
+                      />
+                      {
+                        encrypted ? null :
+                          <CopyFileLinkButton
+                            filename={filename}
+                            url={publicUrl}
+                          />
+                      }
+                    </>
                 }
                 <DeleteFileButton
                   filename={filename}

@@ -91,6 +91,13 @@ const MediaPropertyPermissionSpec = {
   }
 };
 
+export const MediaPropertyLoginConsentSpec = {
+  key: "",
+  message: "",
+  initially_checked: true,
+  required: false
+};
+
 export const MediaPropertyAdvancedSearchOptionSpec = {
   type: "tags",
   title: "",
@@ -252,6 +259,14 @@ export const MediaPropertySpec = {
     primary_category_attribute: undefined,
     enable_advanced_search: false,
     advanced_options: []
+  },
+  domain: {
+    custom_domain: ""
+  },
+  login: {
+    styling: {},
+    terms: {},
+    consent: {}
   },
   pages: {
     main: {

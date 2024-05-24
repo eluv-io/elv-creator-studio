@@ -60,6 +60,7 @@ components:
     create_directory: Create Directory
     select_object: Select Object
     download: Download {filename}
+    copy_link: Copy Link to {filename}
     rename: Rename {filename}
     delete: Delete {filename}
     remove_selection: Remove selection {filename}

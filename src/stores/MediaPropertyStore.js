@@ -466,6 +466,26 @@ class MediaPropertyStore {
       metadataSubtree: "/public/asset_metadata/info/slug_map",
       metadata: slugs
     });
+
+    try {
+      yield this.rootStore.tenantStore.RetrieveTenant({environment: "latest"});
+      yield this.client.ReplaceMetadata({
+        libraryId,
+        objectId,
+        writeToken,
+        metadataSubtree: "/public/asset_metadata/info/tenant",
+        metadata: {
+          tenant_id: this.rootStore.tenantStore.tenantObjectId,
+          tenant_name: this.rootStore.tenantStore.tenantName,
+          tenant_slug: this.rootStore.tenantStore.tenantSlug
+        }
+      });
+    } catch(error) {
+      this.DebugLog({
+        error,
+        level: this.logLevels.DEBUG_LEVEL_ERROR
+      });
+    }
   });
 
   BeforeDeploy = flow(function * ({objectId}) {

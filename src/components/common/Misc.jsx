@@ -1,4 +1,4 @@
-import {Box, Button, Group, Image, Tooltip, ActionIcon} from "@mantine/core";
+import {Box, Button, Group, Image, Tooltip, ActionIcon, CopyButton} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {rootStore} from "@/stores";
 import {FabricUrl} from "@/helpers/Fabric.js";
@@ -14,7 +14,7 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
 
   const button = (
     <ActionIcon {...props} aria-label={label}>
-      { icon ? icon : <Icon /> }
+      {icon ? icon : <Icon/>}
     </ActionIcon>
   );
 
@@ -37,6 +37,21 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
           </Group>
       }
     </Tooltip>
+  );
+};
+
+export const CopyIconButton = ({text, ...props}) => {
+  return (
+    <CopyButton value={text} timeout={2000}>
+      {
+        ({copied, copy}) =>
+          <IconButton
+            {...props}
+            onClick={copy}
+            color={copied ? "teal" : props.color}
+          />
+      }
+    </CopyButton>
   );
 };
 

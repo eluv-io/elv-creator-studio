@@ -52,6 +52,7 @@ class FileBrowserStore {
             fullPath: UrlJoin(path, filename),
             ext,
             url: FabricUrl({libraryId, objectId, writeToken, path: UrlJoin("files", path, filename), auth: "private"}),
+            publicUrl: FabricUrl({libraryId, objectId, path: UrlJoin("files", path, filename), auth: "public"}),
             size: file["."].size,
             encrypted: file["."].encryption?.scheme === "cgck"
           };

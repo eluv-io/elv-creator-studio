@@ -674,15 +674,14 @@ const CodeInput = observer(({
             componentProps={{
               ...inputProps,
               maw: uiStore.inputWidthWide,
-              mt: "xl",
+              mt:"md",
               mb:0,
               minRows: inputProps.minRows || 20
             }}
           /> :
           value ?
-            <ScrollArea mah={500} style={{overflow: "hidden"}}>
+            <ScrollArea mt="md" mah={500} style={{overflow: "hidden"}}>
               <Prism
-                mt="xl"
                 language={language}
                 mah={470}
                 withLineNumbers

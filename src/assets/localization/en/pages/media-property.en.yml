@@ -2,6 +2,7 @@ nav:
   list: Media Properties
   overview: Overview
   general: General
+  domain: Custom Domain Settings
   search: Search
   pages: Pages
   sections: Page Sections
@@ -14,6 +15,13 @@ form:
     media_property_label: Media Property '{label}'
     general: General Settings
     info: Media Property Info
+    domain_settings: Domain Settings
+    feature_settings: Features
+    theme_settings: Theme
+    login_settings: Login Settings
+    login_theme: Login Theme
+    login_consent_options: Data Consent Options
+    login_terms: Terms and Conditions
     permissions: Permission Settings
     meta_tags: Search and Social Preview
     search: Search Settings
@@ -144,6 +152,108 @@ form:
         tag_display:
           label: Tag Display
           description: Choose whether this option should be displayed as a select component (only one tag selectable) or a list of checkboxes (multiple selectable)
+  domain:
+    custom_domain:
+      label: Custom Domain
+      description: Set a custom domain to use for this property. When accessed via your domain, additional customization options will be available, such as custom styling, terms and conditions, and feature settings
+    features:
+      features:
+        label: Features
+        description: Enable or disable features on your site
+      secondary_marketplace:
+        label: Secondary Market and Trading
+      activity:
+        label: Purchase and Trading Activity
+      gifting:
+        label: Gifting
+  theme:
+    font:
+      label: Font
+    custom_font_definition:
+      label: Custom Font Definition
+      description: "Specify the CSS @font-face definition for your custom font, if applicable. Font files may be uploaded to this property and referenced by selecting 'copy link' in the file browser"
+    custom_font_declaration:
+      label: Custom Font Declaration
+      description: CSS font-family declaration for your custom font
+  login:
+    provider:
+      label: Login Provider
+    disable_registration:
+      label: Disable Registration
+      description: If checked, users will not be able to create new accounts
+    styling:
+      logos:
+        label: Logos
+      logo:
+        label: Main Logo
+      powered_by_logo:
+        label: "'Powered By' Logo"
+      background_image:
+        label: Background Image
+      background_image_desktop:
+        label: Background Image (Desktop)
+      background_image_mobile:
+        label: Background Image (Mobile)
+      colors:
+        background_color:
+          label: Background Color
+        text_color:
+          label: Text Color
+        border_color:
+          label: Border Color
+      border_radius:
+        label: Border Radius (px)
+      login_box:
+        label: Login Box
+      sign_in_button:
+        label: Sign In Button / Primary Action
+      sign_up_button:
+        label: Sign Up button / Secondary Action
+      inputs:
+        label: Input Boxes
+      text:
+        label: Text
+      primary_text_color:
+        label: Primary Text Color
+      secondary_text_color:
+        label: Secondary Text Color
+      link_color:
+        label: Link Color
+      disable_sign_up:
+        label: Disable Sign Up
+    terms:
+      terms_and_conditions:
+        label: Terms and Conditions
+      terms_document:
+        label: Terms Document
+        description: You can display a link to a custom file outlining your terms
+      terms_document_file:
+        label: File
+      terms_document_link_text:
+        label: Link Text
+    consent:
+      require_consent:
+        label: Request Consent for Email Collection
+        description: If checked, the user will have the option to opt in or out of sharing their email address when signing in
+      default_consent:
+        label: Consent by Default
+        description: If checked, the email collection consent option will be checked by default
+      custom_consent_options:
+        label: Custom Consent Options
+        description: You may define additional options for the user to opt in or out of when signing in
+        fieldLabel: Custom Consent Option
+      key:
+        label: Key
+        description: The name for this field to be reported as in the collected data
+      message:
+        label: Message
+        description: Describe what the user is consenting to
+      initially_checked:
+        label: Initially Checked
+        description: If selected, this option will be checked by default
+      required:
+        label: Required
+        description: If selected, login will not be allowed unless this consent option is checked
 
   pages:
     create:
