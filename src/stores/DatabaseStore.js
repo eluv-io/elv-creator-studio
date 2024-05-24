@@ -366,7 +366,7 @@ class DatabaseStore {
     yield Promise.all(
       Object.keys(content.sites).map(async siteId => {
         content.sites[siteId].tenantSlug = tenantSlug;
-        content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug;
+        content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug || "";
 
         // Determine marketplaces
         content.sites[siteId].primaryMarketplace = await this.MarketplaceInfo(
