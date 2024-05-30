@@ -73,7 +73,7 @@ const MediaPropertySearch = observer(() => {
         options={[
           {label: "None", value: ""},
           {label: "Media Type", value: "__media-type"},
-          {label: "Date (Live Content Only)", value: "__date"},
+          {label: "Date", value: "__date"},
           ...(Object.keys(attributes).map(attributeId => ({
             label: attributes[attributeId].title || "Attribute",
             value: attributeId

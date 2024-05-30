@@ -217,7 +217,10 @@ form:
       description: Date of this live video
     start_time:
       label: Start Time
-      description: Approximate start time of this live video
+      description: Scheduled start time of this live video
+    stream_start_time:
+      label: Stream Start Time
+      description: The time at which to show the video stream. If not set, Start Time will be used.
     end_time:
       label: End Time
       description: Approximate end time of this live video
