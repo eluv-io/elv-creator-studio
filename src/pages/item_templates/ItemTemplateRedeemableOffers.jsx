@@ -272,11 +272,11 @@ const ItemTemplateRedeemableOffers = observer(() => {
               let color = "green";
 
               if(redeemableOffer.available_at && ParseDate(redeemableOffer.available_at) > new Date()) {
-                status = LocalizeString(l10n.redeemable_offers.redemable_offers.status.unreleased, { date: FormatDate(redeemableOffer.available_at)});
+                status = LocalizeString(l10n.redeemable_offers.redeemable_offers.status.unreleased, { date: FormatDate(redeemableOffer.available_at)});
                 color = "yellow";
                 Icon = IconClock;
               } else if(redeemableOffer.expires_at && ParseDate(redeemableOffer.expires_at) < new Date()) {
-                status = LocalizeString(l10n.redeemable_offers.redemable_offers.status.expired, { date: FormatDate(redeemableOffer.expires_at)});
+                status = LocalizeString(l10n.redeemable_offers.redeemable_offers.status.expired, { date: FormatDate(redeemableOffer.expires_at)});
                 color = "red";
                 Icon = IconClock;
               }
