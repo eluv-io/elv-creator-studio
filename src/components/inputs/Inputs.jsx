@@ -304,7 +304,7 @@ const Input = observer(({
     case "number":
       // Additional options: min, max, step
       Component = NumberInput;
-      value = value || "";
+      value = ["string", "number"].includes(typeof value) && value || "";
       break;
     case "uuid":
       componentProps.disabled = true;

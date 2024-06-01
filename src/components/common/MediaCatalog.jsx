@@ -66,6 +66,8 @@ export const MediaPropertySectionPermissionIcon = observer(({sectionOrSectionIte
 });
 
 export const MediaItemPermissionIcon = observer(({mediaItem}) => {
+  if(!mediaItem) { return null; }
+
   let Icon, color, label;
   if(mediaItem.public) {
     Icon = IconWorld;
@@ -109,9 +111,10 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, show
     md: { p: "sm", fz1: "md", fz2: "sm", img: 75 },
     lg: { p: "md", fz1: "lg", fz2: "md", img: 100 },
   };
+  mediaItem = mediaItem || {};
 
   const page = mediaItem.type === "collection" ? "media-collections" : mediaItem.type === "list" ? "media-lists" : "media";
-  const link = UrlJoin("/media-catalogs", mediaItem.media_catalog_id, page, mediaItem.id);
+  const link = UrlJoin("/media-catalogs", mediaItem.media_catalog_id || "", page, mediaItem.id || "");
 
   return (
     <Paper withBorder p={sizes[size].p} key={`media-item-${mediaItem.id}`} maw={uiStore.inputWidth} {...componentProps}>

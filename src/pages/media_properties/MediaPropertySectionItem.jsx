@@ -46,10 +46,10 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
             <MediaItemCard mediaItem={mediaItem} size="md" mb="md" withLink showPermissions />
           </MantineInput.Wrapper>
           {
-            mediaItem.type === "media" ? null :
+            !mediaItem || mediaItem?.type === "media" ? null :
               <Inputs.Checkbox
                 {...inputProps}
-                {...l10n.section_items[`expand_${mediaItem.type}`]}
+                {...l10n.section_items[`expand_${mediaItem?.type}`]}
                 field="expand"
               />
           }

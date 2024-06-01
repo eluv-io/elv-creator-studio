@@ -868,6 +868,7 @@ const MediaPropertySection = observer(() => {
                   l10n.sections.display.display_limit_rows :
                   l10n.sections.display.display_limit
               )}
+              defaultValue=""
               min={0}
               subcategory={l10n.categories.section_presentation}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
