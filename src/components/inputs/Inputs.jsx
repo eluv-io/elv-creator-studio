@@ -253,7 +253,7 @@ const Input = observer(({
       const currentValue = store.GetMetadata({objectId, path, field});
 
       // Only set default value on blank string if explicitly specified - otherwise, only set on undefined
-      if(!(typeof currentValue === "undefined" || (currentValue === "" && defaultOnBlankString))) {
+      if(!(typeof currentValue === "undefined" || ((currentValue === "" || currentValue === 0) && defaultOnBlankString))) {
         return;
       }
 
@@ -304,7 +304,7 @@ const Input = observer(({
     case "number":
       // Additional options: min, max, step
       Component = NumberInput;
-      value = ["string", "number"].includes(typeof value) && value || "";
+      value = parseFloat(value);
       break;
     case "uuid":
       componentProps.disabled = true;
@@ -397,7 +397,7 @@ const Input = observer(({
       onChange={event => {
         let value = event?.target ? event.target.value : event;
 
-        if(type === "number" && !value) {
+        if(type === "number" && typeof value !== "number" && !value) {
           // Set missing numbers to undefined instead of empty string
           value = undefined;
         } else if(["date", "datetime"].includes(type)) {

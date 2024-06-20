@@ -230,6 +230,42 @@ const MediaPropertyGeneralSettings = observer(() => {
           { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
         ]}
       />
+
+      <Title order={3} mt={50} mb="md">{l10n.categories.theme_settings}</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.theme.font}
+        subcategory={l10n.categories.theme_settings}
+        path="/public/asset_metadata/info/styling"
+        defaultValue=""
+        field="font"
+        options={[
+          { label: "Inter (Default)", value: "" },
+          { label: "Custom Font", value: "custom" },
+        ]}
+      />
+      {
+        info?.styling?.font !== "custom" ? null :
+          <>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.theme.custom_font_declaration}
+              subcategory={l10n.categories.theme_settings}
+              path="/public/asset_metadata/info/styling"
+              language="css"
+              field="custom_font_declaration"
+            />
+            <Inputs.Code
+              {...inputProps}
+              {...l10n.theme.custom_font_definition}
+              subcategory={l10n.categories.theme_settings}
+              path="/public/asset_metadata/info/styling"
+              language="css"
+              field="custom_font_definition"
+            />
+          </>
+      }
     </PageContent>
   );
 });

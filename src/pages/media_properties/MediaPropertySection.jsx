@@ -100,7 +100,7 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
             <Button variant="outline" onClick={() => setShowMediaSelectionModal(true)}>
               { l10n.section_items.select_media.label }
             </Button>
-            <Stack mb={5} spacing={5} mah={500} style={{overflowY: "scroll"}}>
+            <Stack mb={5} spacing={5} mah={500} style={{overflowY: "auto"}}>
               {
                 selectedMediaItems.length === 0 ? null :
                   <>

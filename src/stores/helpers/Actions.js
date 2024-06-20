@@ -107,7 +107,7 @@ const SetMetadata = function({
     subcategory,
     label,
     info: {
-      cleared: !value,
+      cleared: typeof value !== "number" && !value,
       inverted
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value),

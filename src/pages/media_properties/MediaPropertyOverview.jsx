@@ -3,6 +3,7 @@ import {mediaPropertyStore, uiStore} from "@/stores";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Group, Paper, Text, Title, Container, Image} from "@mantine/core";
+import {ScaleImage} from "@/helpers/Fabric";
 
 const MediaPropertyOverview = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -20,7 +21,7 @@ const MediaPropertyOverview = observer(() => {
               height={250 * 3 / 2}
               withPlaceholder
               fit="contain"
-              src={metadata?.info?.image?.url}
+              src={ScaleImage(metadata?.info?.image?.url, 250)}
               alt={metadata?.info?.name || mediaProperty?.name}
             />
             <Container p={0} m={0} maw={400}>

@@ -33,6 +33,8 @@ form:
     page_label: Page '{label}'
     page_header: Header
     page_sections: Sections
+    page_actions: Actions
+    page_action_label: Action '{label}'
     sections: Page Sections
     section: Page Section
     section_label: Page Section '{label}'
@@ -175,6 +177,19 @@ form:
     custom_font_declaration:
       label: Custom Font Declaration
       description: CSS font-family declaration for your custom font
+    colors:
+      background_color:
+        label: Background Color
+      text_color:
+        label: Text Color
+      border_color:
+        label: Border Color
+    border_radius:
+      label: Border Radius (px)
+    text:
+      label: Button Text
+    icon:
+      label: Button Icon
   login:
     provider:
       label: Login Provider
@@ -194,15 +209,6 @@ form:
         label: Background Image (Desktop)
       background_image_mobile:
         label: Background Image (Mobile)
-      colors:
-        background_color:
-          label: Background Color
-        text_color:
-          label: Text Color
-        border_color:
-          label: Border Color
-      border_radius:
-        label: Border Radius (px)
       login_box:
         label: Login Box
       sign_in_button:
@@ -288,10 +294,58 @@ form:
         label: Desktop (16:9)
       background_image_mobile:
         label: Mobile
+    actions:
+      label: Actions
+      description: Show buttons for various actions
+      fieldLabel: Action
     sections:
       label: Sections
       description: Lay out your page by specifying a list of sections
       fieldLabel: Section
+    permission_behavior:
+      label: Default Permission Behavior
+      description: Specify the default behavior for content that is not accessible due to permissions
+      hint: |
+        Default: Use the permission settings of the property 
+        
+        Hide: Inaccessible content will be hidden 
+
+        Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
+
+        Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+  actions:
+    sections:
+      general: General Settings
+      visibility: Visibility
+      behavior: Behavior
+      button: Button Settings
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    button:
+      label: Button Settings
+    visibility:
+      label: Visibility
+      description: Specify when this button should be visible
+    permissions:
+      label: Permissions
+      description: Specify permissions to check for determining visibility
+    behavior:
+      label: Action Behavior
+      description: Specify what this action does
+    video:
+      label: Video
+      description: Specify a video to show when this action is clicked
+    media_item:
+      label: Media Item
+      description: Select the media item for this action to link to
+    url:
+      label: URL
+      description: The URL for this action to link to
+
   sections:
     create:
       create: Create New Page Section

@@ -222,11 +222,29 @@ export const MediaPropertySectionAutomaticSpec = {
   select: MediaPropertyFilterSpec
 };
 
+export const MediaPropertyPageActionSpec = {
+  id: undefined,
+  label: "<New Action>",
+  description: "",
+  text: "",
+  colors: {
+    background_color: "#FFFFFF",
+    text_color: "#000000",
+    border_color: "#000000",
+  },
+  border_radius: 5,
+  icon: undefined,
+  behavior: "sign_in",
+  visibility: "unauthenticated",
+  permissions: []
+};
+
 export const MediaPropertyPageSpec = {
   id: undefined,
   url_slug: "",
   label: "<New Page>",
   description: "",
+  actions: [],
   layout: {
     title: "",
     description: "",

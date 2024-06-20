@@ -3,58 +3,9 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import UrlJoin from "url-join";
 import {Group, Stack, Title} from "@mantine/core";
 import {MediaPropertyLoginConsentSpec} from "@/specs/MediaPropertySpecs.js";
-
-const ColorOptions = observer(({...inputProps}) => {
-  const path = UrlJoin(inputProps.path, inputProps.field);
-  inputProps.subcategory = inputProps.label;
-
-  return (
-    <Inputs.InputWrapper {...inputProps} maw={300} mb={0}>
-      <Stack mt="md" spacing={5}>
-        <Inputs.Color
-          {...inputProps}
-          {...rootStore.l10n.pages.media_property.form.login.styling.colors.background_color}
-          path={path}
-          field="background_color"
-          componentProps={{
-            mb: 0
-          }}
-        />
-        <Inputs.Color
-          {...inputProps}
-          {...rootStore.l10n.pages.media_property.form.login.styling.colors.text_color}
-          path={path}
-          field="text_color"
-          componentProps={{
-            mb: 0
-          }}
-        />
-        <Inputs.Color
-          {...inputProps}
-          {...rootStore.l10n.pages.media_property.form.login.styling.colors.border_color}
-          path={path}
-          field="border_color"
-          componentProps={{
-            mb: 0
-          }}
-        />
-        <Inputs.Integer
-          {...inputProps}
-          {...rootStore.l10n.pages.media_property.form.login.styling.border_radius}
-          path={path}
-          field="border_radius"
-          min={0}
-          componentProps={{
-            mb: 0
-          }}
-        />
-      </Stack>
-    </Inputs.InputWrapper>
-  );
-});
+import ColorOptions from "@/components/inputs/media_property/Components.jsx";
 
 const LoginStyling = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -232,57 +183,6 @@ const LoginConsentOptions = observer(() => {
   );
 });
 
-const StylingSettings = observer(() => {
-  const { mediaPropertyId } = useParams();
-
-  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
-
-  if(!mediaProperty) { return null; }
-
-  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
-
-  const l10n = rootStore.l10n.pages.media_property.form;
-  const inputProps = {
-    store: mediaPropertyStore,
-    objectId: mediaPropertyId,
-    category: l10n.categories.domain_settings,
-    subcategory: l10n.categories.theme_settings,
-    path: "/public/asset_metadata/info/styling"
-  };
-
-  return (
-    <>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.theme.font}
-        defaultValue=""
-        field="font"
-        options={[
-          { label: "Inter (Default)", value: "" },
-          { label: "Custom Font", value: "custom" },
-        ]}
-      />
-      {
-        info?.styling?.font !== "custom" ? null :
-          <>
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.theme.custom_font_declaration}
-              language="css"
-              field="custom_font_declaration"
-            />
-            <Inputs.Code
-              {...inputProps}
-              {...l10n.theme.custom_font_definition}
-              language="css"
-              field="custom_font_definition"
-            />
-          </>
-      }
-    </>
-  );
-});
-
 const FeatureSettings = observer(() => {
   const { mediaPropertyId } = useParams();
 
@@ -361,11 +261,6 @@ const MediaPropertyDomainSettings = observer(() => {
       {
         !info.domain?.custom_domain ? null :
           <>
-            <Title order={3} mt={50} mb="md">
-              { l10n.categories.theme_settings }
-            </Title>
-            <StylingSettings />
-
             <Title order={3} mt={50} mb="md">
               { l10n.categories.login_settings }
             </Title>
