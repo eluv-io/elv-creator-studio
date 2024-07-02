@@ -26,6 +26,7 @@ const MediaCatalogOverview = observer(() => {
             <Container p={0} m={0} maw={400}>
               <Title order={4}>{ metadata?.info?.name || mediaCatalog?.name }</Title>
               <Title order={6} color="dimmed">{ mediaCatalog.objectId }</Title>
+              <Text mt={3} fz={10} color="dimmed">{ mediaCatalog.versionHash }</Text>
               <Text fz="sm" mt="md">{metadata?.info?.description}</Text>
             </Container>
           </Group>

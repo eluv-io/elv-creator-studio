@@ -109,7 +109,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         />
       </Group>
 
-      <Title order={3} mt={50} mb="md">{l10n.categories.permissions}</Title>
+      <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.permission_sets}
@@ -173,6 +173,73 @@ const MediaPropertyGeneralSettings = observer(() => {
                     label: info.pages[pageId].label,
                     value: pageId
                   }))}
+                />
+            }
+          </>
+      }
+
+      <Title order={3} mt={50}>{l10n.categories.media_sidebar}</Title>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.media_sidebar.show_media_sidebar}
+        path={UrlJoin(inputProps.path, "media_sidebar")}
+        subcategory={l10n.categories.media_sidebar}
+        defaultValue={false}
+        field="show_media_sidebar"
+      />
+
+      {
+        !info?.media_sidebar?.show_media_sidebar ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.media_sidebar.sidebar_content}
+              path={UrlJoin(inputProps.path, "media_sidebar")}
+              subcategory={l10n.categories.media_sidebar}
+              field="sidebar_content"
+              defaultValue="current_section"
+              options={[
+                { label: "Current Section", value: "current_section" },
+                { label: "Specific Section", value: "specific_section" },
+                { label: "All Live Content", value: "live" }
+              ]}
+            />
+            {
+              info?.media_sidebar?.sidebar_content !== "current_section" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.media_sidebar.default_sidebar_content}
+                  path={UrlJoin(inputProps.path, "media_sidebar")}
+                  subcategory={l10n.categories.media_sidebar}
+                  field="default_sidebar_content"
+                  defaultValue="none"
+                  options={[
+                    { label: "None", value: "none" },
+                    { label: "Specific Section", value: "specific_section" },
+                    { label: "All Live Content", value: "live" }
+                  ]}
+                />
+            }
+            {
+              !(
+                info?.media_sidebar?.sidebar_content === "specific_section" ||
+                (
+                  info?.media_sidebar?.sidebar_content === "current_section" &&
+                  info?.media_sidebar?.default_sidebar_content === "specific_section"
+                )
+              ) ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.media_sidebar.sidebar_content_section_id}
+                  path={UrlJoin(inputProps.path, "media_sidebar")}
+                  subcategory={l10n.categories.media_sidebar}
+                  field="sidebar_content_section_id"
+                  defaultValue={Object.keys(info.sections || {})[0]}
+                  options={
+                    Object.keys(info.sections || {}).map(sectionId =>
+                      ({label: info.sections[sectionId].label, value: sectionId})
+                    )
+                  }
                 />
             }
           </>

@@ -271,6 +271,19 @@ export const MediaPropertySpec = {
   permission_sets: [],
   attributes: [],
   sections: {},
+  media_sidebar: {
+    show_media_sidebar: false,
+    sidebar_content: "current_section",
+    default_sidebar_content: "none",
+    default_sidebar_content_section_id: ""
+  },
+  meta_tags: {
+    site_name: "",
+    title: "",
+    description: "",
+    image: undefined,
+    favicon: undefined
+  },
   permission_behavior: "hide",
   search: {
     category_attribute: undefined,

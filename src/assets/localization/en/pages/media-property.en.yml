@@ -23,6 +23,7 @@ form:
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
     permissions: Permission Settings
+    media_sidebar: Media Sidebar
     meta_tags: Search and Social Preview
     search: Search Settings
     advanced_search: Advanced Search Settings
@@ -110,6 +111,18 @@ form:
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
+    media_sidebar:
+      show_media_sidebar:
+        label: Show Media Sidebar (Desktop Only)
+        description: If specified, video media will be shown with a sidebar showing more content and allowing for viewing multiple simultaneous live videos.
+      sidebar_content:
+        label: Sidebar Content
+        description: The type of content to show in the sidebar
+      default_sidebar_content:
+        label: Default Sidebar Content
+        description: The type of content to show in the sidebar for media accessed outside of a section
+      sidebar_content_section_id:
+        label: Sidebar Content Section
     meta_tags:
       meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
       site_name:

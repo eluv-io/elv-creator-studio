@@ -201,9 +201,12 @@ class MediaCatalogStore {
     const info = this.allMediaCatalogs.find(mediaCatalog => mediaCatalog.objectId === mediaCatalogId);
 
     const libraryId = yield this.rootStore.LibraryId({objectId: mediaCatalogId});
+    const versionHash = yield this.client.LatestVersionHash({objectId: mediaCatalogId});
 
     this.mediaCatalogs[mediaCatalogId] = {
       ...info,
+      libraryId,
+      versionHash,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
           libraryId: libraryId,
