@@ -190,6 +190,9 @@ form:
     custom_font_declaration:
       label: Custom Font Declaration
       description: CSS font-family declaration for your custom font
+    custom_title_font_declaration:
+      label: Custom Title Font Declaration (Optional)
+      description: CSS font-family declaration for your custom font to be used for title fields
     colors:
       background_color:
         label: Background Color

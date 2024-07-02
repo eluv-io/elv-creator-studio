@@ -323,6 +323,14 @@ const MediaPropertyGeneralSettings = observer(() => {
               language="css"
               field="custom_font_declaration"
             />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.theme.custom_title_font_declaration}
+              subcategory={l10n.categories.theme_settings}
+              path="/public/asset_metadata/info/styling"
+              language="css"
+              field="custom_title_font_declaration"
+            />
             <Inputs.Code
               {...inputProps}
               {...l10n.theme.custom_font_definition}
