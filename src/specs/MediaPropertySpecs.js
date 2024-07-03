@@ -185,7 +185,9 @@ export const MediaPropertySectionItemPurchaseItemSpec = {
   title: "",
   description: "",
   marketplace: undefined,
-  marketplace_sku: ""
+  marketplace_sku: "",
+  use_custom_image: false,
+  image: undefined
 };
 
 export const MediaPropertySectionBaseSpec = {

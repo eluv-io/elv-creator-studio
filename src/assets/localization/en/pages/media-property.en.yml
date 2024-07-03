@@ -82,6 +82,8 @@ form:
       description: Portrait (2:3)
     header_logo:
       label: Header Logo
+    tv_header_logo:
+      label: Header Logo (TV)
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
@@ -90,6 +92,9 @@ form:
       description: Other properties within this property
     associated_marketplaces:
       label: Associated Marketplaces
+    require_login:
+      label: Require Login
+      description: If specified, users will be automatically prompted to log in when accessing this property
     permission_sets:
       label: Permission Sets
       description: Select permission sets to associate with this property
@@ -539,6 +544,11 @@ form:
       permission_item_id:
         label: Permission Item
         description: Specify an existing permission item to purchase
+      use_item_image:
+        label: Use Item Image
+        description: If checked, the image from the specified item will be displayed. Uncheck to provide a custom image or to have this purchase option display with no image.
+      image:
+        label: Image
       title:
         label: Title
       subtitle:

@@ -107,9 +107,24 @@ const MediaPropertyGeneralSettings = observer(() => {
             { field: "header_logo", aspectRatio: 1 },
           ]}
         />
+        <Inputs.ImageInput
+          {...inputProps}
+          {...l10n.general.tv_header_logo}
+          subcategory={l10n.categories.info}
+          fields={[
+            { field: "tv_header_logo", aspectRatio: 1 },
+          ]}
+        />
       </Group>
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.require_login}
+        subcategory={l10n.categories.permissions}
+        field="require_login"
+        defaultValue={false}
+      />
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.permission_sets}

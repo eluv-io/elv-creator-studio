@@ -419,12 +419,30 @@ const MediaPropertySectionItem = observer(() => {
                             withBorder: false,
                             p: 0,
                             pt: 0,
-                            pb: 0,
-                            mb:0
+                            pb: 0
                           }}
                         />
                       </>
                     }
+                  <Inputs.Checkbox
+                    {...props}
+                    {...l10n.section_items.purchasable_item.use_item_image}
+                    INVERTED
+                    defaultValue={false}
+                    subcategory={l10n.categories.purchase_item}
+                    field="use_custom_image"
+                  />
+                  {
+                    !props.item.use_custom_image ? null :
+                      <Inputs.ImageInput
+                        {...props}
+                        {...l10n.section_items.purchasable_item.image}
+                        subcategory={l10n.categories.purchase_item}
+                        fields={[
+                          {field: "image"}
+                        ]}
+                      />
+                  }
                 </>
               );
             }}
