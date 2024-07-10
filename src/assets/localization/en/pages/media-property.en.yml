@@ -9,6 +9,9 @@ nav:
   section: Page Section
   section_item: Page Section Item
 form:
+  action_labels:
+    set_main_page: Set as Main Page
+    set_main_page_confirm: Are you sure you want to set '{label}' as the main page for this property?
   categories:
     media_properties: Media Properties
     media_property: Media Property
@@ -99,7 +102,7 @@ form:
       label: Permission Sets
       description: Select permission sets to associate with this property
     permission_behavior:
-      label: Default Permission Behavior
+      label: Content Permission Behavior
       description: Specify the default behavior for content that is not accessible due to permissions
       hint: |
         Hide: Inaccessible content will be hidden 
@@ -323,8 +326,17 @@ form:
       label: Sections
       description: Lay out your page by specifying a list of sections
       fieldLabel: Section
+    page_permissions:
+      label: Page Permissions
+      description: If specified, the user must have one or more of these permissions to access this page
+    page_permission_behavior:
+      label: Page Permission Behavior
+      description: Specify what happens if the user does not have access to this page
+    page_permission_alternate_page:
+      label: Alternate Page
+      description: If the user doesn't at least one of the specified permissions, this page will be shown
     permission_behavior:
-      label: Default Permission Behavior
+      label: Content Permission Behavior
       description: Specify the default behavior for content that is not accessible due to permissions
       hint: |
         Default: Use the permission settings of the property 

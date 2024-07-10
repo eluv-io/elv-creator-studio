@@ -31,6 +31,8 @@ components:
     select_file: Select File
     select_file_label: Select file for {item}
     edit: Edit {item}
+    copy: Create a copy of {item}
+    copy_confirm: Are you sure you want to create a copy of {item}?
     navigate_to: Navigate to {item}
     confirm: Confirm
     remove: Remove {item}
@@ -150,4 +152,6 @@ actions:
   MOVE_LIST_ELEMENT: Move '{label}' list position
   MOVE_LIST_ELEMENT_UNLABELLED: Move list position
   CUSTOM: <Custom Action>
+  MIGRATION: Migration
+  MIGRATION_LABEL: Migrate to Version {version}
 

@@ -914,7 +914,22 @@ class DatabaseStore {
         doc.data() && results.push(doc.data())
       );
 
-      return results;
+      return (
+        // Test existence of each object on fabric to ensure deleted items don't show up
+        yield Promise.all(
+          results.map(async result => {
+            try {
+              await this.rootStore.client.LatestVersionHash({objectId: result.objectId});
+
+              return result;
+            } catch(error) {
+              return;
+            }
+          })
+        )
+      )
+        .filter(result => result)
+        .sort((a, b) => a.name < b.name ? -1 : 1);
     } catch(error) {
       this.DebugLog({message: error, level: this.logLevels.DEBUG_LEVEL_INFO});
     }

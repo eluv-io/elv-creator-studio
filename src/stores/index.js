@@ -155,9 +155,14 @@ class RootStore {
       objectId = this.utils.DecodeVersionHash(versionHash).objectId;
     }
 
-    this.versionHashes[objectId] = yield this.client.LatestVersionHash({objectId});
+    if(!this.versionHashes[objectId] || Date.now() - this.versionHashes[objectId].retrievedAt > 30000) {
+      this.versionHashes[objectId] = {
+        versionHash: yield this.client.LatestVersionHash({objectId}),
+        retrievedAt: Date.now()
+      };
+    }
 
-    return this.versionHashes[objectId];
+    return this.versionHashes[objectId].versionHash;
   });
 
   DebugLog({message, error, level=this.logLevels.DEBUG_LEVEL_INFO}) {

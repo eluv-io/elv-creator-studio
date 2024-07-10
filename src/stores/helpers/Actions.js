@@ -4,6 +4,7 @@ import Set from "lodash/set";
 import Get from "lodash/get";
 import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 export const ACTIONS = {
   MODIFY_FIELD: {
@@ -50,6 +51,9 @@ export const ACTIONS = {
     stackable: false
   },
   CUSTOM: {
+    stackable: false
+  },
+  MIGRATION: {
     stackable: false
   }
 };
@@ -496,6 +500,43 @@ const RemoveListElement = function({objectId, page, path, field, index, ...args}
   this.ListAction({actionType: "REMOVE_LIST_ELEMENT", objectId, page, path, field, index, ...args});
 };
 
+const ApplyMigration = function ({
+  objectId,
+  version,
+  label,
+  Apply,
+  Write
+}) {
+  this.ApplyAction({
+    objectId,
+    page: "/migration",
+    path: "/",
+    actionType: "MIGRATION",
+    category: LocalizeString(this.rootStore.l10n.actions.MIGRATION_LABEL, { version }),
+    label,
+    Apply: () => {
+      Apply({
+        Set: (path, value) => {
+          const pathComponents = path.replace(/^\//, "").replace(/\/$/, "").split("/");
+          Set(this[this.objectsMapKey][objectId].metadata, pathComponents, value);
+        }
+      });
+
+      Set(this[this.objectsMapKey][objectId].metadata, ["public", "asset_metadata", "info", "version"], version);
+    },
+    Undo: () => {},
+    Write: async (objectParams) => {
+      await Write(objectParams);
+
+      await this.client.ReplaceMetadata({
+        ...objectParams,
+        metadataSubtree: "/public/asset_metadata/info/version",
+        metadata: version
+      });
+    }
+  });
+};
+
 
 // Action handling
 
@@ -628,7 +669,7 @@ const Save = flow(function * ({libraryId, objectId, writeToken}) {
     yield this.Preprocess({libraryId, objectId, writeToken});
   }
 
-  for(const action of this.actionStack[objectId]) {
+  for(const action of (this.actionStack[objectId] || [])) {
     yield action.Write({libraryId, objectId, writeToken});
   }
 
@@ -670,6 +711,24 @@ const HasUnsavedChanges = function() {
   );
 };
 
+// Ensure the specified load method is called only once unless forced
+const LoadResource = async function({key, id, force, Load}) {
+  key = `_load-${key}`;
+
+  if(force) {
+    // Force - drop all loaded content
+    this[key] = {};
+  }
+
+  this[key] = this[key] || {};
+
+  if(force || !this[key][id]) {
+    this[key][id] = Load();
+  }
+
+  return await this[key][id];
+};
+
 export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.objectsMapKey = objectsMapKey;
   storeClass.prototype.actionStack = {};
@@ -686,6 +745,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.InsertListElement = InsertListElement;
   storeClass.prototype.MoveListElement = MoveListElement;
   storeClass.prototype.RemoveListElement = RemoveListElement;
+  storeClass.prototype.ApplyMigration = ApplyMigration;
 
   storeClass.prototype.ApplyAction = ApplyAction;
   storeClass.prototype.UndoAction = UndoAction;
@@ -699,4 +759,6 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.SetListFieldIds = SetListFieldIds;
 
   storeClass.prototype.HasUnsavedChanges = HasUnsavedChanges;
+
+  storeClass.prototype.LoadResource = LoadResource;
 };

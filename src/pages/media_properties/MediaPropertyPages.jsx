@@ -7,7 +7,7 @@ import {modals} from "@mantine/modals";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useState} from "react";
 import {useForm} from "@mantine/form";
-import {Button, Container, Group, TextInput} from "@mantine/core";
+import {Button, Container, Group, Text, TextInput} from "@mantine/core";
 
 const CreatePageForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
@@ -75,6 +75,8 @@ const MediaPropertyPages = observer(() => {
     path: "/public/asset_metadata/info"
   };
 
+  const mainPageId = info.page_ids.main;
+
   return (
     <PageContent
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.pages}`}
@@ -89,7 +91,9 @@ const MediaPropertyPages = observer(() => {
         nameField="label"
         filterable
         filterFields={["label", "description"]}
-        protectedKeys={["main"]}
+        excludedKeys={["main"]}
+        protectedKeys={[mainPageId]}
+        CopyItem={({item}) => mediaPropertyStore.CreatePage({mediaPropertyId, copyPageId: item.id})}
         AddItem={async () => {
           return new Promise((resolve) => {
             modals.open({
@@ -117,7 +121,16 @@ const MediaPropertyPages = observer(() => {
           {
             accessor: "label",
             sortable: true,
-            title: l10n.pages.label.label
+            title: l10n.pages.label.label,
+            render: item => (
+              <Group spacing="xs" align="end">
+                <Text>{ item.label }</Text>
+                {
+                  item.id !== mainPageId ? null :
+                    <Text fz="xs" fw={600} italic>(Main)</Text>
+                }
+              </Group>
+            )
           },
           {
             accessor: "description",

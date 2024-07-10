@@ -155,3 +155,18 @@ export const ScrollTo = ({top=0, target, container, behavior="smooth"}) => {
     (container || window).scrollTo({top, behavior});
   }
 };
+
+export const CompareSemVer = (a, b) => {
+  const [a1, a2, a3] = a.split(".");
+  const [b1, b2, b3] = b.split(".");
+
+  if(parseInt(a1 || 0) === parseInt(b1 || 0)) {
+    if(parseInt(a2 || 0) === parseInt(b2 || 0)) {
+      return parseInt(a3 || 0) - parseInt(b3 || 0);
+    }
+
+    return parseInt(a2 || 0) - parseInt(b2 || 0);
+  }
+
+  return parseInt(a1 || 0) - parseInt(b1 || 0);
+};

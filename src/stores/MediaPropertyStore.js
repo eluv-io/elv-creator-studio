@@ -14,10 +14,12 @@ import {
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
-import {GenerateUUID} from "@/helpers/Misc.js";
+import {CompareSemVer, GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
+
+import {Migrations, latestVersion} from "@/migrations/MediaPropertyMigrations.js";
 
 class MediaPropertyStore {
   allMediaProperties;
@@ -59,41 +61,48 @@ class MediaPropertyStore {
   });
 
   LoadMediaProperty = flow(function * ({mediaPropertyId, force=false}) {
-    if(this.mediaProperties[mediaPropertyId] && !force) { return; }
+    yield this.LoadResource({
+      key: "mediaProperty",
+      id: mediaPropertyId,
+      force,
+      Load: async () => {
+        await this.LoadMediaProperties();
 
-    yield this.LoadMediaProperties();
+        const info = this.allMediaProperties.find(mediaProperty => mediaProperty.objectId === mediaPropertyId);
 
-    const info = this.allMediaProperties.find(mediaProperty => mediaProperty.objectId === mediaPropertyId);
+        const libraryId = await this.rootStore.LibraryId({objectId: mediaPropertyId});
 
-    const libraryId = yield this.rootStore.LibraryId({objectId: mediaPropertyId});
+        await this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
+        await this.rootStore.marketplaceStore.LoadMarketplaces();
+        await this.rootStore.permissionSetStore.LoadPermissionSets();
 
-    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
-    yield this.rootStore.marketplaceStore.LoadMarketplaces();
-    yield this.rootStore.permissionSetStore.LoadPermissionSets();
+        await Promise.all(
+          this.rootStore.mediaCatalogStore.allMediaCatalogs.map(async ({objectId}) =>
+            await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: objectId})
+          )
+        );
 
-    yield Promise.all(
-      this.rootStore.mediaCatalogStore.allMediaCatalogs.map(async ({objectId}) =>
-        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: objectId})
-      )
-    );
+        await Promise.all(
+          this.rootStore.permissionSetStore.allPermissionSets.map(async ({objectId}) =>
+            await this.rootStore.permissionSetStore.LoadPermissionSet({permissionSetId: objectId})
+          )
+        );
 
-    yield Promise.all(
-      this.rootStore.permissionSetStore.allPermissionSets.map(async ({objectId}) =>
-        await this.rootStore.permissionSetStore.LoadPermissionSet({permissionSetId: objectId})
-      )
-    );
+        this.mediaProperties[mediaPropertyId] = {
+          ...info,
+          metadata: {
+            public: (await this.client.ContentObjectMetadata({
+              libraryId: libraryId,
+              objectId: mediaPropertyId,
+              metadataSubtree: "public",
+              produceLinkUrls: true
+            }))
+          }
+        };
 
-    this.mediaProperties[mediaPropertyId] = {
-      ...info,
-      metadata: {
-        public: (yield this.client.ContentObjectMetadata({
-          libraryId: libraryId,
-          objectId: mediaPropertyId,
-          metadataSubtree: "public",
-          produceLinkUrls: true
-        }))
+        this.ApplyMigrations({mediaPropertyId});
       }
-    };
+    });
   });
 
   GetMediaItem({mediaItemId}) {
@@ -214,7 +223,6 @@ class MediaPropertyStore {
   }
 
   CreateMediaProperty = flow(function * ({name="New Media Property", slug}) {
-    slug = slug || Slugify(name);
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
       libraryId,
@@ -222,6 +230,46 @@ class MediaPropertyStore {
         type: this.rootStore.typeInfo.mediaProperty
       },
       callback: async ({objectId, writeToken}) => {
+        slug = slug || Slugify(name);
+
+        let spec = Clone(MediaPropertySpec);
+
+        const mainPageId = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
+        const accessPageId = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
+
+        spec.version = latestVersion;
+
+        spec.pages = {
+          [mainPageId]: {
+            ...Clone(MediaPropertyPageSpec),
+            id: mainPageId,
+            slug: accessPageId,
+            label: "Main Page",
+            permissions: {
+              ...Clone(MediaPropertyPageSpec).permissions,
+              page_permissions: [],
+              page_permissions_alternate_page_id: accessPageId,
+              page_permissions_behavior: "show_alternate_page"
+            }
+          },
+          [accessPageId]: {
+            ...MediaPropertyPageSpec,
+            id: accessPageId,
+            slug: accessPageId,
+            label: "No Access Page"
+          }
+        };
+
+        spec.pages.main = {
+          ...spec.pages[mainPageId],
+          id: "main",
+          slug: "main"
+        };
+
+        spec.page_ids = {
+          "main": mainPageId
+        };
+
         await this.client.ReplaceMetadata({
           libraryId,
           objectId,
@@ -232,7 +280,7 @@ class MediaPropertyStore {
               asset_metadata: {
                 slug,
                 info: {
-                  ...MediaPropertySpec,
+                  ...spec,
                   id: objectId,
                   name,
                   slug
@@ -246,30 +294,54 @@ class MediaPropertyStore {
 
     const objectId = response.id;
 
-    yield this.client.SetPermission({objectId, permission: "listable"});
+    yield this.UpdateDatabaseRecord({objectId});
+    yield this.LoadMediaProperties(true);
+    yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
 
+    yield this.client.EditAndFinalizeContentObject({
+      libraryId,
+      objectId,
+      callback: async ({writeToken}) => {
+        await this.Save({libraryId, objectId, writeToken});
+      }
+    });
+
+    yield this.client.SetPermission({objectId, permission: "listable"});
     yield this.rootStore.databaseStore.AddGroupPermissions({objectId});
 
-    yield Promise.all([
-      this.UpdateDatabaseRecord({objectId}),
-      this.LoadMediaProperty({mediaPropertyId: objectId}),
-    ]);
-
+    yield this.UpdateDatabaseRecord({objectId});
     yield this.LoadMediaProperties(true);
+    yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
 
     return objectId;
   });
 
-  CreatePage({page, mediaPropertyId, label}) {
+  SetPropertyPageSlug({mediaPropertyId, slug, pageId}) {
+    const pageLabel = this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.pages[pageId].label;
+
+    this.SetMetadata({
+      objectId: mediaPropertyId,
+      page: location.pathname,
+      path: "/public/asset_metadata/info/page_ids",
+      field: slug,
+      value: pageId,
+      category: this.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: pageLabel}),
+      label: this.rootStore.l10n.pages.media_property.form.action_labels.set_main_page
+    });
+  }
+
+  CreatePage({mediaPropertyId, label, copyPageId}) {
     let id = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
 
-    const spec = Clone(MediaPropertyPageSpec);
+    const spec = copyPageId ?
+      Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.pages[copyPageId])) :
+      Clone(MediaPropertyPageSpec);
     spec.id = id;
-    spec.label = label || spec.label;
+    spec.label = label || (copyPageId ? `${spec.label} (Copy)` : spec.label);
 
     this.AddField({
       objectId: mediaPropertyId,
-      page,
+      page: location.pathname,
       path: "/public/asset_metadata/info/pages",
       field: id,
       value: spec,
@@ -280,21 +352,23 @@ class MediaPropertyStore {
     return id;
   }
 
-  CreateSection({page, mediaPropertyId, type="manual", label}) {
+  CreateSection({mediaPropertyId, type="manual", label, copySectionId}) {
     let id = `${this.ID_PREFIXES[`section_${type}`]}${GenerateUUID()}`;
 
-    const spec = Clone(
-      type === "manual" ?
-        MediaPropertySectionManualSpec :
-        MediaPropertySectionAutomaticSpec
-    );
+    const spec = copySectionId ?
+      Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[copySectionId])) :
+      Clone(
+        type === "manual" ?
+          MediaPropertySectionManualSpec :
+          MediaPropertySectionAutomaticSpec
+      );
 
     spec.id = id;
-    spec.label = label || spec.label;
+    spec.label = label || (copySectionId ? `${spec.label} (Copy)` : spec.label);
 
     this.AddField({
       objectId: mediaPropertyId,
-      page,
+      page: location.pathname,
       path: "/public/asset_metadata/info/sections",
       field: id,
       value: spec,
@@ -417,15 +491,48 @@ class MediaPropertyStore {
     yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
   });
 
+  ApplyMigrations({mediaPropertyId}) {
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const currentVersion = mediaProperty.metadata.public.asset_metadata.info.version || "1.0.0";
+
+    const migrations = Object.keys(Migrations)
+      .filter(version => CompareSemVer(currentVersion, version) < 0)
+      .sort(CompareSemVer);
+
+    migrations.forEach(version =>
+      Migrations[version]({mediaPropertyId, mediaProperty, store: this})
+    );
+  }
+
   Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
-    // Build slug map
-    const mediaProperty = yield this.client.ContentObjectMetadata({
+    let mediaProperty = yield this.client.ContentObjectMetadata({
       libraryId,
       objectId,
       writeToken,
       metadataSubtree: "/public/asset_metadata/info"
     });
 
+    // Copy named pages
+    yield Promise.all(
+      Object.keys(mediaProperty.page_ids).map(async slug => {
+        const pageId = mediaProperty.page_ids[slug];
+        mediaProperty.pages[slug] = { ...mediaProperty.pages[pageId], id: slug, slug };
+
+        await this.client.ReplaceMetadata({
+          libraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: UrlJoin("/public/asset_metadata/info/pages", slug),
+          metadata: {
+            ...toJS(mediaProperty.pages[pageId]),
+            id: slug,
+            slug
+          }
+        });
+      })
+    );
+
+    // Build slug map
     let slugs = {
       pages: {},
       sections: {}

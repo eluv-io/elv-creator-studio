@@ -3,7 +3,7 @@ import {Link, useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore} from "@/stores";
 import {Button, Text} from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
-import Inputs from "@/components/inputs/Inputs";
+import Inputs, {Confirm} from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import {useState} from "react";
@@ -350,9 +350,6 @@ const MediaPropertyPage = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.common.slug}
-        disabled={page.slug === "main"}
-        hidden={page.slug === "main"}
-        defaultValue={page.slug === "main" ? "main" : ""}
         field="slug"
         Validate={ValidateSlug}
       />
@@ -369,7 +366,69 @@ const MediaPropertyPage = observer(() => {
         field="description"
       />
 
+      {
+        info.page_ids.main === pageId ?
+          <Text italic fz="xs">This is the main page for this property</Text> :
+          <Button
+            onClick={async () => {
+              await Confirm({
+                title: LocalizeString(l10n.action_labels.set_main_page, {label: page.label}),
+                text: LocalizeString(l10n.action_labels.set_main_page_confirm, {label: page.label}),
+                onConfirm: () => mediaPropertyStore.SetPropertyPageSlug({mediaPropertyId, pageId, slug: "main"})
+              });
+            }}
+          >
+            { l10n.action_labels.set_main_page }
+          </Button>
+      }
+
       <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+
+      <PermissionItemSelect
+        multiple
+        {...inputProps}
+        {...l10n.pages.page_permissions}
+        permissionSetIds={info.permission_sets}
+        path={UrlJoin(inputProps.path, "permissions")}
+        subcategory={l10n.categories.permissions}
+        defaultValue=""
+        field="page_permissions"
+      />
+      {
+        (page.permissions?.page_permissions || []).length === 0 ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.pages.page_permission_behavior}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="page_permissions_behavior"
+              defaultValue="show_alternate_page"
+              options={[
+                { label: "Show Alternate Page", value: "show_alternate_page" },
+                { label: "Show Purchase Options", value: "show_purchase" }
+              ]}
+            />
+            {
+              page?.permissions?.page_permissions_behavior !== "show_alternate_page" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.pages.page_permission_alternate_page}
+                  subcategory={l10n.categories.permissions}
+                  path={UrlJoin(inputProps.path, "permissions")}
+                  field="page_permissions_alternate_page_id"
+                  options={[
+                    ...Object.keys(info.pages || {})
+                      .filter(pageId => pageId !== "main" && pageId !== page.id)
+                      .map(pageId => ({
+                        label: info.pages[pageId].label,
+                        value: pageId
+                      }))
+                  ]}
+                />
+            }
+          </>
+      }
 
       <Inputs.Select
         {...inputProps}
@@ -383,9 +442,30 @@ const MediaPropertyPage = observer(() => {
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
-          }))
+          })),
+          { label: "Show Alternate Page", value: "show_alternate_page"}
         ]}
       />
+
+      {
+        page.permissions?.behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="alternate_page_id"
+            options={[
+              { label: "(Property Main Page)", value: "main" },
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main" && pageId !== page.id)
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
 
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.page_header}</Title>

@@ -57,7 +57,7 @@ export const FabricUrl = ({libraryId, objectId, writeToken, versionHash, noWrite
   if(objectId && !versionHash) {
     // Ensure version hash is loaded for this object
     rootStore.VersionHash({objectId});
-    versionHash = rootStore.versionHashes[objectId];
+    versionHash = rootStore.versionHashes[objectId]?.versionHash;
   }
 
   if(path?.startsWith("/qfab")) {

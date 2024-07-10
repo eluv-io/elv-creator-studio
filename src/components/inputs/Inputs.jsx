@@ -27,7 +27,7 @@ import {observer} from "mobx-react-lite";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
-import {rootStore, uiStore} from "@/stores";
+import {mediaPropertyStore, rootStore, uiStore} from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
@@ -57,7 +57,7 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
   IconLink,
-  IconUnlink
+  IconUnlink, IconCopy
 } from "@tabler/icons-react";
 import {DataTable} from "mantine-datatable";
 
@@ -1864,12 +1864,14 @@ const ReferenceTable = observer(({
   filterFields=[],
   Filter,
   excludedKeys=[],
+  protectedKeys=[],
   editable=true,
   selectedRecords,
   setSelectedRecords,
   width="Wide",
   AddItem,
-  protectedKeys=[]
+  CopyItem,
+  Actions
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -1957,13 +1959,32 @@ const ReferenceTable = observer(({
               !editable ? null :
               {
                 accessor: "id",
-                width: 120,
+                width: 120 + (Actions ? 60 : 0) + (CopyItem ? 60 : 0),
                 title: "",
                 render: item => {
                   const itemName = item[nameField] || fieldLabel;
 
                   return (
                     <Group position="right">
+                      {
+                        !Actions ? null :
+                          Actions(item)
+                      }
+                      {
+                        !CopyItem ? null :
+                          <IconButton
+                            label={LocalizeString(rootStore.l10n.components.inputs.copy, {item: item.label})}
+                            color="blue.6"
+                            Icon={IconCopy}
+                            onClick={async () =>
+                              await Confirm({
+                                title: LocalizeString(rootStore.l10n.components.inputs.copy, {item: item.label}),
+                                text: LocalizeString(rootStore.l10n.components.inputs.copy_confirm, {item: item.label}),
+                                onConfirm: async () => await CopyItem({item})
+                              })
+                            }
+                          />
+                      }
                       <IconButton
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
                         component={Link}

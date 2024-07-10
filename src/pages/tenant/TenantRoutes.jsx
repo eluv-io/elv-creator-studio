@@ -5,13 +5,11 @@ import {rootStore, tenantStore} from "@/stores";
 
 import TenantOverview from "./TenantOverview.jsx";
 import TenantGeneralSettings from "./TenantGeneralSettings.jsx";
-import TenantTheme from "./TenantTheme.jsx";
 
 const TenantRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.tenant.nav.overview, path: "/tenant", Component: <TenantOverview /> },
-    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/tenant/general", Component: <TenantGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.theme, path: "/tenant/theme", Component: <TenantTheme /> },
+    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/tenant/general", Component: <TenantGeneralSettings /> }
   ]
     .map(route => ({
       ...route,

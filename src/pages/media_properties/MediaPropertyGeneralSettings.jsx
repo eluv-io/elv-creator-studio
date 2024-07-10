@@ -137,20 +137,7 @@ const MediaPropertyGeneralSettings = observer(() => {
           }))
         }
       />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.permission_behavior}
-        subcategory={l10n.categories.permissions}
-        defaultValue="hide"
-        path={UrlJoin(inputProps.path, "permissions")}
-        field="behavior"
-        options={[
-          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
-            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
-            value: key
-          }))
-        ]}
-      />
+
       <PermissionItemSelect
         multiple
         {...inputProps}
@@ -170,10 +157,10 @@ const MediaPropertyGeneralSettings = observer(() => {
               subcategory={l10n.categories.permissions}
               path={UrlJoin(inputProps.path, "permissions")}
               field="property_permissions_behavior"
-              defaultValue="show_purchase"
+              defaultValue="show_alternate_page"
               options={[
-                { label: "Show Purchase Options", value: "show_purchase" },
-                { label: "Show Alternate Page", value: "show_alternate_page" }
+                { label: "Show Alternate Page", value: "show_alternate_page" },
+                { label: "Show Purchase Options", value: "show_purchase" }
               ]}
             />
             {
@@ -184,14 +171,32 @@ const MediaPropertyGeneralSettings = observer(() => {
                   subcategory={l10n.categories.permissions}
                   path={UrlJoin(inputProps.path, "permissions")}
                   field="alternate_page_id"
-                  options={Object.keys(info.pages || {}).map(pageId => ({
-                    label: info.pages[pageId].label,
-                    value: pageId
-                  }))}
+                  options={[
+                    ...Object.keys(info.pages || {})
+                      .filter(pageId => pageId !== "main")
+                      .map(pageId => ({
+                        label: info.pages[pageId].label,
+                        value: pageId
+                      }))
+                  ]}
                 />
             }
           </>
       }
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="hide"
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        options={[
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          }))
+        ]}
+      />
 
       <Title order={3} mt={50}>{l10n.categories.media_sidebar}</Title>
       <Inputs.Checkbox

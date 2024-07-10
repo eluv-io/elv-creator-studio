@@ -325,10 +325,15 @@ const MediaPropertySectionItem = observer(() => {
             subcategory={l10n.categories.permissions}
             path={UrlJoin(inputProps.path, "permissions")}
             field="alternate_page_id"
-            options={Object.keys(info.pages || {}).map(pageId => ({
-              label: info.pages[pageId].label,
-              value: pageId
-            }))}
+            options={[
+              { label: "(Property Main Page)", value: "main" },
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main")
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
           />
       }
       {

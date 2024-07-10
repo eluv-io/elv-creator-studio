@@ -18,8 +18,8 @@ import {useEffect, useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 import {ParseDate, SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
-import {IconEdit, IconTrashX} from "@tabler/icons-react";
-import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
+import {IconCopy, IconEdit, IconTrashX} from "@tabler/icons-react";
+import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 import {MediaItemImage, MediaItemPermissionIcon} from "@/components/common/MediaCatalog";
 
 export const MediaItemTitle = observer(({mediaItem}) => {
@@ -330,11 +330,29 @@ const MediaCatalogItemTable = observer(({
           },
           {
             accessor: "id",
-            width: 120,
+            width: 180,
             title: "",
             hidden: disableActions,
             render: mediaItem => (
               <Group position="center">
+                <IconButton
+                  label={LocalizeString(rootStore.l10n.components.inputs.copy, {item: mediaItem.label})}
+                  color="blue.6"
+                  Icon={IconCopy}
+                  onClick={async () =>
+                    await Confirm({
+                      title: LocalizeString(rootStore.l10n.components.inputs.copy, {item: mediaItem.label}),
+                      text: LocalizeString(rootStore.l10n.components.inputs.copy_confirm, {item: mediaItem.label}),
+                      onConfirm: () => mediaCatalogStore.CreateMediaItem({
+                        page: location.pathname,
+                        type: mediaItem.type === "collection" ?
+                          "media_collections" : mediaItem.type === "list" ? "media_lists" : "media",
+                        mediaCatalogId,
+                        copyMediaItemId: mediaItem.id
+                      })
+                    })
+                  }
+                />
                 <IconButton
                   label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.label})}
                   component={Link}

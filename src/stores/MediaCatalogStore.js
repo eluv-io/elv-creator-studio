@@ -225,18 +225,26 @@ class MediaCatalogStore {
     );
   });
 
-  CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title}) {
+  CreateMediaItem({page, type="media", mediaCatalogId, mediaType, title, copyMediaItemId}) {
     let id = GenerateUUID();
 
-    let spec, label, prefix;
+    let spec, label, prefix, copyItem;
     if(type === "media_collections") {
       spec = Clone(MediaCatalogCollectionSpec);
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_collection;
       prefix = this.ID_PREFIXES["media_collections"];
+
+      if(copyMediaItemId) {
+        copyItem = this.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.media_collections[copyMediaItemId];
+      }
     } else if(type === "media_lists") {
       spec = Clone(MediaCatalogMediaListSpec);
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_list;
       prefix = this.ID_PREFIXES["media_lists"];
+
+      if(copyMediaItemId) {
+        copyItem = this.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.media_lists[copyMediaItemId];
+      }
     } else {
       prefix = this.ID_PREFIXES[mediaType];
       label = this.rootStore.l10n.pages.media_catalog.form.categories.media_item;
@@ -248,18 +256,28 @@ class MediaCatalogStore {
       } else if(mediaType === "Gallery") {
         spec = Clone(MediaCatalogMediaGallerySpec);
       } else {
-        spec = MediaCatalogMediaOtherSpec({mediaType});
+        spec = Clone(MediaCatalogMediaOtherSpec({mediaType}));
+      }
+
+      if(copyMediaItemId) {
+        copyItem = this.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.media[copyMediaItemId];
       }
     }
 
     id = `${prefix}${id}`;
 
-    spec.id = id;
-    spec.label = title;
-    spec.title = title;
-    spec.catalog_title = title;
-    spec.media_catalog_id = mediaCatalogId;
+    if(copyItem) {
+      spec = Clone(copyItem);
+      spec.label = `${spec.label} (Copy)`;
+    } else {
+      spec.label = title;
+      spec.title = title;
+      spec.catalog_title = title;
+      spec.media_catalog_id = mediaCatalogId;
+    }
 
+    spec.id = id;
+    
     this.AddField({
       objectId: mediaCatalogId,
       page,
@@ -382,7 +400,7 @@ class MediaCatalogStore {
           let [versionHash, ...pathComponents] = linkPath.split("/");
 
           if(versionHash.startsWith("iq__")) {
-            versionHash = this.rootStore.versionHashes[versionHash] || await this.rootStore.VersionHash({objectId: versionHash});
+            versionHash = await this.rootStore.VersionHash({objectId: versionHash});
           }
 
           link = { "/": UrlJoin("/qfab", versionHash, ...pathComponents) };

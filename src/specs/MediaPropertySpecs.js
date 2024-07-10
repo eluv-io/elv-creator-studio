@@ -76,13 +76,6 @@ Show Page
 Purchase Gate
  */
 
-const MediaPropertySectionPermissionSpec = {
-  permissions: {
-    behavior: "",
-    permission_item_ids: []
-  }
-};
-
 const MediaPropertyPermissionSpec = {
   permissions: {
     behavior: "",
@@ -130,7 +123,7 @@ export const MediaPropertySectionItemBaseSpec = {
     banner_image: undefined,
     banner_image_mobile: undefined
   },
-  ...MediaPropertySectionPermissionSpec
+  ...MediaPropertyPermissionSpec
 };
 
 export const MediaPropertySectionItemMediaSpec = {
@@ -209,7 +202,7 @@ export const MediaPropertySectionBaseSpec = {
     background_image: undefined,
     background_image_mobile: undefined
   },
-  ...MediaPropertySectionPermissionSpec
+  ...MediaPropertyPermissionSpec
 };
 
 export const MediaPropertySectionManualSpec = {
@@ -257,7 +250,7 @@ export const MediaPropertyPageSpec = {
     background_image_mobile: undefined,
     sections: [],
   },
-  ...MediaPropertySectionPermissionSpec,
+  ...MediaPropertyPermissionSpec,
 };
 
 export const MediaPropertySpec = {
@@ -286,6 +279,10 @@ export const MediaPropertySpec = {
     image: undefined,
     favicon: undefined
   },
+  permissions: {
+    property_permissions: [],
+    property_permission_behavior: "show_alternate_page"
+  },
   permission_behavior: "hide",
   search: {
     category_attribute: undefined,
@@ -301,13 +298,9 @@ export const MediaPropertySpec = {
     terms: {},
     consent: {}
   },
-  pages: {
-    main: {
-      ...MediaPropertyPageSpec,
-      id: "main",
-      slug: "main",
-      label: "Main Page"
-    }
+  pages: {},
+  page_ids: {
+    main: undefined
   },
   ...MediaPropertyPermissionSpec,
 };

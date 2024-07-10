@@ -109,6 +109,7 @@ export const MediaPropertySectionsTable = observer(({
       excludedKeys={excludedSectionIds}
       editable={editable}
       width="ExtraWide"
+      CopyItem={({item}) => mediaPropertyStore.CreateSection({mediaPropertyId, copySectionId: item.id})}
       AddItem={async () => {
         return new Promise((resolve) => {
           modals.open({
