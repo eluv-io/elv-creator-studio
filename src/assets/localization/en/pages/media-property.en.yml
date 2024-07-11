@@ -152,11 +152,21 @@ form:
       primary_filter:
         label: Primary Filter
         description: If specified, this filter will be available for selection at the top of the search results page
-      secondary_filter:
-        label: Secondary Filter
-        description: If specified, this filter will be available for selection at the top of the search results page
+      filter_options:
+        label: Filter Options
+        description: Customize values shown for the primary filter and specify secondary filters. If no options are set, the default values for the primary filter attribute will be used.
+        fieldLabel: Filter Option
+      filter_option:
+        primary_filter_value:
+          label: Primary Filter Value
+        primary_filter_image:
+          label: Primary Filter Image (16:9)
+          description: You may specify an image to be used for the primary filter selection
+        secondary_filter_attribute:
+          label: Secondary Filter Attribute
+          description: When the primary filter above is specified, this attribute will be used for the secondary filter
       group_by:
-        label: Group By
+        label: Group Results By
         description: If specified, search results will be grouped by this attribute
       enable_advanced_search:
         label: Enable Advanced Search

@@ -277,7 +277,7 @@ class MediaCatalogStore {
     }
 
     spec.id = id;
-    
+
     this.AddField({
       objectId: mediaCatalogId,
       page,

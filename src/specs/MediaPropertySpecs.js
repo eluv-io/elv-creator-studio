@@ -99,6 +99,13 @@ export const MediaPropertyAdvancedSearchOptionSpec = {
   tag_display: "select"
 };
 
+export const MediaPropertySearchFilterSpec = {
+  primary_filter_value: "",
+  secondary_filter_attribute: "",
+  image: undefined
+};
+
+
 export const MediaPropertyFilterSpec = {
   media_catalog: "",
   content_type: "",
@@ -285,8 +292,9 @@ export const MediaPropertySpec = {
   },
   permission_behavior: "hide",
   search: {
-    category_attribute: undefined,
-    primary_category_attribute: undefined,
+    primary_filter: "",
+    filter_options: [],
+    group_by: "",
     enable_advanced_search: false,
     advanced_options: []
   },

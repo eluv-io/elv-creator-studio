@@ -1,11 +1,11 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore} from "@/stores";
+import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {Group, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
@@ -90,32 +90,17 @@ const MediaPropertyGeneralSettings = observer(() => {
         }
       />
 
-      <Group align="start">
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.general.image}
-          subcategory={l10n.categories.info}
-          fields={[
-            { field: "image", aspectRatio: 2/3 },
-          ]}
-        />
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.general.header_logo}
-          subcategory={l10n.categories.info}
-          fields={[
-            { field: "header_logo", aspectRatio: 1 },
-          ]}
-        />
-        <Inputs.ImageInput
-          {...inputProps}
-          {...l10n.general.tv_header_logo}
-          subcategory={l10n.categories.info}
-          fields={[
-            { field: "tv_header_logo", aspectRatio: 1 },
-          ]}
-        />
-      </Group>
+      <Inputs.ImageInput
+        {...inputProps}
+        label="Images"
+        componentProps={{maw: uiStore.inputWidthWide}}
+        subcategory={l10n.categories.info}
+        fields={[
+          { field: "image", aspectRatio: 2/3, ...l10n.general.image },
+          { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
+          { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
+        ]}
+      />
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox
@@ -311,6 +296,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         subcategory={l10n.categories.meta_tags}
         field="favicon"
         url
+        horizontal
         aspectRatio={1}
         baseSize={125}
         fields={[

@@ -3,7 +3,10 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MediaPropertyAdvancedSearchOptionSpec} from "@/specs/MediaPropertySpecs.js";
+import {
+  MediaPropertyAdvancedSearchOptionSpec,
+  MediaPropertySearchFilterSpec
+} from "@/specs/MediaPropertySpecs.js";
 
 const MediaPropertySearch = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -47,22 +50,68 @@ const MediaPropertySearch = observer(() => {
           })))
         ]}
       />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.search.secondary_filter}
-        subcategory={l10n.categories.search}
-        field="secondary_filter"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
-        ]}
-      />
+      {
+        !info.search?.primary_filter ? null :
+          <Inputs.List
+            {...inputProps}
+            {...l10n.general.search.filter_options}
+            subcategory={l10n.categories.search}
+            field="filter_options"
+            newItemSpec={MediaPropertySearchFilterSpec}
+            renderItem={(props) => {
+              const attributeValues =
+                info.search.primary_filter === "__media-type" ?
+                  ["Video", "Gallery", "Image", "Ebook"] :
+                  attributes[info.search.primary_filter]?.tags || [];
+
+              return (
+                <>
+                  <Inputs.Select
+                    {...props}
+                    {...l10n.general.search.filter_option.primary_filter_value}
+                    subcategory={l10n.categories.search}
+                    field="primary_filter_value"
+                    searchable
+                    defaultValue=""
+                    options={[
+                      {label: "All", value: ""},
+                      ...attributeValues.map(tag => ({
+                        label: tag || "",
+                        value: tag
+                      }))
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...props}
+                    {...l10n.general.search.filter_option.secondary_filter_attribute}
+                    subcategory={l10n.categories.search}
+                    field="secondary_filter_attribute"
+                    searchable
+                    defaultValue=""
+                    options={
+                      [
+                        {label: "None", value: ""},
+                        {label: "Media Type", value: "__media-type"},
+                        ...(Object.keys(attributes).map(attributeId => ({
+                          label: attributes[attributeId].title || "Attribute",
+                          value: attributeId
+                        })))
+                      ].filter(({value}) => info.search.primary_filter !== value)
+                    }
+                  />
+                  <Inputs.SingleImageInput
+                    {...props}
+                    {...l10n.general.search.filter_option.primary_filter_image}
+                    aspectRatio={16/9}
+                    subcategory={l10n.categories.search}
+                    field="primary_filter_image"
+                    horizontal
+                  />
+                </>
+              );
+            }}
+          />
+      }
       <Inputs.Select
         {...inputProps}
         {...l10n.general.search.group_by}
@@ -90,7 +139,7 @@ const MediaPropertySearch = observer(() => {
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.general.search.enable_advanced_search}
-        subcategory={l10n.categories.search}
+        subcategory={l10n.categories.advanced_search}
         field="enable_advanced_search"
         defaultValue={false}
       />

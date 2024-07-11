@@ -27,7 +27,7 @@ import {observer} from "mobx-react-lite";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
-import {mediaPropertyStore, rootStore, uiStore} from "@/stores";
+import {rootStore, uiStore} from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
@@ -711,6 +711,7 @@ const SingleImageInput = observer(({
   noResizePreview,
   aspectRatio=1,
   baseSize=150,
+  horizontal=false,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -739,9 +740,12 @@ const SingleImageInput = observer(({
 
   return (
     <>
-      <Paper shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
+      <Paper maw={uiStore.inputWidth} shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
         <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
-          <UnstyledButton onClick={() => setShowFileBrowser(true)}>
+          <UnstyledButton
+            onClick={() => setShowFileBrowser(true)}
+            style={!horizontal ? undefined : {display: "flex", alignItems: "center", gap: 20}}
+          >
             <HoverCard.Target>
               <Image
                 mb={hasText ? "xs" : 0}
@@ -1243,6 +1247,7 @@ const ImageInput = observer(({
               mb={0}
               url={field.url}
               baseSize={field.baseSize}
+              horizontal={field.horizontal}
             />
           )
         }

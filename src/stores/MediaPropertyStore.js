@@ -512,6 +512,32 @@ class MediaPropertyStore {
       metadataSubtree: "/public/asset_metadata/info"
     });
 
+    // Ensure validity of dependent search filters
+    if(mediaProperty.search?.filter_options) {
+      const primaryFilterValues =
+        mediaProperty.search.primary_filter === "__media-type" ?
+          ["Video", "Gallery", "Image", "Ebook"] :
+          this.GetMediaPropertyAttributes({mediaPropertyId: objectId})?.[mediaProperty.search.primary_filter]?.tags || [];
+      const validatedSecondaryFilters = (mediaProperty.search.filter_options || [])
+        .filter(filterOption =>
+          !filterOption.secondary_filter_attribute ||
+          (filterOption.secondary_filter_attribute !== mediaProperty.search.primary_filter &&
+            (!filterOption.primary_filter_value || primaryFilterValues.includes(filterOption.primary_filter_value)))
+        );
+
+      if(validatedSecondaryFilters.length !== mediaProperty.search.filter_options?.length) {
+        this.DebugLog({message: "Removing invalid dependent secondary filters"});
+
+        yield this.client.ReplaceMetadata({
+          libraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: "/public/asset_metadata/info/search/filter_options",
+          metadata: toJS(validatedSecondaryFilters)
+        });
+      }
+    }
+
     // Copy named pages
     yield Promise.all(
       Object.keys(mediaProperty.page_ids).map(async slug => {
