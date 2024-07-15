@@ -87,6 +87,13 @@ form:
       label: Header Logo
     tv_header_logo:
       label: Header Logo (TV)
+    countdown_background:
+      label: Countdown Page Background Images
+      description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
+    countdown_background_desktop:
+      label: Countdown Background (Desktop)
+    countdown_background_mobile:
+      label: Countdown Background (Mobile)
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property

@@ -327,8 +327,8 @@ const MediaConfiguration = observer(({mediaItem}) => {
             {...l10n.media.gallery.background_image}
             subcategory={l10n.categories.gallery_settings}
             fields={[
-              { field: "background_image", ...l10n.media.gallery.background_image },
-              { field: "background_image_mobile", ...l10n.media.gallery.background_image_mobile },
+              { field: "background_image", aspectRatio: 16/9, baseSize: 135, ...l10n.media.gallery.background_image },
+              { field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.media.gallery.background_image_mobile },
             ]}
           />
           <Inputs.CollectionTable
@@ -418,7 +418,7 @@ const MediaCatalogMediaItem = observer(() => {
       section="mediaCatalog"
       useHistory
     >
-      <MediaCatalogCommonFields type="media" mediaId={mediaItemId} />
+      <MediaCatalogCommonFields type="media" live={mediaItem.live_video} mediaId={mediaItemId} />
 
       {
         ["Link"].includes(mediaItem.media_type) ? null :

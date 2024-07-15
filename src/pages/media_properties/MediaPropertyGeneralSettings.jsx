@@ -103,6 +103,15 @@ const MediaPropertyGeneralSettings = observer(() => {
         ]}
       />
 
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.countdown_background}
+        fields={[
+          { field: "countdown_background_desktop", aspectRatio: 16/9, baseSize: 135, ...l10n.general.countdown_background_desktop },
+          { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.countdown_background_mobile }
+        ]}
+      />
+
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox
         {...inputProps}
@@ -184,7 +193,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         ]}
       />
 
-      <Title order={3} mt={50}>{l10n.categories.media_sidebar}</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.media_sidebar}</Title>
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.general.media_sidebar.show_media_sidebar}

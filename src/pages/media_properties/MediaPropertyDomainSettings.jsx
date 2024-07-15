@@ -36,8 +36,8 @@ const LoginStyling = observer(() => {
         {...inputProps}
         {...l10n.login.styling.background_image}
         fields={[
-          { ...l10n.login.styling.background_image_desktop, field: "background_image_desktop", aspectRatio: 16/9, baseSize: 100 },
-          { ...l10n.login.styling.background_image_mobile, field: "background_image_mobile", aspectRatio: 3/4, baseSize: 100 }
+          { ...l10n.login.styling.background_image_desktop, field: "background_image_desktop", aspectRatio: 16/9, baseSize: 135 },
+          { ...l10n.login.styling.background_image_mobile, field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135 }
         ]}
       />
       <Inputs.InputWrapper {...l10n.login.styling.text}>

@@ -202,8 +202,8 @@ const SiteBanners = observer(() => {
         subcategory={l10n.categories.banner_card_section_settings}
         path="/public/asset_metadata/info/main_page_banner_cards"
         fields={[
-          { field: "background_image", ...l10n.banners.background_image_desktop },
-          { field: "background_image_mobile", ...l10n.banners.background_image_mobile }
+          { field: "background_image", aspectRatio: 16/9, baseSize: 135, ...l10n.banners.background_image_desktop },
+          { field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.banners.background_image_mobile }
         ]}
       />
 

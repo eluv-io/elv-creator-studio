@@ -174,7 +174,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
   );
 });
 
-export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
+export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
   const { mediaCatalogId } = useParams();
 
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
@@ -285,30 +285,43 @@ export const MediaCatalogCommonFields = observer(({type, mediaId}) => {
             {...inputProps}
             {...l10n.media.background_image}
             fields={[
-              { field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 125},
-              { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 2 / 3, baseSize: 125 },
+              { field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 135},
+              { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
             ]}
           />
       }
 
       {
         type !== "media" ? null :
-          <Inputs.List
-            {...inputProps}
-            {...l10n.media.icons}
-            shrink
-            field="icons"
-            renderItem={props =>
-              <Inputs.ImageInput
-                {...props}
-                {...l10n.media.icon}
-                altTextField="alt_text"
-                fields={[
-                  { field: "icon", aspectRatio: 1, baseSize: 100 }
-                ]}
-              />
+          <>
+            <Inputs.List
+              {...inputProps}
+              {...l10n.media.icons}
+              shrink
+              field="icons"
+              renderItem={props =>
+                <Inputs.ImageInput
+                  {...props}
+                  {...l10n.media.icon}
+                  altTextField="alt_text"
+                  fields={[
+                    { field: "icon", aspectRatio: 1, baseSize: 100 }
+                  ]}
+                />
+              }
+            />
+            {
+              !live ? null :
+                <Inputs.ImageInput
+                  {...inputProps}
+                  {...l10n.media.countdown_background}
+                  fields={[
+                    { field: "countdown_background_desktop", aspectRatio: 16/9, baseSize: 135, ...l10n.media.countdown_background_desktop },
+                    { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.media.countdown_background_mobile }
+                  ]}
+                />
             }
-          />
+          </>
       }
 
 

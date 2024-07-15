@@ -952,8 +952,8 @@ const MediaPropertySection = observer(() => {
               {...l10n.sections.display.background_image}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
               fields={[
-                { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 125 },
-                { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2/3, baseSize: 125 },
+                { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
+                { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
               ]}
             />
           </>

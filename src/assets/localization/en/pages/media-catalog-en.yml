@@ -161,6 +161,13 @@ form:
     icons:
       label: Icons
       description: These icon images will be displayed to the left of the title on the media page, as well as on the countdown for live content
+    countdown_background:
+      label: Countdown Page Background Images
+      description: Background image to use when the media is accessed before it is live
+    countdown_background_desktop:
+      label: Countdown Background (Desktop)
+    countdown_background_mobile:
+      label: Countdown Background (Mobile)
     icon:
       label: Icon
     image_portrait:
