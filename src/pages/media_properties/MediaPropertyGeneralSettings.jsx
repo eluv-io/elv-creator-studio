@@ -8,6 +8,7 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
+import ColorOptions from "@/components/inputs/media_property/Components.jsx";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -306,6 +307,19 @@ const MediaPropertyGeneralSettings = observer(() => {
 
       <Title order={3} mt={50} mb="md">{l10n.categories.theme_settings}</Title>
 
+      <ColorOptions
+        {...inputProps}
+        {...l10n.theme.button_style}
+        subcategory={l10n.categories.theme_settings}
+        path="/public/asset_metadata/info/styling"
+        field="button_style"
+        placeholders={{
+          background_color: "#FFFFFF",
+          border_color: "#FFFFFF",
+          text_color: "#000000",
+          border_radius: 5
+        }}
+      />
       <Inputs.Select
         {...inputProps}
         {...l10n.theme.font}

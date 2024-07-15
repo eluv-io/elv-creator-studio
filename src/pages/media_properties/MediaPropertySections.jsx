@@ -138,21 +138,21 @@ export const MediaPropertySectionsTable = observer(({
         {
           accessor: "label",
           sortable: true,
-          title: l10n.sections.label.label
+          title: l10n.sections.label.label,
         },
         {
           accessor: "type",
           sortable: true,
           title: l10n.sections.type.label,
           render: section => <Text>{section.type?.capitalize() || ""}</Text>,
-          width: 175
+          width: 125
         },
         {
           accessor: "display.display_format",
           sortable: true,
           title: l10n.sections.display.display_format.label,
           render: section => <Text>{ section.display?.display_format?.capitalize() || "" }</Text>,
-          width: 175
+          width: 125
         },
         {
           accessor: "permissions",

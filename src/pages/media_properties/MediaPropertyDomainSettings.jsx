@@ -64,21 +64,25 @@ const LoginStyling = observer(() => {
           {...inputProps}
           {...l10n.login.styling.login_box}
           field="login_box"
+          mb={0}
         />
         <ColorOptions
           {...inputProps}
           {...l10n.login.styling.sign_in_button}
           field="sign_in_button"
+          mb={0}
         />
         <ColorOptions
           {...inputProps}
           {...l10n.login.styling.sign_up_button}
           field="sign_up_button"
+          mb={0}
         />
         <ColorOptions
           {...inputProps}
           {...l10n.login.styling.inputs}
           field="inputs"
+          mb={0}
         />
       </Group>
     </>

@@ -211,6 +211,9 @@ form:
     custom_title_font_declaration:
       label: Custom Title Font Declaration (Optional)
       description: CSS font-family declaration for your custom font to be used for title fields
+    button_style:
+      label: Button Style
+      description: Customize the look of buttons in your property
     colors:
       background_color:
         label: Background Color
@@ -424,15 +427,21 @@ form:
         label: Description Rich Text
       display_format:
         label: Display Format
+      card_style:
+        label: Card Style (Web Only)
+        description: Select the card style that items in this section should use
+      card_default_button_text:
+        label: Card Default Button Text
+        description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.
       display_limit_type:
         label: Display Limit Type
         description: For display limit setting, choose whether to limit by number of items or by number of rows
       display_limit:
         label: Display Limit
-        description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+        description: You may limit the maximum number of items shown in this section. If more items are present, a link will be shown in the title to view the whole section. Set to 0 for no limit.
       display_limit_rows:
         label: Display Limit (Rows)
-        description: You may limit the maximum number of rows of items shown in this section. If more items are present, a link will be shown in the title to view the whole section.
+        description: You may limit the maximum number of rows of items shown in this section. If more items are present, a link will be shown in the title to view the whole section. Set to 0 for no limit.
       justification:
         label: Justification
         description: Horizontal alignment of this section
@@ -458,6 +467,9 @@ form:
       group_by:
         label: Group By
         description: If specified, section content will be grouped by this attribute
+      show_primary_filter_in_page_view:
+        label: Show Primary Filter in Page View (Web Only)
+        description: If specified, the primary filter options will be shown for this section when displayed on a page.
     section_content:
       label: Section Content
       fieldLabel: Section Item
@@ -534,6 +546,9 @@ form:
     expand_collection:
       label: Expand Media Collection
       description: By default, media collections are shown as a link to the collection. Select this to instead show links to each media list within the collection.
+    card_button_text:
+      label: Card Button Text
+      description: Specify the text to show on the card when this item is displayed.
     use_media_settings:
       label: Use Media Presentation Settings
       description: If checked, this item will be presented in the section according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item when displayed in this section.

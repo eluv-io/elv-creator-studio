@@ -8,12 +8,19 @@ const ColorOptions = observer(({
   includeTextField,
   includeIcon,
   defaultValues={},
-  ...inputProps
+  placeholders={},
+  ...wrapperProps
 }) => {
-  const path = UrlJoin(inputProps.path, inputProps.field);
+  const path = UrlJoin(wrapperProps.path, wrapperProps.field);
+
+  const inputProps = {
+    ...wrapperProps,
+    description: undefined,
+    hint: undefined
+  };
 
   return (
-    <Inputs.InputWrapper {...inputProps} maw={300} mb={0}>
+    <Inputs.InputWrapper maw={300} mb="md" {...wrapperProps}>
       <Stack mt="md" spacing={5}>
         {
           !includeTextField ? null :
@@ -23,23 +30,26 @@ const ColorOptions = observer(({
               path={path}
               field="text"
               defaultValue={defaultValues["text"]}
+              placeholder={placeholders["text"]}
               componentProps={{mb: 0}}
             />
         }
-        <Inputs.Color
-          {...inputProps}
-          {...rootStore.l10n.pages.media_property.form.theme.colors.background_color}
-          path={path}
-          field="background_color"
-          defaultValue={defaultValues["background_color"]}
-          componentProps={{mb: 0}}
-        />
         <Inputs.Color
           {...inputProps}
           {...rootStore.l10n.pages.media_property.form.theme.colors.text_color}
           path={path}
           field="text_color"
           defaultValue={defaultValues["text_color"]}
+          placeholder={placeholders["text_color"]}
+          componentProps={{mb: 0}}
+        />
+        <Inputs.Color
+          {...inputProps}
+          {...rootStore.l10n.pages.media_property.form.theme.colors.background_color}
+          path={path}
+          field="background_color"
+          defaultValue={defaultValues["background_color"]}
+          placeholder={placeholders["background_color"]}
           componentProps={{mb: 0}}
         />
         <Inputs.Color
@@ -48,6 +58,7 @@ const ColorOptions = observer(({
           path={path}
           field="border_color"
           defaultValue={defaultValues["border_color"]}
+          placeholder={placeholders["border_color"]}
           componentProps={{mb: 0}}
         />
         <Inputs.Integer
@@ -56,6 +67,7 @@ const ColorOptions = observer(({
           path={path}
           field="border_radius"
           defaultValue={defaultValues["border_radius"]}
+          placeholder={placeholders["border_radius"]}
           min={0}
           componentProps={{mb: includeIcon ? "md" : 0}}
         />

@@ -54,7 +54,7 @@ class MediaCatalogStore {
       label: "Landscape (16:9)",
       ratio: 16/9
     },
-    "": {
+    "Mixed": {
       label: "Mixed",
       ratio: 1
     }

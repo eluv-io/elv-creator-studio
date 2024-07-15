@@ -135,7 +135,7 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
   }
 });
 
-const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inputProps, mediaItem}) => {
+const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inputProps, showDescription, mediaItem}) => {
   // These fields mirror catalog media configuration
   const l10n = rootStore.l10n.pages.media_catalog.form;
 
@@ -169,22 +169,20 @@ const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inpu
       />
 
       {
-        /*
-
-          <Inputs.TextArea
-            {...inputProps}
-            {...l10n.media.description}
-            field="description"
-            placeholder={mediaItem?.description}
-          />
-
-          <Inputs.RichText
-            {...inputProps}
-            {...l10n.media.description_rich_text}
-            field="description_rich_text"
-          />
-
-         */
+        !showDescription ? null :
+          <>
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.media.description}
+              field="description"
+              placeholder={mediaItem?.description}
+            />
+            <Inputs.RichText
+              {...inputProps}
+              {...l10n.media.description_rich_text}
+              field="description_rich_text"
+            />
+          </>
       }
 
       <Inputs.MultiSelect
@@ -460,6 +458,16 @@ const MediaPropertySectionItem = observer(() => {
             <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_presentation}</Title>
 
             {
+              !["button_vertical", "button_horizontal"].includes(section.display?.card_style) ? null :
+                <Inputs.Text
+                  {...inputProps}
+                  {...l10n.section_items.card_button_text}
+                  subcategory={l10n.categories.section_presentation}
+                  placeholder={section.display.card_default_button_text}
+                  field="card_button_text"
+                />
+            }
+            {
               sectionItem.type !== "media" ? null :
                 <Inputs.Checkbox
                   {...inputProps}
@@ -475,6 +483,7 @@ const MediaPropertySectionItem = observer(() => {
                   mediaPropertyId={mediaPropertyId}
                   inputProps={inputProps}
                   mediaItem={mediaItem}
+                  showDescription={["button_vertical", "button_horizontal"].includes(section.display?.card_style)}
                   sectionDisplay={section.display?.display_format}
                 />
             }

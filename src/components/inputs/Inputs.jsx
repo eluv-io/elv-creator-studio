@@ -305,6 +305,11 @@ const Input = observer(({
       // Additional options: min, max, step
       Component = NumberInput;
       value = parseFloat(value);
+
+      if(isNaN(value)) {
+        value = "";
+      }
+
       break;
     case "uuid":
       componentProps.disabled = true;
@@ -1975,6 +1980,13 @@ const ReferenceTable = observer(({
                         !Actions ? null :
                           Actions(item)
                       }
+                      <IconButton
+                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
+                        component={Link}
+                        to={UrlJoin(location.pathname, routePath || "", item.id)}
+                        color="purple.6"
+                        Icon={IconEdit}
+                      />
                       {
                         !CopyItem ? null :
                           <IconButton
@@ -1990,13 +2002,6 @@ const ReferenceTable = observer(({
                             }
                           />
                       }
-                      <IconButton
-                        label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
-                        component={Link}
-                        to={UrlJoin(location.pathname, routePath || "", item.id)}
-                        color="purple.6"
-                        Icon={IconEdit}
-                      />
                       <IconButton
                         disabled={protectedKeys.includes(item.id)}
                         label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}

@@ -119,12 +119,30 @@ const SetMetadata = function({
     Write: async (objectParams) => {
       value = toJS(parsedValue || value);
 
+      // For 'falsy' values like false, 0 and "", updating the value directly will delete it
+      // Instead, merge it in
       if(!value && typeof value === "boolean") {
         await this.client.MergeMetadata({
           ...objectParams,
           metadataSubtree: path,
           metadata: {
             [field]: false
+          }
+        });
+      } else if(!value && typeof value === "number") {
+        await this.client.MergeMetadata({
+          ...objectParams,
+          metadataSubtree: path,
+          metadata: {
+            [field]: 0
+          }
+        });
+      } else if(!value && typeof value === "string") {
+        await this.client.MergeMetadata({
+          ...objectParams,
+          metadataSubtree: path,
+          metadata: {
+            [field]: ""
           }
         });
       } else {

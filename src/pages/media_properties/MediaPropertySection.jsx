@@ -838,39 +838,84 @@ const MediaPropertySection = observer(() => {
         field="description_rich_text"
       />
 
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.display.justification}
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        defaultValue="left"
-        field="justification"
-        options={[
-          {label: "Left", value: "left"},
-          {label: "Center", value: "center"},
-          {label: "Right", value: "right"},
-        ]}
-      />
 
       {
-        section.display?.display_format !== "grid" || !section.display?.aspect_ratio ? null :
-          <Inputs.Select
-            {...inputProps}
-            {...l10n.sections.display.display_limit_type}
-            subcategory={l10n.categories.section_presentation}
-            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-            field="display_limit_type"
-            defaultValue="items"
-            options={[
-              { label: "Number of Items", value: "items" },
-              { label: "Number of Rows", value: "rows" }
-            ]}
-          />
+        !["carousel", "grid"].includes(section.display?.display_format) ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.card_style}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              defaultValue=""
+              field="card_style"
+              options={[
+                {label: "Default", value: ""},
+                {label: "Card with Button (Vertical)", value: "button_vertical"},
+                {label: "Card with Button (Horizontal)", value: "button_horizontal"}
+              ]}
+            />
+            {
+              !["button_vertical", "button_vertical"].includes(section.display?.card_style) ? null :
+                <Inputs.Text
+                  {...inputProps}
+                  {...l10n.sections.display.card_default_button_text}
+                  subcategory={l10n.categories.section_presentation}
+                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                  defaultValue="Click Here"
+                  field="card_default_button_text"
+                />
+            }
+          </>
       }
 
       {
         !["carousel", "grid"].includes(section.display?.display_format) ? null :
           <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.aspect_ratio}
+              defaultValue="Landscape"
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="aspect_ratio"
+              options={
+                [
+                  ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
+                    .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
+                ]
+              }
+            />
+            {
+              section.display?.display_format !== "grid" || !section.display?.aspect_ratio ? null :
+                <>
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.justification}
+                    subcategory={l10n.categories.section_presentation}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    defaultValue="left"
+                    field="justification"
+                    options={[
+                      {label: "Left", value: "left"},
+                      {label: "Center", value: "center"},
+                      {label: "Right", value: "right"},
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.display_limit_type}
+                    subcategory={l10n.categories.section_presentation}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    field="display_limit_type"
+                    defaultValue="items"
+                    options={[
+                      { label: "Number of Items", value: "items" },
+                      { label: "Number of Rows", value: "rows" }
+                    ]}
+                  />
+                </>
+            }
             <Inputs.Integer
               {...inputProps}
               {...(
@@ -880,7 +925,7 @@ const MediaPropertySection = observer(() => {
                   l10n.sections.display.display_limit_rows :
                   l10n.sections.display.display_limit
               )}
-              defaultValue=""
+              defaultValue={0}
               min={0}
               subcategory={l10n.categories.section_presentation}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
@@ -900,21 +945,6 @@ const MediaPropertySection = observer(() => {
                 {label: "Title Only", value: "title"},
                 {label: "No Text", value: "none"}
               ]}
-            />
-
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.sections.display.aspect_ratio}
-              defaultValue="Landscape"
-              subcategory={l10n.categories.section_presentation}
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              field="aspect_ratio"
-              options={
-                [
-                  ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
-                    .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
-                ]
-              }
             />
 
             <Inputs.ImageInput
@@ -979,6 +1009,17 @@ const MediaPropertySection = observer(() => {
           })))
         ]}
       />
+
+      {
+        !section?.primary_filter ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.sections.display.show_primary_filter_in_page_view}
+            subcategory={l10n.categories.section_full_content_page}
+            field="show_primary_filter_in_page_view"
+            defaultValue={false}
+          />
+      }
 
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>
