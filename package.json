@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@eluvio/elv-client-js": "^4.0.69",
-    "@eluvio/elv-player-js": "^2.0.2",
+    "@eluvio/elv-player-js": "^2.0.11",
     "@emotion/react": "^11.11.1",
     "@hello-pangea/dnd": "^16.3.0",
     "@mantine/core": "^6.0.17",

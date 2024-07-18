@@ -7,7 +7,7 @@ import MarketplaceItemMultiselect from "@/components/inputs/marketplace/Marketpl
 import UrlJoin from "url-join";
 import {Accordion, Image, Title} from "@mantine/core";
 import {ScaleImage} from "@/helpers/Fabric.js";
-import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib/index";
 
 import {MarketplaceCollectionSpec} from "@/specs/MarketplaceSpecs.js";
 import {IconSettings} from "@tabler/icons-react";

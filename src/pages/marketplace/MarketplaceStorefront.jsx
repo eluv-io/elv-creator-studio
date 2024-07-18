@@ -6,7 +6,7 @@ import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceItemSelect, MarketplaceItemMultiselect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import UrlJoin from "url-join";
 import {Accordion, Title} from "@mantine/core";
-import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib/index";
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 
 import {

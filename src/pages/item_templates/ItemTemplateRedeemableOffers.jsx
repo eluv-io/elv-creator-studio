@@ -9,7 +9,7 @@ import {ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common
 import {Group, Image, Text, Title} from "@mantine/core";
 import {ItemTemplateRedeemableOfferSpec} from "@/specs/ItemTemplateSpecs.js";
 import UrlJoin from "url-join";
-import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib/index";
 import {ScaleImage} from "@/helpers/Fabric";
 
 export const ItemTemplateRedeemableOffer = observer(() => {

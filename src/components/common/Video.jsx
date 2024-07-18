@@ -1,4 +1,4 @@
-import {InitializeEluvioPlayer, EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {InitializeEluvioPlayer, EluvioPlayerParameters} from "@eluvio/elv-player-js/lib/index";
 import {useRef, useEffect} from "react";
 import {rootStore} from "@/stores";
 import {observer} from "mobx-react-lite";

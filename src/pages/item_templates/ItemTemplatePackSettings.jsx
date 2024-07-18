@@ -4,7 +4,7 @@ import {rootStore, itemTemplateStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
-import {EluvioPlayerParameters} from "@eluvio/elv-player-js";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib/index";
 
 const ItemTemplatePackSettings = observer(() => {
   const { itemTemplateId } = useParams();
