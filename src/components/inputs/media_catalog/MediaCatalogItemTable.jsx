@@ -347,6 +347,7 @@ const MediaCatalogItemTable = observer(({
                         page: location.pathname,
                         type: mediaItem.type === "collection" ?
                           "media_collections" : mediaItem.type === "list" ? "media_lists" : "media",
+                        mediaType: mediaItem.media_type,
                         mediaCatalogId,
                         copyMediaItemId: mediaItem.id
                       })

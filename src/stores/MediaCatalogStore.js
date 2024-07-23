@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import Clone from "lodash/clone";
@@ -267,7 +267,7 @@ class MediaCatalogStore {
     id = `${prefix}${id}`;
 
     if(copyItem) {
-      spec = Clone(copyItem);
+      spec = Clone(toJS(copyItem));
       spec.label = `${spec.label} (Copy)`;
     } else {
       spec.label = title;
