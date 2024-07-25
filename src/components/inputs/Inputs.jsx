@@ -1623,7 +1623,7 @@ const CollectionTableRows = observer(({
                 </div>
               </td>
               {columns.map(({field, width, render, centered}, index) =>
-                <td key={`td-${id}-${field}`} style={{width}}>
+                <td key={`td-${id}-${field || index}`} style={{width}}>
                   <Group position={centered ? "center" : "left"}>
                     { render ? render(value, index) : <Text sx={{wordWrap: "anywhere"}}>{value[field] || ""}</Text> }
                   </Group>

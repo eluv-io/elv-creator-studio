@@ -34,187 +34,199 @@ const MediaPropertySearch = observer(() => {
       section="mediaProperty"
       useHistory
     >
-      <Inputs.Select
+      <Inputs.Checkbox
         {...inputProps}
-        {...l10n.general.search.primary_filter}
+        {...l10n.general.search.disable}
         subcategory={l10n.categories.search}
-        field="primary_filter"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
-        ]}
+        field="disabled"
+        defaultValue={false}
       />
       {
-        !info.search?.primary_filter ? null :
-          <Inputs.List
-            {...inputProps}
-            {...l10n.general.search.filter_options}
-            subcategory={l10n.categories.search}
-            field="filter_options"
-            newItemSpec={MediaPropertySearchFilterSpec}
-            renderItem={(props) => {
-              const attributeValues =
-                info.search.primary_filter === "__media-type" ?
-                  ["Video", "Gallery", "Image", "Ebook"] :
-                  attributes[info.search.primary_filter]?.tags || [];
+        info?.search?.disabled ? null :
+          <>
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.search.hide_if_unauthenticated}
+              subcategory={l10n.categories.search}
+              field="hide_if_unauthenticated"
+              defaultValue={false}
+            />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.search.group_by}
+              subcategory={l10n.categories.search}
+              field="group_by"
+              searchable
+              defaultValue=""
+              options={[
+                {label: "None", value: ""},
+                {label: "Media Type", value: "__media-type"},
+                {label: "Date", value: "__date"},
+                ...(Object.keys(attributes).map(attributeId => ({
+                  label: attributes[attributeId].title || "Attribute",
+                  value: attributeId
+                })))
+              ]}
+            />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.search.primary_filter}
+              subcategory={l10n.categories.search}
+              field="primary_filter"
+              searchable
+              defaultValue=""
+              options={[
+                {label: "None", value: ""},
+                {label: "Media Type", value: "__media-type"},
+                ...(Object.keys(attributes).map(attributeId => ({
+                  label: attributes[attributeId].title || "Attribute",
+                  value: attributeId
+                })))
+              ]}
+            />
+            {
+              !info.search?.primary_filter ? null :
+                <Inputs.List
+                  {...inputProps}
+                  {...l10n.general.search.filter_options}
+                  subcategory={l10n.categories.search}
+                  field="filter_options"
+                  newItemSpec={MediaPropertySearchFilterSpec}
+                  renderItem={(props) => {
+                    const attributeValues =
+                      info.search.primary_filter === "__media-type" ?
+                        ["Video", "Gallery", "Image", "Ebook"] :
+                        attributes[info.search.primary_filter]?.tags || [];
 
-              return (
-                <>
-                  <Inputs.Select
-                    {...props}
-                    {...l10n.general.search.filter_option.primary_filter_value}
-                    subcategory={l10n.categories.search}
-                    field="primary_filter_value"
-                    searchable
-                    defaultValue=""
-                    options={[
-                      {label: "All", value: ""},
-                      ...attributeValues.map(tag => ({
-                        label: tag || "",
-                        value: tag
-                      }))
-                    ]}
-                  />
-                  <Inputs.Select
-                    {...props}
-                    {...l10n.general.search.filter_option.secondary_filter_attribute}
-                    subcategory={l10n.categories.search}
-                    field="secondary_filter_attribute"
-                    searchable
-                    defaultValue=""
-                    options={
-                      [
-                        {label: "None", value: ""},
-                        {label: "Media Type", value: "__media-type"},
-                        ...(Object.keys(attributes).map(attributeId => ({
-                          label: attributes[attributeId].title || "Attribute",
-                          value: attributeId
-                        })))
-                      ].filter(({value}) => info.search.primary_filter !== value)
-                    }
-                  />
-                  <Inputs.SingleImageInput
-                    {...props}
-                    {...l10n.general.search.filter_option.primary_filter_image}
-                    aspectRatio={16/9}
-                    subcategory={l10n.categories.search}
-                    field="primary_filter_image"
-                    horizontal
-                  />
-                </>
-              );
-            }}
-          />
-      }
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.search.group_by}
-        subcategory={l10n.categories.search}
-        field="group_by"
-        searchable
-        defaultValue=""
-        options={[
-          {label: "None", value: ""},
-          {label: "Media Type", value: "__media-type"},
-          {label: "Date", value: "__date"},
-          ...(Object.keys(attributes).map(attributeId => ({
-            label: attributes[attributeId].title || "Attribute",
-            value: attributeId
-          })))
-        ]}
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.search.hide_if_unauthenticated}
-        subcategory={l10n.categories.search}
-        field="hide_if_unauthenticated"
-        defaultValue={false}
-      />
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.search.enable_advanced_search}
-        subcategory={l10n.categories.advanced_search}
-        field="enable_advanced_search"
-        defaultValue={false}
-      />
-      {
-        !info.search?.enable_advanced_search ? null :
-          <Inputs.List
-            {...inputProps}
-            {...l10n.general.search.advanced_search_options}
-            subcategory={l10n.categories.advanced_search}
-            field="advanced_search_options"
-            newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
-            renderItem={(props) =>
-              <>
-                <Inputs.Select
-                  {...props}
-                  {...l10n.general.search.advanced.type}
-                  subcategory={l10n.categories.advanced_search}
-                  options={[
-                    { label: "Tags", value: "tags" },
-                    { label: "Attribute", value: "attribute" },
-                    { label: "Media Type", value: "media_type" },
-                    { label: "Date", value: "date" }
-                  ]}
-                  field="type"
+                    return (
+                      <>
+                        <Inputs.Select
+                          {...props}
+                          {...l10n.general.search.filter_option.primary_filter_value}
+                          subcategory={l10n.categories.search}
+                          field="primary_filter_value"
+                          searchable
+                          defaultValue=""
+                          options={[
+                            {label: "All", value: ""},
+                            ...attributeValues.map(tag => ({
+                              label: tag || "",
+                              value: tag
+                            }))
+                          ]}
+                        />
+                        <Inputs.Select
+                          {...props}
+                          {...l10n.general.search.filter_option.secondary_filter_attribute}
+                          subcategory={l10n.categories.search}
+                          field="secondary_filter_attribute"
+                          searchable
+                          defaultValue=""
+                          options={
+                            [
+                              {label: "None", value: ""},
+                              {label: "Media Type", value: "__media-type"},
+                              ...(Object.keys(attributes).map(attributeId => ({
+                                label: attributes[attributeId].title || "Attribute",
+                                value: attributeId
+                              })))
+                            ].filter(({value}) => info.search.primary_filter !== value)
+                          }
+                        />
+                        <Inputs.SingleImageInput
+                          {...props}
+                          {...l10n.general.search.filter_option.primary_filter_image}
+                          aspectRatio={16 / 9}
+                          subcategory={l10n.categories.search}
+                          field="primary_filter_image"
+                          horizontal
+                        />
+                      </>
+                    );
+                  }}
                 />
-                <Inputs.Text
-                  {...props}
-                  {...l10n.general.search.advanced.title}
+            }
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.search.enable_advanced_search}
+              subcategory={l10n.categories.advanced_search}
+              field="enable_advanced_search"
+              defaultValue={false}
+            />
+            {
+              !info.search?.enable_advanced_search ? null :
+                <Inputs.List
+                  {...inputProps}
+                  {...l10n.general.search.advanced_search_options}
                   subcategory={l10n.categories.advanced_search}
-                  field="title"
-                />
-                {
-                  props.item.type !== "attribute" ? null :
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.general.search.advanced.attribute}
-                      subcategory={l10n.categories.advanced_search}
-                      searchable
-                      defaultValue={Object.keys(attributes)[0]}
-                      options={[
-                        ...(Object.keys(attributes).map(attributeId => ({
-                          label: attributes[attributeId].title || "Attribute",
-                          value: attributeId
-                        })))
-                      ]}
-                      field="attribute"
-                    />
-                }
-                {
-                  props.item.type !== "tags" ? null :
+                  field="advanced_search_options"
+                  newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
+                  renderItem={(props) =>
                     <>
-                      <Inputs.MultiSelect
-                        {...props}
-                        {...l10n.general.search.advanced.tags}
-                        subcategory={l10n.categories.advanced_search}
-                        searchable
-                        options={tags}
-                        field="tags"
-                      />
                       <Inputs.Select
                         {...props}
-                        {...l10n.general.search.advanced.tag_display}
+                        {...l10n.general.search.advanced.type}
                         subcategory={l10n.categories.advanced_search}
-                        defaultValue="select"
                         options={[
-                          { label: "Select", value: "select" },
-                          { label: "Checkboxes", value: "checkboxes"}
+                          {label: "Tags", value: "tags"},
+                          {label: "Attribute", value: "attribute"},
+                          {label: "Media Type", value: "media_type"},
+                          {label: "Date", value: "date"}
                         ]}
-                        field="tag_display"
+                        field="type"
                       />
+                      <Inputs.Text
+                        {...props}
+                        {...l10n.general.search.advanced.title}
+                        subcategory={l10n.categories.advanced_search}
+                        field="title"
+                      />
+                      {
+                        props.item.type !== "attribute" ? null :
+                          <Inputs.Select
+                            {...props}
+                            {...l10n.general.search.advanced.attribute}
+                            subcategory={l10n.categories.advanced_search}
+                            searchable
+                            defaultValue={Object.keys(attributes)[0]}
+                            options={[
+                              ...(Object.keys(attributes).map(attributeId => ({
+                                label: attributes[attributeId].title || "Attribute",
+                                value: attributeId
+                              })))
+                            ]}
+                            field="attribute"
+                          />
+                      }
+                      {
+                        props.item.type !== "tags" ? null :
+                          <>
+                            <Inputs.MultiSelect
+                              {...props}
+                              {...l10n.general.search.advanced.tags}
+                              subcategory={l10n.categories.advanced_search}
+                              searchable
+                              options={tags}
+                              field="tags"
+                            />
+                            <Inputs.Select
+                              {...props}
+                              {...l10n.general.search.advanced.tag_display}
+                              subcategory={l10n.categories.advanced_search}
+                              defaultValue="select"
+                              options={[
+                                {label: "Select", value: "select"},
+                                {label: "Checkboxes", value: "checkboxes"}
+                              ]}
+                              field="tag_display"
+                            />
+                          </>
+                      }
                     </>
-                }
-              </>
+                  }
+                />
             }
-          />
+          </>
       }
     </PageContent>
   );

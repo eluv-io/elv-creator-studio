@@ -150,12 +150,12 @@ class RootStore {
     return this.libraryIds[objectId];
   });
 
-  VersionHash = flow(function * ({objectId, versionHash}) {
+  VersionHash = flow(function * ({objectId, versionHash, force}) {
     if(versionHash) {
       objectId = this.utils.DecodeVersionHash(versionHash).objectId;
     }
 
-    if(!this.versionHashes[objectId] || Date.now() - this.versionHashes[objectId].retrievedAt > 30000) {
+    if(force || !this.versionHashes[objectId] || Date.now() - this.versionHashes[objectId].retrievedAt > 30000) {
       this.versionHashes[objectId] = {
         versionHash: yield this.client.LatestVersionHash({objectId}),
         retrievedAt: Date.now()

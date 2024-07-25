@@ -813,6 +813,16 @@ const MediaPropertySection = observer(() => {
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="title"
       />
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.sections.display.title_icon}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="title_icon"
+        baseSize={75}
+        horizontal
+        p="md"
+      />
 
       <Inputs.Text
         {...inputProps}
@@ -947,16 +957,47 @@ const MediaPropertySection = observer(() => {
               ]}
             />
 
+            <Inputs.SingleImageInput
+              {...inputProps}
+              {...l10n.sections.display.logo}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="logo"
+              aspectRatio={1}
+              horizontal
+            />
+
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.sections.display.inline_background_color}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="inline_background_color"
+            />
+
+
             <Inputs.ImageInput
               {...inputProps}
-              {...l10n.sections.display.background_image}
+              {...l10n.sections.display.inline_background_image}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              fields={[
+                { field: "inline_background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 4, baseSize: 125 },
+                { field: "inline_background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2, baseSize: 125 },
+              ]}
+            />
+
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.sections.display.section_page_background_image}
+              subcategory={l10n.categories.section_presentation}
               path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
               fields={[
                 { field: "background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
                 { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
               ]}
             />
-          </>
+        </>
       }
 
       <Title order={3} mt={50} mb="md">{l10n.categories.section_full_content_page}</Title>

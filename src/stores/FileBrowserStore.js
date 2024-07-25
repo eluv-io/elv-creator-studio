@@ -207,9 +207,9 @@ class FileBrowserStore {
       }
 
       // Ensure version hashes are updated
-      yield this.rootStore.VersionHash({objectId});
+      yield this.rootStore.VersionHash({objectId, force: true});
       if(selectedObjectId) {
-        yield this.rootStore.VersionHash({objectId: selectedObjectId});
+        yield this.rootStore.VersionHash({objectId: selectedObjectId, force: true});
       }
     } catch(error) {
       this.DebugLog({message: "Save failed", error, level: this.logLevels.DEBUG_LEVEL_ERROR});
