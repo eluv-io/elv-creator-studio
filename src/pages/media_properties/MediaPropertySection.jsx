@@ -967,6 +967,17 @@ const MediaPropertySection = observer(() => {
               horizontal
             />
 
+            {
+              !section.display.logo ? null :
+                <Inputs.Text
+                  {...inputProps}
+                  {...l10n.sections.display.logo_text}
+                  subcategory={l10n.categories.section_presentation}
+                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                  field="logo_text"
+                />
+            }
+
             <Inputs.Color
               {...inputProps}
               {...l10n.sections.display.inline_background_color}

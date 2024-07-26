@@ -466,6 +466,9 @@ form:
       logo:
         label: Logo Image
         description: Displayed to the left of the content
+      logo_text:
+        label: Logo Text
+        description: Displayed below the logo image
       inline_background_color:
         label: Inline Background Color
         description: Select a color for the background of this section (overridden by inline background images)
