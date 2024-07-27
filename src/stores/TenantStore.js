@@ -253,15 +253,18 @@ class TenantStore {
 
     const objectId = this.client.utils.DecodeVersionHash(versionHash).objectId;
 
-    let path, store;
+    let path, metadataPath, store;
     if(type === "site") {
       path = "/public/asset_metadata/sites";
+      metadataPath = "/meta/public/asset_metadata";
       store = this.rootStore.siteStore;
     } else if(type === "marketplace") {
       path = "/public/asset_metadata/marketplaces";
+      metadataPath = "/meta/public/asset_metadata";
       store = this.rootStore.marketplaceStore;
     } else if(type === "mediaProperty") {
       path = "/public/asset_metadata/media_properties";
+      metadataPath = "/meta/public/asset_metadata/info";
       store = this.rootStore.mediaPropertyStore;
     }
 
@@ -289,7 +292,7 @@ class TenantStore {
             "tag": "latest"
           },
         },
-        "/": UrlJoin("/qfab", versionHash, "/meta/public/asset_metadata/info"),
+        "/": UrlJoin("/qfab", versionHash, metadataPath),
       }
     });
 
