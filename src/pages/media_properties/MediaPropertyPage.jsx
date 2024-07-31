@@ -587,7 +587,15 @@ const MediaPropertyPage = observer(() => {
           {
             label: l10n.sections.display.display_format.label,
             field: "display_format",
-            render: sectionId => <Text>{info.sections[sectionId]?.display?.display_format?.capitalize() || ""}</Text>,
+            render: sectionId => (
+              <Text>
+                {
+                  ["manual", "automatic"].includes(info.sections[sectionId]?.type) ?
+                    info.sections[sectionId]?.display?.display_format?.capitalize() || "" :
+                    info.sections[sectionId]?.type?.capitalize() || ""
+                }
+              </Text>
+            ),
             width: 175
           }
         ]}

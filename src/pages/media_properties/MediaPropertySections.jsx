@@ -47,8 +47,10 @@ const CreateSectionForm = ({Create}) => {
           defaultValue="manual"
           mb="md"
           data={[
-            { label: "Manual", value: "manual" },
-            { label: "Automatic", value: "automatic" }
+            { label: "Manual Content Section", value: "manual" },
+            { label: "Automatic Content Section", value: "automatic" },
+            { label: "Hero Section", value: "hero" },
+            { label: "Container Section", value: "container" },
           ]}
           {...form.getInputProps("type")}
         />
@@ -151,7 +153,15 @@ export const MediaPropertySectionsTable = observer(({
           accessor: "display.display_format",
           sortable: true,
           title: l10n.sections.display.display_format.label,
-          render: section => <Text>{ section.display?.display_format?.capitalize() || "" }</Text>,
+          render: section => (
+            <Text>
+              {
+                ["manual", "automatic"].includes(section?.type) ?
+                  section?.display?.display_format?.capitalize() || "" :
+                  section?.type?.capitalize() || ""
+              }
+            </Text>
+          ),
           width: 125
         },
         {

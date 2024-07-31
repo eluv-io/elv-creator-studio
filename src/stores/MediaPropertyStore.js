@@ -1,6 +1,7 @@
 import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
+  MediaPropertyContainerSectionSpec, MediaPropertyHeroSectionSpec,
   MediaPropertyPageSpec,
   MediaPropertySectionAutomaticSpec,
   MediaPropertySectionItemFilterSpec,
@@ -29,6 +30,8 @@ class MediaPropertyStore {
     "page": "ppge",
     "section_manual": "pscm",
     "section_automatic": "psca",
+    "section_hero": "psch",
+    "section_container": "pscc",
     "section_item": "psci"
   };
 
@@ -355,13 +358,25 @@ class MediaPropertyStore {
   CreateSection({mediaPropertyId, type="manual", label, copySectionId}) {
     let id = `${this.ID_PREFIXES[`section_${type}`]}${GenerateUUID()}`;
 
-    const spec = copySectionId ?
-      Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[copySectionId])) :
-      Clone(
-        type === "manual" ?
-          MediaPropertySectionManualSpec :
-          MediaPropertySectionAutomaticSpec
-      );
+    let spec;
+    if(copySectionId) {
+      spec = Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[copySectionId]));
+    } else {
+      switch(type) {
+        case "manual":
+          spec = Clone(MediaPropertySectionManualSpec);
+          break;
+        case "automatic":
+          spec = Clone(MediaPropertySectionAutomaticSpec);
+          break;
+        case "hero":
+          spec = Clone(MediaPropertyHeroSectionSpec);
+          break;
+        case "container":
+          spec = Clone(MediaPropertyContainerSectionSpec);
+          break;
+      }
+    }
 
     spec.id = id;
     spec.label = label || (copySectionId ? `${spec.label} (Copy)` : spec.label);

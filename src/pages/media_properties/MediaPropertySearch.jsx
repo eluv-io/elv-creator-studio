@@ -5,8 +5,9 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {
   MediaPropertyAdvancedSearchOptionSpec,
-  MediaPropertySearchFilterSpec
+  MediaPropertySearchFilterSpec, MediaPropertySearchSecondaryFilterSpec
 } from "@/specs/MediaPropertySpecs.js";
+import {Title} from "@mantine/core";
 
 const MediaPropertySearch = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -86,6 +87,22 @@ const MediaPropertySearch = observer(() => {
             />
             {
               !info.search?.primary_filter ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.search.primary_filter_style}
+                  subcategory={l10n.categories.search}
+                  field="primary_filter_style"
+                  defaultValue="box"
+                  options={[
+                    {label: "Box", value: "box"},
+                    {label: "Text", value: "text"},
+                    {label: "Image", value: "image"},
+                  ]}
+                />
+            }
+
+            {
+              !info.search?.primary_filter ? null :
                 <Inputs.List
                   {...inputProps}
                   {...l10n.general.search.filter_options}
@@ -115,6 +132,19 @@ const MediaPropertySearch = observer(() => {
                             }))
                           ]}
                         />
+                        {
+                          info.search?.primary_filter_style !== "image" ? null :
+                            <Inputs.SingleImageInput
+                              {...props}
+                              {...l10n.general.search.filter_option.primary_filter_image}
+                              subcategory={l10n.categories.search}
+                              field="primary_filter_image"
+                              baseSize={125}
+                              p="md"
+                              pb="xs"
+                              horizontal
+                            />
+                        }
                         <Inputs.Select
                           {...props}
                           {...l10n.general.search.filter_option.secondary_filter_attribute}
@@ -133,19 +163,92 @@ const MediaPropertySearch = observer(() => {
                             ].filter(({value}) => info.search.primary_filter !== value)
                           }
                         />
-                        <Inputs.SingleImageInput
-                          {...props}
-                          {...l10n.general.search.filter_option.primary_filter_image}
-                          aspectRatio={16 / 9}
-                          subcategory={l10n.categories.search}
-                          field="primary_filter_image"
-                          horizontal
-                        />
+
+                        {
+                          !props.item.secondary_filter_attribute ? null :
+                            <>
+                              <Inputs.Select
+                                {...props}
+                                {...l10n.general.search.filter_option.secondary_filter_spec}
+                                subcategory={l10n.categories.search}
+                                field="secondary_filter_spec"
+                                defaultValue="automatic"
+                                options={[
+                                  {label: "Automatic", value: "automatic"},
+                                  {label: "Manual", value: "manual"}
+                                ]}
+                              />
+
+                              <Inputs.Select
+                                {...props}
+                                {...l10n.general.search.filter_option.secondary_filter_style}
+                                subcategory={l10n.categories.search}
+                                field="secondary_filter_style"
+                                defaultValue="box"
+                                options={[
+                                  {label: "Box", value: "box"},
+                                  {label: "Text", value: "text"},
+                                  {label: "Image", value: "image", disabled: props.item.secondary_filter_spec !== "manual"},
+                                ]}
+                              />
+                              {
+                                props.item.secondary_filter_spec !== "manual" ? null :
+                                  <Inputs.List
+                                    {...props}
+                                    {...l10n.general.search.filter_option.secondary_filter_options}
+                                    subcategory={l10n.categories.search}
+                                    field="secondary_filter_options"
+                                    newItemSpec={MediaPropertySearchSecondaryFilterSpec}
+                                    renderItem={(secondaryFilterProps) => {
+                                      const secondaryAttributeValues =
+                                        props.item.secondary_filter_attribute === "__media-type" ?
+                                          ["Video", "Gallery", "Image", "Ebook"] :
+                                          attributes[props.item.secondary_filter_attribute]?.tags || [];
+
+                                      return (
+                                        <>
+                                          <Inputs.Select
+                                            {...secondaryFilterProps}
+                                            {...l10n.general.search.filter_option.secondary_filter_value}
+                                            subcategory={l10n.categories.search}
+                                            field="secondary_filter_value"
+                                            searchable
+                                            defaultValue=""
+                                            options={[
+                                              {label: "All", value: ""},
+                                              ...secondaryAttributeValues.map(tag => ({
+                                                label: tag || "",
+                                                value: tag
+                                              }))
+                                            ]}
+                                          />
+                                          {
+                                            props.item.secondary_filter_style !== "image" ? null :
+                                              <Inputs.SingleImageInput
+                                                {...secondaryFilterProps}
+                                                {...l10n.general.search.filter_option.secondary_filter_image}
+                                                subcategory={l10n.categories.search}
+                                                field="secondary_filter_image"
+                                                horizontal
+                                                baseSize={125}
+                                                p="md"
+                                                pb="xs"
+                                              />
+                                          }
+                                        </>
+                                      );
+                                    }}
+                                  />
+                              }
+                            </>
+                        }
                       </>
                     );
                   }}
                 />
             }
+
+            <Title order={3} mt={50}  mb="md">{l10n.categories.advanced_search}</Title>
             <Inputs.Checkbox
               {...inputProps}
               {...l10n.general.search.enable_advanced_search}

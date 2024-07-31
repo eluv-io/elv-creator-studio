@@ -101,7 +101,15 @@ export const MediaPropertyAdvancedSearchOptionSpec = {
 
 export const MediaPropertySearchFilterSpec = {
   primary_filter_value: "",
+  primary_filter_image: undefined,
   secondary_filter_attribute: "",
+  secondary_filter_spec: "automatic",
+  secondary_filter_style: "text",
+  secondary_filter_options: [],
+};
+
+export const MediaPropertySearchSecondaryFilterSpec = {
+  secondary_filter_value: "",
   image: undefined
 };
 
@@ -196,6 +204,7 @@ export const MediaPropertySectionBaseSpec = {
   label: "<New Media Section>",
   description: "",
   type: "manual",
+  tags: [],
   display: {
     title: "",
     subtitle: "",
@@ -206,6 +215,9 @@ export const MediaPropertySectionBaseSpec = {
     justification: "left",
     aspect_ratio: "Landscape",
     content_display_text: "titles",
+    inline_background_color: "",
+    inline_background_image: undefined,
+    inline_background_image_mobile: undefined,
     background_image: undefined,
     background_image_mobile: undefined
   },
@@ -222,6 +234,49 @@ export const MediaPropertySectionAutomaticSpec = {
   ...MediaPropertySectionBaseSpec,
   type: "automatic",
   select: MediaPropertyFilterSpec
+};
+
+export const MediaPropertyHeroItemSpec = {
+  id: undefined,
+  title: "",
+  description: "",
+  logo: undefined,
+  logo_alt: "",
+  header_logo: undefined,
+  background_image: undefined,
+  background_image_mobile: undefined,
+  actions: []
+};
+
+export const MediaPropertyHeroSectionSpec = {
+  ...MediaPropertySectionBaseSpec,
+  display: {
+    ...MediaPropertySectionBaseSpec,
+    display_format: "hero"
+  },
+  label: "<New Hero Section>",
+  type: "hero",
+  hero_items: [],
+  permissions: {
+    behavior: "hide",
+    permission_item_ids: []
+  }
+};
+
+export const MediaPropertyContainerSectionSpec = {
+  ...MediaPropertySectionBaseSpec,
+  display: {
+    ...MediaPropertySectionBaseSpec,
+    display_format: "container"
+  },
+  label: "<New Container Section>",
+  type: "container",
+  filter_tags: [],
+  sections: [],
+  permissions: {
+    behavior: "hide",
+    permission_item_ids: []
+  }
 };
 
 export const MediaPropertyPageActionSpec = {
@@ -293,6 +348,7 @@ export const MediaPropertySpec = {
   permission_behavior: "hide",
   search: {
     primary_filter: "",
+    primary_filter_style: "box",
     filter_options: [],
     group_by: "",
     enable_advanced_search: false,

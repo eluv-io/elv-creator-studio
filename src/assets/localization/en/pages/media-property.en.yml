@@ -161,6 +161,9 @@ form:
       primary_filter:
         label: Primary Filter
         description: If specified, this filter will be available for selection at the top of the search results page
+      primary_filter_style:
+        label: Primary Filter Style
+        description: Select how the primary filter is displayed
       filter_options:
         label: Filter Options
         description: Customize values shown for the primary filter and specify secondary filters. If no options are set, the default values for the primary filter attribute will be used.
@@ -169,11 +172,24 @@ form:
         primary_filter_value:
           label: Primary Filter Value
         primary_filter_image:
-          label: Primary Filter Image (16:9)
-          description: You may specify an image to be used for the primary filter selection
+          label: Primary Filter Image
         secondary_filter_attribute:
           label: Secondary Filter Attribute
           description: When the primary filter above is specified, this attribute will be used for the secondary filter
+        secondary_filter_spec:
+          label: Secondary Filter Options Specification
+          description: Specify whether the options for the secondary filter should be automatically populated from the attribute spec, or manually specified. Manual specification of values enables using images in the secondary filter
+        secondary_filter_style:
+          label: Secondary Filter Style
+          description: Select how the secondary filter is displayed. Note that images can only be specified if the secondary filter options are manually set
+        secondary_filter_options:
+          label: Secondary Filter Options
+          fieldLabel: Secondary Filter Option
+        secondary_filter_value:
+          label: Secondary Filter Value
+        secondary_filter_image:
+          label: Secondary Filter Image
+
       group_by:
         label: Group Results By
         description: If specified, search results will be grouped by this attribute
@@ -408,7 +424,7 @@ form:
         label: Label
       type:
         label: Type
-        description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
+        description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options. Hero sections allow for large hero images, descriptions, and custom buttons. Container sections allow grouping sections together with a selectable filter
       validation:
         label: Label must be specified
     modal:
@@ -417,14 +433,20 @@ form:
       label: Page Content Sections
       description: Define groups of content that can be displayed on pages
     type:
-      label: Type
-      description: Section content may be specified manually, or generated automatically from media catalogs based on tags, attributes and schedule options
+      label: Section Type
     label:
       label: Label
       description: For internal reference, not displayed
     description:
       label: Description
       description: For internal reference, not displayed
+    tags:
+      label: Tags
+      description: Tags can be used to filter sections within section containers
+    container:
+      filter_tags:
+        label: Filter Tags
+        description: Select tags that can be used to filter the sections within this container. When a tag is selected, only the sections with the corresponding tag will be shown.
     display:
       title:
         label: Title

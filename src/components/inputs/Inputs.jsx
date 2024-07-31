@@ -330,7 +330,7 @@ const Input = observer(({
       componentProps.searchable = searchable;
       componentProps.data = options.map(option =>
         option.label ?
-          ({label: option.label, value: option.value}) :
+          ({label: option.label, value: option.value, disabled: option.disabled}) :
           option
       );
       break;

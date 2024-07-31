@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore, marketplaceStore, uiStore} from "@/stores";
 import {
   Input as MantineInput,
@@ -18,7 +18,7 @@ import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import {useEffect, useState} from "react";
-import {LocalizeString} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {useForm} from "@mantine/form";
 import {modals} from "@mantine/modals";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput";
@@ -31,6 +31,8 @@ import {
 } from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
+import {IconExternalLink} from "@tabler/icons-react";
+import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
 
 const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
@@ -517,6 +519,7 @@ const SectionFilters = observer(() => {
   };
 
   const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
+
   return (
     <>
       <Container m={0} p={0} miw={uiStore.inputWidth}>
@@ -663,7 +666,7 @@ const SectionFilters = observer(() => {
   );
 });
 
-const MediaPropertySection = observer(() => {
+const ContentSectionDisplaySettings = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
@@ -690,106 +693,7 @@ const MediaPropertySection = observer(() => {
   };
 
   return (
-    <PageContent
-      backLink={UrlJoin("/media-properties", mediaPropertyId, "sections")}
-      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.sections} - ${section.label || ""}`}
-      section="mediaProperty"
-      useHistory
-    >
-      <Title order={3} mb="md">{l10n.categories.general}</Title>
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.common.id}
-        disabled
-        field="id"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.common.slug}
-        field="slug"
-        Validate={ValidateSlug}
-        validateOnLoad
-      />
-
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.type}
-        disabled
-        field="type"
-        options={[
-          { label: "Manual", value: "manual" },
-          { label: "Automatic", value: "automatic" }
-        ]}
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.sections.label}
-        field="label"
-      />
-
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.sections.description}
-        field="description"
-      />
-
-      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.sections.permission_behavior}
-        subcategory={l10n.categories.permissions}
-        defaultValue=""
-        path={UrlJoin(inputProps.path, "permissions")}
-        field="behavior"
-        options={[
-          { label: "Default", value: "" },
-          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
-            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
-            value: key
-          })),
-          { label: "Show If Not Authorized", value: "show_if_unauthorized"},
-          { label: "Show Alternate Page", value: "show_alternate_page"}
-        ]}
-      />
-      {
-        section.permissions?.behavior !== "show_alternate_page" ? null :
-          <Inputs.Select
-            {...inputProps}
-            {...l10n.general.alternate_page}
-            subcategory={l10n.categories.permissions}
-            path={UrlJoin(inputProps.path, "permissions")}
-            field="alternate_page_id"
-            options={[
-              { label: "(Property Main Page)", value: "main" },
-              ...Object.keys(info.pages || {})
-                .filter(pageId => pageId !== "main")
-                .map(pageId => ({
-                  label: info.pages[pageId].label,
-                  value: pageId
-                }))
-            ]}
-          />
-      }
-
-      {
-        (info.permission_sets || []).length === 0 ? null :
-          <>
-            <PermissionItemSelect
-              {...l10n.sections.permissions}
-              {...inputProps}
-              subcategory={l10n.categories.permissions}
-              path={UrlJoin(inputProps.path, "permissions")}
-              field="permission_item_ids"
-              multiple
-              permissionSetIds={info?.permission_sets}
-              defaultFirst
-            />
-          </>
-      }
-
+    <>
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
       <Inputs.Select
@@ -847,7 +751,6 @@ const MediaPropertySection = observer(() => {
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="description_rich_text"
       />
-
 
       {
         !["carousel", "grid"].includes(section.display?.display_format) ? null :
@@ -1008,7 +911,7 @@ const MediaPropertySection = observer(() => {
                 { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
               ]}
             />
-        </>
+          </>
       }
 
       <Title order={3} mt={50} mb="md">{l10n.categories.section_full_content_page}</Title>
@@ -1081,6 +984,273 @@ const MediaPropertySection = observer(() => {
           <SectionContentList /> :
           <SectionFilters />
       }
+    </>
+  );
+});
+
+const ContainerSectionSettings = observer(() => {
+  const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
+  const { mediaPropertyId, sectionId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const section = info.sections?.[sectionId];
+
+  if(!section) {
+    return null;
+  }
+
+  const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId}) || [];
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: l10n.categories.general,
+    path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
+  };
+
+  const excludedSectionIds = [
+    ...(section?.sections || []),
+    ...(Object.keys(info.sections).filter(sectionId =>
+      info.sections[sectionId]?.type === "container"
+    ))
+  ];
+
+  return (
+    <>
+      <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.sections.container.filter_tags}
+        subcategory={l10n.categories.section_presentation}
+        field="filter_tags"
+        options={tags.map(tag => ({label: tag, value: tag}))}
+      />
+
+      <Inputs.CollectionTable
+        {...inputProps}
+        {...l10n.pages.sections}
+        subcategory={l10n.categories.section_presentation}
+        field="sections"
+        idField="."
+        GetName={sectionId => info.sections[sectionId]?.label}
+        editable={false}
+        AddItem={() => setShowSectionSelectionModal(true)}
+        Actions={sectionId => [
+          <IconButton
+            key="link-button"
+            label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info.sections[sectionId]?.label || sectionId })}
+            component={Link}
+            to={UrlJoin("/media-properties/", mediaPropertyId, "sections", sectionId)}
+            color="purple.6"
+            Icon={IconExternalLink}
+          />
+        ]}
+        columns={[
+          {
+            label: l10n.sections.label.label,
+            field: "label",
+            render: sectionId => <Text>{info.sections[sectionId]?.label || (!info.sections[sectionId] ? "<Deleted Section>" : sectionId)}</Text>
+          },
+          {
+            label: l10n.sections.type.label,
+            field: "type",
+            render: sectionId => <Text>{info.sections[sectionId]?.type?.capitalize() || ""}</Text>,
+            width: 175
+          },
+          {
+            label: l10n.sections.display.display_format.label,
+            field: "display_format",
+            render: sectionId => <Text>{info.sections[sectionId]?.display?.display_format?.capitalize() || ""}</Text>,
+            width: 175
+          }
+        ]}
+      />
+
+      {
+        !showSectionSelectionModal ? null :
+          <MediaPropertySectionSelectionModal
+            mediaPropertyId={mediaPropertyId}
+            excludedSectionIds={excludedSectionIds}
+            Close={() => setShowSectionSelectionModal(false)}
+            Submit={sectionIds => {
+              sectionIds.forEach(sectionId => {
+                mediaPropertyStore.InsertListElement({
+                  ...inputProps,
+                  page: location.pathname,
+                  field: "sections",
+                  value: sectionId,
+                  label: info.sections[sectionId]?.label || sectionId
+                });
+              });
+
+              setShowSectionSelectionModal(false);
+            }}
+          />
+      }
+    </>
+  );
+});
+
+const MediaPropertySection = observer(() => {
+  const { mediaPropertyId, sectionId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const section = info.sections?.[sectionId];
+
+  if(!section) {
+    return null;
+  }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: l10n.categories.general,
+    path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
+  };
+
+  const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId}) || [];
+  const specialSectionType = !["manual", "automatic"].includes(section.type);
+
+  return (
+    <PageContent
+      backLink={UrlJoin("/media-properties", mediaPropertyId, "sections")}
+      title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.sections} - ${section.label || ""}`}
+      section="mediaProperty"
+      useHistory
+    >
+      <Title order={3} mb="md">{l10n.categories.general}</Title>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.common.id}
+        disabled
+        field="id"
+      />
+
+      {
+        specialSectionType ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.common.slug}
+            field="slug"
+            Validate={ValidateSlug}
+            validateOnLoad
+          />
+      }
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.type}
+        disabled
+        field="type"
+        options={[
+          { label: "Manual Content Section", value: "manual" },
+          { label: "Automatic Content Section", value: "automatic" },
+          { label: "Hero Section", value: "hero" },
+          { label: "Container Section", value: "container" }
+        ]}
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.label}
+        field="label"
+      />
+
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.sections.description}
+        field="description"
+      />
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.sections.tags}
+        subcategory={l10n.categories.section_presentation}
+        field="tags"
+        options={tags.map(tag => ({label: tag, value: tag}))}
+      />
+
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue=""
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="behavior"
+        disabled={specialSectionType}
+        options={[
+          { label: "Default", value: "" },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          })),
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"},
+          { label: "Show Alternate Page", value: "show_alternate_page"}
+        ]}
+      />
+      {
+        section.permissions?.behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="alternate_page_id"
+            options={[
+              { label: "(Property Main Page)", value: "main" },
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main")
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
+
+      {
+        (info.permission_sets || []).length === 0 ? null :
+          <>
+            <PermissionItemSelect
+              {...l10n.sections.permissions}
+              {...inputProps}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="permission_item_ids"
+              multiple
+              permissionSetIds={info?.permission_sets}
+              defaultFirst
+            />
+          </>
+      }
+
+      {
+        section.type === "container" ?
+          <ContainerSectionSettings /> :
+          section.type === "hero" ?
+            null :
+            <ContentSectionDisplaySettings />
+      }
+
+
     </PageContent>
   );
 });
