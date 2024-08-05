@@ -152,6 +152,6 @@ actions:
   MOVE_LIST_ELEMENT: Move '{label}' list position
   MOVE_LIST_ELEMENT_UNLABELLED: Move list position
   CUSTOM: <Custom Action>
-  MIGRATION: Migration
+  MIGRATION: "{label}"
   MIGRATION_LABEL: Migrate to Version {version}
 

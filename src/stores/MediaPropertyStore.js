@@ -31,6 +31,7 @@ class MediaPropertyStore {
     "section_manual": "pscm",
     "section_automatic": "psca",
     "section_hero": "psch",
+    "section_hero_item": "pshi",
     "section_container": "pscc",
     "section_item": "psci"
   };
@@ -490,12 +491,12 @@ class MediaPropertyStore {
     return id;
   }
 
-  MediaPropertyCategory({category, type="sections", mediaPropertyId, id, sectionItemId, label}) {
+  MediaPropertyCategory({category, type="sections", mediaPropertyId, path, id, sectionItemId, label}) {
     return () => {
       if(type === "sectionItem") {
         label = this.GetSectionItemLabel({mediaPropertyId, sectionId: id, sectionItemId}) || label;
       } else {
-        label = this.GetMetadata({objectId: mediaPropertyId, path: UrlJoin("/public/asset_metadata/info", type, id), field: "label"}) || label;
+        label = this.GetMetadata({objectId: mediaPropertyId, path: path || UrlJoin("/public/asset_metadata/info", type, id), field: "label"}) || label;
       }
 
       return LocalizeString(this.rootStore.l10n.pages.media_property.form.categories[category], { label: label });

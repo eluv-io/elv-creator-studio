@@ -1,7 +1,79 @@
 import UrlJoin from "url-join";
 import {CompareSemVer, GenerateUUID} from "@/helpers/Misc.js";
 import {toJS} from "mobx";
+import {MediaPropertyHeroItemSpec, MediaPropertyHeroSectionSpec} from "@/specs/MediaPropertySpecs.js";
+import Clone from "lodash/clone";
 
+// Page headers -> hero sections
+export const V1_0_2 = ({mediaPropertyId, mediaProperty, store}) => {
+  const version = "1.0.2";
+  const pages = mediaProperty.metadata.public.asset_metadata.info.pages || {};
+  let newPageSections = {};
+  let newPageSectionsList = {};
+
+  Object.keys(pages).forEach(pageId => {
+    if(pageId === "main") { return; }
+
+    const page = pages[pageId];
+    const heroSectionId = `${store.ID_PREFIXES["section_hero"]}${GenerateUUID()}`;
+
+    const heroSection = Clone(MediaPropertyHeroSectionSpec);
+    heroSection.id = heroSectionId;
+    heroSection.label = `${page.label} Header`;
+    heroSection.allow_overlap = true;
+
+    const heroItem = Clone(MediaPropertyHeroItemSpec);
+    heroItem.id = `${store.ID_PREFIXES["section_hero_item"]}${GenerateUUID()}`;
+    heroItem.label = "Page Header";
+    heroItem.display = { ...toJS(heroItem.display), ...toJS(page.layout) };
+    heroItem.actions = [ ...(toJS(page.actions) || []) ];
+
+    heroSection.hero_items = [ heroItem ];
+
+    newPageSections[pageId] = toJS(heroSection);
+    newPageSectionsList[pageId] = [ heroSectionId, ...(page.layout.sections || []) ];
+  });
+
+  store.ApplyMigration({
+    version,
+    objectId: mediaPropertyId,
+    label: "Convert page headers into hero sections",
+    Apply: ({Set}) => {
+      Object.keys(newPageSections).forEach(pageId => {
+        // Add section to sections list
+        Set(
+          UrlJoin("/public/asset_metadata/info/sections", newPageSections[pageId].id),
+          newPageSections[pageId]
+        );
+
+        // Set hero section as first section
+        Set(
+          UrlJoin("/public/asset_metadata/info/pages", pageId, "layout", "sections"),
+          newPageSectionsList[pageId]
+        );
+      });
+    },
+    Write: async (objectParams) => {
+      await Promise.all(
+        Object.keys(newPageSections).map(async pageId => {
+          await store.client.ReplaceMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", newPageSections[pageId].id),
+            metadata: newPageSections[pageId]
+          });
+
+          await store.client.ReplaceMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/pages", pageId, "layout", "sections"),
+            metadata: newPageSectionsList[pageId]
+          });
+        })
+      );
+    }
+  });
+};
+
+// Page IDs + main page swap
 export const V1_0_1 = ({mediaPropertyId, mediaProperty, store}) => {
   const version = "1.0.1";
 
@@ -11,7 +83,7 @@ export const V1_0_1 = ({mediaPropertyId, mediaProperty, store}) => {
   store.ApplyMigration({
     version,
     objectId: mediaPropertyId,
-    label: mediaProperty.name,
+    label: "Update main handling",
     Apply: ({Set}) => {
       Set(
         UrlJoin("/public/asset_metadata/info/pages", mainPageId),
@@ -44,7 +116,8 @@ export const V1_0_1 = ({mediaPropertyId, mediaProperty, store}) => {
 };
 
 export const Migrations = {
-  "1.0.1": V1_0_1
+  "1.0.1": V1_0_1,
+  "1.0.2": V1_0_2
 };
 
 export const latestVersion = Object.keys(Migrations).sort(CompareSemVer).reverse()[0];

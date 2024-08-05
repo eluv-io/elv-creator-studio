@@ -19,6 +19,7 @@ import MediaPropertyStore from "@/stores/MediaPropertyStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 import PermissionSetStore from "@/stores/PermissionSetStore.js";
+import UrlJoin from "url-join";
 
 configure({
   enforceActions: "always",
@@ -134,6 +135,21 @@ class RootStore {
     this.loaded = true;
 
     this.DebugTimeEnd({key: "Root store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
+
+    let lastPath;
+    setInterval(() => {
+      if(window.location.pathname === lastPath) {
+        return;
+      }
+
+      lastPath = window.location.pathname;
+      this.client?.SendMessage({
+        options: {
+          operation: "SetFramePath",
+          path: UrlJoin("#", window.location.pathname)
+        }
+      });
+    }, 500);
   });
 
   LibraryId = flow(function * ({objectId, versionHash}) {

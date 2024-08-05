@@ -1694,6 +1694,7 @@ const CollectionTable = observer(({
   fieldLabel,
   newItemSpec={},
   idField="index",
+  idPrefix,
   nameField,
   GetName,
   routePath="",
@@ -1745,6 +1746,11 @@ const CollectionTable = observer(({
 
         if(idField !== "index") {
           id = GenerateUUID();
+
+          if(idPrefix) {
+            id = `${idPrefix}${id}`;
+          }
+
           newEntry[idField] = id;
         }
 

@@ -50,6 +50,10 @@ form:
     section_item_content: Section Item Content
     section_item_presentation: Section Item Presentation
     section_full_content_page: Full Section Content Page
+    section_hero_item: Hero Item
+    section_hero_item_presentation: Hero Item Presentation
+    section_hero_item_label: Hero Item '{label}'
+    section_hero_item_action_label: Action '{label}'
     purchase_item: Purchase Item
   create:
     create: Create New {type}
@@ -356,6 +360,13 @@ form:
         label: Desktop (16:9)
       background_image_mobile:
         label: Mobile
+      background_video:
+        label: Background Video
+        description: Hero items can have a muted, looping video animation for the background
+      background_video_desktop:
+        label: Desktop Background Video (16:9)
+      background_video_mobile:
+        label: Mobile Background Video
     actions:
       label: Actions
       description: Show buttons for various actions
@@ -432,6 +443,12 @@ form:
     sections:
       label: Page Content Sections
       description: Define groups of content that can be displayed on pages
+    hero_overlap:
+      label: Allow hero background overlap
+      description: If checked, the background image of this section will be allowed to overlap with sections below it.
+    hero_items:
+      label: Hero Items
+      fieldLabel: Hero Item
     type:
       label: Section Type
     label:
@@ -642,6 +659,9 @@ form:
         label: Marketplace
       marketplace_sku:
         label: Item
+      redirect_on_purchase:
+        label: Redirect After Purchase
+        description: If specified, the user will be redirected to this page after purchasing this item
     permission_behavior:
       label: Permission Behavior
       description: Specify the default behavior for content that is not accessible due to permissions

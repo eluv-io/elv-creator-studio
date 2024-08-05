@@ -33,6 +33,7 @@ import {ValidateSlug} from "@/components/common/Validation.jsx";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
+import {MediaPropertyHeroItemSpec} from "@/specs/MediaPropertySpecs.js";
 
 const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
@@ -1099,6 +1100,60 @@ const ContainerSectionSettings = observer(() => {
   );
 });
 
+const HeroSectionSettings = observer(() => {
+  const { mediaPropertyId, sectionId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const section = info.sections?.[sectionId];
+
+  if(!section) {
+    return null;
+  }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: l10n.categories.section_hero_item,
+    path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
+  };
+
+  return (
+    <>
+      <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sections.hero_overlap}
+        field="allow_overlap"
+        defaultValue={false}
+      />
+      <Inputs.CollectionTable
+        {...inputProps}
+        {...l10n.sections.hero_items}
+        field="hero_items"
+        idField="id"
+        idPrefix={mediaPropertyStore.ID_PREFIXES.section_hero_item}
+        routePath="hero_items"
+        newItemSpec={MediaPropertyHeroItemSpec}
+        GetName={sectionId => section.hero_items[sectionId]?.label}
+        columns={[
+          {
+            label: l10n.sections.label.label,
+            field: "label"
+          }
+        ]}
+      />
+    </>
+  );
+});
+
 const MediaPropertySection = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
@@ -1246,7 +1301,7 @@ const MediaPropertySection = observer(() => {
         section.type === "container" ?
           <ContainerSectionSettings /> :
           section.type === "hero" ?
-            null :
+            <HeroSectionSettings /> :
             <ContentSectionDisplaySettings />
       }
 

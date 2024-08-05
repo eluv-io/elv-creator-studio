@@ -11,7 +11,7 @@ import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
-import {MediaPropertyPageActionSpec, MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
+import {MediaPropertyActionSpec, MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
 import ColorOptions from "@/components/inputs/media_property/Components";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
@@ -37,6 +37,7 @@ const PageActionBehaviors = {
   "link": "Link to URL"
 };
 
+// TODO: remove
 const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
   const l10n = rootStore.l10n.pages.media_property.form;
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
@@ -468,88 +469,6 @@ const MediaPropertyPage = observer(() => {
       }
 
 
-      <Title order={3} mb="md" mt={50}>{l10n.categories.page_header}</Title>
-
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.pages.header.position}
-        defaultValue="Left"
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="position"
-        options={["Left", "Center", "Right"]}
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.pages.header.title}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="title"
-      />
-
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.pages.header.description}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="description"
-      />
-
-      <Inputs.RichText
-        {...inputProps}
-        {...l10n.pages.header.description_rich_text}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="description_rich_text"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.pages.header.logo}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        fields={[
-          { field: "logo" }
-        ]}
-        altTextField="logo_alt"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.pages.header.background_image}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        fields={[
-          { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
-          { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
-        ]}
-      />
-
-      <Title order={3} mb="md" mt={50}>{l10n.categories.page_actions}</Title>
-      <Inputs.CollectionTable
-        {...inputProps}
-        {...l10n.pages.actions}
-        subcategory={l10n.categories.page_actions}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId)}
-        routePath="actions"
-        newItemSpec={MediaPropertyPageActionSpec}
-        field="actions"
-        idField="id"
-        GetName={action => action.label || "Action"}
-        columns={[
-          {
-            label: l10n.actions.label.label,
-            field: "label"
-          },
-          {
-            label: l10n.actions.visibility.label,
-            field: "visibility",
-            render: action => <Text>{PageActionConditions[action?.visibility || ""]}</Text>
-          }
-        ]}
-      />
-
       <Title order={3} mb="md" mt={50}>{l10n.categories.sections}</Title>
 
       <Inputs.CollectionTable
@@ -624,6 +543,90 @@ const MediaPropertyPage = observer(() => {
             }}
           />
       }
+
+
+      { /* TODO: Remove */ }
+      <Title order={3} mb="md" mt={100}>{l10n.categories.page_header} (Deprecated)</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.pages.header.position}
+        defaultValue="Left"
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        field="position"
+        options={["Left", "Center", "Right"]}
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.pages.header.title}
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        field="title"
+      />
+
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.pages.header.description}
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        field="description"
+      />
+
+      <Inputs.RichText
+        {...inputProps}
+        {...l10n.pages.header.description_rich_text}
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        field="description_rich_text"
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.pages.header.logo}
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        fields={[
+          { field: "logo" }
+        ]}
+        altTextField="logo_alt"
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.pages.header.background_image}
+        subcategory={l10n.categories.page_header}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
+        fields={[
+          { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
+          { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
+        ]}
+      />
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.page_actions}</Title>
+      <Inputs.CollectionTable
+        {...inputProps}
+        {...l10n.pages.actions}
+        subcategory={l10n.categories.page_actions}
+        path={UrlJoin("/public/asset_metadata/info/pages", pageId)}
+        routePath="actions"
+        newItemSpec={MediaPropertyActionSpec}
+        field="actions"
+        idField="id"
+        GetName={action => action.label || "Action"}
+        columns={[
+          {
+            label: l10n.actions.label.label,
+            field: "label"
+          },
+          {
+            label: l10n.actions.visibility.label,
+            field: "visibility",
+            render: action => <Text>{PageActionConditions[action?.visibility || ""]}</Text>
+          }
+        ]}
+      />
     </PageContent>
   );
 });

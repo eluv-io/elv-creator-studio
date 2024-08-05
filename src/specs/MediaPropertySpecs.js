@@ -238,13 +238,17 @@ export const MediaPropertySectionAutomaticSpec = {
 
 export const MediaPropertyHeroItemSpec = {
   id: undefined,
-  title: "",
+  label: "<New Hero Item>",
   description: "",
-  logo: undefined,
-  logo_alt: "",
-  header_logo: undefined,
-  background_image: undefined,
-  background_image_mobile: undefined,
+  display: {
+    title: "",
+    description: "",
+    logo: undefined,
+    logo_alt: "",
+    header_logo: undefined,
+    background_image: undefined,
+    background_image_mobile: undefined
+  },
   actions: []
 };
 
@@ -256,6 +260,7 @@ export const MediaPropertyHeroSectionSpec = {
   },
   label: "<New Hero Section>",
   type: "hero",
+  allow_overlap: false,
   hero_items: [],
   permissions: {
     behavior: "hide",
@@ -279,7 +284,7 @@ export const MediaPropertyContainerSectionSpec = {
   }
 };
 
-export const MediaPropertyPageActionSpec = {
+export const MediaPropertyActionSpec = {
   id: undefined,
   label: "<New Action>",
   description: "",

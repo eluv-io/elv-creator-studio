@@ -16,6 +16,125 @@ import {useEffect} from "react";
 import {MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 
+export const MediaPropertySectionItemPurchaseItems = observer((inputProps) => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+  const l10n = rootStore.l10n.pages.media_property.form;
+
+  return (
+    <Inputs.List
+      {...inputProps}
+      {...l10n.section_items.purchasable_items}
+      newItemSpec={MediaPropertySectionItemPurchaseItemSpec}
+      field="items"
+      maw="100%"
+      renderItem={props => {
+        return (
+          <>
+            <Inputs.UUID
+              {...props}
+              hidden
+              field="id"
+            />
+            <PermissionItemSelect
+              {...l10n.section_items.purchasable_item.permission_item_id}
+              {...props}
+              defaultValue=""
+              field="permission_item_id"
+              permissionSetIds={info?.permission_sets}
+            />
+            {
+              props.item.permission_item_id ? null :
+                <>
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.section_items.purchasable_item.title}
+                    subcategory={l10n.categories.purchase_item}
+                    field="title"
+                  />
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.section_items.purchasable_item.subtitle}
+                    subcategory={l10n.categories.purchase_item}
+                    field="subtitle"
+                  />
+                  <Inputs.TextArea
+                    {...props}
+                    {...l10n.section_items.purchasable_item.description}
+                    subcategory={l10n.categories.purchase_item}
+                    field="description"
+                  />
+                  <MarketplaceSelect
+                    {...props}
+                    {...l10n.section_items.purchasable_item.marketplace}
+                    subcategory={l10n.categories.purchase_item}
+                    path={UrlJoin(props.path, "/marketplace")}
+                    field="marketplace_slug"
+                    defaultFirst
+                  />
+                  <MarketplaceItemSelect
+                    {...props}
+                    {...l10n.section_items.purchasable_item.marketplace_sku}
+                    subcategory={l10n.categories.purchase_item}
+                    marketplaceSlug={props.item?.marketplace?.marketplace_slug}
+                    field="marketplace_sku"
+                    componentProps={{
+                      withBorder: false,
+                      p: 0,
+                      pt: 0,
+                      pb: 0
+                    }}
+                  />
+                </>
+            }
+            <Inputs.Checkbox
+              {...props}
+              {...l10n.section_items.purchasable_item.use_item_image}
+              INVERTED
+              defaultValue={false}
+              subcategory={l10n.categories.purchase_item}
+              field="use_custom_image"
+            />
+            {
+              !props.item.use_custom_image ? null :
+                <Inputs.ImageInput
+                  {...props}
+                  {...l10n.section_items.purchasable_item.image}
+                  subcategory={l10n.categories.purchase_item}
+                  fields={[
+                    {field: "image"}
+                  ]}
+                />
+            }
+            <Inputs.Select
+              {...props}
+              {...l10n.section_items.purchasable_item.redirect_on_purchase}
+              subcategory={l10n.categories.purchase_item}
+              field="redirect_page"
+              defaultValue=""
+              options={[
+                { label: "None", value: "" },
+                { label: "(Property Main Page)", value: "main" },
+                ...Object.keys(info.pages || {})
+                  .filter(pageId => pageId !== "main")
+                  .map(pageId => ({
+                    label: info.pages[pageId].label,
+                    value: pageId
+                  }))
+              ]}
+            />
+          </>
+        );
+      }}
+    />
+  );
+});
+
 const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inputProps, l10n}) => {
   const pages = Object.keys(mediaProperty.pages);
   const mediaProperties = mediaPropertyStore.allMediaProperties
@@ -358,98 +477,9 @@ const MediaPropertySectionItem = observer(() => {
         inputProps={inputProps}
       />
 
-
-
       {
         sectionItem.type !== "item_purchase" ? null :
-          <Inputs.List
-            {...inputProps}
-            {...l10n.section_items.purchasable_items}
-            newItemSpec={MediaPropertySectionItemPurchaseItemSpec}
-            field="items"
-            maw="100%"
-            renderItem={props => {
-              return (
-                <>
-                  <Inputs.UUID
-                    {...props}
-                    hidden
-                    field="id"
-                  />
-                  <PermissionItemSelect
-                    {...l10n.section_items.purchasable_item.permission_item_id}
-                    {...props}
-                    defaultValue=""
-                    field="permission_item_id"
-                    permissionSetIds={info?.permission_sets}
-                  />
-                  {
-                    props.item.permission_item_id ? null :
-                      <>
-                        <Inputs.Text
-                          {...props}
-                          {...l10n.section_items.purchasable_item.title}
-                          subcategory={l10n.categories.purchase_item}
-                          field="title"
-                        />
-                        <Inputs.Text
-                          {...props}
-                          {...l10n.section_items.purchasable_item.subtitle}
-                          subcategory={l10n.categories.purchase_item}
-                          field="subtitle"
-                        />
-                        <Inputs.TextArea
-                          {...props}
-                          {...l10n.section_items.purchasable_item.description}
-                          subcategory={l10n.categories.purchase_item}
-                          field="description"
-                        />
-                        <MarketplaceSelect
-                          {...props}
-                          {...l10n.section_items.purchasable_item.marketplace}
-                          subcategory={l10n.categories.purchase_item}
-                          path={UrlJoin(props.path, "/marketplace")}
-                          field="marketplace_slug"
-                          defaultFirst
-                        />
-                        <MarketplaceItemSelect
-                          {...props}
-                          {...l10n.section_items.purchasable_item.marketplace_sku}
-                          subcategory={l10n.categories.purchase_item}
-                          marketplaceSlug={props.item?.marketplace?.marketplace_slug}
-                          field="marketplace_sku"
-                          componentProps={{
-                            withBorder: false,
-                            p: 0,
-                            pt: 0,
-                            pb: 0
-                          }}
-                        />
-                      </>
-                    }
-                  <Inputs.Checkbox
-                    {...props}
-                    {...l10n.section_items.purchasable_item.use_item_image}
-                    INVERTED
-                    defaultValue={false}
-                    subcategory={l10n.categories.purchase_item}
-                    field="use_custom_image"
-                  />
-                  {
-                    !props.item.use_custom_image ? null :
-                      <Inputs.ImageInput
-                        {...props}
-                        {...l10n.section_items.purchasable_item.image}
-                        subcategory={l10n.categories.purchase_item}
-                        fields={[
-                          {field: "image"}
-                        ]}
-                      />
-                  }
-                </>
-              );
-            }}
-          />
+          <MediaPropertySectionItemPurchaseItems {...inputProps} />
       }
 
       {
