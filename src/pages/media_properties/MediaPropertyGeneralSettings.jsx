@@ -97,7 +97,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.info}
         fields={[
-          { field: "image", aspectRatio: 2/3, ...l10n.general.image },
           { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
           { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
         ]}
@@ -111,6 +110,53 @@ const MediaPropertyGeneralSettings = observer(() => {
           { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.countdown_background_mobile }
         ]}
       />
+
+      <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
+
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.general.image}
+        subcategory={l10n.categories.main_page_display}
+        field="image"
+        aspectRatio={2/3}
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.show_on_main_page}
+        subcategory={l10n.categories.main_page_display}
+        field="show_on_main_page"
+        defaultValue={false}
+      />
+
+      {
+        !info.show_on_main_page ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.parent_property}
+              subcategory={l10n.categories.main_page_display}
+              field="parent_property"
+              options={
+                [
+                  { label: "None", value: "" },
+                  ...(
+                    mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+                      label: mediaProperty.name,
+                      value: mediaProperty.objectId
+                    }))
+                      .filter(({value}) => value !== mediaPropertyId)
+                  )
+                ]}
+            />
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.general.main_page_url}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_url"
+            />
+          </>
+      }
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox

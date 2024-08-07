@@ -305,7 +305,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
                   {...l10n.media.icon}
                   altTextField="alt_text"
                   fields={[
-                    { field: "icon", aspectRatio: 1, baseSize: 100 }
+                    { field: "icon", aspectRatio: 1, baseSize: 75, componentProps: {p: "sm"} }
                   ]}
                 />
               }

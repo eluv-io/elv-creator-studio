@@ -11,7 +11,7 @@ import {
   Text,
   TextInput,
   Checkbox,
-  Paper
+  Paper, Accordion
 } from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
@@ -31,7 +31,7 @@ import {
 } from "@/components/common/MediaCatalog.jsx";
 import {ValidateSlug} from "@/components/common/Validation.jsx";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {IconExternalLink} from "@tabler/icons-react";
+import {IconExternalLink, IconSettings} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
 import {MediaPropertyHeroItemSpec} from "@/specs/MediaPropertySpecs.js";
 
@@ -1128,12 +1128,6 @@ const HeroSectionSettings = observer(() => {
     <>
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.sections.hero_overlap}
-        field="allow_overlap"
-        defaultValue={false}
-      />
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sections.hero_items}
@@ -1150,6 +1144,21 @@ const HeroSectionSettings = observer(() => {
           }
         ]}
       />
+      <Accordion mt="md" maw={uiStore.inputWidthWide} variant="contained">
+        <Accordion.Item value="default">
+          <Accordion.Control icon={<IconSettings />}>
+            { rootStore.l10n.components.forms.advanced_settings }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.sections.hero_overlap}
+              field="allow_overlap"
+              defaultValue={false}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </>
   );
 });

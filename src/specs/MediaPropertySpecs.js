@@ -245,7 +245,6 @@ export const MediaPropertyHeroItemSpec = {
     description: "",
     logo: undefined,
     logo_alt: "",
-    header_logo: undefined,
     background_image: undefined,
     background_image_mobile: undefined
   },
@@ -255,12 +254,12 @@ export const MediaPropertyHeroItemSpec = {
 export const MediaPropertyHeroSectionSpec = {
   ...MediaPropertySectionBaseSpec,
   display: {
-    ...MediaPropertySectionBaseSpec,
+    ...MediaPropertySectionBaseSpec.display,
     display_format: "hero"
   },
   label: "<New Hero Section>",
   type: "hero",
-  allow_overlap: false,
+  allow_overlap: true,
   hero_items: [],
   permissions: {
     behavior: "hide",

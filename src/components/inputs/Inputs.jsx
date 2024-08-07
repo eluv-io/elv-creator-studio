@@ -1253,6 +1253,7 @@ const ImageInput = observer(({
               url={field.url}
               baseSize={field.baseSize}
               horizontal={field.horizontal}
+              {...(field.componentProps || {})}
             />
           )
         }

@@ -18,6 +18,7 @@ form:
     media_property_label: Media Property '{label}'
     general: General Settings
     info: Media Property Info
+    main_page_display: Main Page Display Settings
     domain_settings: Domain Settings
     feature_settings: Features
     theme_settings: Theme
@@ -106,6 +107,15 @@ form:
       description: Other properties within this property
     associated_marketplaces:
       label: Associated Marketplaces
+    show_on_main_page:
+      label: Show on Main Page
+      description: If specified, this property will be visible on the main page of the Eluvio Media Wallet
+    main_page_url:
+      label: Link to Custom URL
+      description: If specified, the link on the main page for this property will link to this url instead of to the property in the Media Wallet
+    parent_property:
+      label: Parent Property
+      description: If specified, this property will be linked as a subproperty of the specified parent property on the main page.
     require_login:
       label: Require Login
       description: If specified, users will be automatically prompted to log in when accessing this property
@@ -139,7 +149,7 @@ form:
         description: The type of content to show in the sidebar
       default_sidebar_content:
         label: Default Sidebar Content
-        description: The type of content to show in the sidebar for media accessed outside of a section
+        description: The type of content to show in the sidebar for media accessed outside of a section, e.g. via search
       sidebar_content_section_id:
         label: Sidebar Content Section
     meta_tags:
@@ -444,7 +454,7 @@ form:
       label: Page Content Sections
       description: Define groups of content that can be displayed on pages
     hero_overlap:
-      label: Allow hero background overlap
+      label: Allow Succeeding Sections to Overlap
       description: If checked, the background image of this section will be allowed to overlap with sections below it.
     hero_items:
       label: Hero Items
