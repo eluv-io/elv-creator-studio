@@ -1131,6 +1131,7 @@ const HeroSectionSettings = observer(() => {
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sections.hero_items}
+        subcategoryFnParams={{fields: ["label", "id"], l10n: l10n.categories.section_hero_item_label}}
         field="hero_items"
         idField="id"
         idPrefix={mediaPropertyStore.ID_PREFIXES.section_hero_item}

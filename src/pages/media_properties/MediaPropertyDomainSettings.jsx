@@ -209,16 +209,16 @@ const FeatureSettings = observer(() => {
         <Stack mt="md" spacing="xs">
           <Inputs.Checkbox
             {...inputProps}
-            {...l10n.domain.features.secondary_marketplace}
+            {...l10n.domain.features.discover}
             defaultValue={true}
-            field="secondary_marketplace"
+            field="discover"
             componentProps={{mb: 0}}
           />
           <Inputs.Checkbox
             {...inputProps}
-            {...l10n.domain.features.activity}
+            {...l10n.domain.features.secondary_marketplace}
             defaultValue={true}
-            field="activity"
+            field="secondary_marketplace"
             componentProps={{mb: 0}}
           />
           <Inputs.Checkbox

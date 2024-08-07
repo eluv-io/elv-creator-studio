@@ -15,11 +15,13 @@ import MediaPropertyDomainSettings from "@/pages/media_properties/MediaPropertyD
 import MediaPropertySectionHeroItem, {
   MediaPropertySectionHeroItemAction
 } from "@/pages/media_properties/MediaPropertySectionHeroItem.jsx";
+import MediaPropertyThemeSettings from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.overview, path: "/media-properties/:mediaPropertyId", Component: <MediaPropertyOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.general, path: "/media-properties/:mediaPropertyId/general", Component: <MediaPropertyGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.theme, path: "/media-properties/:mediaPropertyId/theme", Component: <MediaPropertyThemeSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.search, path: "/media-properties/:mediaPropertyId/search", Component: <MediaPropertySearch /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.pages, path: "/media-properties/:mediaPropertyId/pages", Component: <MediaPropertyPages /> },
     { label: rootStore.l10n.pages.media_property.nav.page, path: "/media-properties/:mediaPropertyId/pages/:pageId", Component: <MediaPropertyPage /> },

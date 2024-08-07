@@ -561,9 +561,27 @@ const CheckboxInput = observer(({
 });
 
 // Rich text
-const RichTextInput = observer(({store, objectId, path, field, category, subcategory, label, description, hint}) => {
+const RichTextInput = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  description,
+  hint,
+  componentProps={},
+  componentPropsVisible={}
+}) => {
   const location = useLocation();
   const [showEditor, setShowEditor] = useState(false);
+  const [editorKey, setEditorKey] = useState(Math.random());
+
+  // React to undo/redo when the editor is open
+  useEffect(() => {
+    setEditorKey(Math.random());
+  }, [store.actionStack[objectId], store.redoStack[objectId]]);
 
   const value = store.GetMetadata({objectId, path, field});
   return (
@@ -580,11 +598,14 @@ const RichTextInput = observer(({store, objectId, path, field, category, subcate
           }
         }
       }}
+      {...componentProps}
+      {...(showEditor ? componentPropsVisible : {})}
     >
       {
         showEditor ?
           <Container p={0} m={0} my="xl">
             <RichTextEditor
+              key={`editor-${editorKey}`}
               store={store}
               objectId={objectId}
               page={location.pathname}
@@ -1382,7 +1403,9 @@ const List = observer(({
   path,
   field,
   category,
+  categoryFnParams,
   subcategory,
+  subcategoryFnParams,
   label,
   hint,
   description,
@@ -1410,6 +1433,14 @@ const List = observer(({
   const location = useLocation();
   const values = (store.GetMetadata({objectId, path, field}) || []);
   simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
+
+  if(categoryFnParams) {
+    category = CategoryFn({store, objectId, path, field, params: categoryFnParams});
+  }
+
+  if(subcategoryFnParams) {
+    subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
+  }
 
   const items = values.map((value, index) => {
     const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";

@@ -8,7 +8,8 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import ColorOptions from "@/components/inputs/media_property/Components.jsx";
+import {MediaPropertyFooterItemSpec} from "@/specs/MediaPropertySpecs.js";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -102,61 +103,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         ]}
       />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.countdown_background}
-        fields={[
-          { field: "countdown_background_desktop", aspectRatio: 16/9, baseSize: 135, ...l10n.general.countdown_background_desktop },
-          { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.countdown_background_mobile }
-        ]}
-      />
-
-      <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
-
-      <Inputs.SingleImageInput
-        {...inputProps}
-        {...l10n.general.image}
-        subcategory={l10n.categories.main_page_display}
-        field="image"
-        aspectRatio={2/3}
-      />
-
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.show_on_main_page}
-        subcategory={l10n.categories.main_page_display}
-        field="show_on_main_page"
-        defaultValue={false}
-      />
-
-      {
-        !info.show_on_main_page ? null :
-          <>
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.general.parent_property}
-              subcategory={l10n.categories.main_page_display}
-              field="parent_property"
-              options={
-                [
-                  { label: "None", value: "" },
-                  ...(
-                    mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-                      label: mediaProperty.name,
-                      value: mediaProperty.objectId
-                    }))
-                      .filter(({value}) => value !== mediaPropertyId)
-                  )
-                ]}
-            />
-            <Inputs.URL
-              {...inputProps}
-              {...l10n.general.main_page_url}
-              subcategory={l10n.categories.main_page_display}
-              field="main_page_url"
-            />
-          </>
-      }
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox
@@ -239,72 +185,160 @@ const MediaPropertyGeneralSettings = observer(() => {
         ]}
       />
 
-      <Title order={3} mt={50} mb="md">{l10n.categories.media_sidebar}</Title>
+
+      <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
+
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.general.image}
+        subcategory={l10n.categories.main_page_display}
+        field="image"
+        aspectRatio={2/3}
+      />
+
       <Inputs.Checkbox
         {...inputProps}
-        {...l10n.general.media_sidebar.show_media_sidebar}
-        path={UrlJoin(inputProps.path, "media_sidebar")}
-        subcategory={l10n.categories.media_sidebar}
+        {...l10n.general.show_on_main_page}
+        subcategory={l10n.categories.main_page_display}
+        field="show_on_main_page"
         defaultValue={false}
-        field="show_media_sidebar"
       />
 
       {
-        !info?.media_sidebar?.show_media_sidebar ? null :
+        !info.show_on_main_page ? null :
           <>
             <Inputs.Select
               {...inputProps}
-              {...l10n.general.media_sidebar.sidebar_content}
-              path={UrlJoin(inputProps.path, "media_sidebar")}
-              subcategory={l10n.categories.media_sidebar}
-              field="sidebar_content"
-              defaultValue="current_section"
-              options={[
-                { label: "Current Section", value: "current_section" },
-                { label: "Specific Section", value: "specific_section" },
-                { label: "All Live Content", value: "live" }
-              ]}
+              {...l10n.general.parent_property}
+              subcategory={l10n.categories.main_page_display}
+              field="parent_property"
+              options={
+                [
+                  { label: "None", value: "" },
+                  ...(
+                    mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+                      label: mediaProperty.name,
+                      value: mediaProperty.objectId
+                    }))
+                      .filter(({value}) => value !== mediaPropertyId)
+                  )
+                ]}
             />
-            {
-              info?.media_sidebar?.sidebar_content !== "current_section" ? null :
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.general.media_sidebar.default_sidebar_content}
-                  path={UrlJoin(inputProps.path, "media_sidebar")}
-                  subcategory={l10n.categories.media_sidebar}
-                  field="default_sidebar_content"
-                  defaultValue="none"
-                  options={[
-                    { label: "None", value: "none" },
-                    { label: "Specific Section", value: "specific_section" },
-                    { label: "All Live Content", value: "live" }
-                  ]}
-                />
-            }
-            {
-              !(
-                info?.media_sidebar?.sidebar_content === "specific_section" ||
-                (
-                  info?.media_sidebar?.sidebar_content === "current_section" &&
-                  info?.media_sidebar?.default_sidebar_content === "specific_section"
-                )
-              ) ? null :
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.general.media_sidebar.sidebar_content_section_id}
-                  path={UrlJoin(inputProps.path, "media_sidebar")}
-                  subcategory={l10n.categories.media_sidebar}
-                  field="sidebar_content_section_id"
-                  defaultValue={Object.keys(info.sections || {})[0]}
-                  options={
-                    Object.keys(info.sections || {}).map(sectionId =>
-                      ({label: info.sections[sectionId].label, value: sectionId})
-                    )
-                  }
-                />
-            }
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.general.main_page_url}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_url"
+            />
           </>
       }
+
+      <Title order={3} mt={50} mb="md">{l10n.categories.footer}</Title>
+
+      <Inputs.List
+        {...inputProps}
+        {...l10n.general.footer_items.footer_items}
+        path="/public/asset_metadata/info/footer"
+        field="items"
+        idField="id"
+        newItemSpec={MediaPropertyFooterItemSpec}
+        showBottomAddButton
+        subcategoryFnParams={{fields: ["label", "text", "id"], l10n: l10n.categories.footer_item_label}}
+        renderItem={({item, ...props}) => {
+          const subcategory = () => LocalizeString(l10n.categories.footer_item_label, { label: item.label });
+
+          return (
+            <>
+              <Inputs.UUID
+                {...props}
+                {...l10n.general.footer_items.id}
+                hidden
+                subcategory={subcategory}
+                field="id"
+              />
+              <Inputs.Text
+                {...props}
+                {...l10n.general.footer_items.label}
+                subcategory={subcategory}
+                field="label"
+              />
+              <Inputs.Text
+                {...props}
+                {...l10n.general.footer_items.text}
+                subcategory={subcategory}
+                field="text"
+              />
+
+              <Inputs.Select
+                {...props}
+                {...l10n.general.footer_items.type}
+                subcategory={subcategory}
+                field="type"
+                defaultValue="link"
+                options={[
+                  { label: l10n.general.footer_items.types.link, value: "link" },
+                  { label: l10n.general.footer_items.types.image, value: "image" },
+                  { label: l10n.general.footer_items.types.rich_text, value: "rich_text" },
+                  { label: l10n.general.footer_items.types.html, value: "html" },
+                ]}
+              />
+              {
+                item.type !== "link" ? null :
+                  <Inputs.URL
+                    {...props}
+                    {...l10n.general.footer_items.link_url}
+                    subcategory={subcategory}
+                    field="url"
+                  />
+              }
+
+              {
+                item.type !== "image" ? null :
+                  <Inputs.ImageInput
+                    {...props}
+                    {...l10n.general.footer_items.image}
+                    subcategory={subcategory}
+                    altTextField="image_alt"
+                    fields={[
+                      { field: "image" },
+                    ]}
+                  />
+              }
+
+              {
+                item.type !== "rich_text" ? null :
+                  <Inputs.RichText
+                    {...props}
+                    {...l10n.general.footer_items.content_rich_text}
+                    subcategory={subcategory}
+                    field="content_rich_text"
+                    componentPropsVisible={{w: uiStore.inputWidth}}
+                  />
+              }
+
+              {
+                item.type !== "html" ? null :
+                  <Inputs.File
+                    {...props}
+                    {...l10n.general.footer_items.content_html}
+                    subcategory={subcategory}
+                    field="content_html"
+                    extensions={["html"]}
+                  />
+              }
+            </>
+          );
+        }}
+      />
+
+      <Inputs.RichText
+        {...inputProps}
+        {...l10n.general.footer_text}
+        path="/public/asset_metadata/info/footer"
+        subcategory={l10n.categories.footer}
+        field="rich_text"
+      />
+
 
       <Title order={3} mt={50}>{l10n.categories.meta_tags}</Title>
       <Title order={6} fw={500} color="dimmed" maw={500} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
@@ -359,63 +393,6 @@ const MediaPropertyGeneralSettings = observer(() => {
           { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
         ]}
       />
-
-      <Title order={3} mt={50} mb="md">{l10n.categories.theme_settings}</Title>
-
-      <ColorOptions
-        {...inputProps}
-        {...l10n.theme.button_style}
-        subcategory={l10n.categories.theme_settings}
-        path="/public/asset_metadata/info/styling"
-        field="button_style"
-        placeholders={{
-          background_color: "#FFFFFF",
-          border_color: "#FFFFFF",
-          text_color: "#000000",
-          border_radius: 5
-        }}
-      />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.theme.font}
-        subcategory={l10n.categories.theme_settings}
-        path="/public/asset_metadata/info/styling"
-        defaultValue=""
-        field="font"
-        options={[
-          { label: "Inter (Default)", value: "" },
-          { label: "Custom Font", value: "custom" },
-        ]}
-      />
-      {
-        info?.styling?.font !== "custom" ? null :
-          <>
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.theme.custom_font_declaration}
-              subcategory={l10n.categories.theme_settings}
-              path="/public/asset_metadata/info/styling"
-              language="css"
-              field="custom_font_declaration"
-            />
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.theme.custom_title_font_declaration}
-              subcategory={l10n.categories.theme_settings}
-              path="/public/asset_metadata/info/styling"
-              language="css"
-              field="custom_title_font_declaration"
-            />
-            <Inputs.Code
-              {...inputProps}
-              {...l10n.theme.custom_font_definition}
-              subcategory={l10n.categories.theme_settings}
-              path="/public/asset_metadata/info/styling"
-              language="css"
-              field="custom_font_definition"
-            />
-          </>
-      }
     </PageContent>
   );
 });

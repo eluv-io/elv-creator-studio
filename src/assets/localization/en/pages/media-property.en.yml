@@ -2,6 +2,7 @@ nav:
   list: Media Properties
   overview: Overview
   general: General
+  theme: Theme and Styling
   domain: Custom Domain Settings
   search: Search
   pages: Pages
@@ -18,16 +19,20 @@ form:
     media_property_label: Media Property '{label}'
     general: General Settings
     info: Media Property Info
+    theme_settings: Theme and Styling Settings
+    theme: Theme
     main_page_display: Main Page Display Settings
     domain_settings: Domain Settings
+    footer: Footer Settings
+    footer_item: Footer Item
+    footer_item_label: Footer Item '{label}'
     feature_settings: Features
-    theme_settings: Theme
     login_settings: Login Settings
     login_theme: Login Theme
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
     permissions: Permission Settings
-    media_sidebar: Media Sidebar
+    media_sidebar: Media Sidebar and Live Content Settings
     meta_tags: Search and Social Preview
     search: Search Settings
     advanced_search: Advanced Search Settings
@@ -224,6 +229,35 @@ form:
         tag_display:
           label: Tag Display
           description: Choose whether this option should be displayed as a select component (only one tag selectable) or a list of checkboxes (multiple selectable)
+    footer_items:
+      footer_items:
+        label: Footer Items
+        description: Specify the content of the footer of your media property. Each footer item can link to a URL, or open a modal containing either an image, rich text content or HTML content
+        fieldLabel: Footer Item
+      type:
+        label: Content Type
+      types:
+        image: Image
+        link: Link
+        rich_text: Rich Text
+        html: HTML Document
+      id:
+        label: ID
+      label:
+        label: Label
+      text:
+        label: Text
+      link_url:
+        label: Link URL
+      image:
+        label: Image
+      content_rich_text:
+        label: Content (Rich Text)
+      content_html:
+        label: Content (HTML)
+    footer_text:
+      label: Footer Text
+      description: Displayed below the footer items
   domain:
     custom_domain:
       label: Custom Domain
@@ -232,6 +266,9 @@ form:
       features:
         label: Features
         description: Enable or disable features on your site
+      discover:
+        label: Discover Link
+        description: Show a link back to the main Eluvio Media Wallet page
       secondary_marketplace:
         label: Secondary Market and Trading
       activity:
