@@ -1,7 +1,9 @@
 import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
-  MediaPropertyContainerSectionSpec, MediaPropertyHeroSectionSpec,
+  MediaPropertyContainerSectionSpec,
+  MediaPropertyHeroItemSpec,
+  MediaPropertyHeroSectionSpec,
   MediaPropertyPageSpec,
   MediaPropertySectionAutomaticSpec,
   MediaPropertySectionItemFilterSpec,
@@ -241,14 +243,50 @@ class MediaPropertyStore {
         const mainPageId = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
         const accessPageId = `${this.ID_PREFIXES["page"]}${GenerateUUID()}`;
 
+        const mainPageHeroSectionId = `${this.ID_PREFIXES["section_hero"]}${GenerateUUID()}`;
+        const mainPageHeroSectionHeroItemId = `${this.ID_PREFIXES["section_hero_item"]}${GenerateUUID()}`;
+        const accessPageHeroSectionId = `${this.ID_PREFIXES["section_hero"]}${GenerateUUID()}`;
+        const accessPageHeroSectionHeroItemId = `${this.ID_PREFIXES["section_hero_item"]}${GenerateUUID()}`;
+
         spec.version = latestVersion;
+
+        spec.sections = {
+          [mainPageHeroSectionId]: {
+            ...Clone(MediaPropertyHeroSectionSpec),
+            id: mainPageHeroSectionId,
+            label: "Main Page Header",
+            hero_items: [{
+              ...Clone(MediaPropertyHeroItemSpec),
+              id: mainPageHeroSectionHeroItemId,
+              label: "Header",
+              display: {
+                ...Clone(MediaPropertyHeroItemSpec.display),
+                title: "Page Header"
+              }
+            }]
+          },
+          [accessPageHeroSectionId]: {
+            ...Clone(MediaPropertyHeroSectionSpec),
+            id: accessPageHeroSectionId,
+            label: "Access Page Header",
+            hero_items: [{
+              ...Clone(MediaPropertyHeroItemSpec),
+              id: accessPageHeroSectionHeroItemId,
+              label: "Header",
+              display: {
+                ...Clone(MediaPropertyHeroItemSpec.display),
+                title: "Page Header"
+              }
+            }]
+          },
+        };
 
         spec.pages = {
           [mainPageId]: {
             ...Clone(MediaPropertyPageSpec),
             id: mainPageId,
-            slug: accessPageId,
             label: "Main Page",
+            sections: [mainPageHeroSectionId],
             permissions: {
               ...Clone(MediaPropertyPageSpec).permissions,
               page_permissions: [],
@@ -259,8 +297,8 @@ class MediaPropertyStore {
           [accessPageId]: {
             ...MediaPropertyPageSpec,
             id: accessPageId,
-            slug: accessPageId,
-            label: "No Access Page"
+            label: "No Access Page",
+            sections: [accessPageHeroSectionId]
           }
         };
 

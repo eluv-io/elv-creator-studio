@@ -181,9 +181,29 @@ const MediaPropertyGeneralSettings = observer(() => {
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
             label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
             value: key
-          }))
+          })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
         ]}
       />
+
+      {
+        info.permissions?.behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="alternate_page_id"
+            options={[
+              { label: "(Property Main Page)", value: "main" },
+              ...Object.keys(info.pages || {})
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
 
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
