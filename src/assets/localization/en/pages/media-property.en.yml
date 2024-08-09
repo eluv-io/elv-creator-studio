@@ -578,7 +578,7 @@ form:
         label: Group By
         description: If specified, section content will be grouped by this attribute
       show_primary_filter_in_page_view:
-        label: Show Primary Filter in Page View (Web Only)
+        label: Show Primary Filter in Page View
         description: If specified, the primary filter options will be shown for this section when displayed on a page.
     section_content:
       label: Section Content

@@ -140,6 +140,11 @@ export const MediaPropertySectionBaseSpec = {
   description: "",
   type: "manual",
   tags: [],
+  filters: {
+    primary_filter: "",
+    filter_options: [],
+    group_by: "",
+  },
   display: {
     title: "",
     subtitle: "",
