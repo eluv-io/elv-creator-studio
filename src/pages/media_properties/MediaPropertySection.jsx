@@ -701,6 +701,22 @@ const FilterOptions = observer(() => {
     <>
       <Inputs.Select
         {...inputProps}
+        {...l10n.general.search.group_by}
+        field="group_by"
+        searchable
+        defaultValue=""
+        options={[
+          {label: "None", value: ""},
+          {label: "Media Type", value: "__media-type"},
+          {label: "Date", value: "__date"},
+          ...(Object.keys(attributes).map(attributeId => ({
+            label: attributes[attributeId].title || "Attribute",
+            value: attributeId
+          })))
+        ]}
+      />
+      <Inputs.Select
+        {...inputProps}
         {...l10n.general.search.primary_filter}
         field="primary_filter"
         searchable
