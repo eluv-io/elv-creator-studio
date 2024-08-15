@@ -303,7 +303,14 @@ export const MediaPropertySpec = {
     advanced_options: []
   },
   domain: {
-    custom_domain: ""
+    custom_domain: "",
+    disable_registration: false,
+    features: {
+      discover: true,
+      gifting: true,
+      secondary_marketplace: true
+    },
+    provider: "ory"
   },
   login: {
     styling: {},

@@ -26,6 +26,8 @@ export const MediaPropertySectionItemPurchaseItems = observer((inputProps) => {
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
   const l10n = rootStore.l10n.pages.media_property.form;
 
+  const secondaryEnabled = info.domain?.features?.secondary_marketplace;
+
   return (
     <Inputs.List
       {...inputProps}
@@ -111,6 +113,20 @@ export const MediaPropertySectionItemPurchaseItems = observer((inputProps) => {
                   ]}
                 />
             }
+            <Inputs.Select
+              {...props}
+              {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+              subcategory={l10n.categories.purchase_item}
+              field="secondary_market_purchase_option"
+              defaultValue=""
+              disabled={!secondaryEnabled}
+              options={[
+                { label: "None", value: "" },
+                { label: "Show", value: "show" },
+                { label: "Show if Out of Stock", value: "out_of_stock" },
+                { label: "Secondary Only", value: "only" }
+              ]}
+            />
             <Inputs.Select
               {...props}
               {...l10n.section_items.purchasable_item.redirect_on_purchase}

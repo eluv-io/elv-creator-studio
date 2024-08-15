@@ -706,6 +706,9 @@ form:
         label: Marketplace
       marketplace_sku:
         label: Item
+      secondary_market_purchase_option:
+        label: Secondary Market Purchase Options
+        description: Specify if you want to present an option for the user to purchase this item from the secondary marketplace
       redirect_on_purchase:
         label: Redirect After Purchase
         description: If specified, the user will be redirected to this page after purchasing this item
