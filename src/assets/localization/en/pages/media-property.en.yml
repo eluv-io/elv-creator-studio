@@ -55,7 +55,7 @@ form:
     section_item_label: Section Item `{label}`
     section_item_content: Section Item Content
     section_item_presentation: Section Item Presentation
-    section_full_content_page: Full Section Content Page
+    section_full_content_page: "'View All' Page Filters"
     section_hero_item: Hero Item
     section_hero_item_presentation: Hero Item Presentation
     section_hero_item_label: Hero Item '{label}'
@@ -93,6 +93,9 @@ form:
     image:
       label: Image
       description: Portrait (2:3)
+    video:
+      label: Video
+      description: Silent, looping animation replacing the image on the main page
     header_logo:
       label: Header Logo
     tv_header_logo:

@@ -260,6 +260,12 @@ const MediaConfiguration = observer(({mediaItem}) => {
                   subcategory={l10n.categories.media}
                   field="end_time"
                 />
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.media.enable_dvr}
+                  subcategory={l10n.categories.media}
+                  field="enable_dvr"
+                />
               </>
           }
           {

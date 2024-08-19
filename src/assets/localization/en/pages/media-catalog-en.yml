@@ -231,6 +231,9 @@ form:
     end_time:
       label: End Time
       description: Approximate end time of this live video
+    enable_dvr:
+      label: Enable DVR
+      description: Allow users to navigate back to previous parts of the live recording
     override_settings_when_viewed:
       label: Use different settings when viewed
       description: If specified, you can show a different title, description, etc. to use when this media is being viewed
