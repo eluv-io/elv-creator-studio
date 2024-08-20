@@ -144,7 +144,7 @@ const DeploymentStatus = observer(({mode}) => {
                 try {
                   setDeploying(true);
 
-                  await tenantStore.DeployTenant();
+                  await tenantStore.DeployTenant({mode});
                 } finally {
                   setDeploying(false);
                 }
@@ -274,8 +274,11 @@ const TenantOverview = observer(() => {
 
         <Title order={3} mt={50} fw={500} mb="md">{ l10n.overview.deployment }</Title>
 
-        <DeploymentStatus mode="production" />
-        <DeploymentStatus mode="staging" />
+        <DeploymentStatus mode="production"/>
+        {
+          rootStore.network !== "main" ? null :
+            <DeploymentStatus mode="staging" />
+        }
       </Container>
 
       <Title fw={500} order={3} mt={50} mb="md">{ l10n.mediaProperty.plural }</Title>

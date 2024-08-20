@@ -338,10 +338,11 @@ class TenantStore {
     yield this.Reload();
   });
 
-  DeployTenant = flow(function * () {
+  DeployTenant = flow(function * ({mode}) {
     yield this.client.walletClient.DeployTenant({
       tenantId: this.rootStore.tenantId,
-      tenantSlug: this.tenantSlug
+      tenantSlug: this.tenantSlug,
+      environment: mode === "staging" ? "staging" : "production"
     });
 
     yield new Promise(resolve => setTimeout(resolve, 5000));
