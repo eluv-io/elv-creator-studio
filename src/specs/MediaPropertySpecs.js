@@ -117,6 +117,14 @@ export const MediaPropertySectionItemMarketplaceLinkSpec = {
   marketplace_sku: ""
 };
 
+export const MediaPropertySectionItemRedeemableOfferSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "redeemable_offer",
+  marketplace: undefined,
+  marketplace_sku: "",
+  offer_id: ""
+};
+
 export const MediaPropertySectionItemPurchaseSpec = {
   ...MediaPropertySectionItemBaseSpec,
   type: "item_purchase",

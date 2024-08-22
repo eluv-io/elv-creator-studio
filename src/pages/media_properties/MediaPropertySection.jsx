@@ -69,7 +69,9 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
       pageId: value => form.values.type !== "page_link" || value ? null : l10n.section_items.create.validation.page,
       subpropertyId: value => form.values.type !== "subproperty_link" || value ? null : l10n.section_items.create.validation.subproperty,
       propertyId: value => form.values.type !== "property_link" || value ? null : l10n.section_items.create.validation.property,
-      marketplaceId: value => form.values.type !== "marketplace_link" || value ? null : l10n.section_items.create.validation.marketplace
+      marketplaceId: value => !["marketplace_link", "redeemable_offer"].includes(form.values.type) || value ? null : l10n.section_items.create.validation.marketplace,
+      marketplaceSKU: value => form.values.type !== "redeemable_offer" || value ? null :  l10n.section_items.create.validation.marketplace_item,
+      offerId: value =>form.values.type !== "redeemable_offer" || value ? null : l10n.section_items.create.validation.offer_id
     }
   });
 
@@ -77,8 +79,14 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
     mediaPropertyStore.GetMediaItem({mediaItemId})
   );
 
+  const marketplaceItem = (marketplaceStore.marketplaces[form.values.marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [])
+    ?.find(item => item.sku === form.values.marketplaceSKU);
+  const redeemableOffers = (marketplaceItem?.nft_template?.nft?.redeemable_offers || [])
+    .filter(offer => !isNaN(parseInt(offer.offer_id)));
+
   useEffect(() => {
     form.getInputProps("marketplaceSKU").onChange("");
+    form.getInputProps("offerId").onChange("");
   }, [form.values.marketplaceId]);
 
   useEffect(() => {
@@ -205,6 +213,7 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
 
       break;
     case "marketplace_link":
+    case "redeemable_offer":
       formContent = (
         <>
           <Select
@@ -231,6 +240,18 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
               ...form.getInputProps("marketplaceSKU")
             }}
           />
+          {
+            form.values.type !== "redeemable_offer" ? null :
+              <Select
+                withinPortal
+                {...l10n.section_items.redeemable_offer}
+                data={[
+                  { label: "<Select Offer>", value: "" },
+                  ...(redeemableOffers.map(offer => ({label: offer.name, value: offer.offer_id})))
+                ]}
+                {...form.getInputProps("offerId")}
+              />
+          }
         </>
       );
 
@@ -1355,6 +1376,7 @@ const MediaPropertySection = observer(() => {
 
   const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId}) || [];
   const specialSectionType = !["manual", "automatic"].includes(section.type);
+  const secondaryEnabled = info.domain?.features?.secondary_marketplace;
 
   return (
     <PageContent
@@ -1455,7 +1477,23 @@ const MediaPropertySection = observer(() => {
             ]}
           />
       }
-
+      {
+        section.permissions?.behavior !== "show_purchase" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+            subcategory={l10n.categories.permissions}
+            field="secondary_market_purchase_option"
+            defaultValue=""
+            disabled={!secondaryEnabled}
+            options={[
+              { label: "None", value: "" },
+              { label: "Show", value: "show" },
+              { label: "Show if Out of Stock", value: "out_of_stock" },
+              { label: "Secondary Only", value: "only" }
+            ]}
+          />
+      }
       {
         (info.permission_sets || []).length === 0 ? null :
           <>

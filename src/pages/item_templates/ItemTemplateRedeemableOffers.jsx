@@ -74,8 +74,13 @@ export const ItemTemplateRedeemableOffer = observer(() => {
       />
       <Inputs.Text
         {...inputProps}
-        {...l10n.redeemable_offers.description_text}
+        {...l10n.redeemable_offers.title}
         field="name"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.redeemable_offers.subtitle}
+        field="subtitle"
       />
       <Inputs.TextArea
         {...inputProps}

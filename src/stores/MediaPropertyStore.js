@@ -45,6 +45,7 @@ class MediaPropertyStore {
     "page_link": "Page Link",
     "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
+    "redeemable_offer": "Redeemable Offer",
     "marketplace_link": "Marketplace Link"
   };
 
@@ -446,11 +447,12 @@ class MediaPropertyStore {
     subpropertyId,
     propertyPageId,
     marketplaceId,
-    marketplaceSKU
+    marketplaceSKU,
+    offerId
   }) {
     let id = `${this.ID_PREFIXES["section_item"]}${GenerateUUID()}`;
 
-    let spec;
+    let spec, marketplace;
     switch(type) {
       case "media":
         // eslint-disable-next-line no-case-declarations
@@ -482,14 +484,26 @@ class MediaPropertyStore {
         break;
       case "marketplace_link":
         spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);
-        // eslint-disable-next-line no-case-declarations
-        const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+         
+        marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
         spec.marketplace = {
           marketplace_id: marketplaceId,
           tenant_slug: marketplace.tenantSlug,
           marketplace_slug: marketplace.marketplaceSlug
         };
         spec.marketplace_sku = marketplaceSKU;
+        break;
+      case "redeemable_offer":
+        spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);
+         
+        marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+        spec.marketplace = {
+          marketplace_id: marketplaceId,
+          tenant_slug: marketplace.tenantSlug,
+          marketplace_slug: marketplace.marketplaceSlug
+        };
+        spec.marketplace_sku = marketplaceSKU;
+        spec.offer_id = offerId;
         break;
     }
 

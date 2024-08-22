@@ -236,8 +236,12 @@ form:
       label: Offer ID
     name:
       label: Name
+    title:
+      label: Title
+    subtitle:
+      label: Subtitle
     description_text:
-      label: Description (Plain Text)
+      label: Description
     description:
       label: Description (Rich Text)
     tags:

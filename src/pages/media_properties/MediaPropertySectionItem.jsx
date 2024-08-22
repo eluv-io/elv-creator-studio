@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore, uiStore, mediaCatalogStore} from "@/stores";
+import {rootStore, mediaPropertyStore, uiStore, mediaCatalogStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
@@ -169,6 +169,14 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
     mediaPropertyStore.LoadMediaProperty({mediaPropertyId: propertyId});
   }, [sectionItem.property_id, sectionItem.subproperty_id, sectionItem.type]);
 
+  useEffect(() => {
+    if(!["marketplace_link", "redeemable_offer"].includes(sectionItem.type)) {
+      return;
+    }
+
+    marketplaceStore.LoadMarketplace({marketplaceId: sectionItem.marketplace.marketplace_id});
+  }, []);
+
   let property;
   switch(sectionItem.type) {
     case "media":
@@ -244,9 +252,18 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
         </>
       );
     case "marketplace_link":
+    case "redeemable_offer":
+      // eslint-disable-next-line no-case-declarations
+      const marketplaceItem = (marketplaceStore.marketplaces[sectionItem.marketplace?.marketplace_id]?.metadata?.public?.asset_metadata?.info?.items || [])
+        ?.find(item => item.sku === sectionItem.marketplace_sku);
+      // eslint-disable-next-line no-case-declarations
+      const redeemableOffers = (marketplaceItem?.nft_template?.nft?.redeemable_offers || [])
+        .filter(offer => !isNaN(parseInt(offer.offer_id)));
+
       return (
         <>
           <MarketplaceSelect
+            disabled
             {...inputProps}
             {...l10n.section_items.marketplace}
             path={UrlJoin(inputProps.path, "/marketplace")}
@@ -255,16 +272,26 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
           <MarketplaceItemSelect
             {...inputProps}
             {...l10n.section_items.marketplace_sku}
+            disabled
             marketplaceSlug={sectionItem.marketplace.marketplace_slug}
             field="marketplace_sku"
             componentProps={{
               withBorder: false,
               p: 0,
               pt: 0,
-              pb: 0,
-              mb:0
+              pb: 0
             }}
           />
+          {
+            sectionItem.type !== "redeemable_offer" ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.section_items.redeemable_offer}
+                disabled
+                field="offer_id"
+                options={redeemableOffers.map(offer => ({label: offer.name, value: offer.offer_id}))}
+              />
+          }
         </>
       );
   }
@@ -381,6 +408,7 @@ const MediaPropertySectionItem = observer(() => {
   };
 
   const mediaItem = sectionItem.type !== "media" ? null : mediaPropertyStore.GetMediaItem({mediaItemId: sectionItem.media_id});
+  const secondaryEnabled = info.domain?.features?.secondary_marketplace;
 
   return (
     <PageContent
@@ -466,6 +494,23 @@ const MediaPropertySectionItem = observer(() => {
                   label: info.pages[pageId].label,
                   value: pageId
                 }))
+            ]}
+          />
+      }
+      {
+        sectionItem.permissions?.behavior !== "show_purchase" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+            subcategory={l10n.categories.permissions}
+            field="secondary_market_purchase_option"
+            defaultValue=""
+            disabled={!secondaryEnabled}
+            options={[
+              { label: "None", value: "" },
+              { label: "Show", value: "show" },
+              { label: "Show if Out of Stock", value: "out_of_stock" },
+              { label: "Secondary Only", value: "only" }
             ]}
           />
       }

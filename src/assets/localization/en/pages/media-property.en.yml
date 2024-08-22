@@ -643,6 +643,8 @@ form:
         property: Property must be specified
         subproperty: Subproperty must be specified
         marketplace: Marketplace must be specified
+        marketplace_item_id: Item must be specified
+        offer_id: Offer must be specified
     type:
       label: Type
     label:
@@ -685,8 +687,9 @@ form:
     marketplace:
       label: Marketplace
     marketplace_sku:
-      label: Marketplace Item (optional)
-      description: Link to a specific item page
+      label: Marketplace Item
+    redeemable_offer:
+      label: Redeemable Offer
     purchasable_items:
       label: Purchasable Items
       fieldLabel: Item

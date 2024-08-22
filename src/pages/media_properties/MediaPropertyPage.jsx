@@ -331,6 +331,7 @@ const MediaPropertyPage = observer(() => {
     subcategory: l10n.categories.general,
     path: UrlJoin("/public/asset_metadata/info/pages", pageId)
   };
+  const secondaryEnabled = info.domain?.features?.secondary_marketplace;
 
   return (
     <PageContent
@@ -428,6 +429,24 @@ const MediaPropertyPage = observer(() => {
                   ]}
                 />
             }
+            {
+              page.permissions?.page_permissions_behavior !== "show_purchase" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+                  subcategory={l10n.categories.permissions}
+                  path={UrlJoin(inputProps.path, "permissions")}
+                  field="secondary_market_purchase_option"
+                  defaultValue=""
+                  disabled={!secondaryEnabled}
+                  options={[
+                    { label: "None", value: "" },
+                    { label: "Show", value: "show" },
+                    { label: "Show if Out of Stock", value: "out_of_stock" },
+                    { label: "Secondary Only", value: "only" }
+                  ]}
+                />
+            }
           </>
       }
 
@@ -464,6 +483,23 @@ const MediaPropertyPage = observer(() => {
                   label: info.pages[pageId].label,
                   value: pageId
                 }))
+            ]}
+          />
+      }
+      {
+        page.permissions?.behavior !== "show_purchase" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+            subcategory={l10n.categories.permissions}
+            field="secondary_market_purchase_option"
+            defaultValue=""
+            disabled={!secondaryEnabled}
+            options={[
+              { label: "None", value: "" },
+              { label: "Show", value: "show" },
+              { label: "Show if Out of Stock", value: "out_of_stock" },
+              { label: "Secondary Only", value: "only" }
             ]}
           />
       }
