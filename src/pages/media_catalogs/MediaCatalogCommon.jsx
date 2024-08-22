@@ -267,6 +267,23 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         field="description_rich_text"
       />
 
+      {
+        type === "media" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.media.preferred_aspect_ratio}
+            defaultValue="Landscape"
+            field="preferred_aspect_ratio"
+            options={
+              [
+                ...Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
+                  .map(value => value === "Mixed" ? undefined : ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}))
+                  .filter(option => option)
+              ]
+            }
+          />
+      }
+
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.media.thumbnail_images}

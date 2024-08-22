@@ -192,6 +192,8 @@ form:
       label: Description
     description_rich_text:
       label: Description (Rich Text)
+    preferred_aspect_ratio:
+      label: Preferred Aspect Ratio
     tags:
       label: Tags
       description: Configure available tags on the 'Tags and Attributes' page
