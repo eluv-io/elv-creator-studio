@@ -174,6 +174,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
         minHeight={150}
         fetching={!items}
         idAccessor="slug"
+        verticalSpacing={0}
         records={items || []}
         columns={[
           {

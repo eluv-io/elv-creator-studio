@@ -434,7 +434,7 @@ const SectionContentList = observer(() => {
         }}
         columns={[
           {
-            label: l10n.sections.label.label,
+            label: l10n.section_items.label.label,
             field: "label",
             render: sectionItem =>
               <SectionItemTitle
@@ -1483,6 +1483,7 @@ const MediaPropertySection = observer(() => {
             {...inputProps}
             {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
             subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
             field="secondary_market_purchase_option"
             defaultValue=""
             disabled={!secondaryEnabled}

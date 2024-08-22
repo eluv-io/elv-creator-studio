@@ -2,15 +2,15 @@ import {observer} from "mobx-react-lite";
 import {Link, useParams} from "react-router-dom";
 import {rootStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import Inputs from "@/components/inputs/Inputs";
+import Inputs, {Confirm} from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import {Group, Title, Text} from "@mantine/core";
+import {Button, Group, Title, Text} from "@mantine/core";
 import {IconButton, ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
 
 import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
-import {IconCircleCheck, IconX, IconClock, IconTemplate} from "@tabler/icons-react";
+import {IconCircleCheck, IconX, IconClock, IconTemplate, IconLink} from "@tabler/icons-react";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -388,6 +388,42 @@ const MarketplaceItems = observer(() => {
       title={`${info.branding?.name || "Marketplace"} - Items`}
       section="marketplace"
       useHistory
+      titleContent={
+        <Button
+          label={l10n.items.update_links}
+          Icon={IconLink}
+          color="blue.6"
+          onClick={() => {
+            Confirm({
+              text: l10n.items.update_links_confirm,
+              onConfirm: () => {
+                info.items.forEach((item, index) =>
+                  marketplaceStore.SetLink({
+                    ...l10n.item.item_template,
+                    store: marketplaceStore,
+                    objectId: marketplaceId,
+                    category: ListItemCategory({
+                      store: marketplaceStore,
+                      objectId: marketplaceId,
+                      listPath: "/public/asset_metadata/info/items",
+                      idField: "sku",
+                      id: item.sku,
+                      l10n: l10n.categories.item_label
+                    }),
+                    subcategory: l10n.categories.item_info,
+                    page: location.pathname,
+                    path: UrlJoin("/public/asset_metadata/info/items", index.toString()),
+                    field: "nft_template",
+                    linkHash: item.nft_template["."].source
+                  })
+                );
+              }
+            });
+          }}
+        >
+          { l10n.items.update_links_button }
+        </Button>
+      }
     >
       <Inputs.CollectionTable
         {...inputProps}
@@ -402,6 +438,38 @@ const MarketplaceItems = observer(() => {
           value.sku?.toLowerCase().includes(filter.toLowerCase())
         }
         newItemSpec={MarketplaceItemSpec}
+        Actions={(item, index) =>
+          <IconButton
+            variant="transparent"
+            disabled={!item.nft_template}
+            label={LocalizeString(l10n.item.update_link, {label: item.name || item.label})}
+            Icon={IconLink}
+            color="blue.6"
+            onClick={() => {
+              Confirm({
+                text: LocalizeString(l10n.item.update_link_confirm, {label: item.name || item.label}),
+                onConfirm: () => marketplaceStore.SetLink({
+                  ...l10n.item.item_template,
+                  store: marketplaceStore,
+                  objectId: marketplaceId,
+                  category: ListItemCategory({
+                    store: marketplaceStore,
+                    objectId: marketplaceId,
+                    listPath: "/public/asset_metadata/info/items",
+                    idField: "sku",
+                    id: item.sku,
+                    l10n: l10n.categories.item_label
+                  }),
+                  subcategory: l10n.categories.item_info,
+                  page: location.pathname,
+                  path: UrlJoin("/public/asset_metadata/info/items", index.toString()),
+                  field: "nft_template",
+                  linkHash: item.nft_template["."].source
+                })
+              });
+            }}
+          />
+        }
         columns={[
           {
             label: l10n.items.items.columns.name,

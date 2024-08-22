@@ -503,6 +503,7 @@ const MediaPropertySectionItem = observer(() => {
             {...inputProps}
             {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
             subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
             field="secondary_market_purchase_option"
             defaultValue=""
             disabled={!secondaryEnabled}

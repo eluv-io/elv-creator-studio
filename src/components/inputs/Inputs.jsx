@@ -1665,7 +1665,7 @@ const CollectionTableRows = observer(({
                 <Group spacing={6} position="center" noWrap onClick={event => event.stopPropagation()}>
                   {
                     !Actions ? null :
-                      Actions(value)
+                      Actions(value, index)
                   }
                   {
                     !editable ? null :
@@ -2009,7 +2009,7 @@ const ReferenceTable = observer(({
                 accessor: "id",
                 width: 120 + (Actions ? 60 : 0) + (CopyItem ? 60 : 0),
                 title: "",
-                render: item => {
+                render: (item) => {
                   const itemName = item[nameField] || fieldLabel;
 
                   return (

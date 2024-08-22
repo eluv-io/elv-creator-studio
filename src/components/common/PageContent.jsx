@@ -9,6 +9,7 @@ import {IconButton} from "@/components/common/Misc";
 
 const PageContent = observer(({
   title,
+  titleContent,
   subtitle,
   section,
   useHistory,
@@ -27,17 +28,20 @@ const PageContent = observer(({
       {
         !title ? null :
           <Title order={2} mb={subtitle ? 0 : "xl"} maw={uiStore.inputWidthWide}>
-            <Group align="center" noWrap>
-              {
-                !backLink ? null :
-                  <IconButton
-                    label={rootStore.l10n.components.actions.back}
-                    component={Link}
-                    to={backLink}
-                    icon={<IconArrowBackUp size={30} />}
-                  />
-              }
-              {title}
+            <Group position="apart" align="center">
+              <Group align="center" noWrap>
+                {
+                  !backLink ? null :
+                    <IconButton
+                      label={rootStore.l10n.components.actions.back}
+                      component={Link}
+                      to={backLink}
+                      icon={<IconArrowBackUp size={30} />}
+                    />
+                }
+                {title}
+              </Group>
+              { titleContent }
             </Group>
           </Title>
       }

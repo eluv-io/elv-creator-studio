@@ -2,9 +2,11 @@ import {flow, runInAction, toJS} from "mobx";
 import UrlJoin from "url-join";
 import Set from "lodash/set";
 import Get from "lodash/get";
+import {rootStore} from "@/stores/index.js";
 import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
+import {Utils} from "@eluvio/elv-client-js";
 
 export const ACTIONS = {
   MODIFY_FIELD: {
@@ -304,6 +306,7 @@ const SetLink = flow(function * ({
   path,
   field,
   linkObjectId,
+  linkHash,
   linkType="meta",
   linkPath="/public/asset_metadata",
   category,
@@ -313,6 +316,10 @@ const SetLink = flow(function * ({
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  if(linkHash) {
+    linkObjectId = Utils.DecodeVersionHash(linkHash).objectId;
   }
 
   const fullPath = UrlJoin(path, field);
@@ -325,6 +332,11 @@ const SetLink = flow(function * ({
   if(linkObjectId) {
     const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
     const originalHash = ExtractHashFromLink(originalValue);
+
+    if(targetHash === originalHash) {
+      rootStore.DebugLog({message: "Set Link: Already at latest version | " + label});
+      return;
+    }
 
     if(originalHash && this.utils.DecodeVersionHash(originalHash)?.objectId === linkObjectId) {
       actionType = "UPDATE_LINK";

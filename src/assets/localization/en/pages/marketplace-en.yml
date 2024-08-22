@@ -266,12 +266,17 @@ form:
         name: Name
         price: Price
         status: Status
+    update_links_button: Update Item Templates
+    update_links: Update item template links for all items
+    update_links_confirm: Are you sure you want to update all item template links for all items in this marketplace?
     status:
       available: Available
       not_for_sale: Not for Sale
       unreleased: Available {date}
       expired: Expired {date}
   item:
+    update_link: Update item template link for '{label}'
+    update_link_confirm: Are you sure you want to update item template link for '{label}'
     image:
       label: Image
     name:

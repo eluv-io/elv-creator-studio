@@ -159,7 +159,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                   {...l10n.general.alternate_page}
                   subcategory={l10n.categories.permissions}
                   path={UrlJoin(inputProps.path, "permissions")}
-                  field="alternate_page_id"
+                  field="property_permissions_alternate_page_id"
                   options={[
                     ...Object.keys(info.pages || {})
                       .filter(pageId => pageId !== "main")
@@ -177,7 +177,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                   {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
                   subcategory={l10n.categories.permissions}
                   path={UrlJoin(inputProps.path, "permissions")}
-                  field="secondary_market_purchase_option"
+                  field="property_permissions_secondary_market_purchase_option"
                   defaultValue=""
                   disabled={!secondaryEnabled}
                   options={[
@@ -230,6 +230,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             {...inputProps}
             {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
             subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
             field="secondary_market_purchase_option"
             defaultValue=""
             disabled={!secondaryEnabled}

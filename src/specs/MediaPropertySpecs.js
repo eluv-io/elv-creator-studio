@@ -16,6 +16,7 @@ const MediaPropertyPermissionSpec = {
   permissions: {
     behavior: "",
     alternate_page_id: undefined,
+    secondary_market_purchase_option: "",
     permission_item_ids: []
   }
 };
@@ -73,7 +74,12 @@ export const MediaPropertySectionItemBaseSpec = {
     banner_image: undefined,
     banner_image_mobile: undefined
   },
-  ...MediaPropertyPermissionSpec
+  permissions: {
+    page_permissions: "",
+    page_permissions_alternate_page_id: "",
+    page_permissions_secondary_market_purchase_option: "",
+    ...MediaPropertyPermissionSpec
+  }
 };
 
 export const MediaPropertySectionItemMediaSpec = {
@@ -299,7 +305,12 @@ export const MediaPropertySpec = {
   },
   permissions: {
     property_permissions: [],
-    property_permission_behavior: "show_alternate_page"
+    property_permission_behavior: "show_alternate_page",
+    property_permissions_alternate_page_id: "",
+    property_permissions_secondary_market_purchase_option: "",
+    behavior: "",
+    alternate_page_id: "",
+    secondary_market_purchase_option: ""
   },
   permission_behavior: "hide",
   search: {
