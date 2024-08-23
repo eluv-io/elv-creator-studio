@@ -6,12 +6,14 @@ import {
   MediaPropertyHeroSectionSpec,
   MediaPropertyPageSpec,
   MediaPropertySectionAutomaticSpec,
+  MediaPropertySectionItemExternalLinkSpec,
   MediaPropertySectionItemFilterSpec,
   MediaPropertySectionItemMarketplaceLinkSpec,
   MediaPropertySectionItemMediaSpec,
   MediaPropertySectionItemPageLinkSpec,
   MediaPropertySectionItemPropertyLinkSpec,
   MediaPropertySectionItemPurchaseSpec,
+  MediaPropertySectionItemRedeemableOfferSpec,
   MediaPropertySectionItemSubpropertyLinkSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
@@ -46,7 +48,7 @@ class MediaPropertyStore {
     "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
     "redeemable_offer": "Redeemable Offer",
-    "marketplace_link": "Marketplace Link"
+    "external_link": "External Link"
   };
 
   PERMISSION_BEHAVIORS = {
@@ -448,7 +450,8 @@ class MediaPropertyStore {
     propertyPageId,
     marketplaceId,
     marketplaceSKU,
-    offerId
+    offerId,
+    url
   }) {
     let id = `${this.ID_PREFIXES["section_item"]}${GenerateUUID()}`;
 
@@ -484,7 +487,7 @@ class MediaPropertyStore {
         break;
       case "marketplace_link":
         spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);
-         
+
         marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
         spec.marketplace = {
           marketplace_id: marketplaceId,
@@ -494,8 +497,8 @@ class MediaPropertyStore {
         spec.marketplace_sku = marketplaceSKU;
         break;
       case "redeemable_offer":
-        spec = Clone(MediaPropertySectionItemMarketplaceLinkSpec);
-         
+        spec = Clone(MediaPropertySectionItemRedeemableOfferSpec);
+
         marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
         spec.marketplace = {
           marketplace_id: marketplaceId,
@@ -504,6 +507,10 @@ class MediaPropertyStore {
         };
         spec.marketplace_sku = marketplaceSKU;
         spec.offer_id = offerId;
+        break;
+      case "external_link":
+        spec = Clone(MediaPropertySectionItemExternalLinkSpec);
+        spec.url = url;
         break;
     }
 

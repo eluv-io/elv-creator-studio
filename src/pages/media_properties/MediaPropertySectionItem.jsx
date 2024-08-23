@@ -294,6 +294,14 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
           }
         </>
       );
+    case "external_link":
+      return (
+        <Inputs.URL
+          {...inputProps}
+          {...l10n.section_items.url}
+          field="url"
+        />
+      );
   }
 });
 

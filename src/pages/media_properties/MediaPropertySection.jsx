@@ -29,7 +29,7 @@ import {
   MediaItemPermissionIcon,
   MediaPropertySectionPermissionIcon
 } from "@/components/common/MediaCatalog.jsx";
-import {ValidateSlug} from "@/components/common/Validation.jsx";
+import {ValidateSlug, ValidateUrl} from "@/components/common/Validation.jsx";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {IconExternalLink, IconSettings} from "@tabler/icons-react";
 import {MediaPropertySectionSelectionModal} from "@/pages/media_properties/MediaPropertySections.jsx";
@@ -62,6 +62,8 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
       propertyPageId: "main",
       marketplaceId: marketplaces[0]?.objectId,
       marketplaceSKU: "",
+      offerId: "",
+      url: ""
     },
     validate: {
       label: value => form.values.type === "media" || value ? null : l10n.section_items.create.validation.label,
@@ -71,7 +73,8 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
       propertyId: value => form.values.type !== "property_link" || value ? null : l10n.section_items.create.validation.property,
       marketplaceId: value => !["marketplace_link", "redeemable_offer"].includes(form.values.type) || value ? null : l10n.section_items.create.validation.marketplace,
       marketplaceSKU: value => form.values.type !== "redeemable_offer" || value ? null :  l10n.section_items.create.validation.marketplace_item,
-      offerId: value =>form.values.type !== "redeemable_offer" || value ? null : l10n.section_items.create.validation.offer_id
+      offerId: value => form.values.type !== "redeemable_offer" || value ? null : l10n.section_items.create.validation.offer_id,
+      url: value => form.values.type !== "external_link" || ValidateUrl(value) === undefined ? null : l10n.section_items.create.validation.url
     }
   });
 
@@ -253,6 +256,15 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
               />
           }
         </>
+      );
+
+      break;
+    case "external_link":
+      formContent = (
+        <TextInput
+          {...l10n.section_items.url}
+          {...form.getInputProps("url")}
+        />
       );
 
       break;

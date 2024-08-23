@@ -131,6 +131,12 @@ export const MediaPropertySectionItemRedeemableOfferSpec = {
   offer_id: ""
 };
 
+export const MediaPropertySectionItemExternalLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "external_link",
+  url: ""
+};
+
 export const MediaPropertySectionItemPurchaseSpec = {
   ...MediaPropertySectionItemBaseSpec,
   type: "item_purchase",

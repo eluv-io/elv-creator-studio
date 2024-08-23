@@ -648,6 +648,7 @@ form:
         marketplace: Marketplace must be specified
         marketplace_item_id: Item must be specified
         offer_id: Offer must be specified
+        url: URL is not valid
     type:
       label: Type
     label:
@@ -693,6 +694,8 @@ form:
       label: Marketplace Item
     redeemable_offer:
       label: Redeemable Offer
+    url:
+      label: External URL
     purchasable_items:
       label: Purchasable Items
       fieldLabel: Item
