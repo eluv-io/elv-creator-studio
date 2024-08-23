@@ -1046,6 +1046,19 @@ const ContentSectionDisplaySettings = observer(() => {
                 ]
               }
             />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.text_justification}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              defaultValue="left"
+              field="text_justification"
+              options={[
+                {label: "Left", value: "left"},
+                {label: "Center", value: "center"},
+                {label: "Right", value: "right"},
+              ]}
+            />
             {
               section.display?.display_format !== "grid" || !section.display?.aspect_ratio ? null :
                 <>
