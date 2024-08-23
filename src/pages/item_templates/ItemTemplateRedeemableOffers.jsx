@@ -102,11 +102,6 @@ export const ItemTemplateRedeemableOffer = observer(() => {
         {...l10n.redeemable_offers.expiration_date}
         field="expires_at"
       />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.redeemable_offers.style_variant}
-        field="style"
-      />
       <Inputs.FabricBrowser
         {...inputProps}
         {...l10n.redeemable_offers.animation}
@@ -140,14 +135,6 @@ export const ItemTemplateRedeemableOffer = observer(() => {
       {
         redeemableOffer?.visibility?.hide ? null :
           <>
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.redeemable_offers.featured}
-              subcategory={l10n.categories.redeemable_offer_visibility}
-              path={UrlJoin(inputProps.path, "visibility")}
-              field="featured"
-              defaultValue={false}
-            />
             <Inputs.Checkbox
               {...inputProps}
               {...l10n.redeemable_offers.hide_if_unreleased}

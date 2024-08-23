@@ -33,6 +33,7 @@ form:
     gallery_settings: Gallery Settings
     gallery_item: Gallery Item
     gallery_item_label: Gallery Item '{label}'
+    player_settings: Video Player Settings
     migrate_media_from_template_label: Migrate Media from '{label}'
   type:
     label: Content Type
@@ -214,9 +215,6 @@ form:
     clip_end_time:
       label: Clip End Time (Seconds)
       description: If blank, clip will play to the end of the original video
-    player_profile:
-      label: Player Profile
-      description: Select the default player profile to use for this content
     offerings:
       label: Offerings
       description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
@@ -242,9 +240,24 @@ form:
     viewed_settings:
       label: Viewed Settings
       description: These options will be used when the media item is being viewed
+    player_profile:
+      label: Player Profile
+      description: Select the default player profile to use for this content
+    player_controls:
+      label: Player Controls
+      description: Specify how the player controls should show
+    player_loop:
+      label: Loop
+      description: Specify whether the content should automatically loop
+    player_muted:
+      label: Mute
+      description: Specify whether the content should start muted
     poster_image:
       label: Video Poster Image
       description: Displayed in the video player before playback is started
+    always_show_poster:
+      label: Always Show Poster
+      description: If specified, the poster will be permanently visible even when the poster is playing. This is useful in cases where the content is audio only.
     image_aspect_ratio:
       label: Image Orientation
     full_image:

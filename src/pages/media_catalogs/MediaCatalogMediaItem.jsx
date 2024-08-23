@@ -294,9 +294,13 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 />
               </>
           }
+
+          <Title order={3} mt={50} mb="md">{ l10n.categories.player_settings }</Title>
+
           <Inputs.Select
             {...inputProps}
             {...l10n.media.player_profile}
+            subcategory={l10n.categories.player_settings}
             field="player_profile"
             defaultValue=""
             options={[
@@ -305,11 +309,48 @@ const MediaConfiguration = observer(({mediaItem}) => {
               { label: "Ultra Low Latency Live", value: "ULTRA_LOW_LATENCY" },
             ]}
           />
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.media.player_controls}
+            subcategory={l10n.categories.player_settings}
+            field="player_controls"
+            defaultValue=""
+            options={[
+              { label: "Default", value: ""},
+              { label: "Hidden with Volume Toggle", value: "off_with_volume_toggle" },
+              { label: "Hidden", value: "off" },
+            ]}
+          />
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.media.player_muted}
+            subcategory={l10n.categories.player_settings}
+            defaultValue={false}
+            field="player_muted"
+          />
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.media.player_loop}
+            subcategory={l10n.categories.player_settings}
+            defaultValue={false}
+            field="player_loop"
+          />
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.poster_image}
+            subcategory={l10n.categories.player_settings}
             fields={[{field: "poster_image", aspectRatio: 16/9}]}
           />
+          {
+            !mediaItem.poster_image ? null :
+              <Inputs.Checkbox
+                {...inputProps}
+                {...l10n.media.always_show_poster}
+                subcategory={l10n.categories.player_settings}
+                defaultValue={false}
+                field="always_show_poster"
+              />
+          }
         </>
       );
 
