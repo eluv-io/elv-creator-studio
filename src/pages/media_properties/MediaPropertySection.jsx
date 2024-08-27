@@ -1038,12 +1038,7 @@ const ContentSectionDisplaySettings = observer(() => {
                   field="card_default_button_text"
                 />
             }
-          </>
-      }
 
-      {
-        !["carousel", "grid"].includes(section.display?.display_format) ? null :
-          <>
             <Inputs.Select
               {...inputProps}
               {...l10n.sections.display.aspect_ratio}
@@ -1095,8 +1090,8 @@ const ContentSectionDisplaySettings = observer(() => {
                     field="display_limit_type"
                     defaultValue="items"
                     options={[
-                      { label: "Number of Items", value: "items" },
-                      { label: "Number of Rows", value: "rows" }
+                      {label: "Number of Items", value: "items"},
+                      {label: "Number of Rows", value: "rows"}
                     ]}
                   />
                 </>
@@ -1131,47 +1126,53 @@ const ContentSectionDisplaySettings = observer(() => {
                 {label: "No Text", value: "none"}
               ]}
             />
+          </>
+      }
 
-            <Inputs.SingleImageInput
-              {...inputProps}
-              {...l10n.sections.display.logo}
-              subcategory={l10n.categories.section_presentation}
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              field="logo"
-              aspectRatio={1}
-              horizontal
-            />
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.sections.display.logo}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="logo"
+        aspectRatio={1}
+        horizontal
+      />
 
-            {
-              !section.display.logo ? null :
-                <Inputs.Text
-                  {...inputProps}
-                  {...l10n.sections.display.logo_text}
-                  subcategory={l10n.categories.section_presentation}
-                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-                  field="logo_text"
-                />
-            }
+      {
+        !section.display.logo ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.sections.display.logo_text}
+            subcategory={l10n.categories.section_presentation}
+            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+            field="logo_text"
+          />
+      }
 
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.sections.display.inline_background_color}
-              subcategory={l10n.categories.section_presentation}
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              field="inline_background_color"
-            />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.sections.display.inline_background_color}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="inline_background_color"
+      />
 
 
-            <Inputs.ImageInput
-              {...inputProps}
-              {...l10n.sections.display.inline_background_image}
-              subcategory={l10n.categories.section_presentation}
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              fields={[
-                { field: "inline_background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 4, baseSize: 125 },
-                { field: "inline_background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2, baseSize: 125 },
-              ]}
-            />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.sections.display.inline_background_image}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        fields={[
+          { field: "inline_background_image", ...l10n.sections.display.background_image_desktop, aspectRatio: 4, baseSize: 125 },
+          { field: "inline_background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2, baseSize: 125 },
+        ]}
+      />
+
+      {
+        section.display?.display_format === "banner" ? null :
+          <>
 
             <Inputs.ImageInput
               {...inputProps}
@@ -1183,11 +1184,11 @@ const ContentSectionDisplaySettings = observer(() => {
                 { field: "background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
               ]}
             />
+
+            <Title order={3} mt={50} mb="md">{l10n.categories.section_full_content_page}</Title>
+            <FilterOptions />
           </>
       }
-
-      <Title order={3} mt={50} mb="md">{l10n.categories.section_full_content_page}</Title>
-      <FilterOptions />
 
       <Title order={3} mb="md" mt={50}>{l10n.categories[section.type === "manual" ? "section_content" : "section_filters"]}</Title>
 
