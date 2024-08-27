@@ -40,6 +40,10 @@ class DatabaseStore {
 
   Initialize = flow(function * () {
     try {
+      const network = yield this.client.NetworkInfo();
+      if(network?.name !== "main") {
+        this.appName += "-demo";
+      }
       this.rootStore.DebugTimeStart({key: "Database store initialization", level: this.logLevels.DEBUG_LEVEL_INFO});
 
       // eslint-disable-next-line no-undef
