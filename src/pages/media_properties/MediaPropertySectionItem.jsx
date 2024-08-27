@@ -287,7 +287,6 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
               <Inputs.Select
                 {...inputProps}
                 {...l10n.section_items.redeemable_offer}
-                disabled
                 field="offer_id"
                 options={redeemableOffers.map(offer => ({label: offer.name, value: offer.offer_id}))}
               />

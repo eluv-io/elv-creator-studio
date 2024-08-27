@@ -581,66 +581,6 @@ const MediaPropertyPage = observer(() => {
           />
       }
 
-
-      { /* TODO: Remove */ }
-      <Title order={3} mb="md" mt={100}>{l10n.categories.page_header} (Deprecated)</Title>
-
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.pages.header.position}
-        defaultValue="Left"
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="position"
-        options={["Left", "Center", "Right"]}
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.pages.header.title}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="title"
-      />
-
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.pages.header.description}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="description"
-      />
-
-      <Inputs.RichText
-        {...inputProps}
-        {...l10n.pages.header.description_rich_text}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        field="description_rich_text"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.pages.header.logo}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        fields={[
-          { field: "logo" }
-        ]}
-        altTextField="logo_alt"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.pages.header.background_image}
-        subcategory={l10n.categories.page_header}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId, "layout")}
-        fields={[
-          { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
-          { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
-        ]}
-      />
-
       <Title order={3} mb="md" mt={50}>{l10n.categories.page_actions}</Title>
       <Inputs.CollectionTable
         {...inputProps}

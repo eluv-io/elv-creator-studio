@@ -701,7 +701,7 @@ class MediaPropertyStore {
 
     let modified = false;
     const catalogs = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalogs || [];
-    let catalogLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
+    let catalogLinks = { ...(this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {}) };
     yield Promise.all(catalogs.map(async catalogId => {
       const catalogHash = await this.client.LatestVersionHash({objectId: catalogId});
 
@@ -714,7 +714,7 @@ class MediaPropertyStore {
     }));
 
     const permissionSets = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_sets || [];
-    let permissionSetLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links || {};
+    let permissionSetLinks = { ...(this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links) || {} };
     yield Promise.all(permissionSets.map(async permissionSetId => {
       const permissionSetHash = await this.client.LatestVersionHash({objectId: permissionSetId});
 

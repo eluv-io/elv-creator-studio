@@ -196,14 +196,22 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
           {
             accessor: "record.latestDeployed",
             title: l10n.overview.status.link,
-            render: record => <DeployStatus linked={!!record.latestHash} deployed={record.latestDeployed} isLink />
+            render: record => <DeployStatus
+              linked={!!record.latestHash}
+              deployed={record.latestDeployed}
+              isLink
+            />
           },
           {
             accessor: "record.productionDeployed",
             title: l10n.overview.status.production,
             render: record => (
               !record.latestHash ? null :
-                <DeployStatus linked={!!record.latestHash} deployed={record.productionDeployed} hash={record.productionHash} />
+                <DeployStatus
+                  linked={!!record.latestHash}
+                  deployed={record.productionDeployed}
+                  hash={record.productionHash}
+                />
             )
           },
           {
@@ -211,7 +219,11 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             title: l10n.overview.status.staging,
             render: record => (
               !record.latestHash ? null :
-                <DeployStatus linked={!!record.latestHash} deployed={record.stagingDeployed} hash={record.stagingHash} />
+                <DeployStatus
+                  linked={!!record.latestHash}
+                  deployed={record.stagingDeployed}
+                  hash={record.stagingHash}
+                />
             )
           },
           {
