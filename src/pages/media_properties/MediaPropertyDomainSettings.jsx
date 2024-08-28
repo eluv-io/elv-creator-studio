@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore} from "@/stores";
+import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Group, Stack, Title} from "@mantine/core";
@@ -27,17 +27,21 @@ const LoginStyling = observer(() => {
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.login.styling.logos}
+        componentProps={{maw: uiStore.inputWidthWide}}
         fields={[
           { ...l10n.login.styling.logo, field: "logo" },
+          { ...l10n.login.styling.logo_tv, field: "logo_tv" },
           { ...l10n.login.styling.powered_by_logo, field: "powered_by_logo" }
         ]}
       />
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.login.styling.background_image}
+        componentProps={{maw: uiStore.inputWidthWide}}
         fields={[
-          { ...l10n.login.styling.background_image_desktop, field: "background_image_desktop", aspectRatio: 16/9, baseSize: 135 },
-          { ...l10n.login.styling.background_image_mobile, field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135 }
+          { ...l10n.login.styling.background_image_desktop, field: "background_image_desktop", aspectRatio: 16/9, baseSize: 115 },
+          { ...l10n.login.styling.background_image_tv, field: "background_image_tv", aspectRatio: 16/9, baseSize: 115 },
+          { ...l10n.login.styling.background_image_mobile, field: "background_image_mobile", aspectRatio: 1/2, baseSize: 115 },
         ]}
       />
       <Inputs.InputWrapper {...l10n.login.styling.text}>

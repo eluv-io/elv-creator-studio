@@ -317,6 +317,8 @@ form:
         label: Logos
       logo:
         label: Main Logo
+      logo_tv:
+        label: Main Logo (TV)
       powered_by_logo:
         label: "'Powered By' Logo"
       background_image:
@@ -325,6 +327,8 @@ form:
         label: Background Image (Desktop)
       background_image_mobile:
         label: Background Image (Mobile)
+      background_image_tv:
+        label: Background Image (TV)
       login_box:
         label: Login Box
       sign_in_button:
