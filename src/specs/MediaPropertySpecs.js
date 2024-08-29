@@ -73,9 +73,6 @@ export const MediaPropertySectionItemBaseSpec = {
     banner_image_mobile: undefined
   },
   permissions: {
-    page_permissions: "",
-    page_permissions_alternate_page_id: "",
-    page_permissions_secondary_market_purchase_option: "",
     ...MediaPropertyPermissionSpec
   }
 };
@@ -275,6 +272,9 @@ export const MediaPropertyPageSpec = {
     sections: [],
   },
   permissions: {
+    page_permissions: "",
+    page_permissions_alternate_page_id: "",
+    page_permissions_secondary_market_purchase_option: "",
     ...MediaPropertyPermissionSpec
   }
 };
