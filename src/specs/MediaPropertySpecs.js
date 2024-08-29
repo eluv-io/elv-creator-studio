@@ -13,12 +13,10 @@ export const MediaPropertyFooterItemSpec = {
 };
 
 const MediaPropertyPermissionSpec = {
-  permissions: {
-    behavior: "",
-    alternate_page_id: undefined,
-    secondary_market_purchase_option: "",
-    permission_item_ids: []
-  }
+  behavior: "",
+  alternate_page_id: undefined,
+  secondary_market_purchase_option: "",
+  permission_item_ids: []
 };
 
 export const MediaPropertyLoginConsentSpec = {
@@ -181,7 +179,9 @@ export const MediaPropertySectionBaseSpec = {
     background_image: undefined,
     background_image_mobile: undefined
   },
-  ...MediaPropertyPermissionSpec
+  permissions: {
+    ...MediaPropertyPermissionSpec
+  }
 };
 
 export const MediaPropertySectionManualSpec = {
@@ -222,8 +222,7 @@ export const MediaPropertyHeroSectionSpec = {
   allow_overlap: true,
   hero_items: [],
   permissions: {
-    behavior: "hide",
-    permission_item_ids: []
+    ...MediaPropertyPermissionSpec
   }
 };
 
@@ -238,8 +237,7 @@ export const MediaPropertyContainerSectionSpec = {
   filter_tags: [],
   sections: [],
   permissions: {
-    behavior: "hide",
-    permission_item_ids: []
+    ...MediaPropertyPermissionSpec
   }
 };
 
@@ -276,7 +274,9 @@ export const MediaPropertyPageSpec = {
     background_image_mobile: undefined,
     sections: [],
   },
-  ...MediaPropertyPermissionSpec,
+  permissions: {
+    ...MediaPropertyPermissionSpec
+  }
 };
 
 export const MediaPropertySpec = {
@@ -314,9 +314,7 @@ export const MediaPropertySpec = {
     property_permission_behavior: "show_alternate_page",
     property_permissions_alternate_page_id: "",
     property_permissions_secondary_market_purchase_option: "",
-    behavior: "",
-    alternate_page_id: "",
-    secondary_market_purchase_option: ""
+    ...MediaPropertyPermissionSpec
   },
   permission_behavior: "hide",
   search: {
@@ -345,6 +343,5 @@ export const MediaPropertySpec = {
   pages: {},
   page_ids: {
     main: undefined
-  },
-  ...MediaPropertyPermissionSpec,
+  }
 };
