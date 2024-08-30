@@ -4,6 +4,70 @@ import {toJS} from "mobx";
 import {MediaPropertyHeroItemSpec, MediaPropertyHeroSectionSpec} from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
 
+// Fix bad permission metadata
+export const V1_0_4 = ({mediaPropertyId, mediaProperty, store}) => {
+  const version = "1.0.4";
+  const sections = mediaProperty.metadata.public.asset_metadata.info.sections || {};
+
+  let sectionItemsToFixPagePermissions = [];
+  let sectionItemsToFixNestedPermissions = [];
+
+  // Find page with slug that is a page ID
+  Object.keys(sections).filter(sectionId => {
+    sections[sectionId]?.content?.forEach((sectionItem, index) => {
+      if(typeof sectionItem?.permissions?.page_permissions === "string") {
+        sectionItemsToFixPagePermissions.push({sectionId, index});
+      }
+
+      if(sectionItem?.permissions?.permissions) {
+        sectionItemsToFixNestedPermissions.push({sectionId, index});
+      }
+    });
+  });
+
+  store.ApplyMigration({
+    version,
+    objectId: mediaPropertyId,
+    label: "Fix section item permissions metadata",
+    Apply: ({Set}) => {
+      sectionItemsToFixPagePermissions.forEach(({sectionId, index}) =>
+        Set(
+          UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/page_permissions"),
+          []
+        )
+      );
+
+      sectionItemsToFixNestedPermissions.forEach(({sectionId, index}) =>
+        Set(
+          UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/permissions"),
+          undefined
+        )
+      );
+    },
+    Write: async (objectParams) => {
+      await Promise.all(
+        sectionItemsToFixPagePermissions.map(async ({sectionId, index}) =>
+          await store.client.ReplaceMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/page_permissions"),
+            metadata: []
+          })
+        )
+      );
+
+      await Promise.all(
+        sectionItemsToFixNestedPermissions.map(async ({sectionId, index}) =>
+          await store.client.DeleteMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/permissions"),
+          })
+        )
+      );
+    }
+  });
+};
+
+
 // Remove page IDs from slugs in newly created properties
 export const V1_0_3 = ({mediaPropertyId, mediaProperty, store}) => {
   const version = "1.0.3";
@@ -154,7 +218,8 @@ export const V1_0_1 = ({mediaPropertyId, mediaProperty, store}) => {
 export const Migrations = {
   "1.0.1": V1_0_1,
   "1.0.2": V1_0_2,
-  "1.0.3": V1_0_3
+  "1.0.3": V1_0_3,
+  "1.0.4": V1_0_4
 };
 
 export const latestVersion = Object.keys(Migrations).sort(CompareSemVer).reverse()[0];
