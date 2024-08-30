@@ -15,7 +15,7 @@ export const V1_0_4 = ({mediaPropertyId, mediaProperty, store}) => {
   // Find page with slug that is a page ID
   Object.keys(sections).filter(sectionId => {
     sections[sectionId]?.content?.forEach((sectionItem, index) => {
-      if(typeof sectionItem?.permissions?.page_permissions === "string") {
+      if(typeof sectionItem?.permissions?.page_permissions !== "undefined") {
         sectionItemsToFixPagePermissions.push({sectionId, index});
       }
 
@@ -46,13 +46,22 @@ export const V1_0_4 = ({mediaPropertyId, mediaProperty, store}) => {
     },
     Write: async (objectParams) => {
       await Promise.all(
-        sectionItemsToFixPagePermissions.map(async ({sectionId, index}) =>
-          await store.client.ReplaceMetadata({
+        sectionItemsToFixPagePermissions.map(async ({sectionId, index}) => {
+          await store.client.DeleteMetadata({
             ...objectParams,
             metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/page_permissions"),
-            metadata: []
-          })
-        )
+          });
+
+          await store.client.DeleteMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/page_permissions_alternate_page_id"),
+          });
+
+          await store.client.DeleteMetadata({
+            ...objectParams,
+            metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "content", index.toString(), "permissions/page_permissions_secondary_market_purchase_option"),
+          });
+        })
       );
 
       await Promise.all(
