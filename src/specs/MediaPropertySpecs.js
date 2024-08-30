@@ -52,7 +52,6 @@ export const MediaPropertyFilterSpec = {
   media_catalog: "",
   content_type: "",
   media_types: [],
-  tags: [],
   attributes: [],
   attribute_values: {},
   date: undefined,
@@ -272,7 +271,8 @@ export const MediaPropertyPageSpec = {
     sections: [],
   },
   permissions: {
-    page_permissions: "",
+    page_permissions: [],
+    page_permission_behavior: "show_alternate_page",
     page_permissions_alternate_page_id: "",
     page_permissions_secondary_market_purchase_option: "",
     ...MediaPropertyPermissionSpec
