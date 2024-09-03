@@ -89,6 +89,9 @@ form:
     preview_password:
       label: Preview Password
       description: Require a password to access your marketplace in preview mode. This helps prevent unauthorized users from viewing unpublished changes to your marketplace.
+    property_redirect:
+      label: Property Redirect
+      description: Redirect to the specified property if a marketplace route is loaded
     show_global:
       label: Show on Global Marketplace
       description: Make your marketplace visible in the global marketplace list

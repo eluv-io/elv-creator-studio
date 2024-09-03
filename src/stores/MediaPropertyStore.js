@@ -403,6 +403,21 @@ class MediaPropertyStore {
     let spec;
     if(copySectionId) {
       spec = Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.sections[copySectionId]));
+
+      // Update IDs of section items
+      if(spec.content) {
+        spec.content = spec.content.map(sectionItem => ({
+          ...sectionItem,
+          id: `${sectionItem.id.slice(0, 4)}${GenerateUUID()}`
+        }));
+      }
+
+      if(spec.hero_items) {
+        spec.hero_items = spec.hero_items.map(sectionItem => ({
+          ...sectionItem,
+          id: `${sectionItem.id.slice(0, 4)}${GenerateUUID()}`
+        }));
+      }
     } else {
       switch(type) {
         case "manual":

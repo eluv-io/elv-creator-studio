@@ -1,12 +1,13 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, marketplaceStore, tenantStore, uiStore} from "@/stores";
+import {rootStore, marketplaceStore, tenantStore, uiStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 
 import {IconReportMoney, IconSettings} from "@tabler/icons-react";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
+import {useEffect} from "react";
 
 const ebanxSupportedCountries = [
   {"label":"Argentina","value":"AR"},
@@ -33,6 +34,12 @@ const MarketplaceGeneralSettings = observer(() => {
 
   const l10n = rootStore.l10n.pages.marketplace.form;
   const inputProps = { store: marketplaceStore, objectId: marketplaceId, category: l10n.categories.general };
+
+  useEffect(() => {
+    mediaPropertyStore.LoadMediaProperties();
+  }, []);
+
+  const mediaProperties = mediaPropertyStore.allMediaProperties;
 
   return (
     <PageContent
@@ -93,6 +100,14 @@ const MarketplaceGeneralSettings = observer(() => {
         subcategory={l10n.categories.info}
         path="/public/asset_metadata/info"
         field="preview_password_digest"
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.property_redirect}
+        options={mediaProperties.map(property => ({label: property.name, value: property.objectId}))}
+        path="/public/asset_metadata/info"
+        field="property_redirect"
       />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.global_settings }</Title>
