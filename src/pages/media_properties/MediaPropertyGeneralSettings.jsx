@@ -246,12 +246,14 @@ const MediaPropertyGeneralSettings = observer(() => {
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
 
-      <Inputs.SingleImageInput
+      <Inputs.ImageInput
         {...inputProps}
-        {...l10n.general.image}
+        componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.main_page_display}
-        field="image"
-        aspectRatio={2/3}
+        fields={[
+          { field: "image", aspectRatio: 2/3, ...l10n.general.image },
+          { field: "image_tv", aspectRatio: 16/9, ...l10n.general.image_tv },
+        ]}
       />
 
 
@@ -269,6 +271,14 @@ const MediaPropertyGeneralSettings = observer(() => {
         {...l10n.general.show_on_main_page}
         subcategory={l10n.categories.main_page_display}
         field="show_on_main_page"
+        defaultValue={false}
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.show_on_main_page_tv}
+        subcategory={l10n.categories.main_page_display}
+        field="show_on_main_page_tv"
         defaultValue={false}
       />
 

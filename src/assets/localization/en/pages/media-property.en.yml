@@ -93,6 +93,9 @@ form:
     image:
       label: Image
       description: Portrait (2:3)
+    image_tv:
+      label: Image (TV)
+      description: Landscape (16/9)
     video:
       label: Video
       description: Silent, looping animation replacing the image on the main page
@@ -116,8 +119,11 @@ form:
     associated_marketplaces:
       label: Associated Marketplaces
     show_on_main_page:
-      label: Show on Main Page
-      description: If specified, this property will be visible on the main page of the Eluvio Media Wallet
+      label: Show on Main Page (Desktop)
+      description: If specified, this property will be visible on the main page of the Eluvio Media Wallet Site
+    show_on_main_page_tv:
+      label: Show on Main Page (TV)
+      description: If specified, this property will be visible on the main page of the Eluvio Media Wallet TV Apps
     main_page_url:
       label: Link to Custom URL
       description: If specified, the link on the main page for this property will link to this url instead of to the property in the Media Wallet
