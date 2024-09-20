@@ -142,7 +142,7 @@ const MediaPropertyGeneralSettings = observer(() => {
           <>
             <Inputs.Select
               {...inputProps}
-              {...l10n.general.property_permission_behavior}
+              {...l10n.general.property_permissions_behavior}
               subcategory={l10n.categories.permissions}
               path={UrlJoin(inputProps.path, "permissions")}
               field="property_permissions_behavior"
@@ -190,6 +190,60 @@ const MediaPropertyGeneralSettings = observer(() => {
             }
           </>
       }
+
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.search_permissions_behavior}
+        subcategory={l10n.categories.permissions}
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="search_permissions_behavior"
+        defaultValue="hide"
+        options={[
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+            value: key
+          })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
+        ]}
+      />
+      {
+        info?.permissions?.search_permissions_behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="search_permissions_alternate_page_id"
+            options={[
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main")
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
+      {
+        info.permissions?.search_permissions_behavior !== "show_purchase" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="search_permissions_secondary_market_purchase_option"
+            defaultValue=""
+            disabled={!secondaryEnabled}
+            options={[
+              { label: "None", value: "" },
+              { label: "Show", value: "show" },
+              { label: "Show if Out of Stock", value: "out_of_stock" },
+              { label: "Secondary Only", value: "only" }
+            ]}
+          />
+      }
+
       <Inputs.Select
         {...inputProps}
         {...l10n.general.permission_behavior}

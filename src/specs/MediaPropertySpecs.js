@@ -314,6 +314,9 @@ export const MediaPropertySpec = {
     property_permission_behavior: "show_alternate_page",
     property_permissions_alternate_page_id: "",
     property_permissions_secondary_market_purchase_option: "",
+    search_permission_behavior: "hide",
+    search_permissions_alternate_page_id: "",
+    search_permissions_secondary_market_purchase_option: "",
     ...MediaPropertyPermissionSpec
   },
   permission_behavior: "hide",

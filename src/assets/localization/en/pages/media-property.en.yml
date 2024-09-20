@@ -148,9 +148,12 @@ form:
     property_permissions:
       label: Property Permissions
       description: If specified, the user must have one or more of these permissions to access this property
-    property_permission_behavior:
+    property_permissions_behavior:
       label: Property Permission Behavior
       description: Specify what happens if the user does not have access to this property
+    search_permissions_behavior:
+      label: Search Permission Behavior
+      description: Specify what happens if the user does not have access to content when searching
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
