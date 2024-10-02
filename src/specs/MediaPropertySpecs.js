@@ -147,6 +147,11 @@ export const MediaPropertySectionItemPurchaseItemSpec = {
   image: undefined
 };
 
+export const MediaPropertySectionItemVisualSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "visual_only"
+};
+
 export const MediaPropertySectionBaseSpec = {
   id: undefined,
   url_slug: "",

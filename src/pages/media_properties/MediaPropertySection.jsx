@@ -39,7 +39,7 @@ import {
   MediaPropertySearchSecondaryFilterSpec
 } from "@/specs/MediaPropertySpecs.js";
 
-const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
+const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
   const [creating, setCreating] = useState(false);
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
@@ -294,10 +294,13 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
             data-autofocus
             {...l10n.section_items.type}
             defaultValue="media"
-            data={
-              Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
-                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key}))
-            }
+            data={[
+              ...Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
+                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key})),
+              section.display?.display_format === "banner" ?
+                { value: "visual_only", label: "Visual Only" } :
+                undefined
+            ].filter(option => option)}
             {...form.getInputProps("type")}
           />
           { formContent }
@@ -413,6 +416,7 @@ const SectionContentList = observer(() => {
                   <CreateSectionItemForm
                     mediaPropertyId={mediaPropertyId}
                     mediaProperty={info}
+                    section={section}
                     Create={async args => {
                       let id;
                       if(args.type === "media") {

@@ -537,14 +537,19 @@ const MediaPropertySectionItem = observer(() => {
           </>
       }
 
-      <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_content}</Title>
-      <SectionItemOptions
-        mediaProperty={info}
-        sectionItem={sectionItem}
-        mediaItem={mediaItem}
-        l10n={l10n}
-        inputProps={inputProps}
-      />
+      {
+        sectionItem.type === "visual_only" ? null :
+          <>
+            <Title order={3} mb="md" mt={50}>{l10n.categories.section_item_content}</Title>
+            <SectionItemOptions
+              mediaProperty={info}
+              sectionItem={sectionItem}
+              mediaItem={mediaItem}
+              l10n={l10n}
+              inputProps={inputProps}
+            />
+          </>
+      }
 
       {
         sectionItem.type !== "item_purchase" ? null :

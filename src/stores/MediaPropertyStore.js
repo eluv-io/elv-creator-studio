@@ -14,7 +14,7 @@ import {
   MediaPropertySectionItemPropertyLinkSpec,
   MediaPropertySectionItemPurchaseSpec,
   MediaPropertySectionItemRedeemableOfferSpec,
-  MediaPropertySectionItemSubpropertyLinkSpec,
+  MediaPropertySectionItemSubpropertyLinkSpec, MediaPropertySectionItemVisualSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
@@ -526,6 +526,9 @@ class MediaPropertyStore {
       case "external_link":
         spec = Clone(MediaPropertySectionItemExternalLinkSpec);
         spec.url = url;
+        break;
+      case "visual_only":
+        spec = Clone(MediaPropertySectionItemVisualSpec);
         break;
     }
 
