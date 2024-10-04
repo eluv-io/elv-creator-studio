@@ -63,15 +63,43 @@ class TenantStore {
           })) || mediaProperty.name;
         }
 
-        const slug = await this.client.ContentObjectMetadata({
+        const info = (await this.client.ContentObjectMetadata({
           versionHash: mediaPropertyHash,
-          metadataSubtree: "public/asset_metadata/info/slug",
-        });
+          metadataSubtree: "public/asset_metadata/info",
+          select: [
+            "slug",
+            "media_catalog_links",
+            "permission_set_links"
+          ]
+        })) || {};
 
+        const slug = info.slug;
 
         const latestLink = this.TenantLinkSlugAndHash({objectId: mediaProperty.objectId, links: tenantStore.latestTenant.metadata.public.asset_metadata.media_properties});
         const productionLink = this.TenantLinkSlugAndHash({objectId: mediaProperty.objectId, links: tenantStore.productionTenant?.metadata.public.asset_metadata.media_properties});
         const stagingLink = this.TenantLinkSlugAndHash({objectId: mediaProperty.objectId, links: tenantStore.stagingTenant?.metadata.public.asset_metadata.media_properties});
+
+        let mediaCatalogsBehind = (
+          await Promise.all(
+            Object.keys(info.media_catalog_links || {}).map(async mediaCatalogId => {
+              const deployedHash = ExtractHashFromLink(info.media_catalog_links[mediaCatalogId]);
+              const latestHash = await this.client.LatestVersionHash({objectId: mediaCatalogId});
+
+              return deployedHash !== latestHash;
+            })
+          )
+        ).find(result => result);
+
+        let permissionSetsBehind = (
+          await Promise.all(
+            Object.keys(info.permission_set_links || {}).map(async permissionSetId => {
+              const deployedHash = ExtractHashFromLink(info.permission_set_links[permissionSetId]);
+              const latestHash = await this.client.LatestVersionHash({objectId: permissionSetId});
+
+              return deployedHash !== latestHash;
+            })
+          )
+        ).find(result => result);
 
         return {
           name,
@@ -95,7 +123,9 @@ class TenantStore {
           productionSlug: productionLink.slug,
           stagingHash: stagingLink.versionHash,
           stagingDeployed: stagingLink.versionHash === mediaPropertyHash,
-          stagingSlug: stagingLink.slug
+          stagingSlug: stagingLink.slug,
+          mediaCatalogsBehind,
+          permissionSetsBehind
         };
       })
     );

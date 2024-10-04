@@ -28,6 +28,8 @@ form:
     link_deployed: Latest Version Linked
     link_not_deployed: Previous Version Linked
     not_linked: Not Linked
+    media_catalog_behind: Previous Media Catalog(s) Deployed
+    permission_set_behind: Previous Permission Set(s) Deployed
     deploy: Deploy
     deploy_confirm: Are you sure you want to deploy your changes?
     add_link: Add Link

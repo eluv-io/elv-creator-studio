@@ -1,4 +1,5 @@
 import {observer} from "mobx-react-lite";
+import {useEffect} from "react";
 import {Link, useParams} from "react-router-dom";
 import {rootStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
@@ -376,6 +377,10 @@ export const MarketplaceItem = observer(() => {
 const MarketplaceItems = observer(() => {
   const { marketplaceId } = useParams();
 
+  useEffect(() => {
+    marketplaceStore.LoadMarketplaceItemStatus({marketplaceId});
+  }, []);
+
   const marketplace = marketplaceStore.marketplaces[marketplaceId];
 
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
@@ -417,6 +422,8 @@ const MarketplaceItems = observer(() => {
                     linkHash: item.nft_template["."].source
                   })
                 );
+
+                setTimeout(() => marketplaceStore.LoadMarketplaceItemStatus({marketplaceId}), 1000);
               }
             });
           }}
@@ -441,7 +448,7 @@ const MarketplaceItems = observer(() => {
         Actions={(item, index) =>
           <IconButton
             variant="transparent"
-            disabled={!item.nft_template}
+            disabled={!item.nft_template || item.isLatestTemplate}
             label={LocalizeString(l10n.item.update_link, {label: item.name || item.label})}
             Icon={IconLink}
             color="blue.6"

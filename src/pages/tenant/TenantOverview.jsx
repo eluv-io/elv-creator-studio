@@ -24,17 +24,43 @@ import {
   IconWorldUpload
 } from "@tabler/icons-react";
 
-const DeployStatus = ({linked=true, deployed, hash, isLink}) => {
-  const label = rootStore.l10n.pages.tenant.form.overview[
-    !linked ? "not_linked" :
-      (isLink ?
-        (deployed ? "link_deployed" : "link_not_deployed") :
-        (deployed ? "deployed" : hash ? "previous_deployed" : "not_deployed"))
-    ];
+const DeployStatus = ({linked=true, deployed, mediaCatalogsBehind, permissionSetsBehind, hash, isTenantLink}) => {
+  let labelKey = "not_linked";
+  let indicatorColor = "#AAA";
+  if(linked) {
+    indicatorColor = "#CC0000";
+
+    if(deployed) {
+      if(mediaCatalogsBehind) {
+        labelKey = "media_catalog_behind";
+      } else if(permissionSetsBehind) {
+        labelKey = "permission_set_behind";
+      } else {
+        indicatorColor = "#00CC00";
+        labelKey = isTenantLink ? "link_deployed" : "deployed";
+      }
+    } else {
+      if(isTenantLink) {
+        labelKey = "link_not_deployed";
+      } else {
+        labelKey = hash ? "previous_deployed" : "not_deployed";
+      }
+    }
+  }
+
+  const label = rootStore.l10n.pages.tenant.form.overview[labelKey];
 
   return (
     <Group align="center" spacing="xs" noWrap>
-      <div style={{height: 8, width: 8, minWidth: 8, borderRadius: "100%", backgroundColor: !linked ? "#AAA" : (deployed ? "#00CC00" : "#CC0000")}} />
+      <div
+        style={{
+          height: 8,
+          width: 8,
+          minWidth: 8,
+          borderRadius: "100%",
+          backgroundColor: indicatorColor
+        }}
+      />
       <Text fz="xs">{ label }</Text>
     </Group>
   );
@@ -49,7 +75,7 @@ const UpdateLinkButton = ({type, record}) => {
     <IconButton
       label={LocalizeString(linked ? l10n.update_link_label : l10n.add_link_label, {name: record.name})}
       variant="transparent"
-      disabled={record.latestDeployed}
+      disabled={record.latestDeployed && !record.mediaCatalogsBehind && !record.permissionSetsBehind}
       loading={loading}
       color="purple.6"
       Icon={IconUnlink}
@@ -196,11 +222,14 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
           {
             accessor: "record.latestDeployed",
             title: l10n.overview.status.link,
-            render: record => <DeployStatus
-              linked={!!record.latestHash}
-              deployed={record.latestDeployed}
-              isLink
-            />
+            render: record =>
+              <DeployStatus
+                linked={!!record.latestHash}
+                deployed={record.latestDeployed}
+                mediaCatalogsBehind={record.mediaCatalogsBehind}
+                permissionSetsBehind={record.permissionSetsBehind}
+                isTenantLink
+              />
           },
           {
             accessor: "record.productionDeployed",
@@ -210,6 +239,8 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
                 <DeployStatus
                   linked={!!record.latestHash}
                   deployed={record.productionDeployed}
+                  mediaCatalogsBehind={record.mediaCatalogsBehind}
+                  permissionSetsBehind={record.permissionSetsBehind}
                   hash={record.productionHash}
                 />
             )
@@ -222,6 +253,8 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
                 <DeployStatus
                   linked={!!record.latestHash}
                   deployed={record.stagingDeployed}
+                  mediaCatalogsBehind={record.mediaCatalogsBehind}
+                  permissionSetsBehind={record.permissionSetsBehind}
                   hash={record.stagingHash}
                 />
             )

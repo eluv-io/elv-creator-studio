@@ -1,5 +1,6 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 class MarketplaceStore {
   allMarketplaces;
@@ -62,6 +63,30 @@ class MarketplaceStore {
       category: this.rootStore.l10n.pages.marketplace.form.categories.storefront_footer_link,
       label: this.rootStore.l10n.pages.marketplace.form.common.id.label,
     });
+  });
+
+  LoadMarketplaceItemStatus = flow(function * ({marketplaceId}) {
+    yield this.LoadMarketplace({marketplaceId});
+
+    const items = this.marketplaces[marketplaceId]?.metadata?.public?.asset_metadata?.info?.items;
+
+    if(!items || items.length > 50) { return; }
+
+    this.marketplaces[marketplaceId].metadata.public.asset_metadata.info.items = (
+      yield this.client.utils.LimitedMap(
+        5,
+        items,
+        async item => {
+          const currentHash = ExtractHashFromLink(item.nft_template);
+          const latestHash = currentHash && await this.client.LatestVersionHash({versionHash: currentHash});
+
+          return {
+            ...item,
+            isLatestTemplate: currentHash === latestHash
+          };
+        }
+      )
+    );
   });
 
   Reload = flow(function * ({objectId}) {
