@@ -3,7 +3,7 @@ nav:
   overview: Overview
   general: General
   theme: Theme and Styling
-  domain: Custom Domain Settings
+  domain: Customization Settings
   search: Search
   pages: Pages
   sections: Page Sections
@@ -21,7 +21,7 @@ form:
     info: Media Property Info
     theme_settings: Theme and Styling Settings
     theme: Theme
-    main_page_display: Main Page Display Settings
+    main_page_display: Discover Page Display Settings
     domain_settings: Domain Settings
     footer: Footer Settings
     footer_item: Footer Item
@@ -103,6 +103,9 @@ form:
       label: Header Logo
     tv_header_logo:
       label: Header Logo (TV)
+    qr_background:
+      label: QR Page Background (TV)
+      description: This image will be displayed in the background when a QR code is presented to the user
     countdown_background:
       label: Countdown Page Background Images
       description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
@@ -315,6 +318,7 @@ form:
       label: Button Text
     icon:
       label: Button Icon
+    qr_background:
   login:
     provider:
       label: Login Provider

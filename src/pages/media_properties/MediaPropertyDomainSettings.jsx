@@ -257,51 +257,41 @@ const MediaPropertyDomainSettings = observer(() => {
 
   return (
     <PageContent
-      title={`${info.name || mediaProperty.name || "Media Property"} - Custom Domain Settings`}
+      title={`${info.name || mediaProperty.name || "Media Property"} - Customization Settings`}
       section="mediaProperty"
       useHistory
     >
-      <Inputs.Text
+      <Title order={3} mt={50} mb="md">
+        { l10n.categories.login_settings }
+      </Title>
+      <Inputs.Select
         {...inputProps}
-        {...l10n.domain.custom_domain}
-        field="custom_domain"
+        {...l10n.login.provider}
+        category={l10n.categories.login_settings}
+        path="/public/asset_metadata/info/login/settings"
+        defaultValue="auth0"
+        field="provider"
+        options={[
+          { label: "Auth0 (Deprecated)", value: "auth0" },
+          { label: "Ory", value: "ory" }
+        ]}
       />
-      {
-        !info.domain?.custom_domain ? null :
-          <>
-            <Title order={3} mt={50} mb="md">
-              { l10n.categories.login_settings }
-            </Title>
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.login.provider}
-              category={l10n.categories.login_settings}
-              path="/public/asset_metadata/info/login/settings"
-              defaultValue="auth0"
-              field="provider"
-              options={[
-                { label: "Auth0 (Deprecated)", value: "auth0" },
-                { label: "Ory", value: "ory" }
-              ]}
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.login.disable_registration}
-              category={l10n.categories.login_settings}
-              path="/public/asset_metadata/info/login/settings"
-              defaultValue={false}
-              field="disable_registration"
-            />
-            <LoginStyling />
-            <LoginTerms />
-            <LoginConsentOptions />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.login.disable_registration}
+        category={l10n.categories.login_settings}
+        path="/public/asset_metadata/info/login/settings"
+        defaultValue={false}
+        field="disable_registration"
+      />
+      <LoginStyling />
+      <LoginTerms />
+      <LoginConsentOptions />
 
-            <Title order={3} mt={50} mb="md">
-              { l10n.categories.feature_settings }
-            </Title>
-            <FeatureSettings />
-          </>
-      }
+      <Title order={3} mt={50} mb="md">
+        { l10n.categories.feature_settings }
+      </Title>
+      <FeatureSettings />
     </PageContent>
   );
 });

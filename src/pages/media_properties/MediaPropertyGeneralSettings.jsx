@@ -105,6 +105,18 @@ const MediaPropertyGeneralSettings = observer(() => {
         ]}
       />
 
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.qr_background}
+        subcategory={l10n.categories.info}
+        maw={400}
+        miw={400}
+        componentProps={{maw: 490}}
+        fields={[
+          {field: "qr_background", aspectRatio: 16/9 }
+        ]}
+      />
+
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox

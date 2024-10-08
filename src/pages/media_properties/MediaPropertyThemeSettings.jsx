@@ -87,7 +87,6 @@ const MediaPropertyThemeSettings = observer(() => {
           </>
       }
 
-
       <Title order={3} mt={50} mb="md">{l10n.categories.media_sidebar}</Title>
       <Inputs.Checkbox
         {...inputProps}
