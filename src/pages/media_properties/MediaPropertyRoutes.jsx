@@ -21,7 +21,6 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.overview, path: "/media-properties/:mediaPropertyId", Component: <MediaPropertyOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.general, path: "/media-properties/:mediaPropertyId/general", Component: <MediaPropertyGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.theme, path: "/media-properties/:mediaPropertyId/theme", Component: <MediaPropertyThemeSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.search, path: "/media-properties/:mediaPropertyId/search", Component: <MediaPropertySearch /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.pages, path: "/media-properties/:mediaPropertyId/pages", Component: <MediaPropertyPages /> },
     { label: rootStore.l10n.pages.media_property.nav.page, path: "/media-properties/:mediaPropertyId/pages/:pageId", Component: <MediaPropertyPage /> },
@@ -31,6 +30,7 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId/hero_items/:heroItemId", Component: <MediaPropertySectionHeroItem /> },
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId/hero_items/:heroItemId/actions/:actionId", Component: <MediaPropertySectionHeroItemAction /> },
     { label: rootStore.l10n.pages.media_property.nav.section_item, path: "/media-properties/:mediaPropertyId/sections/:sectionId/content/:sectionItemId", Component: <MediaPropertySectionItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.theme, path: "/media-properties/:mediaPropertyId/theme", Component: <MediaPropertyThemeSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.domain, path: "/media-properties/:mediaPropertyId/domain", Component: <MediaPropertyDomainSettings /> },
   ]
     .map(route => ({

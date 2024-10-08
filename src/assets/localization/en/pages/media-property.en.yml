@@ -22,11 +22,12 @@ form:
     theme_settings: Theme and Styling Settings
     theme: Theme
     main_page_display: Discover Page Display Settings
-    domain_settings: Domain Settings
+    domain_settings: Customization Settings
     footer: Footer Settings
     footer_item: Footer Item
     footer_item_label: Footer Item '{label}'
     feature_settings: Features
+    purchase_settings: Purchase Settings
     login_settings: Login Settings
     login_theme: Login Theme
     login_consent_options: Data Consent Options
@@ -103,9 +104,6 @@ form:
       label: Header Logo
     tv_header_logo:
       label: Header Logo (TV)
-    qr_background:
-      label: QR Page Background (TV)
-      description: This image will be displayed in the background when a QR code is presented to the user
     countdown_background:
       label: Countdown Page Background Images
       description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
@@ -318,7 +316,11 @@ form:
       label: Button Text
     icon:
       label: Button Icon
-    qr_background:
+  purchase_settings:
+    purchase_background_tv:
+      label: Purchase Page Background (TV)
+      description: This image will be displayed in the background when a QR code is presented to the user
+
   login:
     provider:
       label: Login Provider

@@ -262,6 +262,18 @@ const MediaPropertyDomainSettings = observer(() => {
       useHistory
     >
       <Title order={3} mt={50} mb="md">
+        { l10n.categories.purchase_settings }
+      </Title>
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.purchase_settings.purchase_background_tv}
+        subcategory={l10n.categories.purchase_settings}
+        path="/public/asset_metadata/info/purchase_settings"
+        field="background_tv"
+        aspectRatio={16/9}
+      />
+
+      <Title order={3} mt={50} mb="md">
         { l10n.categories.login_settings }
       </Title>
       <Inputs.Select
