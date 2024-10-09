@@ -580,6 +580,9 @@ form:
       logo_text:
         label: Logo Text
         description: Displayed below the logo image
+      logo_alignment:
+        label: Logo Alignment
+        description: Vertical alignment for the logo
       inline_background_color:
         label: Inline Background Color
         description: Select a color for the background of this section (overridden by inline background images)

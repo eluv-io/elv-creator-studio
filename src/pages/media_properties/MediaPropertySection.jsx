@@ -1154,6 +1154,23 @@ const ContentSectionDisplaySettings = observer(() => {
           />
       }
 
+      {
+        !section.display.logo || section.display?.display_format !== "grid" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.sections.display.logo_alignment}
+            subcategory={l10n.categories.section_presentation}
+            defaultValue="top"
+            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+            field="logo_alignment"
+            options={[
+              {label: "Top", value: "top"},
+              {label: "Center", value: "center"},
+              {label: "Bottom", value: "bottom"},
+            ]}
+          />
+      }
+
       <Inputs.Color
         {...inputProps}
         {...l10n.sections.display.inline_background_color}
