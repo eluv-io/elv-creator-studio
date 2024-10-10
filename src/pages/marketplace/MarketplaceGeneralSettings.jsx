@@ -94,14 +94,6 @@ const MarketplaceGeneralSettings = observer(() => {
         field="slug"
       />
 
-      <Inputs.Password
-        {...inputProps}
-        {...l10n.general.preview_password}
-        subcategory={l10n.categories.info}
-        path="/public/asset_metadata/info"
-        field="preview_password_digest"
-      />
-
       <Inputs.Select
         {...inputProps}
         {...l10n.general.property_redirect}

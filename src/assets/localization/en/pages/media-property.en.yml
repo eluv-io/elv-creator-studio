@@ -119,6 +119,9 @@ form:
       description: Other properties within this property
     associated_marketplaces:
       label: Associated Marketplaces
+    preview_password:
+      label: Preview Password
+      description: Specify a password to protect access to your property in the staging environment
     show_on_main_page:
       label: Show on Main Page (Desktop)
       description: If specified, this property will be visible on the main page of the Eluvio Media Wallet Site
