@@ -39,7 +39,7 @@ const MarketplaceGeneralSettings = observer(() => {
     mediaPropertyStore.LoadMediaProperties();
   }, []);
 
-  const mediaProperties = mediaPropertyStore.allMediaProperties;
+  const mediaProperties = mediaPropertyStore.allMediaProperties || [];
 
   return (
     <PageContent

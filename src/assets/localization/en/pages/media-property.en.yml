@@ -32,6 +32,7 @@ form:
     login_theme: Login Theme
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
+    subproperties: Subproperties
     permissions: Permission Settings
     media_sidebar: Media Sidebar and Live Content Settings
     meta_tags: Search and Social Preview
@@ -114,14 +115,30 @@ form:
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
-    subproperties:
-      label: Subproperties
-      description: Other properties within this property
     associated_marketplaces:
       label: Associated Marketplaces
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
+    subproperties:
+      subproperties:
+        label: Subproperties
+        description: Other properties within this property
+      property:
+        label: Property
+      show_property_selection:
+        label: Show Property Selection in Header
+        description: If specified, users will be able to navigate between this parent property and the specified subproperties via a selector in the header
+      property_selection:
+        label: Property Selection
+        description: Define how properties should be displayed in the property selector
+      icon:
+        label: Icon
+      logo:
+        label: Logo (Optional)
+      title:
+        label: Title
+        description: Will be displayed if logo is not specified
     show_on_main_page:
       label: Show on Main Page (Desktop)
       description: If specified, this property will be visible on the main page of the Eluvio Media Wallet Site
@@ -749,6 +766,9 @@ form:
       redirect_on_purchase:
         label: Redirect After Purchase
         description: If specified, the user will be redirected to this page after purchasing this item
+    disabled:
+      label: Disabled
+      description: If specified, this item will be shown as disabled (unless permission settings indicate it should be hidden instead)
     permission_behavior:
       label: Permission Behavior
       description: Specify the default behavior for content that is not accessible due to permissions

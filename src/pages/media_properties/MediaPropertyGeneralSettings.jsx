@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
+import {MarketplaceMultiselect, MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
@@ -80,20 +80,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         marketplaceIdField="marketplace_id"
       />
 
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.general.subproperties}
-        subcategory={l10n.general.subproperties.label}
-        field="subproperties"
-        options={
-          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-            label: mediaProperty.name,
-            value: mediaProperty.objectId
-          }))
-            .filter(({value}) => value !== mediaPropertyId)
-        }
-      />
-
       <Inputs.Password
         {...inputProps}
         {...l10n.general.preview_password}
@@ -112,6 +98,74 @@ const MediaPropertyGeneralSettings = observer(() => {
           { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
         ]}
       />
+
+      <Title order={3} mt={50}  mb="md">{l10n.categories.subproperties}</Title>
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.subproperties.subproperties}
+        subcategory={l10n.categories.subproperties}
+        field="subproperties"
+        options={
+          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+            label: mediaProperty.name,
+            value: mediaProperty.objectId
+          }))
+            .filter(({value}) => value !== mediaPropertyId)
+        }
+      />
+      {
+        !info.subproperties || info.subproperties.length <= 0 ? null :
+        <>
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.general.subproperties.show_property_selection}
+            subcategory={l10n.categories.subproperties}
+            field="show_property_selection"
+            defaultValue={false}
+          />
+
+          {
+            !info.show_property_selection ? null :
+              <Inputs.List
+                {...inputProps}
+                {...l10n.general.subproperties.property_selection}
+                subcategory={l10n.categories.subproperties}
+                field="property_selection"
+                renderItem={props => (
+                  <>
+                    <Inputs.Select
+                      {...props}
+                      {...l10n.general.subproperties.property}
+                      field="property_id"
+                      options={
+                        (mediaPropertyStore.allMediaProperties || []).map(mediaProperty => ({
+                          label: mediaProperty.name,
+                          value: mediaProperty.objectId
+                        }))
+                          .filter(({value}) => {
+                            const index = info.property_selection?.findIndex(({property_id}) => property_id === value);
+                            return (mediaPropertyId === value || info.subproperties.includes(value)) && (index < 0 || index === props.index);
+                          })
+                      }
+                    />
+                    <Inputs.Text
+                      {...props}
+                      {...l10n.general.subproperties.title}
+                      field="title"
+                    />
+                    <Inputs.ImageInput
+                      {...props}
+                      fields={[
+                        {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
+                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100}
+                      ]}
+                    />
+                  </>
+                )}
+              />
+          }
+        </>
+      }
 
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>

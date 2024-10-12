@@ -537,6 +537,13 @@ const MediaPropertySectionItem = observer(() => {
           </>
       }
 
+      <Inputs.Checkbox
+        {...l10n.section_items.disabled}
+        {...inputProps}
+        field="disabled"
+        defaultValue={false}
+      />
+
       {
         sectionItem.type === "visual_only" ? null :
           <>
