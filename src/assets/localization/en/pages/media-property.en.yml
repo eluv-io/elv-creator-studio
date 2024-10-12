@@ -117,6 +117,9 @@ form:
       description: Media from these catalogs will be available in this property
     associated_marketplaces:
       label: Associated Marketplaces
+    currency:
+      label: Currency
+      description: Select the currency used to purchase items in this property
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment

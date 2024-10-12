@@ -89,6 +89,9 @@ form:
     preview_password:
       label: Preview Password
       description: Require a password to access your marketplace in preview mode. This helps prevent unauthorized users from viewing unpublished changes to your marketplace.
+    currencies:
+      label: Currencies
+      description: Specify which currencies item prices should be defined with, in addition to USD
     property_redirect:
       label: Property Redirect
       description: Redirect to the specified property if a marketplace route is loaded
@@ -319,6 +322,8 @@ form:
       label: Free
     price:
       label: Price (USD)
+    price_currency:
+      label: "Price ({currencyCode})"
     max_per_checkout:
       label: Maximum Quantity Purchasable per Checkout
       description: Leave blank for no limit

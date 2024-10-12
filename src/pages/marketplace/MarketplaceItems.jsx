@@ -200,6 +200,18 @@ export const MarketplaceItem = observer(() => {
               path={UrlJoin(inputProps.path, "price")}
               field="USD"
             />
+            {
+              (info.currencies || []).map(currencyCode =>
+                <Inputs.Price
+                  key={`price-${currencyCode}`}
+                  {...inputProps}
+                  label={LocalizeString(l10n.item.price_currency.label, {currencyCode})}
+                  subcategory={l10n.categories.item_purchase_details}
+                  path={UrlJoin(inputProps.path, "price")}
+                  field={currencyCode}
+                />
+              )
+            }
             <Inputs.Integer
               {...inputProps}
               {...l10n.item.max_per_checkout}

@@ -4,10 +4,20 @@ import {rootStore, marketplaceStore, tenantStore, uiStore, mediaPropertyStore} f
 import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
+import CountryCodesList from "country-codes-list";
 
 import {IconReportMoney, IconSettings} from "@tabler/icons-react";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
 import {useEffect} from "react";
+
+const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
+Object.keys(currencies).forEach(currencyCode => {
+  if(!currencyCode || !currencies[currencyCode]) {
+    delete currencies[currencyCode];
+  }
+});
+
+delete currencies["USD"];
 
 const ebanxSupportedCountries = [
   {"label":"Argentina","value":"AR"},
@@ -92,6 +102,22 @@ const MarketplaceGeneralSettings = observer(() => {
         disabled
         path="/public/asset_metadata"
         field="slug"
+      />
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.currencies}
+        searchable
+        options={
+          Object.keys(currencies)
+            .sort((a, b) => currencies[a] > currencies[b] ? 1 : -1)
+            .map(currencyCode => ({
+              label: `${currencies[currencyCode]} (${currencyCode})`,
+              value: currencyCode
+            }))
+        }
+        path="/public/asset_metadata/info"
+        field="currencies"
       />
 
       <Inputs.Select

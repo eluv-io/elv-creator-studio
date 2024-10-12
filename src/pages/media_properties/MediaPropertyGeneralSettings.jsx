@@ -3,13 +3,21 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MarketplaceMultiselect, MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
+import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {MediaPropertyFooterItemSpec} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
+import CountryCodesList from "country-codes-list";
+
+const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
+Object.keys(currencies).forEach(currencyCode => {
+  if(!currencyCode || !currencies[currencyCode]) {
+    delete currencies[currencyCode];
+  }
+});
 
 const MediaPropertyGeneralSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -78,6 +86,24 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="associated_marketplaces"
         tenantSlugField="tenant_slug"
         marketplaceIdField="marketplace_id"
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.currency}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info"
+        field="currency"
+        defaultValue="USD"
+        searchable
+        options={
+          Object.keys(currencies)
+            .sort((a, b) => currencies[a] > currencies[b] ? 1 : -1)
+            .map(currencyCode => ({
+              label: `${currencies[currencyCode]} (${currencyCode})`,
+              value: currencyCode
+            }))
+        }
       />
 
       <Inputs.Password
