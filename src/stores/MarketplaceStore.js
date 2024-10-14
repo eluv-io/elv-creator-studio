@@ -5,6 +5,7 @@ import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 class MarketplaceStore {
   allMarketplaces;
   marketplaces = {};
+  itemTemplateMetadata = {};
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -34,14 +35,30 @@ class MarketplaceStore {
           libraryId: libraryId,
           objectId: marketplaceId,
           metadataSubtree: "public",
-          resolveLinks: true,
-          linkDepthLimit: 1,
-          resolveIgnoreErrors: true,
-          resolveIncludeSource: true,
           produceLinkUrls: true
         }))
       }
     };
+
+    const itemTemplates = yield this.client.ContentObjectMetadata({
+      libraryId: libraryId,
+      objectId: marketplaceId,
+      metadataSubtree: "public/asset_metadata/info/items",
+      produceLinkUrls: true,
+      resolveLinks: true,
+      resolveIgnoreErrors: true,
+      resolveIncludeSource: true,
+      linkDepthLimit: 1,
+      select: [
+        "*/nft_template"
+      ]
+    });
+
+    itemTemplates.forEach(({nft_template}) => {
+      if(!nft_template?.["."]?.source) { return; }
+
+      this.itemTemplateMetadata[nft_template["."].source] = nft_template;
+    });
 
     this.SetListFieldIds({
       objectId: marketplaceId,
@@ -62,6 +79,16 @@ class MarketplaceStore {
       path: "/public/asset_metadata/info/footer_links",
       category: this.rootStore.l10n.pages.marketplace.form.categories.storefront_footer_link,
       label: this.rootStore.l10n.pages.marketplace.form.common.id.label,
+    });
+  });
+
+  LoadItemTemplateMetadata = flow(function * ({itemTemplateHash}) {
+    if(!itemTemplateHash || this.itemTemplateMetadata[itemTemplateHash]) { return; }
+
+    this.itemTemplateMetadata[itemTemplateHash] = yield this.client.ContentObjectMetadata({
+      versionHash: itemTemplateHash,
+      metadataSubtree: "/public/asset_metadata",
+      produceLinkUrls: true
     });
   });
 

@@ -38,6 +38,7 @@ import {
   MediaPropertySearchFilterSpec,
   MediaPropertySearchSecondaryFilterSpec
 } from "@/specs/MediaPropertySpecs.js";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
   const [creating, setCreating] = useState(false);
@@ -84,7 +85,9 @@ const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
 
   const marketplaceItem = (marketplaceStore.marketplaces[form.values.marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [])
     ?.find(item => item.sku === form.values.marketplaceSKU);
-  const redeemableOffers = (marketplaceItem?.nft_template?.nft?.redeemable_offers || [])
+  const itemTemplateHash = ExtractHashFromLink(marketplaceItem.nft_template);
+  const itemTemplateMetadata = itemTemplateHash && marketplaceStore.itemTemplateMetadata[itemTemplateHash];
+  const redeemableOffers = (itemTemplateMetadata?.nft?.redeemable_offers || [])
     .filter(offer => !isNaN(parseInt(offer.offer_id)));
 
   useEffect(() => {

@@ -12,6 +12,7 @@ import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
 import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
 import {IconCircleCheck, IconX, IconClock, IconTemplate, IconLink} from "@tabler/icons-react";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -21,6 +22,15 @@ export const MarketplaceItem = observer(() => {
   const info = marketplace?.metadata?.public?.asset_metadata?.info || {};
   const itemIndex = info.items?.findIndex(item => item.sku === sku);
   const item = info.items[itemIndex];
+  const itemTemplateHash = ExtractHashFromLink(item?.nft_template);
+  const itemTemplateId = itemTemplateHash && rootStore.utils.DecodeVersionHash(itemTemplateHash)?.objectId;
+  const itemTemplateMetadata = marketplaceStore[itemTemplateHash];
+
+  useEffect(() => {
+    if(itemTemplateHash && !itemTemplateMetadata) {
+      marketplaceStore.LoadItemTemplateMetadata({itemTemplateHash});
+    }
+  }, []);
 
   if(!item) {
     return (
@@ -45,9 +55,6 @@ export const MarketplaceItem = observer(() => {
       l10n: l10n.categories.item_label
     })
   };
-
-  const itemTemplateId = !item.nft_template ? null :
-    rootStore.utils.DecodeVersionHash(item.nft_template["."].source)?.objectId;
 
   return (
     <PageContent
@@ -93,8 +100,8 @@ export const MarketplaceItem = observer(() => {
         }
         subcategory={l10n.categories.item_info}
         field="nft_template"
-        previewable={item.nft_template?.nft?.playable}
-        previewIsAnimation={!item.nft_template?.nft?.has_audio}
+        previewable={itemTemplateMetadata?.nft?.playable}
+        previewIsAnimation={!itemTemplateMetadata?.nft?.has_audio}
         GetImage={nft_template => nft_template?.nft?.image}
       />
       <Inputs.Text
@@ -431,7 +438,7 @@ const MarketplaceItems = observer(() => {
                     page: location.pathname,
                     path: UrlJoin("/public/asset_metadata/info/items", index.toString()),
                     field: "nft_template",
-                    linkHash: item.nft_template["."].source
+                    linkHash: ExtractHashFromLink(item.nft_template)
                   })
                 );
 
@@ -483,7 +490,7 @@ const MarketplaceItems = observer(() => {
                   page: location.pathname,
                   path: UrlJoin("/public/asset_metadata/info/items", index.toString()),
                   field: "nft_template",
-                  linkHash: item.nft_template["."].source
+                  linkHash: ExtractHashFromLink(item.nft_template)
                 })
               });
             }}
@@ -496,7 +503,7 @@ const MarketplaceItems = observer(() => {
             render: item => (
               <Group noWrap>
                 <ItemImage marketplaceId={marketplaceId} item={item} scale={200} width={60} height={60} radius="xs" />
-                <Text>{item.name || item.nft_template?.nft?.name}</Text>
+                <Text>{item.name}</Text>
               </Group>
             )
           },

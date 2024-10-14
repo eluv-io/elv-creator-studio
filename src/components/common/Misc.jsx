@@ -1,7 +1,7 @@
 import {Box, Button, Group, Image, Tooltip, ActionIcon, CopyButton} from "@mantine/core";
 import {Link} from "react-router-dom";
-import {rootStore} from "@/stores";
-import {FabricUrl} from "@/helpers/Fabric.js";
+import {rootStore, marketplaceStore} from "@/stores";
+import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
 
 export const LinkButton = (props) => {
   return <Button component={Link} variant="outline" {...props} />;
@@ -77,8 +77,13 @@ export const ItemImage = ({marketplaceId, item, scale, ...props}) => {
       url = new URL(item.image.url);
     } else if(item.image?.["/"]) {
       url = FabricUrl({objectId: marketplaceId, path: item.image["/"], width: 200});
-    } else if(item?.nft_template?.nft?.image) {
-      url = new URL(item.nft_template.nft.image);
+    } else if(item?.nft_template) {
+      const itemTemplateHash = ExtractHashFromLink(item?.nft_template);
+      const itemTemplateMetadata = marketplaceStore.itemTemplateMetadata[itemTemplateHash];
+
+      if(itemTemplateMetadata?.nft?.image) {
+        url = new URL(itemTemplateMetadata.nft.image);
+      }
     }
 
     if(url && scale) {

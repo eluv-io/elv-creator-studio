@@ -15,6 +15,7 @@ import {ValidateSlug} from "@/components/common/Validation.jsx";
 import {useEffect} from "react";
 import {MediaPropertySectionItemPurchaseItemSpec} from "@/specs/MediaPropertySpecs.js";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 export const MediaPropertySectionItemPurchaseItems = observer((inputProps) => {
   const { mediaPropertyId } = useParams();
@@ -257,8 +258,12 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
       const marketplaceItem = (marketplaceStore.marketplaces[sectionItem.marketplace?.marketplace_id]?.metadata?.public?.asset_metadata?.info?.items || [])
         ?.find(item => item.sku === sectionItem.marketplace_sku);
       // eslint-disable-next-line no-case-declarations
-      const redeemableOffers = (marketplaceItem?.nft_template?.nft?.redeemable_offers || [])
-        .filter(offer => !isNaN(parseInt(offer.offer_id)));
+        const itemTemplateHash = ExtractHashFromLink(marketplaceItem.nft_template);
+      // eslint-disable-next-line no-case-declarations
+      const itemTemplateMetadata = itemTemplateHash && marketplaceStore.itemTemplateMetadata[itemTemplateHash];
+      // eslint-disable-next-line no-case-declarations
+      const redeemableOffers = (itemTemplateMetadata?.nft?.redeemable_offers || [])
+    .filter(offer => !isNaN(parseInt(offer.offer_id)));
 
       return (
         <>
