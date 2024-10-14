@@ -85,7 +85,7 @@ const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
 
   const marketplaceItem = (marketplaceStore.marketplaces[form.values.marketplaceId]?.metadata?.public?.asset_metadata?.info?.items || [])
     ?.find(item => item.sku === form.values.marketplaceSKU);
-  const itemTemplateHash = ExtractHashFromLink(marketplaceItem.nft_template);
+  const itemTemplateHash = ExtractHashFromLink(marketplaceItem?.nft_template);
   const itemTemplateMetadata = itemTemplateHash && marketplaceStore.itemTemplateMetadata[itemTemplateHash];
   const redeemableOffers = (itemTemplateMetadata?.nft?.redeemable_offers || [])
     .filter(offer => !isNaN(parseInt(offer.offer_id)));
