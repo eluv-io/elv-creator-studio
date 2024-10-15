@@ -178,6 +178,9 @@ form:
       description: Select the countries for which EBANX is allowed
     ebanx_pix_enabled:
       label: Allow Pix
+    wallet_balance:
+      label: Wallet Balance
+      description: Allow purchases with this payment type
 
 
   theme:

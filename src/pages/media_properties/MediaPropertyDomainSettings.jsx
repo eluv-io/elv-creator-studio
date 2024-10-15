@@ -264,6 +264,24 @@ const MediaPropertyDomainSettings = observer(() => {
       <Title order={3} mt={50} mb="md">
         { l10n.categories.purchase_settings }
       </Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.purchase_settings.purchase_redirect}
+        subcategory={l10n.categories.purchase_settings}
+        path="/public/asset_metadata/info/purchase_settings"
+        field="purchase_redirect"
+        defaultValue=""
+        options={[
+          { label: "None", value: "" },
+          { label: "(Property Main Page)", value: "main" },
+          ...Object.keys(info.pages || {})
+            .filter(pageId => pageId !== "main")
+            .map(pageId => ({
+              label: info.pages[pageId].label,
+              value: pageId
+            }))
+        ]}
+      />
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.purchase_settings.purchase_background_tv}
@@ -272,7 +290,6 @@ const MediaPropertyDomainSettings = observer(() => {
         field="background_tv"
         aspectRatio={16/9}
       />
-
       <Title order={3} mt={50} mb="md">
         { l10n.categories.login_settings }
       </Title>

@@ -346,6 +346,9 @@ form:
     purchase_background_tv:
       label: Purchase Page Background (TV)
       description: This image will be displayed in the background when a QR code is presented to the user
+    purchase_redirect:
+      label: Redirect After Purchase
+      description: If specified, the user will be redirected to this page after purchasing an item in this property. May be overridden for individual purchase items.
 
   login:
     provider:

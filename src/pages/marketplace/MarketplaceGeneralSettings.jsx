@@ -239,19 +239,19 @@ const MarketplaceGeneralSettings = observer(() => {
             />
             <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.coinbase}
+              {...l10n.general.wallet_balance}
               subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/coinbase"
+              path="/public/asset_metadata/info/payment_options/wallet_balance"
               field="enabled"
               defaultValue={true}
             />
             <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.circle}
+              {...l10n.general.coinbase}
               subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/circle"
+              path="/public/asset_metadata/info/payment_options/coinbase"
               field="enabled"
-              defaultValue={false}
+              defaultValue={true}
             />
             <Inputs.Checkbox
               {...inputProps}

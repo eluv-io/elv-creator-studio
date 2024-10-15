@@ -228,6 +228,9 @@ export const MarketplaceSpec = {
     }
   },
   payment_options: {
+    wallet_balance: {
+      enabled: true,
+    },
     stripe: {
       enabled: true
     },
