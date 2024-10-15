@@ -7,7 +7,7 @@ import Inputs, {Confirm} from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 import {Button, Group, Title, Text} from "@mantine/core";
 import {IconButton, ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
-import {FormatDate, FormatUSD, ParseDate} from "@/helpers/Misc.js";
+import {FormatDate, FormatPriceString, ParseDate} from "@/helpers/Misc.js";
 
 import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
@@ -507,7 +507,12 @@ const MarketplaceItems = observer(() => {
               </Group>
             )
           },
-          { label: l10n.items.items.columns.price, field: "price", width: "100px", render: item => item.free ? "Free" : FormatUSD(item.price.USD) },
+          {
+            label: l10n.items.items.columns.price,
+            field: "price",
+            width: "100px",
+            render: item => item.free ? "Free" : FormatPriceString(item.price)
+          },
           {
             label: l10n.items.items.columns.status,
             centered: true,

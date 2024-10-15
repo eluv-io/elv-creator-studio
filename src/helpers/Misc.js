@@ -33,6 +33,24 @@ export const GenerateUUID = () => rootStore.utils.B58(UUIDParse(UUID()));
 export const FormatUSD = usd => typeof usd === "undefined" || usd === "" ? "" :
   new Intl.NumberFormat(navigator.language || "en-US", { style: "currency", currency: "USD"}).format(usd);
 
+export const FormatPriceString = (prices={}) => {
+  let currency = "USD";
+  let price = prices.USD;
+  if(typeof price !== "number") {
+    currency = Object.keys(prices).find(currencyCode => prices[currencyCode]);
+    price = prices[currency];
+  }
+
+  if(typeof price === "undefined" || isNaN(price)) {
+    return "";
+  }
+
+  return new Intl.NumberFormat(navigator.language || "en-US", {
+    style: "currency",
+    currency
+  }).format(price.toString());
+};
+
 export const SortTable = ({sortStatus, AdditionalCondition}) => {
   return (a, b) => {
     if(AdditionalCondition && typeof AdditionalCondition(a, b) !== "undefined") {

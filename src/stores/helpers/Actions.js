@@ -147,6 +147,11 @@ const SetMetadata = function({
             [field]: ""
           }
         });
+      } else if(!value && typeof value === "undefined") {
+        await this.client.DeleteMetadata({
+          ...objectParams,
+          metadataSubtree: fullPath
+        });
       } else {
         await this.client.ReplaceMetadata({
           ...objectParams,
