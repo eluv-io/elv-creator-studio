@@ -231,6 +231,15 @@ const MarketplaceGeneralSettings = observer(() => {
           <Accordion.Panel>
             <Inputs.Checkbox
               {...inputProps}
+              {...l10n.general.prices_inclusive}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info"
+              field="prices_inclusive"
+              defaultValue={false}
+            />
+            <br />
+            <Inputs.Checkbox
+              {...inputProps}
               {...l10n.general.stripe}
               subcategory={l10n.categories.payment_options}
               path="/public/asset_metadata/info/payment_options/stripe"

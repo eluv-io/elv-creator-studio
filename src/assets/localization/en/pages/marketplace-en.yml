@@ -181,8 +181,9 @@ form:
     wallet_balance:
       label: Wallet Balance
       description: Allow purchases with this payment type
-
-
+    prices_inclusive:
+      label: Use Inclusive Prices
+      description: If specified, specified item prices will include taxes and fees
   theme:
     use_tenant_styling:
       label: Use Global Theme
