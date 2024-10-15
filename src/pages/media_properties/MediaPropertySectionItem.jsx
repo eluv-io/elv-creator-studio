@@ -135,7 +135,8 @@ export const MediaPropertySectionItemPurchaseItems = observer((inputProps) => {
               field="redirect_page"
               defaultValue=""
               options={[
-                { label: "None", value: "" },
+                { label: "Property Default", value: "" },
+                { label: "None", value: "_none" },
                 { label: "(Property Main Page)", value: "main" },
                 ...Object.keys(info.pages || {})
                   .filter(pageId => pageId !== "main")
