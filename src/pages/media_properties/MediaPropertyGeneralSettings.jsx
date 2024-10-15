@@ -8,7 +8,7 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaPropertyFooterItemSpec} from "@/specs/MediaPropertySpecs.js";
+import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
 
@@ -124,75 +124,6 @@ const MediaPropertyGeneralSettings = observer(() => {
           { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
         ]}
       />
-
-      <Title order={3} mt={50}  mb="md">{l10n.categories.subproperties}</Title>
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.general.subproperties.subproperties}
-        subcategory={l10n.categories.subproperties}
-        field="subproperties"
-        options={
-          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-            label: mediaProperty.name,
-            value: mediaProperty.objectId
-          }))
-            .filter(({value}) => value !== mediaPropertyId)
-        }
-      />
-      {
-        !info.subproperties || info.subproperties.length <= 0 ? null :
-        <>
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.general.subproperties.show_property_selection}
-            subcategory={l10n.categories.subproperties}
-            field="show_property_selection"
-            defaultValue={false}
-          />
-
-          {
-            !info.show_property_selection ? null :
-              <Inputs.List
-                {...inputProps}
-                {...l10n.general.subproperties.property_selection}
-                subcategory={l10n.categories.subproperties}
-                field="property_selection"
-                renderItem={props => (
-                  <>
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.general.subproperties.property}
-                      field="property_id"
-                      options={
-                        (mediaPropertyStore.allMediaProperties || []).map(mediaProperty => ({
-                          label: mediaProperty.name,
-                          value: mediaProperty.objectId
-                        }))
-                          .filter(({value}) => {
-                            const index = info.property_selection?.findIndex(({property_id}) => property_id === value);
-                            return (mediaPropertyId === value || info.subproperties.includes(value)) && (index < 0 || index === props.index);
-                          })
-                      }
-                    />
-                    <Inputs.Text
-                      {...props}
-                      {...l10n.general.subproperties.title}
-                      field="title"
-                    />
-                    <Inputs.ImageInput
-                      {...props}
-                      fields={[
-                        {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
-                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100}
-                      ]}
-                    />
-                  </>
-                )}
-              />
-          }
-        </>
-      }
-
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox
@@ -385,6 +316,86 @@ const MediaPropertyGeneralSettings = observer(() => {
           />
       }
 
+
+
+      <Title order={3} mt={50}  mb="md">{l10n.categories.subproperties}</Title>
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.subproperties.subproperties}
+        subcategory={l10n.categories.subproperties}
+        field="subproperties"
+        options={
+          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+            label: mediaProperty.name,
+            value: mediaProperty.objectId
+          }))
+            .filter(({value}) => value !== mediaPropertyId)
+        }
+      />
+      {
+        !info.subproperties || info.subproperties.length <= 0 ? null :
+        <>
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.general.subproperties.show_property_selection}
+            subcategory={l10n.categories.subproperties}
+            field="show_property_selection"
+            defaultValue={false}
+          />
+
+          {
+            !info.show_property_selection ? null :
+              <Inputs.List
+                {...inputProps}
+                {...l10n.general.subproperties.property_selection}
+                subcategory={l10n.categories.subproperties}
+                field="property_selection"
+                newItemSpec={MediaPropertySubpropertySpec}
+                renderItem={props => (
+                  <>
+                    <Inputs.Select
+                      {...props}
+                      {...l10n.general.subproperties.property}
+                      field="property_id"
+                      options={
+                        (mediaPropertyStore.allMediaProperties || []).map(mediaProperty => ({
+                          label: mediaProperty.name,
+                          value: mediaProperty.objectId
+                        }))
+                          .filter(({value}) => {
+                            const index = info.property_selection?.findIndex(({property_id}) => property_id === value);
+                            return (mediaPropertyId === value || info.subproperties.includes(value)) && (index < 0 || index === props.index);
+                          })
+                      }
+                    />
+                    <Inputs.Text
+                      {...props}
+                      {...l10n.general.subproperties.title}
+                      field="title"
+                    />
+                    <Inputs.ImageInput
+                      {...props}
+                      fields={[
+                        {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
+                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100}
+                      ]}
+                    />
+                    {
+                      props.item?.property_id === mediaPropertyId ? null :
+                        <PermissionItemSelect
+                          multiple
+                          {...props}
+                          {...l10n.general.subproperties.permissions}
+                          permissionSetIds={info.permission_sets}
+                          field="permission_item_ids"
+                        />
+                    }
+                  </>
+                )}
+              />
+          }
+        </>
+      }
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
 

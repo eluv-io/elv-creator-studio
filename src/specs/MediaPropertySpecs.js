@@ -284,6 +284,14 @@ export const MediaPropertyPageSpec = {
   }
 };
 
+export const MediaPropertySubpropertySpec = {
+  property_id: undefined,
+  title: "",
+  icon: undefined,
+  logo: undefined,
+  permission_item_ids: []
+};
+
 export const MediaPropertySpec = {
   id: undefined,
   url_slug: "",

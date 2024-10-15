@@ -142,6 +142,9 @@ form:
       title:
         label: Title
         description: Will be displayed if logo is not specified
+      permissions:
+        label: Permissions
+        description: If specified, this option will not show unless the user has at least one of the specified permissions
     show_on_main_page:
       label: Show on Main Page (Desktop)
       description: If specified, this property will be visible on the main page of the Eluvio Media Wallet Site
