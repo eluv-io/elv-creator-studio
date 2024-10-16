@@ -15,6 +15,7 @@ const PermissionItemSelect = observer(({permissionSetIds=[], defaultFirst, multi
   if(multiple) {
     return (
       <Inputs.MultiSelect
+        searchable
         options={permissionItems}
         {...inputProps}
       />
@@ -28,6 +29,7 @@ const PermissionItemSelect = observer(({permissionSetIds=[], defaultFirst, multi
   return (
     <Inputs.Select
       options={permissionItems}
+      searchable
       defaultValue={defaultFirst ? permissionItems?.[0]?.value : undefined}
       {...inputProps}
     />

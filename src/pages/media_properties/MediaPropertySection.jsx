@@ -824,15 +824,15 @@ const FilterOptions = observer(() => {
                   />
                   {
                     section.filters.primary_filter_style !== "image" ? null :
-                      <Inputs.SingleImageInput
-                        {...props}
-                        {...l10n.general.search.filter_option.primary_filter_image}
-                        field="primary_filter_image"
-                        baseSize={125}
-                        p="md"
-                        pb="xs"
-                        horizontal
-                      />
+                       <Inputs.ImageInput
+                         {...props}
+                         {...l10n.general.search.filter_option.images}
+                         subcategory={l10n.categories.search}
+                         fields={[
+                           { ...l10n.general.search.filter_option.primary_filter_image, field: "primary_filter_image", baseSize: 125 },
+                           { ...l10n.general.search.filter_option.primary_filter_image_tv, field: "primary_filter_image_tv", baseSize: 125 }
+                         ]}
+                       />
                   }
                   <Inputs.Select
                     {...props}
@@ -908,14 +908,14 @@ const FilterOptions = observer(() => {
                                     />
                                     {
                                       props.item.secondary_filter_style !== "image" ? null :
-                                        <Inputs.SingleImageInput
+                                        <Inputs.ImageInput
                                           {...secondaryFilterProps}
-                                          {...l10n.general.search.filter_option.secondary_filter_image}
-                                          field="secondary_filter_image"
-                                          horizontal
-                                          baseSize={125}
-                                          p="md"
-                                          pb="xs"
+                                          {...l10n.general.search.filter_option.images}
+                                          subcategory={l10n.categories.search}
+                                          fields={[
+                                            { ...l10n.general.search.filter_option.secondary_filter_image, field: "secondary_filter_image", baseSize: 125 },
+                                            { ...l10n.general.search.filter_option.secondary_filter_image_tv, field: "secondary_filter_image_tv", baseSize: 125 }
+                                          ]}
                                         />
                                     }
                                   </>
