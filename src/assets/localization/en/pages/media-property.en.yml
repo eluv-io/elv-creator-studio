@@ -92,6 +92,8 @@ form:
     page_title:
       label: Page Title
       description: The title of the page in the browser
+    images:
+      label: Images
     image:
       label: Image
       description: Portrait (2:3)
@@ -139,6 +141,8 @@ form:
         label: Icon
       logo:
         label: Logo (Optional)
+      tile:
+        label: Tile Image (TV)
       title:
         label: Title
         description: Will be displayed if logo is not specified

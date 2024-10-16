@@ -375,9 +375,12 @@ const MediaPropertyGeneralSettings = observer(() => {
                     />
                     <Inputs.ImageInput
                       {...props}
+                      {...l10n.general.images}
+                      maw={uiStore.inputWidth}
                       fields={[
                         {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
-                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100}
+                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100},
+                        {...l10n.general.subproperties.tile, field: "tile", aspectRatio: 16/9, baseSize: 100}
                       ]}
                     />
                     {
