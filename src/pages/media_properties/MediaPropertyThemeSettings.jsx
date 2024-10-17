@@ -88,6 +88,19 @@ const MediaPropertyThemeSettings = observer(() => {
       }
 
 
+      <Title order={3} mt={50} mb="md">{l10n.categories.user_profile}</Title>
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.profile_background}
+        subcategory={l10n.categories.media_sidebar}
+        path="/public/asset_metadata/info/styling/profile"
+        fields={[
+          { field: "background_image", aspectRatio: 16/9, baseSize: 135, ...l10n.general.profile_background_desktop },
+          { field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.profile_background_mobile }
+        ]}
+      />
+
+
       <Title order={3} mt={50} mb="md">{l10n.categories.media_sidebar}</Title>
       <Inputs.Checkbox
         {...inputProps}
