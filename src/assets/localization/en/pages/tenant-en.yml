@@ -1,7 +1,7 @@
 nav:
   overview: Overview
   general: General
-  theme: Global Theme
+  email_templates: Email Templates
 form:
   categories:
     general: Settings
@@ -12,6 +12,14 @@ form:
     advanced: Advanced Settings
     owners: Owners
     leaderboard_excludes: Leaderboard Excluded Addresses
+    email_templates: Email Templates
+    email_templates_common: Common Settings
+    email_template_settings: Email Template Settings
+    email_verification_template: Email Verification Template
+    welcome_email_template: Welcome Email Template
+    password_reset_template: Password Reset Email Template
+    preview_email_template: Preview Email Template
+    invite_template: Invite Email Template
   overview:
     slug: Slug
     deployment: Deployment Status
@@ -86,17 +94,65 @@ form:
     issuer_url:
       label: Issuer URL
       description: The exact issuer URL.  This URL may change as long as the issuer unique ID remains unchanged.
-
-
-  global_theme:
-    enable_global_theme:
-      label: Enable Global Media Wallet Theme
-      description: Override settings for all marketplaces with 'Use Global Theme' enabled. Overrides marketplace theme on pages outside of the marketplace storefront, item pages and collections. This includes all secondary market pages as well as user profile and item pages.
-    app_background:
-      label: App Background
-    background_desktop:
-      label: Background (Desktop)
-    background_mobile:
-      label: Background (Mobile)
-    wallet_css:
-      label: Custom Media Wallet CSS
+  email_templates:
+    copyright:
+      label: Copyright
+    banner_image:
+      label: Banner Image
+      description: 3:1 Aspect Ratio
+    colors:
+      label: Colors
+    title_color:
+      label: Title Color
+    button_color:
+      label: Button Color
+    page_title:
+      label: Page Title
+    preheader:
+      label: Preheader
+      description: This will appear below the email title in certain clients as a preview of the email
+    title:
+      label: Title
+    subtitle:
+      label: Subtitle
+    text:
+      label: Text
+    secondary_text:
+      label: Secondary Text
+      description: This text will show below the verification code
+    button_text:
+      label: Button Text
+    defaults:
+      welcome_email:
+        page_title: "Welcome to the Eluvio Media Wallet!"
+        preheader: "Welcome to the Eluvio Media Wallet!"
+        title: "Welcome to the Eluvio Media Wallet!"
+        subtitle: ""
+        text: "Welcome to the Eluvio Media Wallet!"
+        button_text: "Eluvio Media Wallet"
+        copyright: ""
+      email_verification:
+        page_title: "Verify your Email Address"
+        preheader: "Welcome to the Eluvio Media Wallet!"
+        title: "Verify your Email Address"
+        subtitle: ""
+        text: "Welcome to the Eluvio Media Wallet! Verify your email address to complete your account."
+        button_text: "Verify your Email"
+        copyright: ""
+      invite:
+        page_title: "Welcome to the Eluvio Media Wallet"
+        preheader: "Your account has been successfully set up!"
+        title: "Welcome to the Eluvio Media Wallet"
+        subtitle: ""
+        text: "Your account has been successfully set up! To get started, please click the button below to create your password:"
+        button_text: "Create Password"
+        copyright: ""
+      password_reset:
+        page_title: "Reset Your Password"
+        preheader: "We received a request to reset your password"
+        title: "Reset Your Password"
+        subtitle: ""
+        text: "We received a request to recover access to your account. Please use the following code to proceed:"
+        secondary_text: "If you did not request this, you can ignore this email. Someone else might have entered your email address by mistake."
+        recovery_code: "123456"
+        copyright: ""

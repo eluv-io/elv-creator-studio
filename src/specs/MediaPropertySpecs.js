@@ -38,7 +38,6 @@ export const MediaPropertySearchFilterSpec = {
   primary_filter_value: "",
   primary_filter_image: undefined,
   secondary_filter_attribute: "",
-  secondary_filter_spec: "automatic",
   secondary_filter_style: "text",
   secondary_filter_options: [],
 };

@@ -257,6 +257,7 @@ form:
           description: Select how the secondary filter is displayed. Note that images can only be specified if the secondary filter options are manually set
         secondary_filter_options:
           label: Secondary Filter Options
+          description: Customize values shown for the secondary filter. If no options are set, the default values for the secondary filter attribute will be used.
           fieldLabel: Secondary Filter Option
         secondary_filter_value:
           label: Secondary Filter Value

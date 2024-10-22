@@ -168,18 +168,6 @@ const MediaPropertySearch = observer(() => {
                             <>
                               <Inputs.Select
                                 {...props}
-                                {...l10n.general.search.filter_option.secondary_filter_spec}
-                                subcategory={l10n.categories.search}
-                                field="secondary_filter_spec"
-                                defaultValue="automatic"
-                                options={[
-                                  {label: "Automatic", value: "automatic"},
-                                  {label: "Manual", value: "manual"}
-                                ]}
-                              />
-
-                              <Inputs.Select
-                                {...props}
                                 {...l10n.general.search.filter_option.secondary_filter_style}
                                 subcategory={l10n.categories.search}
                                 field="secondary_filter_style"
@@ -187,57 +175,54 @@ const MediaPropertySearch = observer(() => {
                                 options={[
                                   {label: "Box", value: "box"},
                                   {label: "Text", value: "text"},
-                                  {label: "Image", value: "image", disabled: props.item.secondary_filter_spec !== "manual"},
+                                  {label: "Image", value: "image", disabled: props.item.secondary_filter_options.length === 0},
                                 ]}
                               />
-                              {
-                                props.item.secondary_filter_spec !== "manual" ? null :
-                                  <Inputs.List
-                                    {...props}
-                                    {...l10n.general.search.filter_option.secondary_filter_options}
-                                    subcategory={l10n.categories.search}
-                                    field="secondary_filter_options"
-                                    newItemSpec={MediaPropertySearchSecondaryFilterSpec}
-                                    renderItem={(secondaryFilterProps) => {
-                                      const secondaryAttributeValues =
-                                        props.item.secondary_filter_attribute === "__media-type" ?
-                                          ["Video", "Gallery", "Image", "Ebook"] :
-                                          attributes[props.item.secondary_filter_attribute]?.tags || [];
+                              <Inputs.List
+                                {...props}
+                                {...l10n.general.search.filter_option.secondary_filter_options}
+                                subcategory={l10n.categories.search}
+                                field="secondary_filter_options"
+                                newItemSpec={MediaPropertySearchSecondaryFilterSpec}
+                                renderItem={(secondaryFilterProps) => {
+                                  const secondaryAttributeValues =
+                                    props.item.secondary_filter_attribute === "__media-type" ?
+                                      ["Video", "Gallery", "Image", "Ebook"] :
+                                      attributes[props.item.secondary_filter_attribute]?.tags || [];
 
-                                      return (
-                                        <>
-                                          <Inputs.Select
+                                  return (
+                                    <>
+                                      <Inputs.Select
+                                        {...secondaryFilterProps}
+                                        {...l10n.general.search.filter_option.secondary_filter_value}
+                                        subcategory={l10n.categories.search}
+                                        field="secondary_filter_value"
+                                        searchable
+                                        defaultValue=""
+                                        options={[
+                                          {label: "All", value: ""},
+                                          ...secondaryAttributeValues.map(tag => ({
+                                            label: tag || "",
+                                            value: tag
+                                          }))
+                                        ]}
+                                      />
+                                      {
+                                        props.item.secondary_filter_style !== "image" ? null :
+                                          <Inputs.ImageInput
                                             {...secondaryFilterProps}
-                                            {...l10n.general.search.filter_option.secondary_filter_value}
+                                            {...l10n.general.search.filter_option.images}
                                             subcategory={l10n.categories.search}
-                                            field="secondary_filter_value"
-                                            searchable
-                                            defaultValue=""
-                                            options={[
-                                              {label: "All", value: ""},
-                                              ...secondaryAttributeValues.map(tag => ({
-                                                label: tag || "",
-                                                value: tag
-                                              }))
+                                            fields={[
+                                              { ...l10n.general.search.filter_option.secondary_filter_image, field: "secondary_filter_image", baseSize: 125 },
+                                              { ...l10n.general.search.filter_option.secondary_filter_image_tv, field: "secondary_filter_image_tv", baseSize: 125 }
                                             ]}
                                           />
-                                          {
-                                            props.item.secondary_filter_style !== "image" ? null :
-                                              <Inputs.ImageInput
-                                                {...secondaryFilterProps}
-                                                {...l10n.general.search.filter_option.images}
-                                                subcategory={l10n.categories.search}
-                                                fields={[
-                                                  { ...l10n.general.search.filter_option.secondary_filter_image, field: "secondary_filter_image", baseSize: 125 },
-                                                  { ...l10n.general.search.filter_option.secondary_filter_image_tv, field: "secondary_filter_image_tv", baseSize: 125 }
-                                                ]}
-                                              />
-                                          }
-                                        </>
-                                      );
-                                    }}
-                                  />
-                              }
+                                      }
+                                    </>
+                                  );
+                                }}
+                              />
                             </>
                         }
                       </>

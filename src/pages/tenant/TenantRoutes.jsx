@@ -5,11 +5,13 @@ import {rootStore, tenantStore} from "@/stores";
 
 import TenantOverview from "./TenantOverview.jsx";
 import TenantGeneralSettings from "./TenantGeneralSettings.jsx";
+import TenantEmailTemplates from "@/pages/tenant/TenantEmailTemplates.jsx";
 
 const TenantRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.tenant.nav.overview, path: "/tenant", Component: <TenantOverview /> },
-    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/tenant/general", Component: <TenantGeneralSettings /> }
+    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.general, path: "/tenant/general", Component: <TenantGeneralSettings /> },
+    { navRoute: true, label: rootStore.l10n.pages.tenant.nav.email_templates, path: "/tenant/email_templates", Component: <TenantEmailTemplates /> }
   ]
     .map(route => ({
       ...route,
