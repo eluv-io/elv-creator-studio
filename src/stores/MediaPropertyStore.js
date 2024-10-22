@@ -719,30 +719,51 @@ class MediaPropertyStore {
 
     let modified = false;
     const catalogs = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalogs || [];
-    let catalogLinks = Clone(toJS(this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {}));
+
+    let catalogLinks = {};
     yield Promise.all(catalogs.map(async catalogId => {
       const catalogHash = await this.client.LatestVersionHash({objectId: catalogId});
 
-      if(!catalogLinks?.[catalogId]?.["/"]?.includes(catalogHash)) {
-        modified = true;
-        catalogLinks[catalogId] = {
-          "/": UrlJoin("/qfab", catalogHash, "meta", "public", "asset_metadata", "info")
-        };
-      }
+      catalogLinks[catalogId] = {
+        "/": UrlJoin("/qfab", catalogHash, "meta", "public", "asset_metadata", "info")
+      };
     }));
 
+    // Determine if any links changed
+    const oldCatalogLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
+
+    modified = JSON.stringify(Object.keys(catalogLinks).sort()) !== JSON.stringify(Object.keys(oldCatalogLinks).sort());
+    if(!modified) {
+      Object.keys(catalogLinks).forEach(catalogId => {
+        if(catalogLinks[catalogId]?.["/"] !== oldCatalogLinks[catalogId]?.["/"]) {
+          modified = true;
+        }
+      });
+    }
+
     const permissionSets = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_sets || [];
-    let permissionSetLinks = Clone(toJS(this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links || {}));
+    let permissionSetLinks = {};
     yield Promise.all(permissionSets.map(async permissionSetId => {
       const permissionSetHash = await this.client.LatestVersionHash({objectId: permissionSetId});
 
-      if(!permissionSetLinks?.[permissionSetId]?.["/"]?.includes(permissionSetHash)) {
-        modified = true;
-        permissionSetLinks[permissionSetId] = {
-          "/": UrlJoin("/qfab", permissionSetHash, "meta", "public", "asset_metadata", "info")
-        };
-      }
+      permissionSetLinks[permissionSetId] = {
+        "/": UrlJoin("/qfab", permissionSetHash, "meta", "public", "asset_metadata", "info")
+      };
     }));
+
+    if(!modified) {
+      const oldPermissionSetLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links || {};
+
+      modified = JSON.stringify(Object.keys(permissionSetLinks).sort()) !== JSON.stringify(Object.keys(oldPermissionSetLinks).sort());
+
+      if(!modified) {
+        Object.keys(permissionSetLinks).forEach(permissionSetId => {
+          if(permissionSetLinks[permissionSetId]?.["/"] !== oldPermissionSetLinks[permissionSetId]?.["/"]) {
+            modified = true;
+          }
+        });
+      }
+    }
 
     if(!modified) {
       return;
