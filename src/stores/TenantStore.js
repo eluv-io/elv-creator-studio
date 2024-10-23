@@ -268,7 +268,8 @@ class TenantStore {
     const metadata = {
       public: (yield this.client.ContentObjectMetadata({
         versionHash: tenantHash,
-        metadataSubtree: "public"
+        metadataSubtree: "public",
+        produceLinkUrls: true
       }))
     };
 

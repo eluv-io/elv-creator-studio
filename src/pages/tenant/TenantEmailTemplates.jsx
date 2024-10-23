@@ -44,7 +44,7 @@ const EmailPreview = observer(() => {
 
   if(html) {
     const commonSettings = info?.email_template_settings?.common || {};
-    html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image?.url);
+    html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image);
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
     html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#000000");
     html = html.replaceAll("{{copyright}}", commonSettings.copyright || "");
@@ -149,6 +149,7 @@ const TenantGeneralSettings = observer(() => {
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.email_templates.banner_image}
+        url
         aspectRatio={3}
         maw={400}
         baseSize={115}
@@ -156,7 +157,6 @@ const TenantGeneralSettings = observer(() => {
         subcategory={l10n.categories.email_templates_common}
         field="banner_image"
       />
-
 
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.email_template_settings }</Title>
