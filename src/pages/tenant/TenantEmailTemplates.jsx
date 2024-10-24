@@ -6,10 +6,8 @@ import {Accordion, Select, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 
-import WelcomeEmailTemplate from "@/assets/email_templates/WelcomeEmailTemplate.html?raw";
-import EmailVerificationTemplate from "@/assets/email_templates/EmailVerificationTemplate.html?raw";
-import PasswordResetTemplate from "@/assets/email_templates/PasswordResetTemplate.html?raw";
-import InviteTemplate from "@/assets/email_templates/InviteEmailTemplate.html?raw";
+import CodeTemplate from "@/assets/email_templates/CodeTemplate.html?raw";
+import LinkTemplate from "@/assets/email_templates/LinkTemplate.html?raw";
 
 const EmailPreview = observer(() => {
   const [preview, setPreview] = useState("");
@@ -23,22 +21,22 @@ const EmailPreview = observer(() => {
     case "welcome_email":
       settings = info.email_template_settings?.welcome_email || {};
       defaults = l10n.email_templates.defaults.welcome_email;
-      html = WelcomeEmailTemplate;
+      html = LinkTemplate;
       break;
     case "email_verification":
       settings = info.email_template_settings?.email_verification || {};
       defaults = l10n.email_templates.defaults.email_verification;
-      html = EmailVerificationTemplate;
+      html = LinkTemplate;
       break;
     case "password_reset":
       settings = info.email_template_settings?.password_reset || {};
       defaults = l10n.email_templates.defaults.password_reset;
-      html = PasswordResetTemplate;
+      html = CodeTemplate;
       break;
     case "invite":
       settings = info.email_template_settings?.invite || {};
       defaults = l10n.email_templates.defaults.invite;
-      html = InviteTemplate;
+      html = LinkTemplate;
       break;
   }
 
@@ -199,6 +197,14 @@ const TenantGeneralSettings = observer(() => {
               placeholder={l10n.email_templates.defaults.welcome_email.button_text || ""}
               field="button_text"
             />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "welcome_email")}
+              subcategory={l10n.categories.welcome_email_template}
+              placeholder={l10n.email_templates.defaults.welcome_email.secondary_text || ""}
+              field="secondary_text"
+            />
             <Inputs.Text
               {...inputProps}
               {...l10n.email_templates.page_title}
@@ -253,6 +259,14 @@ const TenantGeneralSettings = observer(() => {
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.button_text || ""}
               field="button_text"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "email_verification")}
+              subcategory={l10n.categories.email_verification_template}
+              placeholder={l10n.email_templates.defaults.email_verification.secondary_text || ""}
+              field="secondary_text"
             />
             <Inputs.Text
               {...inputProps}
@@ -365,6 +379,14 @@ const TenantGeneralSettings = observer(() => {
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.button_text || ""}
               field="button_text"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "invite")}
+              subcategory={l10n.categories.invite_template}
+              placeholder={l10n.email_templates.defaults.invite.secondary_text || ""}
+              field="secondary_text"
             />
             <Inputs.Text
               {...inputProps}

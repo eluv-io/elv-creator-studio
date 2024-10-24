@@ -130,6 +130,7 @@ form:
         subtitle: ""
         text: "Welcome to the Eluvio Media Wallet!"
         button_text: "Eluvio Media Wallet"
+        secondary_text: ""
         copyright: ""
       email_verification:
         page_title: "Verify your Email Address"
@@ -138,6 +139,7 @@ form:
         subtitle: ""
         text: "Welcome to the Eluvio Media Wallet! Verify your email address to complete your account."
         button_text: "Verify your Email"
+        secondary_text: ""
         copyright: ""
       invite:
         page_title: "Welcome to the Eluvio Media Wallet"
@@ -146,6 +148,7 @@ form:
         subtitle: ""
         text: "Your account has been successfully set up! To get started, please click the button below to create your password:"
         button_text: "Create Password"
+        secondary_text: ""
         copyright: ""
       password_reset:
         page_title: "Reset Your Password"

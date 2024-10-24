@@ -4,125 +4,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <title>{{pageTitle}}</title>
+    <title>{{page_title}}</title>
     <style media="all" type="text/css">
-    /*
-        Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
-        - The "symbol *" part is to solve Firefox SVG sprite bug
-        - The "html" element is excluded, otherwise a bug in Chrome breaks the CSS hyphens property (https://github.com/elad2412/the-new-css-reset/issues/36)
-     */
-      *:where(:not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)) {
-          all: unset;
-          display: revert;
-      }
-
-      /* Preferred box-sizing value */
-      *,
-      *::before,
-      *::after {
-          box-sizing: border-box;
-      }
-
-      /* Fix mobile Safari increase font-size on landscape mode */
       html {
           -moz-text-size-adjust: none;
           -webkit-text-size-adjust: none;
           text-size-adjust: none;
       }
 
-      /* Reapply the pointer cursor for anchor tags */
       a, button {
           cursor: revert;
       }
 
-      /* Remove list styles (bullets/numbers) */
       ol, ul, menu, summary {
           list-style: none;
       }
 
-      /* Firefox: solve issue where nested ordered lists continue numbering from parent (https://bugzilla.mozilla.org/show_bug.cgi?id=1881517) */
       ol {
           counter-reset: revert;
       }
 
-      /* For images to not be able to exceed their container */
       img {
           max-inline-size: 100%;
           max-block-size: 100%;
       }
 
-      /* removes spacing between cells in tables */
       table {
           border-collapse: collapse;
       }
 
-      /* Safari - solving issue when using user-select:none on the <body> text input doesn't working */
       input, textarea {
           -webkit-user-select: auto;
       }
 
-      /* revert the 'white-space' property for textarea elements on Safari */
       textarea {
           white-space: revert;
       }
 
-      /* minimum style to allow to style meter element */
       meter {
           -webkit-appearance: revert;
           appearance: revert;
       }
 
-      /* preformatted text - use only for this feature */
-      :where(pre) {
-          all: revert;
-          box-sizing: border-box;
-      }
-
-      /* reset default text opacity of input placeholder */
-      ::placeholder {
-          color: unset;
-      }
-
-      /* fix the feature of 'hidden' attribute.
-         display:revert; revert to element instead of attribute */
-      :where([hidden]) {
-          display: none;
-      }
-
-      /* revert for bug in Chromium browsers
-         - fix for the content editable attribute will work properly.
-         - webkit-user-select: auto; added for Safari in case of using user-select:none on wrapper element*/
-      :where([contenteditable]:not([contenteditable="false"])) {
-          -moz-user-modify: read-write;
-          -webkit-user-modify: read-write;
-          overflow-wrap: break-word;
-          -webkit-line-break: after-white-space;
-          -webkit-user-select: auto;
-      }
-
-      /* apply back the draggable feature - exist only in Chromium and Safari */
-      :where([draggable="true"]) {
-          -webkit-user-drag: element;
-      }
-
-      /* Revert Modal native behavior */
-      :where(dialog:modal) {
-          all: revert;
-          box-sizing: border-box;
-      }
-
-      /* Remove details summary webkit styles */
-      ::-webkit-details-marker {
-          display: none;
-      }
-
 
     body {
+      color: #000000;
       -webkit-font-smoothing: antialiased;
       line-height: 1.3;
       -ms-text-size-adjust: 100%;
       -webkit-text-size-adjust: 100%;
       font-family: Inter, "Helvetica Neue", helvetica, sans-serif;
+    }
+
+    body * {
+      color: #000000;
+      text-align: center;
     }
 
     table {
@@ -165,8 +101,7 @@
     .container {
       margin: 0 auto !important;
       max-width: 600px;
-      padding: 0;
-      padding-top: 24px;
+      padding: 50px 0 100px;
       width: 600px;
     }
 
@@ -194,19 +129,23 @@
 
     .title,
     .subtitle {
-      color: #000000;
       color: {{title_color}};
-      font-size: 27px;
+      font-size: 30px;
       font-weight: 700;
     }
 
     .text {
       white-space: pre-wrap;
-      padding: 30px 0;
+      padding: 30px 30px 15px;
+      font-size: 18px;
+      font-weight: 500;
     }
 
     .text--secondary {
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+      padding: 0;
     }
 
     .code {
@@ -214,9 +153,10 @@
       background-color: white;
       border-radius: 4px;
       letter-spacing: 5px;
-      padding: 20px 40px;
+      padding: 15px 40px;
       width: max-content;
-      margin: 0 auto;
+      margin: 5px auto 20px;
+      font-size: 24px;
     }
 
     .wrapper {
@@ -225,7 +165,7 @@
     }
 
     .btn table {
-      margin: 0 auto;
+      margin: 20px auto 30px;
     }
 
     .btn table {
@@ -236,13 +176,12 @@
       box-sizing: border-box;
       cursor: pointer;
       display: inline-block;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       margin: 0;
       padding: 12px 35px;
       text-decoration: none;
       color: #FFFFFF;
-      background-color: #000000;
       background: {{button_color}};
       border-radius: 4px;
     }
@@ -251,7 +190,7 @@
       clear: both;
       text-align: center;
       width: 100%;
-      padding-top: 10px;
+      margin-top: 30px;
     }
 
     .footer * {
@@ -287,16 +226,33 @@
       margin-right: 10px;
     }
 
+    .link-alternative-text {
+      margin-top: 30px;
+    }
+    .link-alternative-text,
+    .link-alternative-link {
+      font-size: 12px;
+      opacity: 0.5;
+      text-decoration: none;
+      color: #000000;
+    }
+
     p {
       font-size: 16px;
       font-weight: normal;
-      margin: 0;
-      margin-bottom: 16px;
     }
 
     a {
       color: #1255cc;
       text-decoration: underline;
+    }
+
+    h1,
+    h2,
+    p,
+    a {
+      margin: 0;
+      text-align: center!important;
     }
 
 
@@ -316,14 +272,20 @@
 
       .text {
         font-size: 18px;
+        padding: 30px 0 15px;
       }
 
       .text--secondary {
         font-size: 14px;
+        padding: 0;
+      }
+
+      .code {
+        font-size: 24px;
       }
 
       .wrapper {
-        padding: 15px 25px; !important;
+        padding: 15px 25px !important;
       }
       .content {
         padding: 0 !important;
@@ -336,6 +298,8 @@
         border-left-width: 0 !important;
         border-radius: 0 !important;
         border-right-width: 0 !important;
+        margin-bottom: 0;
+        padding-bottom: 25px;
       }
       .btn table {
         max-width: 100% !important;
@@ -345,31 +309,6 @@
         font-size: 16px !important;
         max-width: 100% !important;
         width: 100% !important;
-      }
-    }
-    /* -------------------------------------
-    PRESERVE THESE STYLES IN THE HEAD
-------------------------------------- */
-
-    @media all {
-      .ExternalClass {
-        width: 100%;
-      }
-      .ExternalClass,
-      .ExternalClass p,
-      .ExternalClass span,
-      .ExternalClass font,
-      .ExternalClass td,
-      .ExternalClass div {
-        line-height: 100%;
-      }
-      #MessageViewBody a {
-        color: inherit;
-        text-decoration: none;
-        font-size: inherit;
-        font-family: inherit;
-        font-weight: inherit;
-        line-height: inherit;
       }
     }
     </style>
@@ -395,11 +334,36 @@
                 <td class="wrapper">
                   <h1 class="title">{{title}}</h1>
                   <h2 class="subtitle">{{subtitle}}</h2>
-                  <div class="text">{{text}}</div>
-                  <div class="code">
-                    {{recovery_code}}
-                  </div>
-                  <div class="text text--secondary">{{secondary_text}}</div>
+                  <p class="text">{{text}}</p>
+
+                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                    <tbody>
+                      <tr>
+                        <td align="left">
+                          <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <a href="{{button_link}}" target="_blank">
+                                    {{button_text}}
+                                  </a>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p class="text text--secondary">{{secondary_text}}</p>
+                  <p class="link-alternative-text">
+                    If the button above does not work, paste this link into your browser.
+                  </p>
+                  <p>
+                    <a href="{{button_link}}" target="_blank" class="link-alternative-link">
+                      {{button_link}}
+                    </a>
+                  </p>
                 </td>
               </tr>
 
