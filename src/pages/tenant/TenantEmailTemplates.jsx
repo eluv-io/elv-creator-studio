@@ -122,6 +122,7 @@ const TenantGeneralSettings = observer(() => {
         componentProps={{maw: uiStore.inputWidthNarrow}}
         path={UrlJoin(inputProps.path, "common")}
         subcategory={l10n.categories.email_templates_common}
+        placeholder={l10n.email_templates.defaults.common.copyright}
         field="copyright"
       />
 
