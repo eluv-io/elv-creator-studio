@@ -45,7 +45,7 @@ const EmailPreview = observer(() => {
     html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image);
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
     html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#000000");
-    html = html.replaceAll("{{copyright}}", commonSettings.copyright || "");
+    html = html.replaceAll("{{copyright}}", commonSettings.copyright || "©Eluvio, Inc");
 
     Object.keys(defaults).forEach(key =>
       html = html.replaceAll(`{{${key}}}`, settings[key] || defaults[key])
