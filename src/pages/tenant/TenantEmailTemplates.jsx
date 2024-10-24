@@ -118,6 +118,15 @@ const TenantGeneralSettings = observer(() => {
 
       <Inputs.Text
         {...inputProps}
+        {...l10n.email_templates.from}
+        componentProps={{maw: uiStore.inputWidthNarrow}}
+        path={UrlJoin(inputProps.path, "common")}
+        subcategory={l10n.categories.email_templates_common}
+        placeholder={l10n.email_templates.defaults.common.from}
+        field="from"
+      />
+      <Inputs.Text
+        {...inputProps}
         {...l10n.email_templates.copyright}
         componentProps={{maw: uiStore.inputWidthNarrow}}
         path={UrlJoin(inputProps.path, "common")}
@@ -168,6 +177,14 @@ const TenantGeneralSettings = observer(() => {
           <Accordion.Panel>
             <Inputs.Text
               {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "welcome_email")}
+              subcategory={l10n.categories.welcome_email_template}
+              placeholder={l10n.email_templates.defaults.welcome_email.subject || ""}
+              field="subject"
+            />
+            <Inputs.Text
+              {...inputProps}
               {...l10n.email_templates.title}
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
@@ -208,14 +225,6 @@ const TenantGeneralSettings = observer(() => {
             />
             <Inputs.Text
               {...inputProps}
-              {...l10n.email_templates.page_title}
-              path={UrlJoin(inputProps.path, "welcome_email")}
-              subcategory={l10n.categories.welcome_email_template}
-              placeholder={l10n.email_templates.defaults.welcome_email.page_title || ""}
-              field="page_title"
-            />
-            <Inputs.Text
-              {...inputProps}
               {...l10n.email_templates.preheader}
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
@@ -229,6 +238,14 @@ const TenantGeneralSettings = observer(() => {
             { l10n.categories.email_verification_template }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "email_verification")}
+              subcategory={l10n.categories.email_verification_template}
+              placeholder={l10n.email_templates.defaults.email_verification.subject || ""}
+              field="subject"
+            />
             <Inputs.Text
               {...inputProps}
               {...l10n.email_templates.title}
@@ -271,14 +288,6 @@ const TenantGeneralSettings = observer(() => {
             />
             <Inputs.Text
               {...inputProps}
-              {...l10n.email_templates.page_title}
-              path={UrlJoin(inputProps.path, "email_verification")}
-              subcategory={l10n.categories.email_verification_template}
-              placeholder={l10n.email_templates.defaults.email_verification.page_title || ""}
-              field="page_title"
-            />
-            <Inputs.Text
-              {...inputProps}
               {...l10n.email_templates.preheader}
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
@@ -293,6 +302,14 @@ const TenantGeneralSettings = observer(() => {
             { l10n.categories.password_reset_template }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "password_reset")}
+              subcategory={l10n.categories.password_reset_template}
+              placeholder={l10n.email_templates.defaults.password_reset.subject || ""}
+              field="subject"
+            />
             <Inputs.Text
               {...inputProps}
               {...l10n.email_templates.title}
@@ -327,14 +344,6 @@ const TenantGeneralSettings = observer(() => {
             />
             <Inputs.Text
               {...inputProps}
-              {...l10n.email_templates.page_title}
-              path={UrlJoin(inputProps.path, "password_reset")}
-              subcategory={l10n.categories.password_reset_template}
-              placeholder={l10n.email_templates.defaults.password_reset.page_title || ""}
-              field="page_title"
-            />
-            <Inputs.Text
-              {...inputProps}
               {...l10n.email_templates.preheader}
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
@@ -349,6 +358,14 @@ const TenantGeneralSettings = observer(() => {
             { l10n.categories.invite_template }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "invite")}
+              subcategory={l10n.categories.invite_template}
+              placeholder={l10n.email_templates.defaults.invite.subject || ""}
+              field="subject"
+            />
             <Inputs.Text
               {...inputProps}
               {...l10n.email_templates.title}
@@ -388,14 +405,6 @@ const TenantGeneralSettings = observer(() => {
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.secondary_text || ""}
               field="secondary_text"
-            />
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.email_templates.page_title}
-              path={UrlJoin(inputProps.path, "invite")}
-              subcategory={l10n.categories.invite_template}
-              placeholder={l10n.email_templates.defaults.invite.page_title || ""}
-              field="page_title"
             />
             <Inputs.Text
               {...inputProps}

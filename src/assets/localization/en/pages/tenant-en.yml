@@ -95,6 +95,8 @@ form:
       label: Issuer URL
       description: The exact issuer URL.  This URL may change as long as the issuer unique ID remains unchanged.
   email_templates:
+    from:
+      label: Email 'From' Field
     copyright:
       label: Copyright
     banner_image:
@@ -106,8 +108,8 @@ form:
       label: Title Color
     button_color:
       label: Button Color
-    page_title:
-      label: Page Title
+    subject:
+      label: Email Subject Line
     preheader:
       label: Preheader
       description: This will appear below the email title in certain clients as a preview of the email
@@ -124,9 +126,10 @@ form:
       label: Button Text
     defaults:
       common:
+        from: "noreply@eluv.io"
         copyright: "©Eluvio, Inc"
       welcome_email:
-        page_title: "Welcome to the Eluvio Media Wallet!"
+        subject: "Welcome to the Eluvio Media Wallet!"
         preheader: "Welcome to the Eluvio Media Wallet!"
         title: "Welcome to the Eluvio Media Wallet!"
         subtitle: ""
@@ -134,7 +137,7 @@ form:
         button_text: "Eluvio Media Wallet"
         secondary_text: ""
       email_verification:
-        page_title: "Verify your Email Address"
+        subject: "Verify your Email Address"
         preheader: "Welcome to the Eluvio Media Wallet!"
         title: "Verify your Email Address"
         subtitle: ""
@@ -142,7 +145,7 @@ form:
         button_text: "Verify your Email"
         secondary_text: ""
       invite:
-        page_title: "Welcome to the Eluvio Media Wallet"
+        subject: "Welcome to the Eluvio Media Wallet"
         preheader: "Your account has been successfully set up!"
         title: "Welcome to the Eluvio Media Wallet"
         subtitle: ""
@@ -150,7 +153,7 @@ form:
         button_text: "Create Password"
         secondary_text: ""
       password_reset:
-        page_title: "Reset Your Password"
+        subject: "Reset Your Password"
         preheader: "We received a request to reset your password"
         title: "Reset Your Password"
         subtitle: ""
