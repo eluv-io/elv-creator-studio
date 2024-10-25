@@ -310,7 +310,7 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
   }
 });
 
-const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inputProps, showDescription, mediaItem}) => {
+const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDescription, mediaItem, section}) => {
   // These fields mirror catalog media configuration
   const l10n = rootStore.l10n.pages.media_catalog.form;
 
@@ -344,6 +344,16 @@ const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inpu
       />
 
       {
+        !["button_vertical", "button_horizontal"].includes(section?.display?.card_style) ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...rootStore.l10n.pages.media_property.form.section_items.show_price}
+            field="show_price"
+            defaultValue={false}
+          />
+      }
+
+      {
         !showDescription ? null :
           <>
             <Inputs.TextArea
@@ -372,7 +382,7 @@ const SectionItemPresentation = observer(({mediaPropertyId, sectionDisplay, inpu
       />
 
       {
-        sectionDisplay === "banner" ? null :
+        section?.display?.display_format === "banner" ? null :
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.thumbnail_images}
@@ -599,9 +609,9 @@ const MediaPropertySectionItem = observer(() => {
                 <SectionItemPresentation
                   mediaPropertyId={mediaPropertyId}
                   inputProps={inputProps}
+                  section={section}
                   mediaItem={mediaItem}
                   showDescription={["button_vertical", "button_horizontal"].includes(section.display?.card_style)}
-                  sectionDisplay={section.display?.display_format}
                 />
             }
             {

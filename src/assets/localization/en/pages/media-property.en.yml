@@ -304,10 +304,12 @@ form:
         label: Label
       text:
         label: Text
+      link_image:
+        label: Image
       link_url:
         label: Link URL
       image:
-        label: Image
+        label: Content Image
       content_rich_text:
         label: Content (Rich Text)
       content_html:
@@ -595,7 +597,7 @@ form:
       display_format:
         label: Display Format
       card_style:
-        label: Card Style (Web Only)
+        label: Card Style
         description: Select the card style that items in this section should use
       card_default_button_text:
         label: Card Default Button Text
@@ -768,6 +770,9 @@ form:
     purchasable_items:
       label: Purchasable Items
       fieldLabel: Item
+    show_price:
+      label: Show Price
+      description: If selected, the card will display the price, or price range if there are multiple purchasable items
     purchasable_item:
       permission_item_id:
         label: Permission Item

@@ -770,7 +770,7 @@ const SingleImageInput = observer(({
         <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
           <UnstyledButton
             onClick={() => setShowFileBrowser(true)}
-            style={!horizontal ? undefined : {display: "flex", alignItems: "center", gap: 20}}
+            style={!horizontal ? undefined : {display: "flex", alignItems: "center", flexDirection: "row-reverse", gap: 20}}
           >
             <HoverCard.Target>
               <Image

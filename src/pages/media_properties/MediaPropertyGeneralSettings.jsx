@@ -503,6 +503,17 @@ const MediaPropertyGeneralSettings = observer(() => {
                 field="text"
               />
 
+              <Inputs.SingleImageInput
+                {...props}
+                {...l10n.general.footer_items.link_image}
+                aspectRatio={2}
+                baseSize={80}
+                p="md"
+                horizontal
+                subcategory={subcategory}
+                field="link_image"
+              />
+
               <Inputs.Select
                 {...props}
                 {...l10n.general.footer_items.type}
