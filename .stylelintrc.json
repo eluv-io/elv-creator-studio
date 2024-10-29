@@ -1,5 +1,8 @@
 {
   "extends": ["stylelint-config-standard-scss"],
+  "ignoreFiles": [
+    "src/assets/email_templates/parts/template.css"
+  ],
   "plugins": [
     "stylelint-order"
   ],

@@ -8,6 +8,7 @@ import UrlJoin from "url-join";
 
 import CodeTemplate from "@/assets/email_templates/CodeTemplate.html?raw";
 import LinkTemplate from "@/assets/email_templates/LinkTemplate.html?raw";
+import PurchaseReceiptTemplate from "@/assets/email_templates/PurchaseReceiptTemplate.html?raw";
 
 const EmailPreview = observer(() => {
   const [preview, setPreview] = useState("");
@@ -38,13 +39,17 @@ const EmailPreview = observer(() => {
       defaults = l10n.email_templates.defaults.invite;
       html = LinkTemplate;
       break;
+    case "purchase_receipt":
+      settings = info.email_template_settings?.purchase_receipt || {};
+      defaults = l10n.email_templates.defaults.purchase_receipt;
+      html = PurchaseReceiptTemplate;
   }
 
   if(html) {
     const commonSettings = info?.email_template_settings?.common || {};
     html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image);
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
-    html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#000000");
+    html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#393939");
     html = html.replaceAll("{{copyright}}", commonSettings.copyright || "©Eluvio, Inc");
 
     Object.keys(defaults).forEach(key =>
@@ -64,7 +69,8 @@ const EmailPreview = observer(() => {
           { label: "Welcome Email", value: "welcome_email"},
           { label: "Email Verification", value: "email_verification"},
           { label: "Password Reset", value: "password_reset"},
-          { label: "Invite", value: "invite"}
+          { label: "Invite", value: "invite"},
+          { label: "Purchase Receipt", value: "purchase_receipt"}
         ]}
       />
       {
@@ -142,6 +148,7 @@ const TenantGeneralSettings = observer(() => {
           path={UrlJoin(inputProps.path, "common")}
           subcategory={l10n.categories.email_templates_common}
           defaultValue="#000000"
+          defaultOnBlankString
           field="title_color"
         />
         <Inputs.Color
@@ -149,7 +156,8 @@ const TenantGeneralSettings = observer(() => {
           {...l10n.email_templates.button_color}
           path={UrlJoin(inputProps.path, "common")}
           subcategory={l10n.categories.email_templates_common}
-          defaultValue="#000000"
+          defaultValue="#393939"
+          defaultOnBlankString
           field="button_color"
         />
       </Inputs.InputWrapper>
@@ -412,6 +420,70 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.preheader || ""}
+              field="preheader"
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item value="purchase_receipt">
+          <Accordion.Control>
+            { l10n.categories.purchase_receipt_template }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.subject || ""}
+              field="subject"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.title}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.title || ""}
+              field="title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subtitle}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.subtitle || ""}
+              field="subtitle"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.text}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.text || ""}
+              field="text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.button_text}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.button_text || ""}
+              field="button_text"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.secondary_text || ""}
+              field="secondary_text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.preheader}
+              path={UrlJoin(inputProps.path, "purchase_receipt")}
+              subcategory={l10n.categories.purchase_receipt_template}
+              placeholder={l10n.email_templates.defaults.purchase_receipt.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
