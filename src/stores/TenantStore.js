@@ -147,9 +147,9 @@ class TenantStore {
           })) || marketplace.brandedName;
         }
 
-        const slug = await this.client.ContentObjectMetadata({
+        let slug = await this.client.ContentObjectMetadata({
           versionHash: marketplaceHash,
-          metadataSubtree: "public/asset_metadata/info/slug",
+          metadataSubtree: "public/asset_metadata/slug"
         });
 
         const latestLink = this.TenantLinkSlugAndHash({objectId: marketplace.objectId, links: tenantStore.latestTenant.metadata.public.asset_metadata.marketplaces});
