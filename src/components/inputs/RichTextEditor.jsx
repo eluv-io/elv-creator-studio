@@ -3,7 +3,7 @@ import { useEditor, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import {observer} from "mobx-react-lite";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {rootStore} from "@/stores";
 
 import {
@@ -14,6 +14,7 @@ import {
 
 const RichTextEditor = observer(({store, objectId, page, path, field, category, subcategory, label, componentProps={}}) => {
   const [value] = useState(store.GetMetadata({objectId, path, field}));
+  const editorRef = useRef(null);
 
   const editor = useEditor({
     extensions: [
@@ -21,7 +22,11 @@ const RichTextEditor = observer(({store, objectId, page, path, field, category, 
       Underline,
       Link
     ],
-    onBlur: ({editor}) => {
+    onBlur: ({editor, event}) => {
+      if(editorRef?.current?.contains(event.relatedTarget || event.explicitOriginalTarget)) {
+        return;
+      }
+
       store.SetMetadata({
         objectId,
         page,
@@ -38,7 +43,7 @@ const RichTextEditor = observer(({store, objectId, page, path, field, category, 
   });
 
   return (
-    <TipTapEditor {...componentProps} editor={editor}>
+    <TipTapEditor {...componentProps} editor={editor} ref={editorRef}>
       {
         !editor ? null :
           <BubbleMenu editor={editor}>

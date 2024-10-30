@@ -5,7 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {Title} from "@mantine/core";
+import {Accordion, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec} from "@/specs/MediaPropertySpecs.js";
@@ -318,326 +318,379 @@ const MediaPropertyGeneralSettings = observer(() => {
 
 
 
-      <Title order={3} mt={50}  mb="md">{l10n.categories.subproperties}</Title>
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.general.subproperties.subproperties}
-        subcategory={l10n.categories.subproperties}
-        field="subproperties"
-        options={
-          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-            label: mediaProperty.name,
-            value: mediaProperty.objectId
-          }))
-            .filter(({value}) => value !== mediaPropertyId)
-        }
-      />
-      {
-        !info.subproperties || info.subproperties.length <= 0 ? null :
-        <>
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.general.subproperties.show_property_selection}
-            subcategory={l10n.categories.subproperties}
-            field="show_property_selection"
-            defaultValue={false}
-          />
+      <Title order={3} mt={50}  mb="md">{l10n.categories.additional_settings}</Title>
 
-          {
-            !info.show_property_selection ? null :
-              <Inputs.List
-                {...inputProps}
-                {...l10n.general.subproperties.property_selection}
-                subcategory={l10n.categories.subproperties}
-                field="property_selection"
-                newItemSpec={MediaPropertySubpropertySpec}
-                renderItem={props => (
+      <Accordion maw={uiStore.inputWidthWide + 50} variant="contained">
+        <Accordion.Item value="subproperties">
+          <Accordion.Control>
+            { l10n.categories.subproperties }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.MultiSelect
+              {...inputProps}
+              {...l10n.general.subproperties.subproperties}
+              subcategory={l10n.categories.subproperties}
+              field="subproperties"
+              options={
+                mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+                  label: mediaProperty.name,
+                  value: mediaProperty.objectId
+                }))
+                  .filter(({value}) => value !== mediaPropertyId)
+              }
+            />
+            {
+              !info.subproperties || info.subproperties.length <= 0 ? null :
+              <>
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.general.subproperties.show_property_selection}
+                  subcategory={l10n.categories.subproperties}
+                  field="show_property_selection"
+                  defaultValue={false}
+                />
+
+                {
+                  !info.show_property_selection ? null :
+                    <Inputs.List
+                      {...inputProps}
+                      {...l10n.general.subproperties.property_selection}
+                      maw={uiStore.inputWidthWide}
+                      subcategory={l10n.categories.subproperties}
+                      field="property_selection"
+                      newItemSpec={MediaPropertySubpropertySpec}
+                      renderItem={props => (
+                        <>
+                          <Inputs.Select
+                            {...props}
+                            {...l10n.general.subproperties.property}
+                            field="property_id"
+                            options={
+                              (mediaPropertyStore.allMediaProperties || []).map(mediaProperty => ({
+                                label: mediaProperty.name,
+                                value: mediaProperty.objectId
+                              }))
+                                .filter(({value}) => {
+                                  const index = info.property_selection?.findIndex(({property_id}) => property_id === value);
+                                  return (mediaPropertyId === value || info.subproperties.includes(value)) && (index < 0 || index === props.index);
+                                })
+                            }
+                          />
+                          <Inputs.Text
+                            {...props}
+                            {...l10n.general.subproperties.title}
+                            field="title"
+                          />
+                          <Inputs.ImageInput
+                            {...props}
+                            {...l10n.general.images}
+                            fields={[
+                              {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
+                              {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100},
+                              {...l10n.general.subproperties.tile, field: "tile", aspectRatio: 16/9, baseSize: 100}
+                            ]}
+                          />
+                          {
+                            props.item?.property_id === mediaPropertyId ? null :
+                              <PermissionItemSelect
+                                multiple
+                                {...props}
+                                {...l10n.general.subproperties.permissions}
+                                permissionSetIds={info.permission_sets}
+                                field="permission_item_ids"
+                              />
+                          }
+                        </>
+                      )}
+                    />
+                }
+              </>
+            }
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="main_page_display">
+          <Accordion.Control>
+            { l10n.categories.main_page_display }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.ImageInput
+              {...inputProps}
+              componentProps={{maw: uiStore.inputWidthWide}}
+              subcategory={l10n.categories.main_page_display}
+              fields={[
+                { field: "image", aspectRatio: 2/3, ...l10n.general.image },
+                { field: "image_tv", aspectRatio: 16/9, ...l10n.general.image_tv },
+              ]}
+            />
+
+
+            <Inputs.FabricBrowser
+              {...inputProps}
+              {...l10n.general.video}
+              subcategory={l10n.categories.main_page_display}
+              field="video"
+              previewable
+              previewIsAnimation
+            />
+
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.show_on_main_page}
+              subcategory={l10n.categories.main_page_display}
+              field="show_on_main_page"
+              defaultValue={false}
+            />
+
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.show_on_main_page_tv}
+              subcategory={l10n.categories.main_page_display}
+              field="show_on_main_page_tv"
+              defaultValue={false}
+            />
+
+            {
+              !info.show_on_main_page ? null :
+                <>
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.general.parent_property}
+                    subcategory={l10n.categories.main_page_display}
+                    field="parent_property"
+                    options={
+                      [
+                        { label: "None", value: "" },
+                        ...(
+                          mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+                            label: mediaProperty.name,
+                            value: mediaProperty.objectId
+                          }))
+                            .filter(({value}) => value !== mediaPropertyId)
+                        )
+                      ]}
+                  />
+                  <Inputs.URL
+                    {...inputProps}
+                    {...l10n.general.main_page_url}
+                    subcategory={l10n.categories.main_page_display}
+                    field="main_page_url"
+                  />
+                </>
+            }
+
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="footer">
+          <Accordion.Control>
+            { l10n.categories.footer }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.footer_items.footer_items}
+              path="/public/asset_metadata/info/footer"
+              field="items"
+              idField="id"
+              newItemSpec={MediaPropertyFooterItemSpec}
+              showBottomAddButton
+              subcategoryFnParams={{fields: ["label", "text", "id"], l10n: l10n.categories.footer_item_label}}
+              renderItem={({item, ...props}) => {
+                const subcategory = () => LocalizeString(l10n.categories.footer_item_label, { label: item.label });
+
+                return (
                   <>
-                    <Inputs.Select
+                    <Inputs.UUID
                       {...props}
-                      {...l10n.general.subproperties.property}
-                      field="property_id"
-                      options={
-                        (mediaPropertyStore.allMediaProperties || []).map(mediaProperty => ({
-                          label: mediaProperty.name,
-                          value: mediaProperty.objectId
-                        }))
-                          .filter(({value}) => {
-                            const index = info.property_selection?.findIndex(({property_id}) => property_id === value);
-                            return (mediaPropertyId === value || info.subproperties.includes(value)) && (index < 0 || index === props.index);
-                          })
-                      }
+                      {...l10n.general.footer_items.id}
+                      hidden
+                      subcategory={subcategory}
+                      field="id"
                     />
                     <Inputs.Text
                       {...props}
-                      {...l10n.general.subproperties.title}
-                      field="title"
+                      {...l10n.general.footer_items.text}
+                      subcategory={subcategory}
+                      field="text"
                     />
-                    <Inputs.ImageInput
+
+                    <Inputs.SingleImageInput
                       {...props}
-                      {...l10n.general.images}
-                      maw={uiStore.inputWidth}
-                      fields={[
-                        {...l10n.general.subproperties.icon, field: "icon", aspectRatio: 1, baseSize: 100},
-                        {...l10n.general.subproperties.logo, field: "logo", aspectRatio: 16/9, baseSize: 100},
-                        {...l10n.general.subproperties.tile, field: "tile", aspectRatio: 16/9, baseSize: 100}
+                      {...l10n.general.footer_items.link_image}
+                      aspectRatio={2}
+                      baseSize={80}
+                      p="md"
+                      horizontal
+                      subcategory={subcategory}
+                      field="link_image"
+                    />
+
+                    <Inputs.Select
+                      {...props}
+                      {...l10n.general.footer_items.type}
+                      subcategory={subcategory}
+                      field="type"
+                      defaultValue="link"
+                      options={[
+                        { label: l10n.general.footer_items.types.link, value: "link" },
+                        { label: l10n.general.footer_items.types.image, value: "image" },
+                        { label: l10n.general.footer_items.types.rich_text, value: "rich_text" },
+                        { label: l10n.general.footer_items.types.html, value: "html" },
+                        { label: l10n.general.footer_items.types.faq, value: "faq" }
                       ]}
                     />
                     {
-                      props.item?.property_id === mediaPropertyId ? null :
-                        <PermissionItemSelect
-                          multiple
+                      item.type !== "link" ? null :
+                        <Inputs.URL
                           {...props}
-                          {...l10n.general.subproperties.permissions}
-                          permissionSetIds={info.permission_sets}
-                          field="permission_item_ids"
+                          {...l10n.general.footer_items.link_url}
+                          subcategory={subcategory}
+                          field="url"
+                        />
+                    }
+
+                    {
+                      item.type !== "image" ? null :
+                        <Inputs.ImageInput
+                          {...props}
+                          {...l10n.general.footer_items.image}
+                          subcategory={subcategory}
+                          altTextField="image_alt"
+                          fields={[
+                            { field: "image" },
+                          ]}
+                        />
+                    }
+
+                    {
+                      item.type !== "rich_text" ? null :
+                        <Inputs.RichText
+                          {...props}
+                          {...l10n.general.footer_items.content_rich_text}
+                          subcategory={subcategory}
+                          field="content_rich_text"
+                          componentPropsVisible={{w: uiStore.inputWidth}}
+                        />
+                    }
+
+                    {
+                      item.type !== "html" ? null :
+                        <Inputs.File
+                          {...props}
+                          {...l10n.general.footer_items.content_html}
+                          subcategory={subcategory}
+                          field="content_html"
+                          extensions={["html"]}
                         />
                     }
                   </>
-                )}
-              />
-          }
-        </>
-      }
-
-      <Title order={3} mt={50}  mb="md">{l10n.categories.main_page_display}</Title>
-
-      <Inputs.ImageInput
-        {...inputProps}
-        componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.main_page_display}
-        fields={[
-          { field: "image", aspectRatio: 2/3, ...l10n.general.image },
-          { field: "image_tv", aspectRatio: 16/9, ...l10n.general.image_tv },
-        ]}
-      />
-
-
-      <Inputs.FabricBrowser
-        {...inputProps}
-        {...l10n.general.video}
-        subcategory={l10n.categories.main_page_display}
-        field="video"
-        previewable
-        previewIsAnimation
-      />
-
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.show_on_main_page}
-        subcategory={l10n.categories.main_page_display}
-        field="show_on_main_page"
-        defaultValue={false}
-      />
-
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.show_on_main_page_tv}
-        subcategory={l10n.categories.main_page_display}
-        field="show_on_main_page_tv"
-        defaultValue={false}
-      />
-
-      {
-        !info.show_on_main_page ? null :
-          <>
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.general.parent_property}
-              subcategory={l10n.categories.main_page_display}
-              field="parent_property"
-              options={
-                [
-                  { label: "None", value: "" },
-                  ...(
-                    mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-                      label: mediaProperty.name,
-                      value: mediaProperty.objectId
-                    }))
-                      .filter(({value}) => value !== mediaPropertyId)
-                  )
-                ]}
+                );
+              }}
             />
-            <Inputs.URL
+            <Inputs.RichText
               {...inputProps}
-              {...l10n.general.main_page_url}
-              subcategory={l10n.categories.main_page_display}
-              field="main_page_url"
+              {...l10n.general.footer_text}
+              path="/public/asset_metadata/info/footer"
+              subcategory={l10n.categories.footer}
+              field="rich_text"
             />
-          </>
-      }
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="meta_tags">
+          <Accordion.Control>
+            { l10n.categories.meta_tags }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
 
-      <Title order={3} mt={50} mb="md">{l10n.categories.footer}</Title>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.meta_tags.site_name}
+              path={UrlJoin(inputProps.path, "meta_tags")}
+              subcategory={l10n.categories.meta_tags}
+              placeholder="Eluvio Media wallet"
+              field="site_name"
+            />
 
-      <Inputs.List
-        {...inputProps}
-        {...l10n.general.footer_items.footer_items}
-        path="/public/asset_metadata/info/footer"
-        field="items"
-        idField="id"
-        newItemSpec={MediaPropertyFooterItemSpec}
-        showBottomAddButton
-        subcategoryFnParams={{fields: ["label", "text", "id"], l10n: l10n.categories.footer_item_label}}
-        renderItem={({item, ...props}) => {
-          const subcategory = () => LocalizeString(l10n.categories.footer_item_label, { label: item.label });
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.meta_tags.title}
+              path={UrlJoin(inputProps.path, "meta_tags")}
+              subcategory={l10n.categories.meta_tags}
+              field="title"
+            />
 
-          return (
-            <>
-              <Inputs.UUID
-                {...props}
-                {...l10n.general.footer_items.id}
-                hidden
-                subcategory={subcategory}
-                field="id"
-              />
-              <Inputs.Text
-                {...props}
-                {...l10n.general.footer_items.label}
-                subcategory={subcategory}
-                field="label"
-              />
-              <Inputs.Text
-                {...props}
-                {...l10n.general.footer_items.text}
-                subcategory={subcategory}
-                field="text"
-              />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.general.meta_tags.description}
+              path={UrlJoin(inputProps.path, "meta_tags")}
+              subcategory={l10n.categories.meta_tags}
+              field="description"
+            />
 
-              <Inputs.SingleImageInput
-                {...props}
-                {...l10n.general.footer_items.link_image}
-                aspectRatio={2}
-                baseSize={80}
-                p="md"
-                horizontal
-                subcategory={subcategory}
-                field="link_image"
-              />
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.meta_tags.image}
+              path={UrlJoin(inputProps.path, "meta_tags")}
+              subcategory={l10n.categories.meta_tags}
+              altTextField="image_alt"
+              fields={[
+                { field: "image", url: true, aspectRatio: 1.91 / 1}
+              ]}
+            />
 
-              <Inputs.Select
-                {...props}
-                {...l10n.general.footer_items.type}
-                subcategory={subcategory}
-                field="type"
-                defaultValue="link"
-                options={[
-                  { label: l10n.general.footer_items.types.link, value: "link" },
-                  { label: l10n.general.footer_items.types.image, value: "image" },
-                  { label: l10n.general.footer_items.types.rich_text, value: "rich_text" },
-                  { label: l10n.general.footer_items.types.html, value: "html" },
-                ]}
-              />
-              {
-                item.type !== "link" ? null :
-                  <Inputs.URL
-                    {...props}
-                    {...l10n.general.footer_items.link_url}
-                    subcategory={subcategory}
-                    field="url"
-                  />
-              }
-
-              {
-                item.type !== "image" ? null :
-                  <Inputs.ImageInput
-                    {...props}
-                    {...l10n.general.footer_items.image}
-                    subcategory={subcategory}
-                    altTextField="image_alt"
-                    fields={[
-                      { field: "image" },
-                    ]}
-                  />
-              }
-
-              {
-                item.type !== "rich_text" ? null :
-                  <Inputs.RichText
-                    {...props}
-                    {...l10n.general.footer_items.content_rich_text}
-                    subcategory={subcategory}
-                    field="content_rich_text"
-                    componentPropsVisible={{w: uiStore.inputWidth}}
-                  />
-              }
-
-              {
-                item.type !== "html" ? null :
-                  <Inputs.File
-                    {...props}
-                    {...l10n.general.footer_items.content_html}
-                    subcategory={subcategory}
-                    field="content_html"
-                    extensions={["html"]}
-                  />
-              }
-            </>
-          );
-        }}
-      />
-
-      <Inputs.RichText
-        {...inputProps}
-        {...l10n.general.footer_text}
-        path="/public/asset_metadata/info/footer"
-        subcategory={l10n.categories.footer}
-        field="rich_text"
-      />
-
-
-      <Title order={3} mt={50}>{l10n.categories.meta_tags}</Title>
-      <Title order={6} fw={500} color="dimmed" maw={500} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.general.meta_tags.site_name}
-        path={UrlJoin(inputProps.path, "meta_tags")}
-        subcategory={l10n.categories.meta_tags}
-        placeholder="Eluvio Media wallet"
-        field="site_name"
-      />
-
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.general.meta_tags.title}
-        path={UrlJoin(inputProps.path, "meta_tags")}
-        subcategory={l10n.categories.meta_tags}
-        field="title"
-      />
-
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.general.meta_tags.description}
-        path={UrlJoin(inputProps.path, "meta_tags")}
-        subcategory={l10n.categories.meta_tags}
-        field="description"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.meta_tags.image}
-        path={UrlJoin(inputProps.path, "meta_tags")}
-        subcategory={l10n.categories.meta_tags}
-        altTextField="image_alt"
-        fields={[
-          { field: "image", url: true, aspectRatio: 1.91 / 1}
-        ]}
-      />
-
-      <Inputs.SingleImageInput
-        {...inputProps}
-        {...l10n.general.meta_tags.favicon}
-        path={UrlJoin(inputProps.path, "meta_tags")}
-        subcategory={l10n.categories.meta_tags}
-        field="favicon"
-        url
-        horizontal
-        aspectRatio={1}
-        baseSize={125}
-        fields={[
-          { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
-        ]}
-      />
+            <Inputs.SingleImageInput
+              {...inputProps}
+              {...l10n.general.meta_tags.favicon}
+              path={UrlJoin(inputProps.path, "meta_tags")}
+              subcategory={l10n.categories.meta_tags}
+              field="favicon"
+              url
+              horizontal
+              aspectRatio={1}
+              baseSize={125}
+              fields={[
+                { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="faq">
+          <Accordion.Control>
+            { l10n.categories.faq }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed" mb="md">{l10n.general.faq.faq_description}</Title>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.faq.title}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="title"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.general.faq.description}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="description"
+            />
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.faq.questions}
+              maw={uiStore.inputWidthWide}
+              w={uiStore.inputWidthWide}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="questions"
+              fieldLabel="question"
+              fields={[
+                { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
+                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer }
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </PageContent>
   );
 });

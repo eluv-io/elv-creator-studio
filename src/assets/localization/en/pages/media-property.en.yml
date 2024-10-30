@@ -26,12 +26,14 @@ form:
     footer: Footer Settings
     footer_item: Footer Item
     footer_item_label: Footer Item '{label}'
+    faq: FAQ Settings
     feature_settings: Features
     purchase_settings: Purchase Settings
     login_settings: Login Settings
     login_theme: Login Theme
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
+    additional_settings: Additional Settings
     subproperties: Subproperties
     permissions: Permission Settings
     user_profile: User Profile Settings
@@ -298,6 +300,7 @@ form:
         link: Link
         rich_text: Rich Text
         html: HTML Document
+        faq: FAQ Page Link
       id:
         label: ID
       label:
@@ -317,6 +320,19 @@ form:
     footer_text:
       label: Footer Text
       description: Displayed below the footer items
+    faq:
+      faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      title:
+        label: Title
+      description:
+        label: Description
+      questions:
+        label: Questions
+      question:
+        label: Question
+      answer:
+        label: Answer
+
   domain:
     custom_domain:
       label: Custom Domain

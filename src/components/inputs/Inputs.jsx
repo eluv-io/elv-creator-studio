@@ -578,12 +578,12 @@ const RichTextInput = observer(({
   const [showEditor, setShowEditor] = useState(false);
   const [editorKey, setEditorKey] = useState(Math.random());
 
+  const value = store.GetMetadata({objectId, path, field});
   // React to undo/redo when the editor is open
   useEffect(() => {
     setEditorKey(Math.random());
-  }, [store.actionStack[objectId], store.redoStack[objectId]]);
+  }, [value]);
 
-  const value = store.GetMetadata({objectId, path, field});
   return (
     <InputWrapper
       label={label}
