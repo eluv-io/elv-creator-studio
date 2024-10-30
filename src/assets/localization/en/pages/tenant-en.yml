@@ -134,7 +134,7 @@ form:
         preheader: "Welcome to the Eluvio Media Wallet!"
         title: "Welcome to the Eluvio Media Wallet!"
         subtitle: ""
-        text: "Welcome to the Eluvio Media Wallet!"
+        text: ""
         button_text: "Eluvio Media Wallet"
         secondary_text: ""
       email_verification:
