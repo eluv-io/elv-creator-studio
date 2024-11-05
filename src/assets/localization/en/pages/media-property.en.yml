@@ -642,6 +642,9 @@ form:
       gap:
         label: Spacing
         description: Specify how much space there should be between banners
+      hide_on_tv:
+        label: Hide on TV Apps
+        description: If checked this section will not be shown on TV apps
       logo:
         label: Logo Image
         description: Displayed to the left of the content

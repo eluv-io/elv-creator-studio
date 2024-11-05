@@ -1140,6 +1140,15 @@ const ContentSectionDisplaySettings = observer(() => {
           />
       }
 
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sections.display.hide_on_tv}
+        subcategory={l10n.categories.section_presentation}
+        defaultValue={false}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="hide_on_tv"
+      />
+
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.sections.display.logo}
