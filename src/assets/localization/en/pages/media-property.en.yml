@@ -642,6 +642,9 @@ form:
       gap:
         label: Spacing
         description: Specify how much space there should be between banners
+      full_bleed:
+        label: Full Bleed
+        description: If checked, banner images will have no margin and will expand to the edges of the screen
       hide_on_tv:
         label: Hide on TV Apps
         description: If checked this section will not be shown on TV apps
@@ -771,6 +774,10 @@ form:
       label: Banner Image (Desktop)
     banner_image_mobile:
       label: Banner Image (Mobile)
+    banner_animation:
+      label: Banner Animation (Desktop)
+    banner_animation_mobile:
+      label: Banner Animation (Mobile)
     page:
       label: Page
     property:

@@ -616,16 +616,32 @@ const MediaPropertySectionItem = observer(() => {
             }
             {
               section.display?.display_format !== "banner" ? null :
-                <Inputs.ImageInput
-                  {...inputProps}
-                  {...l10n.section_items.banner_images}
-                  componentProps={{maw: uiStore.inputWidthWide}}
-                  fields={[
-                    { ...l10n.section_items.banner_image, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image" },
-                    { ...l10n.section_items.banner_image_mobile, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image_mobile" }
-                  ]}
-                  altTextField="banner_alt_text"
-                />
+                <>
+                  <Inputs.ImageInput
+                    {...inputProps}
+                    {...l10n.section_items.banner_images}
+                    componentProps={{maw: uiStore.inputWidthWide}}
+                    fields={[
+                      { ...l10n.section_items.banner_image, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image" },
+                      { ...l10n.section_items.banner_image_mobile, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Landscape"]?.ratio, field: "banner_image_mobile" }
+                    ]}
+                    altTextField="banner_alt_text"
+                  />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    {...l10n.section_items.banner_animation}
+                    field="banner_animation"
+                    previewable
+                    previewIsAnimation
+                  />
+                  <Inputs.FabricBrowser
+                    {...inputProps}
+                    {...l10n.section_items.banner_animation_mobile}
+                    field="banner_animation_mobile"
+                    previewable
+                    previewIsAnimation
+                  />
+                </>
             }
           </>
       }
