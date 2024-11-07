@@ -56,7 +56,6 @@ const TenantGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.max_concurrent_logins}
         subcategory={l10n.categories.info}
-        path="/public/asset_metadata"
         field="max_concurrent_logins"
         defaultValue={0}
       />
