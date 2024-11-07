@@ -52,6 +52,15 @@ const TenantGeneralSettings = observer(() => {
         defaultValue={tenantStore.tenantInfo?.tenantSlug}
       />
 
+      <Inputs.Number
+        {...inputProps}
+        {...l10n.general.max_concurrent_logins}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata"
+        field="max_concurrent_logins"
+        defaultValue={0}
+      />
+
       <Title order={3} mt={50} mb="md">{ l10n.categories.sales }</Title>
 
       <Inputs.Text
@@ -100,51 +109,6 @@ const TenantGeneralSettings = observer(() => {
           Validate: ValidateAddress
         }}
       />
-
-      <Accordion mt={50} maw={uiStore.inputWidth} variant="contained">
-        <Accordion.Item value="default">
-          <Accordion.Control icon={<IconSettings />}>
-            { rootStore.l10n.components.forms.advanced_settings }
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Inputs.List
-              {...inputProps}
-              {...l10n.general.leaderboard_excludes}
-              subcategory={l10n.categories.leaderboard_excludes}
-              path="/public/asset_metadata/info/token"
-              field="leaderboard_excludes"
-              inputProps={{
-                Validate: ValidateAddress
-              }}
-            />
-
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.use_custom_open_id}
-              path="/public/asset_metadata/info/open_id"
-              field="use_custom_open_id"
-            />
-
-            {
-              !info?.open_id?.use_custom_open_id ? null :
-                <Inputs.InputWrapper {...l10n.general.open_id}>
-                  <Inputs.Text
-                    {...inputProps}
-                    {...l10n.general.issuer_id}
-                    path="/public/asset_metadata/info/open_id"
-                    field="issuer_id"
-                  />
-                  <Inputs.URL
-                    {...inputProps}
-                    {...l10n.general.issuer_url}
-                    path="/public/asset_metadata/info/open_id"
-                    field="issuer_url"
-                  />
-                </Inputs.InputWrapper>
-            }
-          </Accordion.Panel>
-        </Accordion.Item>
-      </Accordion>
     </PageContent>
   );
 });

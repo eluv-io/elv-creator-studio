@@ -67,6 +67,9 @@ form:
       label: Tenant ID
     tenant_slug:
       label: Tenant Slug
+    max_concurrent_logins:
+      label: Maximum Concurrent Logins
+      description: Specify the maximum number of concurrent logins users may have on your sites. If this limit is exceeded, the user will be prompted to revoke permissions on the oldest session to proceed. Set to 0 for no limit.
     owners:
       label: Owners
       fieldLabel: Owner
