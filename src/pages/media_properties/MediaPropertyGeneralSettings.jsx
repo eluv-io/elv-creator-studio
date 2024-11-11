@@ -316,6 +316,42 @@ const MediaPropertyGeneralSettings = observer(() => {
           />
       }
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.permission_items_unauthorized_permissions_behavior}
+        subcategory={l10n.categories.permissions}
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="permission_items_unauthorized_permissions_behavior"
+        defaultValue=""
+        options={[
+          { label: "Default (Use Content Permission Behavior)", value: "", },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS)
+            .filter(key => key !== "show_purchase")
+            .map(key => ({
+              label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+              value: key
+            })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
+        ]}
+      />
+      {
+        info?.permissions?.permission_items_unauthorized_permissions_behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.permission_items_unauthorized_alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="permission_items_unauthorized_alternate_page_id"
+            options={[
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main")
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
 
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.additional_settings}</Title>

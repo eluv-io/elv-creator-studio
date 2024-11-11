@@ -194,6 +194,12 @@ form:
     search_permissions_behavior:
       label: Search Permission Behavior
       description: Specify what happens if the user does not have access to content when searching
+    permission_items_unauthorized_permissions_behavior:
+      label: Permission Item(s) Unauthorized Permission Behavior
+      description: Specify what happens for unauthorized items for which the user is not able to purchase the associated permission items, for example due to geographical restrictions.
+    permission_items_unauthorized_alternate_page:
+      label: Alternate Page
+      description: If the user is not authorized to purchase any required permission items, this page will be shown.
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
