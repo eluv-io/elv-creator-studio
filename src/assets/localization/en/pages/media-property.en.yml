@@ -564,6 +564,9 @@ form:
     media_item:
       label: Media Item
       description: Select the media item for this action to link to
+    page_link:
+      label: Page
+      description: Select the page for this action to link to
     url:
       label: URL
       description: The URL for this action to link to

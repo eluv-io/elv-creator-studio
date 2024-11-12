@@ -28,9 +28,10 @@ const ActionConditions = {
 
 const ActionBehaviors = {
   "sign_in": "Sign In",
+  "page_link": "Go to Page",
+  "media_link": "Go to Media",
   "show_purchase": "Show Purchase Options",
   "video": "Show Video",
-  "media_link": "Go to Media",
   "link": "Link to URL"
 };
 
@@ -44,6 +45,21 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
   switch(action.behavior) {
     case "show_purchase":
       return <MediaPropertySectionItemPurchaseItems {...inputProps} />;
+    case "page_link":
+      return (
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.actions.page_link}
+          options={[
+            ...Object.keys(info.pages || {})
+              .map(pageId => ({
+                label: info.pages[pageId].label,
+                value: pageId
+              }))
+          ]}
+          field="page_id"
+        />
+      );
     case "video":
       return (
         <Inputs.FabricBrowser
