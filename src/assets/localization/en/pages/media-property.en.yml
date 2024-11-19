@@ -343,7 +343,7 @@ form:
   domain:
     custom_domain:
       label: Custom Domain
-      description: Set a custom domain to use for this property. When accessed via your domain, additional customization options will be available, such as custom styling, terms and conditions, and feature settings
+      description: Specify the custom domain that will be used for this property
     features:
       features:
         label: Features
