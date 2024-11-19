@@ -1,10 +1,9 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, tenantStore, uiStore} from "@/stores";
+import {rootStore, tenantStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Accordion, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import {ValidateAddress} from "@/components/common/Validation.jsx";
-import {IconSettings} from "@tabler/icons-react";
 
 const TenantGeneralSettings = observer(() => {
   const tenant = tenantStore.latestTenant;

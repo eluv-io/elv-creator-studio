@@ -39,6 +39,7 @@ form:
     user_profile: User Profile Settings
     media_sidebar: Media Sidebar and Live Content Settings
     meta_tags: Search and Social Preview
+    analytics: Analytics
     search: Search Settings
     advanced_search: Advanced Search Settings
     layout: Layout
@@ -859,3 +860,22 @@ form:
 
 
 
+  analytics:
+    analytics_ids:
+      label: Analytics IDs
+      description: Add your analytics IDs to track page views for this property
+      fieldLabel: Analytics ID
+    label:
+      label: Label
+    analytics_type:
+      label: Analytics Type
+    id:
+      label: ID
+    google_conversion_label:
+      label: Google Conversion Label
+    google_conversion_id:
+      label: Google Conversion ID
+    facebook_event_id:
+      label: Facebook Event Id
+    twitter_event_id:
+      label: X Pixel ID
