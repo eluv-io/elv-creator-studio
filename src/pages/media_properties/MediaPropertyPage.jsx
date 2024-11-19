@@ -580,30 +580,6 @@ const MediaPropertyPage = observer(() => {
             }}
           />
       }
-
-      <Title order={3} mb="md" mt={50}>{l10n.categories.page_actions}</Title>
-      <Inputs.CollectionTable
-        {...inputProps}
-        {...l10n.pages.actions}
-        subcategory={l10n.categories.page_actions}
-        path={UrlJoin("/public/asset_metadata/info/pages", pageId)}
-        routePath="actions"
-        newItemSpec={MediaPropertyActionSpec}
-        field="actions"
-        idField="id"
-        GetName={action => action.label || "Action"}
-        columns={[
-          {
-            label: l10n.actions.label.label,
-            field: "label"
-          },
-          {
-            label: l10n.actions.visibility.label,
-            field: "visibility",
-            render: action => <Text>{PageActionConditions[action?.visibility || ""]}</Text>
-          }
-        ]}
-      />
     </PageContent>
   );
 });

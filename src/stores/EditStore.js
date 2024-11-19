@@ -109,35 +109,43 @@ class EditStore {
 
         yield store.Save({libraryId, objectId, writeToken});
 
-        yield this.client.ReplaceMetadata({
-          libraryId,
-          objectId,
-          writeToken,
-          metadataSubtree: "changelist",
-          metadata: item.changeList.markdown
-        });
+        try {
+          yield this.client.ReplaceMetadata({
+            libraryId,
+            objectId,
+            writeToken,
+            metadataSubtree: "changelist",
+            metadata: item.changeList.markdown
+          });
 
-        let commitHistory = (yield this.client.ContentObjectMetadata({
-          libraryId,
-          objectId,
-          metadataSubtree: "commit_history"
-        })) || [];
+          let commitHistory = (yield this.client.ContentObjectMetadata({
+            libraryId,
+            objectId,
+            metadataSubtree: "commit_history"
+          })) || [];
 
-        commitHistory.unshift({
-          message: commitMessages[objectId],
-          author: (yield this.client.userProfileClient.UserMetadata({metadataSubtree: "public/name"})) || this.rootStore.address,
-          author_address: this.rootStore.address,
-          timestamp: new Date().toISOString(),
-          changelist: item.changeList.markdown
-        });
+          commitHistory.unshift({
+            message: commitMessages[objectId],
+            author: (yield this.client.userProfileClient.UserMetadata({metadataSubtree: "public/name"})) || this.rootStore.address,
+            author_address: this.rootStore.address,
+            timestamp: new Date().toISOString(),
+            changelist: item.changeList.markdown
+          });
 
-        yield this.client.ReplaceMetadata({
-          libraryId,
-          objectId,
-          writeToken,
-          metadataSubtree: "commit_history",
-          metadata: commitHistory
-        });
+          yield this.client.ReplaceMetadata({
+            libraryId,
+            objectId,
+            writeToken,
+            metadataSubtree: "commit_history",
+            metadata: commitHistory
+          });
+        } catch(error) {
+          this.DebugLog({
+            message: "Unable to save commit history",
+            error,
+            level: this.logLevels.DEBUG_LEVEL_ERROR
+          });
+        }
 
         yield this.Finalize({objectId, commitMessage: commitMessages[objectId]});
 

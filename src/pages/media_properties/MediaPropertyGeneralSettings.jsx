@@ -316,6 +316,42 @@ const MediaPropertyGeneralSettings = observer(() => {
           />
       }
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.permission_items_unauthorized_permissions_behavior}
+        subcategory={l10n.categories.permissions}
+        path={UrlJoin(inputProps.path, "permissions")}
+        field="permission_items_unauthorized_permissions_behavior"
+        defaultValue=""
+        options={[
+          { label: "Default (Use Content Permission Behavior)", value: "", },
+          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS)
+            .filter(key => key !== "show_purchase")
+            .map(key => ({
+              label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+              value: key
+            })),
+          { label: "Show Alternate Page", value: "show_alternate_page" }
+        ]}
+      />
+      {
+        info?.permissions?.permission_items_unauthorized_permissions_behavior !== "show_alternate_page" ? null :
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.general.permission_items_unauthorized_alternate_page}
+            subcategory={l10n.categories.permissions}
+            path={UrlJoin(inputProps.path, "permissions")}
+            field="permission_items_unauthorized_alternate_page_id"
+            options={[
+              ...Object.keys(info.pages || {})
+                .filter(pageId => pageId !== "main")
+                .map(pageId => ({
+                  label: info.pages[pageId].label,
+                  value: pageId
+                }))
+            ]}
+          />
+      }
 
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.additional_settings}</Title>
@@ -595,6 +631,42 @@ const MediaPropertyGeneralSettings = observer(() => {
             />
           </Accordion.Panel>
         </Accordion.Item>
+        <Accordion.Item value="faq">
+          <Accordion.Control>
+            { l10n.categories.faq }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed" mb="md">{l10n.general.faq.faq_description}</Title>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.faq.title}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="title"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.general.faq.description}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="description"
+            />
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.faq.questions}
+              maw={uiStore.inputWidthWide}
+              w={uiStore.inputWidthWide}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="questions"
+              fieldLabel="question"
+              fields={[
+                { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
+                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer }
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
         <Accordion.Item value="meta_tags">
           <Accordion.Control>
             { l10n.categories.meta_tags }
@@ -654,42 +726,45 @@ const MediaPropertyGeneralSettings = observer(() => {
             />
           </Accordion.Panel>
         </Accordion.Item>
-        <Accordion.Item value="faq">
+         <Accordion.Item value="analytics">
           <Accordion.Control>
-            { l10n.categories.faq }
+            { l10n.categories.analytics }
           </Accordion.Control>
           <Accordion.Panel>
-            <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed" mb="md">{l10n.general.faq.faq_description}</Title>
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.general.faq.title}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="title"
-            />
-            <Inputs.TextArea
-              {...inputProps}
-              {...l10n.general.faq.description}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="description"
-            />
             <Inputs.List
               {...inputProps}
-              {...l10n.general.faq.questions}
-              maw={uiStore.inputWidthWide}
-              w={uiStore.inputWidthWide}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="questions"
-              fieldLabel="question"
+              {...l10n.analytics.analytics_ids}
+              subcategory={l10n.categories.analytics}
+              path="/public/asset_metadata/info"
+              field="analytics_ids"
               fields={[
-                { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
-                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer }
+                {
+                  ...l10n.analytics.label,
+                  InputComponent: Inputs.Text,
+                  field: "label",
+                },
+                {
+                  ...l10n.analytics.analytics_type,
+                  InputComponent: Inputs.Select,
+                  field: "type",
+                  options: [
+                    { label: "Google Analytics ID", value: "google_analytics_id"},
+                    { label: "Google Tag Manager ID", value: "google_tag_manager_id"},
+                    { label: "Meta Pixel ID", value: "meta_pixel_id"},
+                    { label: "X Pixel ID", value: "twitter_pixel_id"},
+                    { label: "App Nexus Segment ID", value: "app_nexus_segment_id"}
+                  ]
+                },
+                {
+                  ...l10n.analytics.id,
+                  InputComponent: Inputs.Text,
+                  field: "id",
+                  label: "ID"
+                }
               ]}
             />
           </Accordion.Panel>
-        </Accordion.Item>
+         </Accordion.Item>
       </Accordion>
     </PageContent>
   );

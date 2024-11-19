@@ -261,6 +261,14 @@ const MediaPropertyDomainSettings = observer(() => {
       section="mediaProperty"
       useHistory
     >
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.domain.custom_domain}
+        subcategory={l10n.categories.domain_settings}
+        path="/public/asset_metadata/info/domain"
+        field="custom_domain"
+        defaultValue=""
+      />
       <Title order={3} mt={50} mb="md">
         { l10n.categories.purchase_settings }
       </Title>

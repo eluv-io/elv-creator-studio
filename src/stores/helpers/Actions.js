@@ -400,11 +400,20 @@ const SetLink = flow(function * ({
     },
     Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
-      ...objectParams,
-      metadataSubtree: fullPath,
-      metadata: toJS(writeValue)
-    })
+    Write: async (objectParams) => {
+      if(writeValue) {
+        await this.client.ReplaceMetadata({
+          ...objectParams,
+          metadataSubtree: fullPath,
+          metadata: toJS(writeValue)
+        });
+      } else {
+        await this.client.DeleteMetadata({
+          ...objectParams,
+          metadataSubtree: fullPath
+        });
+      }
+    }
   });
 });
 

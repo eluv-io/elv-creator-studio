@@ -40,6 +40,7 @@ form:
     user_profile: User Profile Settings
     media_sidebar: Media Sidebar and Live Content Settings
     meta_tags: Search and Social Preview
+    analytics: Analytics
     search: Search Settings
     advanced_search: Advanced Search Settings
     layout: Layout
@@ -195,6 +196,12 @@ form:
     search_permissions_behavior:
       label: Search Permission Behavior
       description: Specify what happens if the user does not have access to content when searching
+    permission_items_unauthorized_permissions_behavior:
+      label: Permission Item(s) Unauthorized Permission Behavior
+      description: Specify what happens for unauthorized items for which the user is not able to purchase the associated permission items, for example due to geographical restrictions.
+    permission_items_unauthorized_alternate_page:
+      label: Alternate Page
+      description: If the user is not authorized to purchase any required permission items, this page will be shown.
     alternate_page:
       label: Alternate Page
       description: If the user doesn't at least one of the specified permissions, this page will be shown
@@ -337,7 +344,7 @@ form:
   domain:
     custom_domain:
       label: Custom Domain
-      description: Set a custom domain to use for this property. When accessed via your domain, additional customization options will be available, such as custom styling, terms and conditions, and feature settings
+      description: Specify the custom domain that will be used for this property
     features:
       features:
         label: Features
@@ -559,6 +566,9 @@ form:
     media_item:
       label: Media Item
       description: Select the media item for this action to link to
+    page_link:
+      label: Page
+      description: Select the page for this action to link to
     url:
       label: URL
       description: The URL for this action to link to
@@ -851,3 +861,22 @@ form:
 
 
 
+  analytics:
+    analytics_ids:
+      label: Analytics IDs
+      description: Add your analytics IDs to track page views for this property
+      fieldLabel: Analytics ID
+    label:
+      label: Label
+    analytics_type:
+      label: Analytics Type
+    id:
+      label: ID
+    google_conversion_label:
+      label: Google Conversion Label
+    google_conversion_id:
+      label: Google Conversion ID
+    facebook_event_id:
+      label: Facebook Event Id
+    twitter_event_id:
+      label: X Pixel ID

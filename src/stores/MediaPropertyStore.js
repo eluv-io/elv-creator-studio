@@ -48,7 +48,8 @@ class MediaPropertyStore {
     "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
     "redeemable_offer": "Redeemable Offer",
-    "external_link": "External Link"
+    "external_link": "External Link",
+    "visual_only": "Visual"
   };
 
   PERMISSION_BEHAVIORS = {
@@ -693,6 +694,15 @@ class MediaPropertyStore {
       metadata: slugs
     });
 
+    // Set last updated time
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/meta_tags/updated_at",
+      metadata: new Date().toISOString()
+    });
+
     try {
       yield this.rootStore.tenantStore.RetrieveTenant({environment: "latest"});
       yield this.client.ReplaceMetadata({
@@ -787,6 +797,12 @@ class MediaPropertyStore {
       ...writeParams,
       metadataSubtree: "/public/asset_metadata/info/permission_set_links",
       metadata: { ...toJS(permissionSetLinks) }
+    });
+
+    yield this.client.ReplaceMetadata({
+      ...writeParams,
+      metadataSubtree: "/public/asset_metadata/info/meta_tags/updated_at",
+      metadata: new Date().toISOString()
     });
 
     const response = yield this.rootStore.editStore.Finalize({
