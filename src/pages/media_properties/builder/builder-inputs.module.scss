@@ -1,0 +1,48 @@
+.builder-input-container {
+  height: max-content;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.editing-contain {
+  width: auto;
+  height: 600px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.submit-container {
+  position: relative;
+  background-color: red;
+}
+
+.submit-button{
+  position: absolute;
+  right: 0;
+}
+
+.editable-text {
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  &:hover {
+    border: 1px solid #d0d0d0;
+  }
+}
+
+.text-input{
+
+}
+
+.text-area{
+
+}

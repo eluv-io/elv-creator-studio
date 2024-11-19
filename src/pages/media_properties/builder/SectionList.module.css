@@ -1,0 +1,61 @@
+.section {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-xl);
+  color: var(--mantine-color-white);
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.section-hero{
+  position: relative;
+  margin-top: 80px;
+}
+
+.itemDragging {
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.section-hero-title {
+  font-size: 2.3em;
+  font-weight: 600;
+  max-width: 800px;
+  width: 800px;
+  color: var(--mantine-color-white);
+}
+
+.section-hero-description{
+  font-size: 1.1em;
+  max-width: 800px;
+  color: var(--mantine-color-white);
+}
+
+.section-hero-logo {
+  height: auto;
+  object-fit: contain;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  &:hover {
+    border: 1px solid #d0d0d0;
+  }
+}
+
+.hidden{
+  display: none;
+}
+
+.hidden-trigger:hover + .hidden {
+  display: block;
+}
+
+.section-hero-logo-container{
+  position: relative;
+  top: 0;
+  width:300px;
+}
+
+.overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

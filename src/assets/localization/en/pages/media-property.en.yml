@@ -1,5 +1,6 @@
 nav:
   list: Media Properties
+  builder: Builder
   overview: Overview
   general: General
   theme: Theme and Styling

@@ -188,3 +188,13 @@ export const CompareSemVer = (a, b) => {
 
   return parseInt(a1 || 0) - parseInt(b1 || 0);
 };
+
+export const ToString = (item) => {
+  let str = JSON.stringify(item, null, 4);
+  return str;
+};
+
+export const LogItem = (item) => {
+  // eslint-disable-next-line no-console
+  console.log(ToString(item));
+};

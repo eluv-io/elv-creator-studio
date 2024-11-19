@@ -85,8 +85,15 @@ class EditStore {
   }
 
   Save = flow(function * ({selectedObjectIds, commitMessages}) {
+    console.log("Save");
+    
     let errors = {};
     for(const item of this.ChangeLists()) {
+      //XXX:
+      //let str = JSON.stringify(item, null, 4); 
+      //console.log(`Item ${str}`);
+      //console.log(`Item markdown ${item.changeList.markdown}`);
+
       if(!selectedObjectIds.includes(item.objectId)) {
         continue;
       }
