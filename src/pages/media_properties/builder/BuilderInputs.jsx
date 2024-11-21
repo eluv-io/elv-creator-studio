@@ -53,16 +53,11 @@ export const BuilderTextInput = observer(({text = "", classNames = [], setText =
     setValue(text);
   }
 
-  const ref = useClickOutside(() => {
-    //setText(value);
-    setEditing(false);
-    setValue(text);
-  });
 
   console.log("Value: ", value);
   return (
     <div className={S("builder-input-container")}>
-        <Modal ref = {ref} size="sm" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
+        <Modal size="sm" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
             <Inputs.Text
               {...inputProps}
               label={label}
@@ -89,7 +84,7 @@ export const BuilderTextInput = observer(({text = "", classNames = [], setText =
               </Flex>
         </Modal>
         <Text 
-          className={S("editable-text",...classNames)}
+          className={S("editable",...classNames)}
           onClick={() => {setEditing(!editing); open();}}
         >
           {text}
@@ -107,16 +102,9 @@ export const BuilderTextArea = observer(({text = "", classNames = [], setText = 
     setValue(text);
   }
 
-  const ref = useClickOutside(() => {
-    //setText(value);
-    setEditing(false);
-    setValue(text);
-  });
-
-  console.log("Value: ", value);
   return (
     <div className={S("builder-input-container")}>
-        <Modal ref = {ref} size="md" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
+        <Modal size="lg" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
           <Flex
               gap="md"
               direction="column"
@@ -151,11 +139,51 @@ export const BuilderTextArea = observer(({text = "", classNames = [], setText = 
               </Flex>
         </Modal>
         <Text 
-          className={S("editable-text",...classNames)}
+          className={S("editable",...classNames)}
           onClick={() => {setEditing(!editing); open();}}
         >
           {text}
         </Text>
+    </div>
+  );
+});
+
+export const BuilderImage = observer(({src = "", classNames = [], fields = {}, label = "", inputProps = null}) => {
+  const [editing, setEditing] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+
+  return (
+    <div className={S("builder-input-container")}>
+        <Modal size="xl" opened={opened} onClose={()=>{close();}} withCloseButton={false} centered>
+          <Flex
+              gap="md"
+              direction="column"
+            >
+
+          <Inputs.ImageInput
+            {...inputProps}
+          />
+            </Flex>
+
+            <Flex
+              gap="md"
+            >
+
+            <Button fullWidth mt="xl"
+              onClick={()=>{
+                close();
+              }
+              
+              }>
+                Close
+              </Button>
+              </Flex>
+        </Modal>
+        <img 
+          className={S("editable",...classNames)}
+          onClick={() => {setEditing(!editing); open();}}
+          src = {src}
+        />
     </div>
   );
 });

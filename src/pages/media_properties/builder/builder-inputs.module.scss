@@ -5,6 +5,11 @@
   width: 100%;
 }
 
+.large {
+  height: 1000px;
+  width: 100%;
+}
+
 .editing-contain {
   width: auto;
   height: 600px;
@@ -30,12 +35,11 @@
   right: 0;
 }
 
-.editable-text {
-  padding: 10px;
+.editable {
   border: 1px solid transparent;
   border-radius: 4px;
   &:hover {
-    border: 1px solid #d0d0d0;
+    border: 1px solid #b364bd;
   }
 }
 
@@ -45,4 +49,10 @@
 
 .text-area{
 
+}
+
+.overlay {
+  position: absolute;
+  top: 40px;
+  right: 40px;
 }

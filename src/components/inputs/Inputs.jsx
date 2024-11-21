@@ -738,6 +738,7 @@ const SingleImageInput = observer(({
   aspectRatio=1,
   baseSize=150,
   horizontal=false,
+  showDropdown=true,
   ...componentProps
 }) => {
   const location = useLocation();
@@ -796,6 +797,7 @@ const SingleImageInput = observer(({
                 />
             }
           </UnstyledButton>
+          {showDropdown ? 
           <HoverCard.Dropdown bg="gray.1" p="xl" >
             <Image
               mb="xs"
@@ -808,7 +810,7 @@ const SingleImageInput = observer(({
               placeholder={<IconPhotoX size={35} />}
               styles={ theme => ({ image: { padding: 10, backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1] }}) }
             />
-          </HoverCard.Dropdown>
+          </HoverCard.Dropdown> : null }
         </HoverCard>
         {
           !imageMetadata ? null :

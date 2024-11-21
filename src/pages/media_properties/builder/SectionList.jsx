@@ -4,14 +4,16 @@ import { useListState } from "@mantine/hooks";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import {observer} from "mobx-react-lite";
-import {useParams} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import UrlJoin from "url-join";
 import {LogItem} from "@/helpers/Misc";
 import {S} from "./CssHelper";
 import {IconButton} from "@/components/common/Misc.jsx";
+
 import {
   BuilderTextInput,
-  BuilderTextArea
+  BuilderTextArea,
+  BuilderImage,
 } from "./BuilderInputs";
 
 import {
@@ -28,8 +30,13 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
   IconLink,
-  IconUnlink, IconCopy
+  IconUnlink, 
+  IconCopy,
 } from "@tabler/icons-react";
+
+import {
+  Image
+} from "@mantine/core";
 
 const SectionList = observer(({mediaPropertyId, sections}) =>  {
   const [state, handlers] = useListState(sections);
@@ -72,6 +79,8 @@ const SectionList = observer(({mediaPropertyId, sections}) =>  {
 });
 
 export function HeroSectionBuilder({mediaPropertyId, section}) {
+  const navigate = useNavigate();
+
   if(!section){return;}
   
   const sectionId = section.id;
@@ -109,20 +118,24 @@ export function HeroSectionBuilder({mediaPropertyId, section}) {
   LogItem(section);
 
   return (
-    <div className={S("section-hero")}>
-      <div className={S("section-hero-logo-container")}>
-        <img
-          className={S("section-hero-logo", "hidden-trigger")}
-          src={heroItem.display?.logo?.url}
-        />
-        <IconButton
-          label={rootStore.l10n.components.actions.edit}
-          Icon={IconEdit}
-          onClick={() => {console.log("clicked");}}
-          color="purple.6"
-          className={S("hidden", "overlay")}
-        />
-      </div>
+    <div className={S("section-hero", "hidden-trigger")}>
+      <img
+        className={S("section-hero-background")}
+        src={heroItem.display?.background_image?.url}
+      />
+
+      <div className={S("section-hero-container", "editable")}>
+        <div className={S("section-hero-logo-container")}>
+          <BuilderImage
+            classNames={["section-hero-logo"]}
+            src={heroItem.display?.logo?.url}
+            inputProps = {{...inputProps,
+              ...l10n.pages.header.logo, altTextField:"logo_alt",
+              fields:[{ field: "logo", componentProps: {showDropdown:false}}]
+              }}
+          />
+
+        </div>
 
         <div>
 
@@ -145,8 +158,18 @@ export function HeroSectionBuilder({mediaPropertyId, section}) {
             label="Hero Description"
             inputProps = {{field:"description",...inputProps}}
             />
-
         </div>
+      </div>
+      <IconButton
+            label={rootStore.l10n.components.actions.edit}
+            Icon={IconEdit}
+            onClick={() => {
+              console.log("Hero Edit Clicked");
+              navigate(UrlJoin("/media-properties/", mediaPropertyId, "/sections/", sectionId, "/hero_items/",heroItemId));
+            }}
+            color="purple.6"
+            className={S("hidden", "overlay")}
+          />
     </div>
   );
 
