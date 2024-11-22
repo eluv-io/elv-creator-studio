@@ -37,7 +37,7 @@ const MediaPropertyBuilder= observer(() => {
 
     //LogItem(section);
   }
-  LogItem(sections);
+  //LogItem(sections);
 
   return (
     <PageContent >

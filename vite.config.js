@@ -1,15 +1,17 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { defineConfig, splitVendorChunkPlugin, transformWithEsbuild } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { fileURLToPath, URL } from "url";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import react from "@vitejs/plugin-react-swc";
 import ViteYaml from "@modyfi/vite-plugin-yaml";
+import svgLoader from 'vite-svg-loader'
 
 export default defineConfig(({command}) => {
   let plugins = [
     react(),
     splitVendorChunkPlugin(),
     ViteYaml(),
+    svgLoader({defaultImport: "url"}),
     viteStaticCopy({
       targets: [
         {
@@ -17,7 +19,20 @@ export default defineConfig(({command}) => {
           dest: ""
         }
       ]
-    })
+    }),
+    {
+      name: "treat-js-files-as-jsx",
+      async transform(code, id) {
+        if (!id.match(/src\/.*\.js$/))  return null;
+
+        // Use the exposed transform from vite, instead of directly
+        // transforming with esbuild
+        return transformWithEsbuild(code, id, {
+          loader: "jsx",
+          jsx: "automatic",
+        });
+      },
+    },
   ];
 
   if(command !== "serve") {
@@ -48,10 +63,23 @@ export default defineConfig(({command}) => {
         "@/pages": fileURLToPath(new URL("./src/pages", import.meta.url)),
         "@/specs": fileURLToPath(new URL("./src/specs", import.meta.url)),
         "@/stores": fileURLToPath(new URL("./src/stores", import.meta.url)),
+        "Assets": fileURLToPath(new URL("./src/pages/media_properties/builder/wallet/assets", import.meta.url)),
+        "Components": fileURLToPath(new URL("./src/pages/media_properties/builder/wallet/components", import.meta.url)),
+        "Stores": fileURLToPath(new URL("./src/pages/media_properties/builder/wallet/stores", import.meta.url)),
+        "Client": fileURLToPath(new URL("./src/pages/media_properties/builder/wallet/client", import.meta.url)),
+        "mobx-react" : "mobx-react-lite",
       }
     },
     build: {
       manifest: true
+    },
+    optimizeDeps: {
+      force: true,
+      esbuildOptions: {
+        loader: {
+          ".js": "jsx",
+        },
+      },
     }
   };
 });

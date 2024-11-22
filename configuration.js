@@ -27,5 +27,18 @@ const EluvioConfiguration = {
 
    */
 
-
+  "network": "demo",
+  "mode": "staging",
+  "purchase-mode": "develop",
+  "show-debug": true,
+  "auth0-domain": "auth.contentfabric.io",
+  "auth0-configuration-id": "ONyubP9rFI5BHzmYglQKBZ1bBbiyoB3S",
+  "ory_configuration": {
+    "url": "https://ory.svc.contentfabric.io",
+    "client_id": "4ef862d4-0144-4715-a1c0-5683458d5034",
+    "audience": "https://wltd.svc.eluv.io",
+    "jwt_template": "jwt_uefa_template1"
+  },
+  "deploy-time": "",
+  "version-hash": "local"
 };

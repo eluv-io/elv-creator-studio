@@ -4,7 +4,7 @@ import SectionLayout from "@/components/common/SectionLayout.jsx";
 import {rootStore, mediaPropertyStore} from "@/stores";
 import MediaPropertyList from "@/pages/media_properties/MediaPropertyList.jsx";
 import MediaPropertyOverview from "@/pages/media_properties/MediaPropertyOverview.jsx";
-import MediaPropertyBuilder from "@/pages/media_properties/builder/MediaPropertyBuilder.jsx";
+import MediaPropertyBuilder from "@/pages/media_properties/builder/index.jsx";
 import MediaPropertyGeneralSettings from "@/pages/media_properties/MediaPropertyGeneralSettings.jsx";
 import MediaPropertyPage, {MediaPropertyPageAction} from "@/pages/media_properties/MediaPropertyPage.jsx";
 import MediaPropertySections from "@/pages/media_properties/MediaPropertySections.jsx";

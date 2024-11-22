@@ -1,0 +1,82 @@
+.filtered-view {
+  &__page-controls {
+    margin: 20px 0 0;
+
+    &--loading {
+      opacity: 0.5;
+    }
+  }
+
+  &__pagination-message {
+    align-items: center;
+    display: flex;
+    font-size: 12px;
+    font-weight: 500;
+    justify-content: center;
+    padding: 0 20px 20px;
+    text-align: center;
+
+    &--highlight {
+      color: var(--color-text-highlight);
+      margin: 0 5px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+  }
+
+  &__action {
+    min-width: 300px;
+  }
+}
+
+.marketplace-listings {
+  position: relative;
+
+  .page-header {
+    margin-bottom: 20px;
+  }
+}
+
+.listings-page {
+  .transfer-table {
+    margin: 20px 0;
+  }
+
+  &__header {
+    align-items: center;
+    display: flex;
+    font: var(--font-component-header);
+    font-size: 20px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  &__message {
+    color: var(--color-text-secondary);
+    font-size: 10px;
+    margin: 40px auto 20px;
+    max-width: 700px;
+    text-align: center;
+
+    a {
+      color: var(--color-text-primary);
+      font-size: 10px;
+    }
+  }
+}
+
+.listing-pagination {
+  font-size: 14px;
+  font-weight: 300;
+  margin: 50px 0 10px;
+  text-align: center;
+
+  @media screen and (max-width: $mobile-breakpoint) {
+    margin-top: 20px;
+  }
+}

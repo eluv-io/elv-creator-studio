@@ -1,3 +1,4 @@
+/*
 .section {
   font-size: 16px;
   display: flex;
@@ -6,14 +7,32 @@
   margin: 0;
   padding: 0;
 }
-
-.section-hero{
+*/
+ 
+/*
+.section{
   position: relative;
   padding-inline: var(--property-page-padding);
   padding-top: 80px;
   width: 100%;
   max-width: 100%;
 }
+
+.section-container{
+  position: relative;
+  padding-inline: var(--property-page-padding);
+  width: 100%;
+  max-width: 100%;
+}
+
+.section-title {
+  font-size: 2.3em;
+  font-weight: 600;
+  max-width: 800px;
+  width: 800px;
+  color: var(--mantine-color-white);
+}
+*/
 
 .itemDragging {
   box-shadow: var(--mantine-shadow-sm);
@@ -34,7 +53,7 @@
 }
 
 .section-hero-logo {
-  height: auto;
+  height: auto;   
   object-fit: contain;
   border: 1px solid transparent;
   border-radius: 4px;

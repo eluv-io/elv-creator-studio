@@ -1,0 +1,614 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px 100px;
+
+  &__advanced-toggle {
+    font-size: 20px;
+    font-weight: 500;
+    opacity: 0.6;
+    padding: 30px 0 10px;
+  }
+
+  .action {
+    background: #d9d9d9;
+    border-radius: 4px;
+    color: #000;
+    font-size: 18px;
+    font-weight: 500;
+    height: 40px;
+    min-width: unset;
+    text-transform: unset;
+    white-space: nowrap;
+    width: max-content;
+
+    * {
+      color: #000;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+
+  &__section-container {
+    background-color: #212121;
+    border-radius: 12px;
+    margin: 0 auto;
+    max-width: 750px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  &__section {
+    margin: 0 auto 2px;
+    padding: 20px 10px;
+    width: 100%;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #000;
+    }
+
+    &-actions,
+    &-message {
+      align-items: flex-end;
+      display: flex;
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+
+    &-message {
+      align-items: center;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 100px;
+    }
+
+    &-box {
+      padding: 20px;
+    }
+
+    &-wallet-connect {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &-account {
+      padding: 0 0 20px;
+
+      .profile-page__header {
+        align-items: center;
+        background-color: #171717;
+        display: flex;
+        height: 70px;
+        justify-content: center;
+      }
+    }
+  }
+
+  &__section-content {
+    padding-inline: 10px;
+  }
+
+  .wallet-connect {
+    margin-top: 20px;
+  }
+
+  &__header {
+    color: var(--color-component-text-primary);
+    font: var(--font-component-misc);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  &__section-header {
+    color: var(--color-component-text-primary);
+    font: var(--font-component-header);
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  &__account-info {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+
+    svg {
+      height: 25px;
+    }
+
+    &__message {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    &__account {
+      margin: 10px 0;
+
+      &--custodial {
+        align-items: center;
+        display: flex;
+        padding-right: 10px;
+
+        svg {
+          margin-right: 10px;
+        }
+      }
+
+      &--external {
+        margin-top: 10px;
+
+        svg,
+        img {
+          height: 60px;
+        }
+      }
+    }
+  }
+
+  &__balance {
+    align-items: center;
+    display: flex;
+    font: var(--font-component-header);
+    font-size: 24px;
+    font-weight: 500;
+    justify-content: center;
+    text-transform: uppercase;
+  }
+
+  &__address-header {
+    color: var(--color-component-text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    margin-top: 20px;
+    text-align: center;
+    width: 100%;
+  }
+
+  &__address {
+    margin: 0 auto;
+    width: max-content;
+  }
+
+  &__address-field {
+    .copyable-field__content {
+      background-color: var(--color-component-bg-secondary);
+      border-radius: var(--border-radius-component);
+      color: var(--color-component-text-primary);
+      font-size: 14px;
+      margin-right: 10px;
+      max-width: unset;
+      padding: 3px 10px;
+    }
+  }
+
+  &__message {
+    color: var(--color-component-text-secondary);
+    font-size: 12px;
+    margin-top: 10px;
+    text-align: center;
+
+    a {
+      color: var(--color-component-text-primary);
+      font-size: 12px;
+    }
+  }
+
+  &__wallet-message {
+    align-items: center;
+    display: flex;
+    font-weight: 300;
+    margin: 30px auto 0;
+    width: max-content;
+
+    img,
+    svg {
+      height: 25px;
+      margin-right: 10px;
+      width: 25px;
+    }
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    padding: 0;
+    width: 100%;
+  }
+
+  &__sign-out {
+    margin: 20px 0 0;
+  }
+
+  .address {
+    font-size: 10px;
+    letter-spacing: 0.01em;
+  }
+
+  &__withdrawal-setup-message {
+    font-size: 14px;
+    margin: 30px auto 0;
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .profile-page__pending-transactions-table {
+    margin: 20px 0;
+
+    .transfer-table__table {
+      max-height: 300px;
+    }
+  }
+
+  &__transactions-link {
+    display: block;
+    font-size: 14px;
+    margin: 30px auto 10px;
+    text-align: center;
+    text-decoration: underline;
+    width: max-content;
+  }
+
+  &__expand-button {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 0 auto 10px;
+    transition: color 0.1s ease;
+    user-select: none;
+
+    &.collapsed {
+      margin-bottom: 0;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text-highlight);
+
+      * {
+        color: var(--color-text-highlight);
+      }
+    }
+
+    &__icon {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  @media screen and (max-width: $mobile-breakpoint) {
+    padding: 0;
+
+    &__address-field {
+      .copyable-field__content {
+        font-size: 9px;
+      }
+    }
+  }
+}
+
+/* Withdrawal Modal */
+
+.deposit-modal,
+.withdrawal-modal {
+  .modal__content {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    overflow-y: hidden;
+  }
+}
+
+.username-modal,
+.deposit-form,
+.withdrawal-confirmation {
+  @include modal;
+
+  max-width: 550px;
+  width: 100%;
+
+  &__header {
+    border-bottom: var(--border-component-primary);
+    font: var(--font-component-header);
+    font-size: 20px;
+    font-weight: 300;
+    padding: 15px 25px;
+    text-align: center;
+  }
+
+  &__content {
+    padding: 20px 30px 40px;
+  }
+
+  &__message {
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    text-align: center;
+
+    &--terms {
+      color: var(--color-text-secondary);
+      font-size: 12px;
+
+      a {
+        font-size: 12px;
+      }
+    }
+  }
+
+  &__select,
+  &__country-select {
+    height: $action-height;
+    margin: 0 auto 30px;
+    max-width: 410px;
+
+    .styled-select__button,
+    .styled-select__option {
+      height: $action-height;
+    }
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .action {
+    max-width: 200px;
+    width: 100%;
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+
+  &__input-error {
+    align-items: center;
+    color: var(--color-text-error);
+    display: flex;
+    font-size: 12px;
+    margin: 10px auto;
+    padding-left: 100px;
+    text-align: center;
+    width: 100%;
+
+    * {
+      color: var(--color-text-error);
+    }
+  }
+
+  &__inputs {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 350px;
+    position: relative;
+
+    .deposit-form__input-error,
+    .withdrawal-confirmation__input-error {
+      bottom: -20px;
+      position: absolute;
+      text-align: left;
+      width: 100%;
+    }
+  }
+
+  &__input-container {
+    align-items: center;
+    display: flex;
+    position: relative;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  &__input__icon {
+    height: 30px;
+    left: 10px;
+    position: absolute;
+    width: 30px;
+    z-index: 1000;
+  }
+
+  input,
+  &__price-input {
+    &:not([type="checkbox"]) {
+      font-size: 20px;
+      height: 50px;
+      max-width: 290px;
+      padding: 0 15px;
+      width: 100%;
+    }
+
+    &.with-icon {
+      padding-left: 50px;
+    }
+
+    &-error {
+      box-shadow: 0 0 3px var(--color-text-error);
+    }
+  }
+
+  &__price-input-label {
+    font-weight: bold;
+    margin-left: 15px;
+    text-align: center;
+  }
+
+  &__detail {
+    display: flex;
+    height: 30px;
+    justify-content: space-between;
+  }
+
+  &__detail-separator {
+    border-bottom: var(--border-component-secondary);
+    margin-bottom: 25px;
+    padding-top: 25px;
+    width: 100%;
+  }
+
+  &__detail-faded {
+    * {
+      color: var(--color-component-text-secondary);
+    }
+  }
+
+  &__error {
+    color: var(--color-text-error);
+    font-size: 12px;
+    margin: 20px 0;
+    text-align: center;
+    width: 100%;
+  }
+
+  .loader {
+    height: $action-height;
+  }
+
+  &__amount-selection {
+    margin-bottom: 40px;
+  }
+
+  &__form {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .labelled-input {
+    align-items: center;
+    display: flex;
+    width: 100%;
+
+    label {
+      min-width: 100px;
+      width: 100px;
+    }
+
+    input {
+      max-width: unset;
+      width: 100%;
+    }
+
+    .styled-select,
+    .styled-select__button {
+      height: 50px;
+      width: 100%;
+    }
+  }
+
+  @media screen and (max-width: $mobile-breakpoint) {
+    margin: 0 20px;
+
+    &__message {
+      font-size: 16px;
+    }
+
+    .action {
+      min-width: 125px;
+    }
+  }
+}
+
+.accept-popup {
+  @include component;
+
+  border: 0;
+
+  &,
+  &__box {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+
+  &__box {
+    @include component;
+
+    max-width: 400px;
+    padding: 30px;
+  }
+
+  &__logo-container {
+    max-width: 300px;
+  }
+
+  &__text {
+    margin: 50px 0 20px;
+  }
+
+  &__requestor,
+  &__requested-action {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  &__requestor {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  &__requested-action {
+    font-size: 20px;
+  }
+
+  .loader {
+    margin-bottom: 20px;
+  }
+
+  &__trust {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+
+    label {
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 5px;
+      text-align: center;
+    }
+  }
+
+  &__actions {
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+  .action {
+    max-width: unset;
+    width: 100%;
+  }
+
+  @media screen and (max-width: $mobile-breakpoint) {
+    &__box {
+      border: 0;
+      justify-content: space-evenly;
+      max-width: 100%;
+      min-height: 100vh;
+      padding-bottom: 200px;
+    }
+  }
+}

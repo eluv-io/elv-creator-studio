@@ -1,0 +1,41 @@
+@import "variables";
+
+.property {
+  background-color: var(--property-background);
+  color: var(--property-text-primary);
+}
+
+.page {
+  background-color: var(--property-background);
+  color: var(--property-text-primary);
+  padding-bottom: 0;
+  padding-top: 0;
+
+  &.page {
+    padding-inline: 0;
+  }
+
+  &__section {
+    padding-inline: var(--property-page-padding);
+
+    &:last-child {
+      padding-bottom: 100px;
+    }
+  }
+
+  &__sections {
+    display: grid;
+    position: relative;
+    width: 100%;
+  }
+
+  @media screen and (width <= 800px) {
+    &__section {
+      padding-inline: var(--property-page-padding);
+    }
+
+    &__sections {
+      gap: 20px;
+    }
+  }
+}
