@@ -64,23 +64,23 @@ export const BuilderLoaderImage = observer(({src = "", className = "", inputProp
           />
             </Flex>
 
-            <Flex
-              gap="md"
-            >
+          <Flex
+            gap="md"
+          >
 
-            <Button fullWidth mt="xl"
-              onClick={()=>{
-                close();
-              }
-              
-              }>
-                Close
-              </Button>
-              </Flex>
+          <Button fullWidth mt="xl"
+            onClick={()=>{
+              close();
+            }
+            
+            }>
+              Close
+            </Button>
+            </Flex>
         </Modal>
-        <div className={S("hidden-trigger")} >
+        <div className={[S("editable","hidden-trigger","editable-container")].join(" ")} >
           <LoaderImage 
-            className={[S("editable"), className].join(" ")}
+            className={className}
             src = {src}
             {...props}
           />

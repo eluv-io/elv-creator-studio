@@ -1,11 +1,13 @@
 import SectionStyles from "Assets/stylesheets/media_properties/property-section.module.scss";
+import {S as BuilderStyles} from "@/builder/CssHelper";
+
 import {LogItem} from "@/helpers/Misc";
 import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react";
 import {Link, Navigate, useNavigate, useResolvedPath} from "react-router-dom";
 import {mediaPropertyStore, rootStore} from "Stores";
 import {mediaPropertyStore as CSMediaPropertyStore, rootStore as CSRootStore} from "@/stores";
-
+import { useDisclosure } from "@mantine/hooks";
 import MediaCard from "Components/properties/MediaCards";
 import UrlJoin from "url-join";
 import ImageIcon from "Components/common/ImageIcon";
@@ -17,6 +19,9 @@ import {
   PageContainer,
   PageHeader
 } from "Components/properties/Common";
+import {
+  Modal as MantineModal
+} from "@mantine/core";
 
 import RightArrow from "Assets/icons/right-arrow.svg";
 import {SetImageUrlDimensions} from "../../utils/Utils";
@@ -33,7 +38,15 @@ import Video from "Components/properties/Video";
 import LeftArrow from "Assets/icons/left-arrow.svg";
 import Filters from "Components/properties/Filters";
 
-const S = (...classes) => classes.map(c => SectionStyles[c] || "").join(" ");
+import {
+  IconEdit,
+} from "@tabler/icons-react";
+import {IconButton} from "@/components/common/Misc.jsx";
+
+import {MediaPropertySectionModal} from "@/builder/MediaPropertyBuilder.jsx";
+import {default as CSMediaPropertySection} from "@/pages/media_properties/MediaPropertySection.jsx" ;
+
+const S = (...classes) => classes.map(c => SectionStyles[c] || BuilderStyles(c) || "").join(" ");
 
 const GridContentColumns = ({aspectRatio, pageWidth, cardFormat}) => {
   if(cardFormat === "button_vertical") {
@@ -571,6 +584,9 @@ export const SectionResultsGroup = observer(({groupBy, label, results, isSection
 
 
 export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionId, mediaListId, isMediaPage, className=""}) => {
+  const [editing, setEditing] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+
   let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId }};
 
   console.log("MediaPropertySection");
@@ -688,12 +704,17 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
     <div
       style={style}
       className={[S(
+        "editable", "hidden-trigger",
         "section-container",
         `section-container--${section.display?.display_format || "grid"}`,
         `section-container--${section.display.justification || "left"}`,
         section.display.full_bleed ? "section-container--full-bleed" : ""
       ), className].join(" ")}
     >
+        <MantineModal size="xl" opened={opened} onClose={()=>{close();}} withCloseButton={false} centered >
+            <CSMediaPropertySection mediaPropertyId={mediaPropertyId} sectionId={sectionId} options={{showBacklink:false}}/>
+        </MantineModal>
+
       {
         !section.display.logo ? null :
           <div
@@ -787,7 +808,20 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
           }
         />
       </div>
-    </div>
+        <IconButton
+            label={CSRootStore.l10n.components.actions.edit}
+            Icon={IconEdit}
+            onClick={() => {
+              console.log("open");
+              setEditing(!editing);
+              open();
+            }}
+            color="purple.6"
+            className={S("hidden", "overlay")}
+          />
+      {/*!editing ? null : <MediaPropertySectionModal mediaPropertyId={mediaPropertyId} sectionId={sectionId} /> */}
+      
+    </div> 
   );
 });
 

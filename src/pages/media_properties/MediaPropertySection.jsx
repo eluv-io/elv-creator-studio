@@ -373,8 +373,16 @@ export const SectionItemTitle = observer(({sectionItem, aspectRatio, banner}) =>
   );
 });
 
-const SectionContentList = observer(() => {
-  const { mediaPropertyId, sectionId } = useParams();
+const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -538,9 +546,17 @@ const AutomaticSectionContentPreview = observer(({mediaPropertyId, sectionId, as
   );
 });
 
-const AutomaticSectionFilters = observer(() => {
+const AutomaticSectionFilters = observer(({ mediaPropertyId, sectionId }) => {
   const [showContentPreview, setShowContentPreview] = useState(false);
-  const { mediaPropertyId, sectionId } = useParams();
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -711,8 +727,16 @@ const AutomaticSectionFilters = observer(() => {
   );
 });
 
-const FilterOptions = observer(() => {
-  const { mediaPropertyId, sectionId } = useParams();
+const FilterOptions = observer(({ mediaPropertyId, sectionId }) => {
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -920,8 +944,16 @@ const FilterOptions = observer(() => {
   );
 });
 
-const ContentSectionDisplaySettings = observer(() => {
-  const { mediaPropertyId, sectionId } = useParams();
+const ContentSectionDisplaySettings = observer(({ mediaPropertyId, sectionId }) => {
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -1241,16 +1273,24 @@ const ContentSectionDisplaySettings = observer(() => {
 
       {
         section.type === "manual" ?
-          <SectionContentList /> :
-          <AutomaticSectionFilters />
+          <SectionContentList mediaPropertyId={mediaPropertyId} sectionId={sectionId}/> :
+          <AutomaticSectionFilters mediaPropertyId={mediaPropertyId} sectionId={sectionId}/>
       }
     </>
   );
 });
 
-const ContainerSectionSettings = observer(() => {
+const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId }) => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
-  const { mediaPropertyId, sectionId } = useParams();
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -1359,8 +1399,16 @@ const ContainerSectionSettings = observer(() => {
   );
 });
 
-const HeroSectionSettings = observer(() => {
-  const { mediaPropertyId, sectionId } = useParams();
+const HeroSectionSettings = observer(({ mediaPropertyId, sectionId }) => {
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -1423,8 +1471,18 @@ const HeroSectionSettings = observer(() => {
   );
 });
 
-const MediaPropertySection = observer(() => {
-  const { mediaPropertyId, sectionId } = useParams();
+const MediaPropertySection = observer(({ mediaPropertyId, sectionId, options={showBacklink:true} }) => {
+  const params = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = params.mediaPropertyId;
+  }
+
+  if (!sectionId) {
+    sectionId = params.sectionId;
+  }
+
+  console.log(`CS MediaPropertySection ${mediaPropertyId} ${sectionId}`);
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -1453,7 +1511,7 @@ const MediaPropertySection = observer(() => {
 
   return (
     <PageContent
-      backLink={UrlJoin("/media-properties", mediaPropertyId, "sections")}
+      backLink={options.showBacklink? UrlJoin("/media-properties", mediaPropertyId, "sections") : null}
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.sections} - ${section.label || ""}`}
       section="mediaProperty"
       useHistory
@@ -1586,13 +1644,11 @@ const MediaPropertySection = observer(() => {
 
       {
         section.type === "container" ?
-          <ContainerSectionSettings /> :
+          <ContainerSectionSettings mediaPropertyId={mediaPropertyId} sectionId={sectionId} /> :
           section.type === "hero" ?
-            <HeroSectionSettings /> :
-            <ContentSectionDisplaySettings />
+            <HeroSectionSettings mediaPropertyId={mediaPropertyId} sectionId={sectionId} /> :
+            <ContentSectionDisplaySettings mediaPropertyId={mediaPropertyId} sectionId={sectionId} />
       }
-
-
     </PageContent>
   );
 });

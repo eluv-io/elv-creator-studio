@@ -53,6 +53,28 @@
 
 .overlay {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 0px;
+  right: 0px;
+}
+
+.hidden{
+  display: none;
+}
+
+.editable-container{
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.hidden-trigger{
+  position: relative;
+}
+
+.hidden-trigger:hover .hidden {
+  display: block;
+}
+
+.hidden-trigger:hover+.hidden {
+  display: block;
 }
