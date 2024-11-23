@@ -4,6 +4,8 @@ import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react";
 import {Link, Navigate, useNavigate, useResolvedPath} from "react-router-dom";
 import {mediaPropertyStore, rootStore} from "Stores";
+import {mediaPropertyStore as CSMediaPropertyStore, rootStore as CSRootStore} from "@/stores";
+
 import MediaCard from "Components/properties/MediaCards";
 import UrlJoin from "url-join";
 import ImageIcon from "Components/common/ImageIcon";
@@ -176,7 +178,7 @@ const Actions = observer(({sectionId, sectionItemId, sectionItem, actions}) => {
   );
 });
 
-export const MediaPropertyHeroSection = observer(({section}) => {
+export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => {
   const [contentRefs, setContentRefs] = useState({});
   const [activeIndex, setActiveIndex] = useState(0);
   const [minHeight, setMinHeight] = useState(undefined);
@@ -199,6 +201,46 @@ export const MediaPropertyHeroSection = observer(({section}) => {
       resizeHandler.disconnect();
     };
   }, [contentRefs]);
+
+  const sectionId = section.id;
+
+  const heroItems = section.hero_items;
+
+  if(!heroItems || heroItems.count == 0) {return;}
+  const heroItem = heroItems[0];
+  if(!heroItem) {
+    return null;
+  }
+
+  const heroItemId = heroItem.id;
+  const heroItemIndex = section.hero_items?.findIndex(heroItem => heroItem.id === heroItemId);
+
+
+  const l10n = CSRootStore.l10n.pages.media_property.form;
+  const basePath = UrlJoin("/public/asset_metadata/info/sections", sectionId, "hero_items", heroItemIndex.toString());
+  let inputProps = {
+    store: CSMediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: CSMediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: CSMediaPropertyStore.MediaPropertyCategory({
+      category: "section_hero_item_label",
+      mediaPropertyId,
+      type: "hero_item",
+      path: basePath,
+      label: heroItem.label
+    }),
+    path: UrlJoin(basePath, "display"),
+    imageProps: {
+      ...l10n.pages.header.logo, altTextField:"logo_alt",
+      fields:[{ field: "logo", componentProps: {showDropdown:false}}]
+    },
+    textProps: {
+      field:"title",...l10n.pages.header.title
+    },
+    descriptionProps: {
+      field: "description", ...l10n.pages.header.description
+    }
+  };
 
   return (
     <div
@@ -239,6 +281,7 @@ export const MediaPropertyHeroSection = observer(({section}) => {
               display={heroItem.display}
               maxHeaderSize={38}
               className={S("hero-section__header")}
+              inputProps={inputProps}
             >
               <Actions
                 actions={heroItem?.actions}

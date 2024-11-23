@@ -26,6 +26,11 @@ import XIcon from "Assets/icons/x.svg";
 import Video from "Components/properties/Video";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib";
 import "swiper/css";
+import {
+  BuilderScaledText, 
+  BuilderExpandableDescription, 
+  BuilderLoaderImage
+} from "@/builder/BuilderInputs";
 
 const S = (...classes) => classes.map(c => CommonStyles[c] || "").join(" ");
 
@@ -94,7 +99,7 @@ export const PageBackground = observer(({
   );
 });
 
-export const PageHeader = observer(({display, maxHeaderSize=36, active=true, children, className=""}) => {
+export const PageHeader = observer(({display, maxHeaderSize=36, active=true, children, className="", inputProps = null}) => {
   // Collapse expanded description if this header becomes inactive, e.g. hero section is scrolled to another header
   const [descriptionKey, setDescriptionKey] = useState(0);
   useEffect(() => {
@@ -109,13 +114,14 @@ export const PageHeader = observer(({display, maxHeaderSize=36, active=true, chi
         <div className={S("page-header__content", `page-header__content--${display.position?.toLowerCase() || "left"}`)}>
           {
             !display?.logo?.url ? null :
-              <LoaderImage
+              <BuilderLoaderImage
                 lazy={false}
                 loaderHeight={200}
                 loaderWidth={400}
                 alt={display.logo_alt || display.title || "Logo"}
                 src={display.logo?.url}
                 className={S("page-header__logo")}
+                inputProps={inputProps}
               />
           }
           {
@@ -125,20 +131,22 @@ export const PageHeader = observer(({display, maxHeaderSize=36, active=true, chi
                   !display.title_icon ? null :
                     <img src={display.title_icon.url} alt="Icon" className={S("page-header__title-icon")}/>
                 }
-                <ScaledText Tag="h1" maxPx={maxHeaderSize} minPx={28} maxPxMobile={32} minPxMobile={18} className={[S("page-header__title"), "_title"].join(" ")}>
+                
+                <BuilderScaledText Tag="h1" maxPx={maxHeaderSize} minPx={28} maxPxMobile={32} minPxMobile={18} className={[S("page-header__title"), "_title"].join(" ")} inputProps={inputProps}>
                   {display.title}
-                </ScaledText>
+                </BuilderScaledText>
               </div>
           }
           {
             !display.description && !display.description_rich_text ? null :
-              <ExpandableDescription
+              <BuilderExpandableDescription
                 key={descriptionKey}
                 togglePosition={display.position?.toLowerCase() || "left"}
                 description={display.description}
                 descriptionRichText={display.description_rich_text}
                 maxLines={rootStore.pageWidth < 800 ? 12 : 8}
                 className={S("page-header__description")}
+                inputProps={inputProps}
               />
           }
         </div>

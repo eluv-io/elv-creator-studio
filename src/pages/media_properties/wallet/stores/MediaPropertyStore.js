@@ -492,11 +492,6 @@ class MediaPropertyStore {
     const section = this.MediaPropertySection({mediaPropertySlugOrId, sectionSlugOrId, mediaListSlugOrId});
 
     if(!section) { return []; }
-
-    //XXX: Super slow fix
-    //return section.content;
-
-    //TODO: fix super slowness 
     
     let content;
     if(section.type === "automatic") {
@@ -1024,101 +1019,8 @@ class MediaPropertyStore {
   });
 
   LoadMediaProperties = flow(function * () {
-    return yield this.LoadResource({
-      key: "MediaProperties",
-      id: "media-properties",
-      anonymous: true,
-      Load: async () => {
-        const metadataUrl = new URL(
-          this.rootStore.network === "demo" ?
-            "https://demov3.net955210.contentfabric.io/s/demov3" :
-            "https://main.net955305.contentfabric.io/s/main"
-        );
-
-        metadataUrl.pathname = UrlJoin(
-          metadataUrl.pathname,
-          "qlibs",
-          this.rootStore.siteConfiguration.siteLibraryId,
-          "q",
-          this.rootStore.siteConfiguration.siteId,
-          "meta/public/asset_metadata"
-        );
-        metadataUrl.searchParams.set("resolve", "true");
-        metadataUrl.searchParams.set("resolve_ignore_errors", "true");
-        metadataUrl.searchParams.set("resolve_include_source", "true");
-        metadataUrl.searchParams.set("link_depth", "2");
-
-        [
-          "info/media_property_order",
-          "tenants/*/.",
-          "tenants/*/media_properties/*/.",
-          "tenants/*/media_properties/*/name",
-          "tenants/*/media_properties/*/title",
-          "tenants/*/media_properties/*/slug",
-          "tenants/*/media_properties/*/image",
-          "tenants/*/media_properties/*/video",
-          "tenants/*/media_properties/*/show_on_main_page",
-          "tenants/*/media_properties/*/main_page_url",
-          "tenants/*/media_properties/*/parent_property"
-        ].forEach(select => metadataUrl.searchParams.append("select", select));
-
-        const metadata = await (await fetch(metadataUrl.toString())).json();
-
-        let allProperties = {};
-        const propertyOrder = metadata?.info?.media_property_order || [];
-        const properties = Object.keys(metadata?.tenants || {}).map(tenantSlug => {
-          return Object.keys(metadata.tenants[tenantSlug]?.media_properties || {}).map(propertySlug => {
-            try {
-              let property = metadata.tenants[tenantSlug].media_properties[propertySlug];
-
-              property = {
-                ...property,
-                tenantSlug,
-                tenantObjectHash: metadata.tenants[tenantSlug]["."].source,
-                tenantObjectId: Utils.DecodeVersionHash(metadata.tenants[tenantSlug]["."].source).objectId,
-                propertyHash: property["."].source,
-                propertyId: Utils.DecodeVersionHash(property["."].source).objectId
-              };
-
-              if(property.image) {
-                const imageUrl = new URL(
-                  this.rootStore.network === "demo" ?
-                    "https://demov3.net955210.contentfabric.io/s/demov3" :
-                    "https://main.net955305.contentfabric.io/s/main"
-                );
-
-                imageUrl.pathname = UrlJoin(imageUrl.pathname, "q", property.propertyHash, "meta/public/asset_metadata/info/image");
-
-                property.image.url = imageUrl.toString();
-              }
-
-              allProperties[property.propertyId] = property;
-              allProperties[property.slug] = property;
-
-              return property;
-            } catch(error) {
-              this.Log(`Failed to load property ${tenantSlug}/${propertySlug}`, true);
-              this.Log(error, true);
-            }
-          })
-            .filter(property => property);
-        })
-          .flat()
-          .filter(property => property.show_on_main_page)
-          .sort((a, b) => {
-            const indexA = propertyOrder.findIndex(propertySlugOrId => a.slug === propertySlugOrId || a.propertyId === propertySlugOrId);
-            const indexB = propertyOrder.findIndex(propertySlugOrId => b.slug === propertySlugOrId || b.propertyId === propertySlugOrId);
-
-            return indexA < 0 ?
-              (indexB < 0 ? 0 : 1) :
-              (indexA < indexB ? -1 : 1);
-          });
-
-        this.allMediaProperties = allProperties;
-
-        return properties;
-      }
-    });
+      this.allMediaProperties = yield mediaPropertyStore.LoadMediaProperties();
+      return this.allMediaProperties;
   });
 
   LoadMediaPropertyCustomizationMetadata = flow(function * ({mediaPropertySlugOrId, force=false}) {

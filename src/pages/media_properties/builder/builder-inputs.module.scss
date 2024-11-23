@@ -2,7 +2,6 @@
   height: max-content;
   overflow: hidden;
   position: relative;
-  width: 100%;
 }
 
 .large {
@@ -36,6 +35,7 @@
 }
 
 .editable {
+  max-width: 100%;
   border: 1px solid transparent;
   border-radius: 4px;
   &:hover {
@@ -53,6 +53,6 @@
 
 .overlay {
   position: absolute;
-  top: 40px;
-  right: 40px;
+  top: 20px;
+  right: 20px;
 }

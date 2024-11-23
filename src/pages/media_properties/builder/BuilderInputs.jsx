@@ -9,6 +9,8 @@ import {S} from "./CssHelper";
 import { useHover, useDisclosure } from "@mantine/hooks";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 import {useEffect, useState} from "react";
+import { ScaledText, ExpandableDescription, LoaderImage } from "@/wallet/components/properties/Common";
+
 import {
   Input as MantineInput,
   Text,
@@ -42,6 +44,191 @@ import {
   IconLink,
   IconUnlink, IconCopy
 } from "@tabler/icons-react";
+
+export const BuilderLoaderImage = observer(({src = "", className = "", inputProps = null, ...props}) => {
+  const [editing, setEditing] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const { imageProps, ...otherInputProps } = inputProps;
+
+  return (
+    <div className={S("builder-input-container")}>
+        <Modal size="xl" opened={opened} onClose={()=>{close();}} withCloseButton={false} centered>
+          <Flex
+              gap="md"
+              direction="column"
+            >
+
+          <Inputs.ImageInput
+            {...imageProps}
+            {...otherInputProps}
+          />
+            </Flex>
+
+            <Flex
+              gap="md"
+            >
+
+            <Button fullWidth mt="xl"
+              onClick={()=>{
+                close();
+              }
+              
+              }>
+                Close
+              </Button>
+              </Flex>
+        </Modal>
+        <div className={S("hidden-trigger")} >
+          <LoaderImage 
+            className={[S("editable"), className].join(" ")}
+            src = {src}
+            {...props}
+          />
+
+          <IconButton
+            label={rootStore.l10n.components.actions.edit}
+            Icon={IconEdit}
+            onClick={() => {
+              setEditing(!editing); open();
+            }}
+            color="purple.6"
+            className={S("hidden", "overlay")}
+          />
+        </div>
+
+    </div>
+  );
+});
+
+export const BuilderScaledText = observer(({  
+  children,
+  className = "",
+  inputProps = null,
+  ...props
+}) => {
+  const text = children?.toString() || "";
+
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState("");
+  const [opened, { open, close }] = useDisclosure(false);
+
+  if(value == "" && !editing) {
+    setValue(text);
+  }
+
+  const { textProps, ...otherInputProps } = inputProps;
+
+  console.log("Value: ", value);
+  return (
+    <div className={S("builder-input-container", "hidden-trigger")}>
+      {!inputProps ? null :
+        <Modal size="sm" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
+            <Inputs.Text
+              {...textProps}
+              {...otherInputProps}
+            />
+
+            <Flex
+              gap="md"
+            >
+
+            <Button fullWidth mt="xl"
+              onClick={()=>{
+
+                console.log("onSubmit Value ", value);
+
+                close();
+                setValue("");
+              }
+              
+              }>
+                OK
+              </Button>
+              </Flex>
+        </Modal>
+      }
+        <ScaledText
+          {...props}
+          className={[S("editable"),className].join(" ")}
+        >
+          {children}
+        </ScaledText>
+        <IconButton
+          label={rootStore.l10n.components.actions.edit}
+          Icon={IconEdit}
+          onClick={() => {
+            setEditing(!editing); open();
+          }}
+          color="purple.6"
+          className={S("hidden", "overlay")}
+        />
+    </div>
+  );
+});
+
+export const BuilderExpandableDescription = observer(({  
+  className = "",
+  inputProps = null,
+  ...props
+}) => {
+  const {text} = props;
+
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState("");
+  const [opened, { open, close }] = useDisclosure(false);
+
+  if(value == "" && !editing) {
+    setValue(text);
+  }
+
+  const { descriptionProps, ...otherInputProps } = inputProps;
+
+  console.log("Value: ", value);
+  return (
+    <div className={S("builder-input-container", "hidden-trigger", "editable")}>
+      {!inputProps ? null :
+        <Modal size="lg" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>
+            <Inputs.TextArea
+              {...descriptionProps}
+              {...otherInputProps}
+            />
+
+            <Flex
+              gap="md"
+            >
+
+            <Button fullWidth mt="xl"
+              onClick={()=>{
+
+                console.log("onSubmit Value ", value);
+
+                close();
+                setValue("");
+              }
+              
+              }>
+                OK
+              </Button>
+              </Flex>
+        </Modal>
+      }
+      <ExpandableDescription
+        {...props}
+        className={[className].join(" ")}
+      />
+      <IconButton
+          label={rootStore.l10n.components.actions.edit}
+          Icon={IconEdit}
+          onClick={() => {
+            setEditing(!editing); open();
+          }}
+          color="purple.6"
+          className={S("hidden", "overlay")}
+        />
+    </div>
+  );
+});
+
 
 export const BuilderTextInput = observer(({text = "", classNames = [], setText = null, label = "", inputProps = null}) => {
   const [editing, setEditing] = useState(false);

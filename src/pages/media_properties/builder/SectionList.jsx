@@ -211,7 +211,7 @@ export function HeroSectionBuilder({mediaPropertyId, section}) {
       path: basePath,
       label: heroItem.label
     }),
-    path: UrlJoin(basePath, "display")
+    path: UrlJoin(basePath, "display"),
   };
 
 

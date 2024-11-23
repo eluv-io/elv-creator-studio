@@ -57,6 +57,7 @@ export const MediaPropertyPageContent = observer(({mediaPropertyId, isMediaPage,
             return (
               <MediaPropertyHeroSection
                 key={`section-${sectionId}`}
+                mediaPropertyId={mediaPropertyId}
                 section={section}
               />
             );

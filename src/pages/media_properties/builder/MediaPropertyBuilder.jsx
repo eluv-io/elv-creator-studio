@@ -18,7 +18,6 @@ const MediaPropertyBuilder= observer(() => {
 
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
-  const metadata = mediaProperty.metadata.public.asset_metadata;
   const page = info.pages.main;
   //LogItem(page.sections);
 

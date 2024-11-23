@@ -75,6 +75,12 @@
   display: none;
 }
 
+.hidden-trigger{
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
 .hidden-trigger:hover .hidden {
   display: block;
 }

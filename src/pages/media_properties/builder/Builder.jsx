@@ -7,8 +7,8 @@ import  SectionList from "./SectionList";
 import {LogItem} from "@/helpers/Misc";
 import { LogMessage } from "@eluvio/elv-client-js/src/LogMessage";
 import PageStyles from "./media-property-builder.module.scss";
-import MediaPropertyPage from "./wallet/components/properties/MediaPropertyPage";
-import * as Stores from "./wallet/stores";
+import MediaPropertyPage from "@/wallet/components/properties/MediaPropertyPage";
+import * as Stores from "../wallet/stores";
 
 const S = (...classes) => classes.map(c => PageStyles[c] || "").join(" ");
 
