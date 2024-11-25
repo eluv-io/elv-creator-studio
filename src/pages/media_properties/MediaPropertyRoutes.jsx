@@ -19,9 +19,10 @@ import MediaPropertySectionHeroItem, {
 import MediaPropertyThemeSettings from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
+  console.log("rootpath", rootPath);
   const routes = [
-    { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.builder, path: "/media-properties/:mediaPropertyId/build", Component: <MediaPropertyBuilder /> },
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.overview, path: "/media-properties/:mediaPropertyId", Component: <MediaPropertyOverview /> },
+    { root: false, navRoute: true, label: rootStore.l10n.pages.media_property.nav.builder, path: "/media-properties/:mediaPropertyId/build", Component: <MediaPropertyBuilder basePath={rootPath}/> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.general, path: "/media-properties/:mediaPropertyId/general", Component: <MediaPropertyGeneralSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.search, path: "/media-properties/:mediaPropertyId/search", Component: <MediaPropertySearch /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.pages, path: "/media-properties/:mediaPropertyId/pages", Component: <MediaPropertyPages /> },

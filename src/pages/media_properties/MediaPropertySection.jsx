@@ -405,6 +405,8 @@ const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
     path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
   };
 
+  const locationPath = UrlJoin("/media-properties", mediaPropertyId, "sections", sectionId);
+
   if(section.type === "manual") {
     return (
       <Inputs.CollectionTable
@@ -412,6 +414,7 @@ const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
         {...l10n.sections.section_content}
         subcategoryFnParams={{fields: ["label", "id"], l10n: l10n.categories.section_item_label}}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId)}
+        locationPath={locationPath}
         routePath="content"
         field="content"
         idField="id"
@@ -434,7 +437,7 @@ const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
                         // When specifying media, multiple items are allowed. Create an entry for each and don't redirect
                         args.mediaItemIds.forEach(mediaItemId =>
                           mediaPropertyStore.CreateSectionItem({
-                            page: location.pathname,
+                            page: locationPath,
                             mediaPropertyId,
                             sectionId,
                             mediaItemId,
@@ -443,7 +446,7 @@ const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
                         );
                       } else {
                         id = mediaPropertyStore.CreateSectionItem({
-                          page: location.pathname,
+                          page: locationPath,
                           mediaPropertyId,
                           sectionId,
                           ...args
@@ -1280,7 +1283,7 @@ const ContentSectionDisplaySettings = observer(({ mediaPropertyId, sectionId }) 
   );
 });
 
-const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId }) => {
+const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId, locationPath}) => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
   const params = useParams();
 
@@ -1321,6 +1324,7 @@ const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId }) => {
       info.sections[sectionId]?.type === "container"
     ))
   ];
+
 
   return (
     <>
@@ -1384,7 +1388,7 @@ const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId }) => {
               sectionIds.forEach(sectionId => {
                 mediaPropertyStore.InsertListElement({
                   ...inputProps,
-                  page: location.pathname,
+                  page: locationPath,
                   field: "sections",
                   value: sectionId,
                   label: info.sections[sectionId]?.label || sectionId

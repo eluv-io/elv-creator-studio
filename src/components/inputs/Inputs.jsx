@@ -110,9 +110,13 @@ const MultiSelect = observer(({
   clearable,
   searchable,
   disabled,
+  locationPath,
   componentProps={}
 }) => {
-  const location = useLocation();
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   let values = value || store.GetMetadata({objectId, path, field}) || [];
 
@@ -136,7 +140,7 @@ const MultiSelect = observer(({
           for(let i = values.length - 1; i >= 0; i--) {
             store.RemoveListElement({
               objectId,
-              page: location.pathname,
+              page: locationPath,
               path,
               field,
               index: i,
@@ -174,7 +178,7 @@ const MultiSelect = observer(({
           const option = options.find(option => option === removedValue || option?.value === removedValue);
           store.RemoveListElement({
             objectId,
-            page: location.pathname,
+            page: locationPath,
             path,
             field,
             index: values.findIndex(value => value === removedValue),
@@ -200,7 +204,7 @@ const MultiSelect = observer(({
 
           store.InsertListElement({
             objectId,
-            page: location.pathname,
+            page: locationPath,
             path,
             field,
             category,
@@ -239,10 +243,10 @@ const Input = observer(({
   required,
   Validate,
   validateOnLoad=true,
+  locationPath,
   componentProps={}
 }) => {
   const [error, setError] = useState(undefined);
-  const location = useLocation();
   const [changed, setChanged] = useState(false);
 
   value = typeof value !== "undefined" ? value : store.GetMetadata({objectId, path, field});
@@ -358,7 +362,7 @@ const Input = observer(({
         icon={<IconX size={15} />}
         onClick={() => store.SetMetadata({
           objectId,
-          page: location.pathname,
+          page: locationPath,
           path,
           field,
           value: type === "number" ? undefined : "",
@@ -416,7 +420,7 @@ const Input = observer(({
           store.SetBatchMetadata({
             actionType: "MODIFY_FIELD_BATCH_UNSTACKABLE",
             objectId,
-            page: location.pathname,
+            page: locationPath,
             path,
             field,
             values: [
@@ -431,7 +435,7 @@ const Input = observer(({
           store.SetMetadata({
             actionType: "MODIFY_FIELD",
             objectId,
-            page: location.pathname,
+            page: locationPath,
             path,
             field,
             value,
@@ -465,9 +469,13 @@ const Password = observer(({
   label,
   description,
   hint,
+  locationPath,
   componentProps={}
 }) => {
-  const location = useLocation();
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   const value = store.GetMetadata({objectId, path, field});
   const [password, setPassword] = useState(value);
@@ -490,7 +498,7 @@ const Password = observer(({
           setPassword(digest);
           store.SetMetadata({
             objectId,
-            page: location.pathname,
+            page: locationPath,
             path,
             field,
             value: digest,
@@ -523,9 +531,13 @@ const CheckboxInput = observer(({
   description,
   hint,
   defaultValue=false,
+  locationPath,
   componentProps={}
 }) => {
-  const location = useLocation();
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
@@ -546,7 +558,7 @@ const CheckboxInput = observer(({
       onChange={() => store.SetMetadata({
         actionType: "TOGGLE_FIELD",
         objectId,
-        page: location.pathname,
+        page: locationPath,
         path,
         field,
         value: !value,
@@ -571,12 +583,17 @@ const RichTextInput = observer(({
   label,
   description,
   hint,
+  locationPath,
   componentProps={},
   componentPropsVisible={}
 }) => {
-  const location = useLocation();
   const [showEditor, setShowEditor] = useState(false);
   const [editorKey, setEditorKey] = useState(Math.random());
+  
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   const value = store.GetMetadata({objectId, path, field});
   // React to undo/redo when the editor is open
@@ -608,7 +625,7 @@ const RichTextInput = observer(({
               key={`editor-${editorKey}`}
               store={store}
               objectId={objectId}
-              page={location.pathname}
+              page={locationPath}
               path={path}
               field={field}
               category={category}
@@ -739,13 +756,15 @@ const SingleImageInput = observer(({
   baseSize=150,
   horizontal=false,
   showDropdown=true,
+  locationPath,
   ...componentProps
 }) => {
-  const location = useLocation();
-
   const [showFileBrowser, setShowFileBrowser] = useState(false);
-
   const imageMetadata = store.GetMetadata({objectId, path, field});
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   let imageUrl;
   if(url) {
@@ -824,7 +843,7 @@ const SingleImageInput = observer(({
                 ConfirmDelete({
                   itemName: label || "this image",
                   onConfirm: () => store.SetMetadata({
-                    page: location.pathname,
+                    page: locationPath,
                     objectId,
                     path,
                     field,
@@ -849,7 +868,7 @@ const SingleImageInput = observer(({
             Submit={record => {
               if(url) {
                 store.SetMetadata({
-                  page: location.pathname,
+                  page: locationPath,
                   objectId,
                   path,
                   field,
@@ -860,7 +879,7 @@ const SingleImageInput = observer(({
                 });
               } else {
                 store.SetLink({
-                  page: location.pathname,
+                  page: locationPath,
                   objectId,
                   path,
                   field,
@@ -892,10 +911,14 @@ export const FileInput = observer(({
   hint,
   extensions,
   url=false,
+  locationPath,
   fileBrowserProps={}
 }) => {
-  const location = useLocation();
   const [showBrowser, setShowBrowser] = useState(false);
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   let value = store.GetMetadata({objectId, path, field});
 
@@ -987,7 +1010,7 @@ export const FileInput = observer(({
                       itemName: name,
                       onConfirm: () => store.SetLink({
                         objectId,
-                        page: location.pathname,
+                        page: locationPath,
                         path,
                         field,
                         linkObjectId: undefined,
@@ -1049,12 +1072,16 @@ export const FabricBrowserInput = observer(({
   GetImage,
   fabricBrowserProps={},
   autoUpdate=true,
+  locationPath,
   ...componentProps
 }) => {
-  const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [updatable, setUpdatable] = useState(false);
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
@@ -1129,7 +1156,7 @@ export const FabricBrowserInput = observer(({
                     text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
                     onConfirm: () => store.SetLink({
                       objectId,
-                      page: location.pathname,
+                      page: locationPath,
                       path,
                       field,
                       linkObjectId: targetId,
@@ -1175,7 +1202,7 @@ export const FabricBrowserInput = observer(({
                       itemName: name || label,
                       onConfirm: () => store.SetLink({
                         objectId,
-                        page: location.pathname,
+                        page: locationPath,
                         path,
                         field,
                         linkObjectId: undefined,
@@ -1242,9 +1269,13 @@ const ImageInput = observer(({
   label,
   description,
   hint,
+  locationPath,
   componentProps={}
 }) => {
-  const location = useLocation();
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   return (
     <InputWrapper
@@ -1284,7 +1315,7 @@ const ImageInput = observer(({
       {
         !altTextField ? null :
           <Input
-            page={location.pathname}
+            page={locationPath}
             type="textarea"
             store={store}
             objectId={objectId}
@@ -1414,6 +1445,7 @@ const List = observer(({
   actionLabel,
   idField="index",
   fieldLabel,
+  locationPath,
   fields=[],
   newItemSpec={},
   sortable=true,
@@ -1432,7 +1464,10 @@ const List = observer(({
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
-  const location = useLocation();
+  if(!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
   const values = (store.GetMetadata({objectId, path, field}) || []);
   simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
 
@@ -1512,7 +1547,7 @@ const List = observer(({
                     itemName: fieldLabel,
                     onConfirm: () => store.RemoveListElement({
                       objectId,
-                      page: location.pathname,
+                      page: locationPath,
                       path,
                       field,
                       index,
@@ -1542,7 +1577,7 @@ const List = observer(({
 
         store.InsertListElement({
           objectId,
-          page: location.pathname,
+          page: locationPath,
           path,
           field,
           value,
@@ -1584,7 +1619,7 @@ const List = observer(({
             onDragEnd={({source, destination}) =>
               store.MoveListElement({
                 objectId,
-                page: location.pathname,
+                page: locationPath,
                 path,
                 field,
                 index: source.index,
@@ -1634,10 +1669,17 @@ const CollectionTableRows = observer(({
   nameField,
   GetName,
   values,
+  locationPath,
   routePath="",
   editable=true,
   Actions
 }) => {
+
+  if (!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
+
   return (
     values.map((value, index) => {
       const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
@@ -1674,7 +1716,7 @@ const CollectionTableRows = observer(({
                       <IconButton
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: name || fieldLabel})}
                         component={Link}
-                        to={UrlJoin(location.pathname, routePath || "", id)}
+                        to={UrlJoin(locationPath, routePath || "", id)}
                         color="purple.6"
                         Icon={IconEdit}
                       />
@@ -1689,7 +1731,7 @@ const CollectionTableRows = observer(({
                         itemName: name || fieldLabel,
                         onConfirm: () => store.RemoveListElement({
                           objectId,
-                          page: location.pathname,
+                          page: locationPath,
                           path,
                           field,
                           index,
@@ -1731,6 +1773,7 @@ const CollectionTable = observer(({
   idPrefix,
   nameField,
   GetName,
+  locationPath,
   routePath="",
   filterable,
   Filter,
@@ -1741,6 +1784,11 @@ const CollectionTable = observer(({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  if (!locationPath) {
+    locationPath = location.pathname;
+  }
+
   let values = store.GetMetadata({objectId, path, field}) || [];
   const maxWidth = uiStore[`inputWidth${width}`];
 
@@ -1770,7 +1818,7 @@ const CollectionTable = observer(({
           const id = await AddItem();
 
           if(id) {
-            navigate(UrlJoin(location.pathname, routePath || "", id));
+            navigate(UrlJoin(locationPath, routePath || "", id));
           }
           return;
         }
@@ -1790,7 +1838,7 @@ const CollectionTable = observer(({
 
         store.InsertListElement({
           objectId,
-          page: location.pathname,
+          page: locationPath,
           path,
           field,
           value: newEntry,
@@ -1800,7 +1848,7 @@ const CollectionTable = observer(({
           useLabel: false
         });
 
-        navigate(UrlJoin(location.pathname, routePath || "", id));
+        navigate(UrlJoin(locationPath, routePath || "", id));
       }}
     />
   );
@@ -1819,7 +1867,7 @@ const CollectionTable = observer(({
           onDragEnd={({source, destination}) =>
             store.MoveListElement({
               objectId,
-              page: location.pathname,
+              page: locationPath,
               path,
               field,
               index: source.index,
@@ -1869,6 +1917,7 @@ const CollectionTable = observer(({
                     nameField={nameField}
                     GetName={GetName}
                     fieldLabel={fieldLabel}
+                    locationPath={locationPath}
                     routePath={routePath}
                     editable={editable}
                     Actions={Actions}
@@ -1907,6 +1956,7 @@ const ReferenceTable = observer(({
   description,
   hint,
   columns=[],
+  locationPath="",
   routePath="",
   pageSize=50,
   nameField="name",
@@ -1924,7 +1974,11 @@ const ReferenceTable = observer(({
   Actions
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
+
+  if (!locationPath) {
+    const location = useLocation();
+    locationPath = location.pathname;
+  }
 
   const map = store.GetMetadata({objectId, path, field}) || {};
   const values = Object.keys(map)
@@ -1975,7 +2029,7 @@ const ReferenceTable = observer(({
           const newKey = await AddItem();
 
           if(newKey) {
-            navigate(UrlJoin(location.pathname, routePath || "", newKey));
+            navigate(UrlJoin(locationPath, routePath || "", newKey));
           }
         }}
       />
@@ -2023,7 +2077,7 @@ const ReferenceTable = observer(({
                       <IconButton
                         label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: itemName})}
                         component={Link}
-                        to={UrlJoin(location.pathname, routePath || "", item.id)}
+                        to={UrlJoin(locationPath, routePath || "", item.id)}
                         color="purple.6"
                         Icon={IconEdit}
                       />
