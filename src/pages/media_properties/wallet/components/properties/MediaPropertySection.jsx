@@ -4,7 +4,7 @@ import {S as BuilderStyles} from "@/builder/CssHelper";
 import {LogItem} from "@/helpers/Misc";
 import React, {useEffect, useState} from "react";
 import {observer} from "mobx-react";
-import {Link, Navigate, useNavigate, useResolvedPath} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import {mediaPropertyStore, rootStore} from "Stores";
 import {mediaPropertyStore as CSMediaPropertyStore, rootStore as CSRootStore} from "@/stores";
 import { useDisclosure } from "@mantine/hooks";
@@ -87,8 +87,8 @@ const ActionVisible = ({permissions, behavior, visibility}) => {
   }*/
 };
 
-const Action = observer(({sectionId, sectionItemId, sectionItem, action}) => {
-  const match = useResolvedPath("");
+const Action = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, action}) => {
+  let match = {params:{mediaPropertySlugOrId: mediaPropertyId, sectionSlugOrId:sectionId}};
   let buttonParams = {};
 
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -130,7 +130,7 @@ const Action = observer(({sectionId, sectionItemId, sectionItem, action}) => {
       break;
 
     case "media_link":
-      const mediaItem = mediaPropertyStore.media[action.media_id];
+      const mediaItem = CSMediaPropertyStore.GetMediaItem({mediaItemId:action.media_id});
       buttonParams.to = MediaPropertyLink({match, mediaItem}).linkPath;
       break;
 
@@ -163,7 +163,7 @@ const Action = observer(({sectionId, sectionItemId, sectionItem, action}) => {
   );
 });
 
-const Actions = observer(({sectionId, sectionItemId, sectionItem, actions}) => {
+const Actions = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, actions}) => {
   actions = (actions || [])
     .filter(action => ActionVisible({
       visibility: action.visibility,
@@ -181,6 +181,7 @@ const Actions = observer(({sectionId, sectionItemId, sectionItem, actions}) => {
           <Action
             key={action.id}
             action={action}
+            mediaPropertyId={mediaPropertyId}
             sectionId={sectionId}
             sectionItemId={sectionItemId}
             sectionItem={sectionItem}
@@ -320,8 +321,10 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
   );
 });
 
-export const MediaPropertySectionContainer = observer(({section, isMediaPage, sectionClassName=""}) => {
-  const match = useResolvedPath("");
+export const MediaPropertySectionContainer = observer(({mediaPropertyId, section, isMediaPage, sectionClassName=""}) => {
+  if(!section){return;}
+
+  let match = {params:{mediaPropertySlugOrId: mediaPropertyId, sectionSlugOrId:section.id}};
   const [filter, setFilter] = useState("");
 
   return (
@@ -454,7 +457,6 @@ const SectionContentBanner = observer(({section, sectionContent, navContext}) =>
 });
 
 const SectionContentCarousel = observer(({section, sectionContent, navContext}) => {
-  console.log("SectionContentCarousel ");
   //LogItem(sectionContent);
 
   return (
@@ -496,7 +498,6 @@ const SectionContentCarousel = observer(({section, sectionContent, navContext}) 
 
 const SectionContentGrid = observer(({section, sectionContent, navContext}) => {
   const aspectRatio = section.display.aspect_ratio?.toLowerCase();
-  console.log("SectionContentGrid");
   return (
     <MediaGrid
       content={sectionContent}
@@ -587,9 +588,8 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
   const [editing, setEditing] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
 
-  let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId }};
-
-  console.log("MediaPropertySection");
+  //replaced useResolvedPath("")
+  let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId, sectionSlugOrId:sectionId, mediaListSlugOrId:mediaListId }};
 
   let navContext = new URLSearchParams(location.search).get("ctx");
   const [sectionContent, setSectionContent] = useState([]);
@@ -608,10 +608,10 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
 
   const filtersActive = activeFilters.mediaType || Object.keys(activeFilters.attributes).length > 0;
 
-  useEffect(() => {
+  const updateContent = (refresh=false) => {
     if(!section) { return; }
 
-    if (allContentLength > 0) { return; }
+    if (!refresh && allContentLength > 0) { return; }
 
     mediaPropertyStore.MediaPropertySectionContent({
       mediaPropertySlugOrId: match.params.mediaPropertySlugOrId,
@@ -621,13 +621,15 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
       filterOptions: activeFilters
     })
       .then(content => {
-        //console.log("mediaPropertyStore.MediaPropertySectionContent returned");
+        LogItem(content);
         setSectionContent(content);
 
         if(!filtersActive)
           setAllContentLength(content.length);
       });
-  }, [match.params, sectionId, mediaListId, activeFilters]);
+  };
+
+  useEffect(updateContent, [match.params, sectionId, mediaListId, activeFilters]);
 
   if(!section) {
     return null;
@@ -711,7 +713,14 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
         section.display.full_bleed ? "section-container--full-bleed" : ""
       ), className].join(" ")}
     >
-        <MantineModal size="xl" opened={opened} onClose={()=>{close();}} withCloseButton={false} centered >
+        <MantineModal size="xl" opened={opened} 
+          onClose={()=>{
+            updateContent(true); 
+            setEditing(!editing); 
+            close();
+          }} 
+          withCloseButton={false} 
+          centered >
             <CSMediaPropertySection mediaPropertyId={mediaPropertyId} sectionId={sectionId} options={{showBacklink:false}}/>
         </MantineModal>
 
@@ -791,6 +800,7 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
         {
           !section.primary_filter || !section.show_primary_filter_in_page_view ? null :
             <Filters
+              match={match}
               filterSettings={section.filters}
               activeFilters={activeFilters}
               primaryOnly
@@ -812,21 +822,21 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
             label={CSRootStore.l10n.components.actions.edit}
             Icon={IconEdit}
             onClick={() => {
-              console.log("open");
               setEditing(!editing);
               open();
             }}
             color="purple.6"
             className={S("hidden", "overlay")}
           />
-      {/*!editing ? null : <MediaPropertySectionModal mediaPropertyId={mediaPropertyId} sectionId={sectionId} /> */}
       
     </div> 
   );
 });
 
-const MediaPropertySectionPage = observer(() => {
-  const match = useResolvedPath("");
+const MediaPropertySectionPage = observer((mediaPropertyId,pageId,sectionId) => {
+  //replaced useResolvedPath("")
+  let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId, sectionSlugOrId:sectionId}};
+
   const history = useNavigate();
 
   const [sectionContent, setSectionContent] = useState([]);
@@ -957,6 +967,7 @@ const MediaPropertySectionPage = observer(() => {
     <PageContainer className={S("page", "section-page")}>
       <PageBackground display={section.display} />
       <Filters
+        match={match}
         filterSettings={section.filters || {}}
         activeFilters={activeFilters}
         SetActiveFilters={filters => setActiveFilters({...activeFilters, ...filters})}

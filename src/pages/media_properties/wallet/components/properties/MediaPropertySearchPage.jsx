@@ -68,6 +68,7 @@ const MediaPropertySearchPage = observer(() => {
     <PageContainer className={S("search")}>
       <div className={S("search__filters")}>
         <Filters
+          match={match}
           filterSettings={mediaProperty.metadata.search}
           activeFilters={mediaPropertyStore.searchOptions}
           SetActiveFilters={filters => {

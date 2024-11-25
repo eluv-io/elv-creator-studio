@@ -66,6 +66,10 @@ class MediaPropertyStore {
     }
   }
 
+  get media() {
+    return mediaPropertyStore.media;
+  }
+
   get appId() {
     return this.rootStore.appId;
   }

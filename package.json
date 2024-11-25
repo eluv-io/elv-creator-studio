@@ -16,7 +16,7 @@
   "dependencies": {
     "@eluvio/elv-client-js": "^4.0.92",
     "@eluvio/elv-paymentgate": "^1.0.0",
-    "@eluvio/elv-player-js": "^2.0.11",
+    "@eluvio/elv-player-js": "^2.0.19",
     "@emotion/react": "^11.11.1",
     "@hello-pangea/dnd": "^16.3.0",
     "@mantine/carousel": "^6.0.21",
@@ -45,7 +45,6 @@
     "country-codes-list": "^1.6.11",
     "csstree-validator": "^3.0.0",
     "dayjs": "^1.11.9",
-    "embla-carousel-react": "^8.5.1",
     "firebase": "^10.1.0",
     "js-money": "^0.6.3",
     "lodash": "^4.17.21",

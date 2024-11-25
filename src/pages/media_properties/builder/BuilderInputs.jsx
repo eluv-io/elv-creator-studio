@@ -118,7 +118,6 @@ export const BuilderScaledText = observer(({
 
   const { textProps, ...otherInputProps } = inputProps;
 
-  console.log("Value: ", value);
   return (
     <div className={S("builder-input-container", "hidden-trigger")}>
       {!inputProps ? null :
@@ -183,7 +182,6 @@ export const BuilderExpandableDescription = observer(({
 
   const { descriptionProps, ...otherInputProps } = inputProps;
 
-  console.log("Value: ", value);
   return (
     <div className={S("builder-input-container", "hidden-trigger", "editable")}>
       {!inputProps ? null :
@@ -240,8 +238,6 @@ export const BuilderTextInput = observer(({text = "", classNames = [], setText =
     setValue(text);
   }
 
-
-  console.log("Value: ", value);
   return (
     <div className={S("builder-input-container")}>
         <Modal size="sm" opened={opened} onClose={()=>{close(); setValue("");}} withCloseButton={false} centered>

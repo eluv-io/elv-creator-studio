@@ -52,8 +52,7 @@ const FormatFilterOptions = ({match, type="primary", filterSettings, activeFilte
   };
 };
 
-const Filters = observer(({filterSettings={}, activeFilters={}, primaryOnly, SetActiveFilters, className=""}) => {
-  const match = useResolvedPath("");
+const Filters = observer(({match, filterSettings={}, activeFilters={}, primaryOnly, SetActiveFilters, className=""}) => {
   const primaryFilterOptions = FormatFilterOptions({match, type: "primary", filterSettings, activeFilters});
   const secondaryFilterOptions = FormatFilterOptions({match, type: "secondary", filterSettings, activeFilters});
 
