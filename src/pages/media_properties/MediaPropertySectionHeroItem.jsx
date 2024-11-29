@@ -244,8 +244,14 @@ export const MediaPropertySectionHeroItemAction = observer(() => {
 });
 
 
-const MediaPropertySectionHeroItem = observer(() => {
-  const { mediaPropertyId, sectionId, heroItemId } = useParams();
+const MediaPropertySectionHeroItem = observer(({mediaPropertyId, sectionId, heroItemId, options}) => {
+
+  if (!mediaPropertyId || !sectionId || !heroItemId) {
+    const params = useParams();
+    mediaPropertyId = params.mediaPropertyId;
+    sectionId = params.sectionId;
+    heroItemId = params.heroItemId;
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -284,7 +290,7 @@ const MediaPropertySectionHeroItem = observer(() => {
 
   return (
     <PageContent
-      backLink={UrlJoin("/media-properties", mediaPropertyId, "sections", sectionId)}
+      backLink={options.showBacklink? UrlJoin("/media-properties", mediaPropertyId, "sections", sectionId) : null}
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${section.label} - ${heroItem.label || ""}`}
       section="mediaProperty"
       useHistory

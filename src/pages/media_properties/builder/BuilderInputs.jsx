@@ -1,6 +1,4 @@
 import cx from "clsx";
-import { useListState, useClickOutside} from "@mantine/hooks";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";

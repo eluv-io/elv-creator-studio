@@ -56,23 +56,6 @@ const MediaPropertyBuilder= observer(() => {
   );
 });
 
-export const MediaPropertySectionModal = observer((mediaPropertyId, sectionId) => {
-  const [opened, { open, close }] = useDisclosure(false);
-  console.log("MediaPropertySectionModal");
-
-  return (
-    <div className={S("builder-input-container")}>
-        <Modal size="xl" opened={opened} onClose={()=>{close();}} withCloseButton={false} centered >
-          <Flex
-              gap="md"
-              direction="column"
-            >
-              <MediaPropertySection mediaPropertyId={mediaPropertyId} sectionId={sectionId} />
-            </Flex>
-        </Modal>
-    </div>
-  );
-});
 
 export default MediaPropertyBuilder;
 

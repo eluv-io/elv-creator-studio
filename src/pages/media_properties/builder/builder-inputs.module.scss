@@ -57,14 +57,14 @@
   right: 0px;
 }
 
-.hidden{
-  display: none;
-}
-
 .editable-container{
   position: relative;
   width: fit-content;
   height: fit-content;
+}
+
+.hidden{
+  display: none;
 }
 
 .hidden-trigger{
@@ -76,5 +76,21 @@
 }
 
 .hidden-trigger:hover+.hidden {
+  display: block;
+}
+
+.hidden-container{
+  display: none;
+}
+
+.hidden-container-trigger{
+  position: relative;
+}
+
+.hidden-container-trigger:hover .hidden-container {
+  display: block;
+}
+
+.hidden-trigger:hover+.hidden-container {
   display: block;
 }

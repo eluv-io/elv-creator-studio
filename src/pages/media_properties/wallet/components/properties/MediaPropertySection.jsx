@@ -43,8 +43,8 @@ import {
 } from "@tabler/icons-react";
 import {IconButton} from "@/components/common/Misc.jsx";
 
-import {MediaPropertySectionModal} from "@/builder/MediaPropertyBuilder.jsx";
 import {default as CSMediaPropertySection} from "@/pages/media_properties/MediaPropertySection.jsx" ;
+import {default as CSMediaPropertySectionHeroItem} from "@/pages/media_properties/MediaPropertySectionHeroItem.jsx" ;
 
 const S = (...classes) => classes.map(c => SectionStyles[c] || BuilderStyles(c) || "").join(" ");
 
@@ -196,6 +196,7 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
   const [contentRefs, setContentRefs] = useState({});
   const [activeIndex, setActiveIndex] = useState(0);
   const [minHeight, setMinHeight] = useState(undefined);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const activeItem = section.hero_items[activeIndex];
 
@@ -278,7 +279,7 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
             }}
             style={activeIndex === index ? {} : {position: "absolute", opacity: 0, userSelect: "none"}}
             key={`content-${index}`}
-            className={S("hero-section__content", activeIndex === index ? "hero-section__content--active" : "")}
+            className={S("editable", "hidden-container-trigger", "hero-section__content", activeIndex === index ? "hero-section__content--active" : "")}
           >
             {
               section.hero_items.length < 2 ? null :
@@ -290,6 +291,19 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
                   <ImageIcon label="Previous Page" icon={LeftArrow}/>
                 </button>
             }
+            <MantineModal size="xl" opened={opened} 
+              onClose={()=>{
+                close();
+              }} 
+              withCloseButton={false} 
+              centered >
+                <CSMediaPropertySectionHeroItem 
+                  mediaPropertyId={mediaPropertyId} 
+                  sectionId={sectionId} 
+                  heroItemId={heroItemId} 
+                  options={{showBacklink:false}}/>
+            </MantineModal>
+
             <PageHeader
               active={activeIndex === index}
               display={heroItem.display}
@@ -314,6 +328,15 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
                   <ImageIcon label="Next Page" icon={RightArrow}/>
                 </button>
             }
+            <IconButton
+              label={CSRootStore.l10n.components.actions.edit}
+              Icon={IconEdit}
+              onClick={() => {
+                open();
+              }}
+              color="purple.6"
+              className={S("hidden-container", "overlay")}
+            />
           </div>
         )
       }
@@ -706,7 +729,7 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
     <div
       style={style}
       className={[S(
-        "editable", "hidden-trigger",
+        "editable", "hidden-container-trigger",
         "section-container",
         `section-container--${section.display?.display_format || "grid"}`,
         `section-container--${section.display.justification || "left"}`,
@@ -781,7 +804,8 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
                 }
                 {
                   !showAllLink ? null :
-                    <Link to={UrlJoin(MediaPropertyBasePath(match.params), "s", section.slug || sectionId)} className={S("section__title-link")}>
+                    <Link to={UrlJoin(MediaPropertyBasePath(match.params), "s", section.slug || sectionId)} 
+                      className={S("section__title-link")}>
                       <div>
                         { rootStore.l10n.media_properties.sections.view_all }
                       </div>
@@ -819,16 +843,15 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
         />
       </div>
         <IconButton
-            label={CSRootStore.l10n.components.actions.edit}
-            Icon={IconEdit}
-            onClick={() => {
-              setEditing(!editing);
-              open();
-            }}
-            color="purple.6"
-            className={S("hidden", "overlay")}
-          />
-      
+          label={CSRootStore.l10n.components.actions.edit}
+          Icon={IconEdit}
+          onClick={() => {
+            setEditing(!editing);
+            open();
+          }}
+          color="purple.6"
+          className={S("hidden-container", "overlay")}
+        />
     </div> 
   );
 });
