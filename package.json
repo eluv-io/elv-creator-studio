@@ -50,8 +50,7 @@
     "sanitize-html": "^2.11.0",
     "stream-browserify": "^3.0.0",
     "url-join": "^5.0.0",
-    "uuid": "^9.0.0",
-    "vite-plugin-static-copy": "^0.17.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.0.4",
@@ -73,6 +72,7 @@
     "stylelint-config-standard-scss": "^10.0.0",
     "stylelint-order": "^6.0.3",
     "vite": "^4.4.5",
-    "vite-plugin-node-polyfills": "^0.16.0"
+    "vite-plugin-node-polyfills": "^0.16.0",
+    "vite-plugin-static-copy": "^0.17.0"
   }
 }

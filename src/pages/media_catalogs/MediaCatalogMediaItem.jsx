@@ -304,7 +304,8 @@ const MediaConfiguration = observer(({mediaItem}) => {
             field="player_profile"
             defaultValue=""
             options={[
-              { label: "Default", value: ""},
+              { label: "Recommended", value: "" },
+              { label: "Default (VOD)", value: "DEFAULT"},
               { label: "Low Latency Live", value: "LOW_LATENCY" },
               { label: "Ultra Low Latency Live", value: "ULTRA_LOW_LATENCY" },
             ]}
