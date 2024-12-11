@@ -667,6 +667,7 @@ const AutomaticSectionFilters = observer(() => {
                 options={[
                   { label: "Any Time", value: "" },
                   { label: "Live Now", value: "live" },
+                  { label: "Live and Upcoming", value: "live_and_upcoming" },
                   { label: "Upcoming", value: "upcoming" },
                   { label: "Past", value: "past" },
                   { label: "Specific Time Period", value: "period" }
