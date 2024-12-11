@@ -101,6 +101,8 @@ class MediaCatalogStore {
           switch(select.schedule) {
             case "live":
               return started && !ended;
+            case "live_and_upcoming":
+              return !ended && beforeEndLimit;
             case "upcoming":
               return !started && beforeEndLimit;
             case "past":

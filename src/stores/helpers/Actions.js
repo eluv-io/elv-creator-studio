@@ -363,11 +363,11 @@ const SetLink = flow(function * ({
 
     if(linkType === "meta") {
       // Metadata links should contain resolved metadata
-      metadataValue = yield this.client.ContentObjectMetadata({
+      metadataValue = (yield this.client.ContentObjectMetadata({
         versionHash: targetHash,
         metadataSubtree: linkPath,
         produceMetadataLinks: true,
-      });
+      })) || {};
 
       metadataValue["."] = {
         source: targetHash

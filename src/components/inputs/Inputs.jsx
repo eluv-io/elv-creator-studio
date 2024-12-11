@@ -1199,7 +1199,7 @@ export const FabricBrowserInput = observer(({
                       p="xs"
                     />
                 }
-                <Text fz="sm" fw={500}>
+                <Text fz="sm" fw={500} maw={400} truncate>
                   { name || label }
                 </Text>
                 <Text fz={11} color="dimmed">

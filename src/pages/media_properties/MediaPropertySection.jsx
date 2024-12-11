@@ -682,7 +682,7 @@ const AutomaticSectionFilters = observer(() => {
                   />
               }
               {
-                !["upcoming", "period"].includes(section.select.schedule) ? null :
+                !["live_and_upcoming", "upcoming", "period"].includes(section.select.schedule) ? null :
                   <Inputs.DateTime
                     {...inputProps}
                     {...l10n.sections.filters.end_time}
