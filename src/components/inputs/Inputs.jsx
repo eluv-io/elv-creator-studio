@@ -1709,6 +1709,7 @@ const CollectionTableRows = observer(({
   );
 });
 
+let collectionTableFilters = {};
 const CollectionTable = observer(({
   store,
   objectId,
@@ -1731,6 +1732,9 @@ const CollectionTable = observer(({
   GetName,
   routePath="",
   filterable,
+  // Saved filter for filterId resets when filter key changes
+  filterKey,
+  filterId,
   Filter,
   editable=true,
   width="Wide",
@@ -1742,8 +1746,30 @@ const CollectionTable = observer(({
   let values = store.GetMetadata({objectId, path, field}) || [];
   const maxWidth = uiStore[`inputWidth${width}`];
 
-  const [filter, setFilter] = useState("");
+  const filterInfo = collectionTableFilters[filterId];
+  const [filter, setFilter] = useState(filterInfo?.filterKey === filterKey && filterInfo?.filter || "");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+
+  // If filter key has changed, reset filter value
+  useEffect(() => {
+    if(!filterId) { return; }
+
+    if(collectionTableFilters[filterId]?.filterKey !== filterKey) {
+      collectionTableFilters[filterId] = {
+        filterKey,
+        filter: ""
+      };
+
+      setFilter("");
+    }
+  }, []);
+
+  // Save filter
+  useEffect(() => {
+    if(!filterId) { return; }
+
+    collectionTableFilters[filterId] = { filterKey, filter };
+  }, [filter, filterId]);
 
   const filteredValues = filterable && debouncedFilter && Filter ?
     values.filter(value => Filter({filter: debouncedFilter, value})) :

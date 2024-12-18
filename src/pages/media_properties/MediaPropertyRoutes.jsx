@@ -5,7 +5,7 @@ import {rootStore, mediaPropertyStore} from "@/stores";
 import MediaPropertyList from "@/pages/media_properties/MediaPropertyList.jsx";
 import MediaPropertyOverview from "@/pages/media_properties/MediaPropertyOverview.jsx";
 import MediaPropertyGeneralSettings from "@/pages/media_properties/MediaPropertyGeneralSettings.jsx";
-import MediaPropertyPage, {MediaPropertyPageAction} from "@/pages/media_properties/MediaPropertyPage.jsx";
+import MediaPropertyPage from "@/pages/media_properties/MediaPropertyPage.jsx";
 import MediaPropertySections from "@/pages/media_properties/MediaPropertySections.jsx";
 import MediaPropertyPages from "@/pages/media_properties/MediaPropertyPages.jsx";
 import MediaPropertySection from "@/pages/media_properties/MediaPropertySection.jsx";
@@ -24,7 +24,6 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.search, path: "/media-properties/:mediaPropertyId/search", Component: <MediaPropertySearch /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.pages, path: "/media-properties/:mediaPropertyId/pages", Component: <MediaPropertyPages /> },
     { label: rootStore.l10n.pages.media_property.nav.page, path: "/media-properties/:mediaPropertyId/pages/:pageId", Component: <MediaPropertyPage /> },
-    { label: rootStore.l10n.pages.media_property.nav.page, path: "/media-properties/:mediaPropertyId/pages/:pageId/actions/:actionId", Component: <MediaPropertyPageAction /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.sections, path: "/media-properties/:mediaPropertyId/sections", Component: <MediaPropertySections /> },
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId", Component: <MediaPropertySection /> },
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId/hero_items/:heroItemId", Component: <MediaPropertySectionHeroItem /> },
