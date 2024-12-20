@@ -1283,12 +1283,53 @@ const ContainerSectionSettings = observer(() => {
     <>
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.sections.display.title_icon}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="title_icon"
+        baseSize={75}
+        horizontal
+        p="md"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.display.title}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="title"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.display.subtitle}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="subtitle"
+      />
+
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.sections.container.filter_tags}
         subcategory={l10n.categories.section_presentation}
         field="filter_tags"
         options={tags.map(tag => ({label: tag, value: tag}))}
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.container.justification}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        defaultValue="left"
+        field="justification"
+        options={[
+          {label: "Left", value: "left"},
+          {label: "Center", value: "center"},
+          {label: "Right", value: "right"},
+        ]}
       />
 
       <Inputs.CollectionTable

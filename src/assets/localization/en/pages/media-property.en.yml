@@ -609,6 +609,9 @@ form:
       filter_tags:
         label: Filter Tags
         description: Select tags that can be used to filter the sections within this container. When a tag is selected, only the sections with the corresponding tag will be shown.
+      justification:
+        label: Header Justification
+        description: Specify the horizontal position of the header text and/or filters
     visibility:
       label: Visibility
       description: Specify when this section should be displayed or hidden
