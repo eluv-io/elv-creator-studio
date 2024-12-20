@@ -1589,7 +1589,6 @@ const MediaPropertySection = observer(() => {
         subcategory={l10n.categories.visibility}
         field="visibility"
         defaultValue=""
-        disabled={!secondaryEnabled}
         options={[
           { label: "Always Visible", value: "" },
           { label: "Hide if User is Not Signed In", value: "authenticated" },
