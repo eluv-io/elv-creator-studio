@@ -36,6 +36,7 @@ form:
     additional_settings: Additional Settings
     subproperties: Subproperties
     permissions: Permission Settings
+    visibility: Visibility Settings
     user_profile: User Profile Settings
     media_sidebar: Media Sidebar and Live Content Settings
     meta_tags: Search and Social Preview
@@ -608,6 +609,9 @@ form:
       filter_tags:
         label: Filter Tags
         description: Select tags that can be used to filter the sections within this container. When a tag is selected, only the sections with the corresponding tag will be shown.
+    visibility:
+      label: Visibility
+      description: Specify when this section should be displayed or hidden
     display:
       title:
         label: Title

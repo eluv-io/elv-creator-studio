@@ -40,7 +40,7 @@ import {
 } from "@/specs/MediaPropertySpecs.js";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
-const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
+const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
@@ -297,13 +297,10 @@ const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
             data-autofocus
             {...l10n.section_items.type}
             defaultValue="media"
-            data={[
-              ...Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
-                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key})),
-              section.display?.display_format === "banner" ?
-                { value: "visual_only", label: "Visual Only" } :
-                undefined
-            ].filter(option => option)}
+            data={
+              Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
+                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key}))
+            }
             {...form.getInputProps("type")}
           />
           { formContent }
@@ -419,7 +416,6 @@ const SectionContentList = observer(() => {
                   <CreateSectionItemForm
                     mediaPropertyId={mediaPropertyId}
                     mediaProperty={info}
-                    section={section}
                     Create={async args => {
                       let id;
                       if(args.type === "media") {
@@ -1514,6 +1510,7 @@ const MediaPropertySection = observer(() => {
 
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+
       <Inputs.Select
         {...inputProps}
         {...l10n.sections.permission_behavior}
@@ -1584,6 +1581,21 @@ const MediaPropertySection = observer(() => {
             />
           </>
       }
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.visibility}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.visibility}
+        subcategory={l10n.categories.visibility}
+        field="visibility"
+        defaultValue=""
+        disabled={!secondaryEnabled}
+        options={[
+          { label: "Always Visible", value: "" },
+          { label: "Hide if User is Not Signed In", value: "authenticated" },
+          { label: "Hide if User is Signed In", value: "unauthenticated" }
+        ]}
+      />
 
       {
         section.type === "container" ?

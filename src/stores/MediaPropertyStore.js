@@ -49,7 +49,7 @@ class MediaPropertyStore {
     "subproperty_link": "Subproperty Link",
     "redeemable_offer": "Redeemable Offer",
     "external_link": "External Link",
-    "visual_only": "Visual"
+    "visual_only": "Visual Only"
   };
 
   PERMISSION_BEHAVIORS = {
