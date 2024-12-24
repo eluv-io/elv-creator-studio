@@ -321,6 +321,14 @@ const MediaPropertyDomainSettings = observer(() => {
         defaultValue={false}
         field="disable_registration"
       />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.login.enable_metamask}
+        category={l10n.categories.login_settings}
+        path="/public/asset_metadata/info/login/settings"
+        defaultValue={false}
+        field="enable_metamask"
+      />
       <LoginStyling />
       <LoginTerms />
       <LoginConsentOptions />
