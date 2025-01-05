@@ -400,6 +400,9 @@ form:
     disable_registration:
       label: Disable Registration
       description: If checked, users will not be able to create new accounts
+    disable_third_party_login:
+      label: Disable Third Party Login
+      description: If checked, users will not be allowed to log in with their Google or Apple accounts
     enable_metamask:
       label: Enable Login via MetaMask
       description: If checked, users will be able to log in with their MetaMask accounts
