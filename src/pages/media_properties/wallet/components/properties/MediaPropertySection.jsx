@@ -335,7 +335,7 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
                 open();
               }}
               color="purple.6"
-              className={S("hidden-container", "overlay")}
+              className={S("hidden-container", "overlay-section")}
             />
           </div>
         )
@@ -850,7 +850,7 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
             open();
           }}
           color="purple.6"
-          className={S("hidden-container", "overlay")}
+          className={S("hidden-container", "overlay-section")}
         />
     </div> 
   );
