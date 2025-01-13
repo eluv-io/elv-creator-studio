@@ -47,10 +47,11 @@ const EmailPreview = observer(() => {
 
   if(html) {
     const commonSettings = info?.email_template_settings?.common || {};
-    html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image);
+    html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image || defaults.banner_image);
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
     html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#393939");
-    html = html.replaceAll("{{copyright}}", commonSettings.copyright || "©Eluvio, Inc");
+    html = html.replaceAll("{{copyright}}", commonSettings.copyright || l10n.email_templates.defaults.common.copyright);
+    html = html.replaceAll("{{year}}", new Date().getFullYear());
 
     Object.keys(defaults).forEach(key =>
       html = html.replaceAll(`{{${key}}}`, settings[key] || defaults[key])
@@ -129,7 +130,6 @@ const TenantGeneralSettings = observer(() => {
         path={UrlJoin(inputProps.path, "common")}
         subcategory={l10n.categories.email_templates_common}
         placeholder={l10n.email_templates.defaults.common.from}
-        defaultValue={l10n.email_templates.defaults.common.from}
         field="from"
       />
       <Inputs.Text
@@ -139,7 +139,6 @@ const TenantGeneralSettings = observer(() => {
         path={UrlJoin(inputProps.path, "common")}
         subcategory={l10n.categories.email_templates_common}
         placeholder={l10n.email_templates.defaults.common.copyright}
-        defaultValue={l10n.email_templates.defaults.common.copyright}
         field="copyright"
       />
 
@@ -191,7 +190,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.subject || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.subject || ""}
               field="subject"
             />
             <Inputs.Text
@@ -200,7 +198,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.title || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.title || ""}
               field="title"
             />
             <Inputs.Text
@@ -209,7 +206,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.subtitle || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.subtitle || ""}
               field="subtitle"
             />
             <Inputs.TextArea
@@ -218,7 +214,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.text || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.text || ""}
               field="text"
             />
             <Inputs.Text
@@ -227,7 +222,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.button_text || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.button_text || ""}
               field="button_text"
             />
             <Inputs.TextArea
@@ -236,7 +230,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.secondary_text || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.secondary_text || ""}
               field="secondary_text"
             />
             <Inputs.Text
@@ -245,7 +238,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "welcome_email")}
               subcategory={l10n.categories.welcome_email_template}
               placeholder={l10n.email_templates.defaults.welcome_email.preheader || ""}
-              defaultValue={l10n.email_templates.defaults.welcome_email.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
@@ -261,7 +253,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.subject || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.subject || ""}
               field="subject"
             />
             <Inputs.Text
@@ -270,7 +261,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.title || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.title || ""}
               field="title"
             />
             <Inputs.Text
@@ -279,7 +269,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.subtitle || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.subtitle || ""}
               field="subtitle"
             />
             <Inputs.TextArea
@@ -288,7 +277,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.text || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.text || ""}
               field="text"
             />
             <Inputs.Text
@@ -297,7 +285,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.button_text || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.button_text || ""}
               field="button_text"
             />
             <Inputs.TextArea
@@ -306,7 +293,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.secondary_text || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.secondary_text || ""}
               field="secondary_text"
             />
             <Inputs.Text
@@ -315,7 +301,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "email_verification")}
               subcategory={l10n.categories.email_verification_template}
               placeholder={l10n.email_templates.defaults.email_verification.preheader || ""}
-              defaultValue={l10n.email_templates.defaults.email_verification.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
@@ -332,7 +317,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.subject || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.subject || ""}
               field="subject"
             />
             <Inputs.Text
@@ -341,7 +325,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.title || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.title || ""}
               field="title"
             />
             <Inputs.Text
@@ -350,7 +333,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.subtitle || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.subtitle || ""}
               field="subtitle"
             />
             <Inputs.TextArea
@@ -359,7 +341,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.text || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.text || ""}
               field="text"
             />
             <Inputs.TextArea
@@ -368,7 +349,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.secondary_text || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.secondary_text || ""}
               field="secondary_text"
             />
             <Inputs.Text
@@ -377,7 +357,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "password_reset")}
               subcategory={l10n.categories.password_reset_template}
               placeholder={l10n.email_templates.defaults.password_reset.preheader || ""}
-              defaultValue={l10n.email_templates.defaults.password_reset.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
@@ -394,7 +373,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.subject || ""}
-              defaultValue={l10n.email_templates.defaults.invite.subject || ""}
               field="subject"
             />
             <Inputs.Text
@@ -403,7 +381,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.title || ""}
-              defaultValue={l10n.email_templates.defaults.invite.title || ""}
               field="title"
             />
             <Inputs.Text
@@ -412,7 +389,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.subtitle || ""}
-              defaultValue={l10n.email_templates.defaults.invite.subtitle || ""}
               field="subtitle"
             />
             <Inputs.TextArea
@@ -421,7 +397,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.text || ""}
-              defaultValue={l10n.email_templates.defaults.invite.text || ""}
               field="text"
             />
             <Inputs.Text
@@ -430,7 +405,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.button_text || ""}
-              defaultValue={l10n.email_templates.defaults.invite.button_text || ""}
               field="button_text"
             />
             <Inputs.TextArea
@@ -439,7 +413,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.secondary_text || ""}
-              defaultValue={l10n.email_templates.defaults.invite.secondary_text || ""}
               field="secondary_text"
             />
             <Inputs.Text
@@ -448,7 +421,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "invite")}
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.preheader || ""}
-              defaultValue={l10n.email_templates.defaults.invite.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
@@ -465,7 +437,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.subject || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.subject || ""}
               field="subject"
             />
             <Inputs.Text
@@ -474,7 +445,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.title || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.title || ""}
               field="title"
             />
             <Inputs.Text
@@ -483,7 +453,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.subtitle || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.subtitle || ""}
               field="subtitle"
             />
             <Inputs.TextArea
@@ -492,7 +461,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.text || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.text || ""}
               field="text"
             />
             <Inputs.Text
@@ -501,7 +469,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.button_text || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.button_text || ""}
               field="button_text"
             />
             <Inputs.TextArea
@@ -510,7 +477,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.secondary_text || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.secondary_text || ""}
               field="secondary_text"
             />
             <Inputs.Text
@@ -519,7 +485,6 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.preheader || ""}
-              defaultValue={l10n.email_templates.defaults.purchase_receipt.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
