@@ -308,14 +308,15 @@ export const MediaPropertyPageAction = observer(() => {
 
 const MediaPropertyPage = observer(({ mediaPropertyId, pageId, options={showBacklink:true}}) => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
-  const { _mediaPropertyId, _pageId } = useParams();
+
+  const params = useParams();
 
   if (!mediaPropertyId) {
-    mediaPropertyId = _mediaPropertyId
+    mediaPropertyId = params.mediaPropertyId;
   }
 
   if (!pageId){
-    pageId = _pageId
+    pageId = params.pageId;
   }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
