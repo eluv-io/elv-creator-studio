@@ -1,4 +1,3 @@
-import cx from "clsx";
 import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
@@ -89,7 +88,6 @@ export const BuilderLoaderImage = observer(({src = "", className = "", inputProp
             onClick={() => {
               setEditing(!editing); open();
             }}
-            color="purple.6"
             className={S("hidden", "overlay")}
           />
         </div>
@@ -156,7 +154,6 @@ export const BuilderScaledText = observer(({
           onClick={() => {
             setEditing(!editing); open();
           }}
-          color="purple.6"
           className={S("hidden", "overlay")}
         />
     </div>
@@ -218,7 +215,6 @@ export const BuilderExpandableDescription = observer(({
           onClick={() => {
             setEditing(!editing); open();
           }}
-          color="purple.6"
           className={S("hidden", "overlay")}
         />
     </div>

@@ -36,31 +36,34 @@
 
 .editable {
   max-width: 100%;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: 3px solid transparent;
+  //border-radius: 4px;
+  //margin: 5px;
   &:hover {
-    border: 1px solid #b364bd;
+    outline-offset:3px; 
+    border: 3px dotted #CB9AEE99;
   }
-}
-
-.text-input{
-
-}
-
-.text-area{
-
 }
 
 .overlay {
   position: absolute;
   top: 0px;
   right: 0px;
+  color: #CB9AEE
 }
 
-.overlay-section {
+.overlay-section-tool1 {
   position: absolute;
   top: 20px;
   right: 20px;
+  color: #CB9AEE
+}
+
+.overlay-section-tool2 {
+  position: absolute;
+  top: 20px;
+  right: 60px;
+  color: #CB9AEE
 }
 
 .editable-container{

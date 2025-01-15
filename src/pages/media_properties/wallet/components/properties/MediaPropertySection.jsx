@@ -40,11 +40,13 @@ import Filters from "Components/properties/Filters";
 
 import {
   IconEdit,
+  IconTrashX
 } from "@tabler/icons-react";
-import {IconButton} from "@/components/common/Misc.jsx";
+import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
 
 import {default as CSMediaPropertySection} from "@/pages/media_properties/MediaPropertySection.jsx" ;
 import {default as CSMediaPropertySectionHeroItem} from "@/pages/media_properties/MediaPropertySectionHeroItem.jsx" ;
+import {ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 
 const S = (...classes) => classes.map(c => SectionStyles[c] || BuilderStyles(c) || "").join(" ");
 
@@ -192,11 +194,11 @@ const Actions = observer(({mediaPropertyId, sectionId, sectionItemId, sectionIte
   );
 });
 
-export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => {
+export const MediaPropertyHeroSection = observer(({mediaPropertyId,section, pageId, index}) => {
   const [contentRefs, setContentRefs] = useState({});
   const [activeIndex, setActiveIndex] = useState(0);
   const [minHeight, setMinHeight] = useState(undefined);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedEdit, editModal] = useDisclosure(false);
 
   const activeItem = section.hero_items[activeIndex];
 
@@ -230,7 +232,6 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
   const heroItemId = heroItem.id;
   const heroItemIndex = section.hero_items?.findIndex(heroItem => heroItem.id === heroItemId);
 
-
   const l10n = CSRootStore.l10n.pages.media_property.form;
   const basePath = UrlJoin("/public/asset_metadata/info/sections", sectionId, "hero_items", heroItemIndex.toString());
   let inputProps = {
@@ -256,6 +257,21 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
       field: "description", ...l10n.pages.header.description
     }
   };
+
+  const csMediaProperty = CSMediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!csMediaProperty) { return null; }
+
+  const info = csMediaProperty?.metadata?.public?.asset_metadata?.info || {};
+  const page = info.pages?.[pageId];
+  const locationPath = UrlJoin("/media-properties", mediaPropertyId, "pages", pageId);
+  const objectId = mediaPropertyId;
+  const category = CSMediaPropertyStore.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: page.label});
+  const subcategory = l10n.categories.sections;
+  const field = "sections";
+  const path = `/public/asset_metadata/info/pages/${pageId}/layout`;
+  const fieldLabel = "section";
+  const itemName = "section";
 
   return (
     <div
@@ -291,9 +307,9 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
                   <ImageIcon label="Previous Page" icon={LeftArrow}/>
                 </button>
             }
-            <MantineModal size="xl" opened={opened} 
+            <MantineModal size="xl" opened={openedEdit} 
               onClose={()=>{
-                close();
+                editModal.close();
               }} 
               withCloseButton={false} 
               centered >
@@ -332,11 +348,34 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section}) => 
               label={CSRootStore.l10n.components.actions.edit}
               Icon={IconEdit}
               onClick={() => {
-                open();
+                editModal.open();
               }}
-              color="purple.6"
-              className={S("hidden-container", "overlay-section")}
+              className={S("hidden-container", "overlay-section-tool2")}
             />
+
+        <IconButton
+          label={LocalizeString(CSRootStore.l10n.components.inputs.remove, {item: itemName})}
+          Icon={IconTrashX}
+          className={S("hidden-container", "overlay-section-tool1")}
+          onClick={() => {
+            ConfirmDelete({
+              itemName: itemName,
+              onConfirm: () => {
+                CSMediaPropertyStore.RemoveListElement({
+                  objectId,
+                  page : locationPath,
+                  path,
+                  field,
+                  index,
+                  category,
+                  subcategory,
+                  label: fieldLabel
+                });
+              }
+            });
+          }}
+        />
+
           </div>
         )
       }
@@ -607,9 +646,10 @@ export const SectionResultsGroup = observer(({groupBy, label, results, isSection
 });
 
 
-export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionId, mediaListId, isMediaPage, className=""}) => {
+export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionId, mediaListId, isMediaPage, index, className=""}) => {
   const [editing, setEditing] = useState(false);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedEdit, editModal] = useDisclosure(false);
+  const [openedDelete, deleteModal] = useDisclosure(false);
 
   //replaced useResolvedPath("")
   let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId, sectionSlugOrId:sectionId, mediaListSlugOrId:mediaListId }};
@@ -725,6 +765,25 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
     };
   }
 
+  const l10n = CSRootStore.l10n.pages.media_property.form;
+  const csMediaProperty = CSMediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!csMediaProperty) { return null; }
+
+  const info = csMediaProperty?.metadata?.public?.asset_metadata?.info || {};
+  const page = info.pages?.[pageId];
+  const locationPath = UrlJoin("/media-properties", mediaPropertyId, "pages", pageId);
+  const objectId = mediaPropertyId;
+  const category = CSMediaPropertyStore.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: page.label});
+  const subcategory = l10n.categories.sections;
+  const field = "sections";
+  const path = `/public/asset_metadata/info/pages/${pageId}/layout`;
+  const fieldLabel = "section";
+  const itemName = "section";
+
+  //XXX:
+  console.log("MediaProperty index", index);
+
   return (
     <div
       style={style}
@@ -736,11 +795,11 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
         section.display.full_bleed ? "section-container--full-bleed" : ""
       ), className].join(" ")}
     >
-        <MantineModal size="xl" opened={opened} 
+        <MantineModal size="xl" opened={openedEdit} 
           onClose={()=>{
             updateContent(true); 
             setEditing(!editing); 
-            close();
+            editModal.close();
           }} 
           withCloseButton={false} 
           centered >
@@ -842,15 +901,37 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
           }
         />
       </div>
-        <IconButton
+      <IconButton
           label={CSRootStore.l10n.components.actions.edit}
           Icon={IconEdit}
           onClick={() => {
             setEditing(!editing);
-            open();
+            editModal.open();
           }}
-          color="purple.6"
-          className={S("hidden-container", "overlay-section")}
+          className={S("hidden-container", "overlay-section-tool2")}
+        />
+
+      <IconButton
+          label={LocalizeString(CSRootStore.l10n.components.inputs.remove, {item: itemName})}
+          Icon={IconTrashX}
+          className={S("hidden-container", "overlay-section-tool1")}
+          onClick={() => {
+            ConfirmDelete({
+              itemName: itemName,
+              onConfirm: () => {
+                CSMediaPropertyStore.RemoveListElement({
+                  objectId,
+                  page : locationPath,
+                  path,
+                  field,
+                  index,
+                  category,
+                  subcategory,
+                  label: fieldLabel
+                });
+              }
+            });
+          }}
         />
     </div> 
   );

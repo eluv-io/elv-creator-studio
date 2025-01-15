@@ -304,12 +304,19 @@ export const MediaPropertyPageAction = observer(() => {
       />
     </PageContent>
   );
-
 });
 
-const MediaPropertyPage = observer(() => {
+const MediaPropertyPage = observer(({ mediaPropertyId, pageId, options={showBacklink:true}}) => {
   const [showSectionSelectionModal, setShowSectionSelectionModal] = useState(false);
-  const { mediaPropertyId, pageId } = useParams();
+  const { _mediaPropertyId, _pageId } = useParams();
+
+  if (!mediaPropertyId) {
+    mediaPropertyId = _mediaPropertyId
+  }
+
+  if (!pageId){
+    pageId = _pageId
+  }
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
@@ -335,7 +342,7 @@ const MediaPropertyPage = observer(() => {
 
   return (
     <PageContent
-      backLink={UrlJoin("/media-properties", mediaPropertyId, "pages")}
+      backLink={options.showBackLink? UrlJoin("/media-properties", mediaPropertyId, "pages") : null}
       title={`${info.name || mediaProperty.name || "MediaProperty"} - ${l10n.categories.pages} - ${page.label || ""}`}
       section="mediaProperty"
       useHistory

@@ -42,3 +42,14 @@
     }
   }
 }
+
+.toolbar {
+  margin: 40;
+  &__button {
+    padding:10px;
+  }
+}
+
+.page-select {
+  padding:10;
+}

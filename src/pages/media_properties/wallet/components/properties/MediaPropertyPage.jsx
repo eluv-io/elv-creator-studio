@@ -1,11 +1,7 @@
 import PageStyles from "Assets/stylesheets/media_properties/property-page.module.scss";
-
-import React from "react";
 import {observer} from "mobx-react-lite";
 import {mediaPropertyStore} from "Stores";
-import {Navigate, useResolvedPath} from "react-router-dom";
-import { LogMessage } from "@eluvio/elv-client-js/src/LogMessage";
-import {LogItem} from "@/helpers/Misc";
+
 import {
   PageContainer,
 } from "Components/properties/Common";
@@ -58,6 +54,8 @@ export const MediaPropertyPageContent = observer(({mediaPropertyId, isMediaPage,
               <MediaPropertyHeroSection
                 key={`section-${sectionId}`}
                 mediaPropertyId={mediaPropertyId}
+                pageId={page.id}
+                index={index}
                 section={section}
               />
             );
@@ -70,6 +68,7 @@ export const MediaPropertyPageContent = observer(({mediaPropertyId, isMediaPage,
               pageId={page.id}
               sectionId={sectionId}
               isMediaPage={isMediaPage}
+              index={index}
               className={S("page__section")}
             />
           );
