@@ -103,3 +103,18 @@
 .hidden-trigger:hover+.hidden-container {
   display: block;
 }
+
+.toolbar {
+  margin: 40;
+  &__button {
+    padding:10px;
+  }
+}
+
+.page-select {
+  padding:10;
+}
+
+.dashed {
+  border: 3px dotted #CB9AEE99;
+}

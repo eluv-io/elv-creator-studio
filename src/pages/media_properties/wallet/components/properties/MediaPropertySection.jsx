@@ -649,7 +649,6 @@ export const SectionResultsGroup = observer(({groupBy, label, results, isSection
 export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionId, mediaListId, isMediaPage, index, className=""}) => {
   const [editing, setEditing] = useState(false);
   const [openedEdit, editModal] = useDisclosure(false);
-  const [openedDelete, deleteModal] = useDisclosure(false);
 
   //replaced useResolvedPath("")
   let match = {params:{mediaPropertySlugOrId: mediaPropertyId, pageSlugOrId: pageId, sectionSlugOrId:sectionId, mediaListSlugOrId:mediaListId }};

@@ -1834,6 +1834,7 @@ const CollectionTable = observer(({
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
       onClick={async () => {
+        console.log("Add Button onClick");
         if(AddItem) {
           const id = await AddItem();
 

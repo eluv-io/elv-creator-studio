@@ -14,7 +14,7 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
 
   const button = (
     <ActionIcon {...props} aria-label={label}>
-      {icon ? icon : <Icon/>}
+      {icon ? icon : <Icon size={props.size}/>}
     </ActionIcon>
   );
 

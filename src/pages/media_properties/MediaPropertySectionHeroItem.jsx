@@ -244,7 +244,7 @@ export const MediaPropertySectionHeroItemAction = observer(() => {
 });
 
 
-const MediaPropertySectionHeroItem = observer(({mediaPropertyId, sectionId, heroItemId, options}) => {
+const MediaPropertySectionHeroItem = observer(({mediaPropertyId, sectionId, heroItemId, options={showBacklink:true}}) => {
 
   if (!mediaPropertyId || !sectionId || !heroItemId) {
     const params = useParams();

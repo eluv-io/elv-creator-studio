@@ -2,6 +2,7 @@
 
 .property {
   background-color: var(--property-background);
+  color: var(--property-text-primary);
   height: 100%;
   min-height: 100vh;
   min-width: 100%;
@@ -10,7 +11,7 @@
 .page {
   padding-bottom: 0;
   padding-top: 0;
-
+  color: var(--property-text-primary);
   &.page {
     padding-inline: 0;
   }
@@ -52,4 +53,8 @@
 
 .page-select {
   padding:10;
+}
+
+.dashed {
+  border: 3px dotted #CB9AEE99;
 }
