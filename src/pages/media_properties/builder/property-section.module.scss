@@ -341,9 +341,10 @@
   @include page-fade-in;
 
   background-color: var(--property-background);
-  height: min-content;
+  height: 200px;
   max-width: 100%;
-  min-height: var(--property-full-content-height);
+  //min-height: var(--property-full-content-height);
+  min-height: 200px;
   overflow: visible;
   position: relative;
   width: 100%;

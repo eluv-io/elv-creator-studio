@@ -645,7 +645,6 @@ export const SectionResultsGroup = observer(({groupBy, label, results, isSection
   );
 });
 
-
 export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionId, mediaListId, isMediaPage, index, className=""}) => {
   const [editing, setEditing] = useState(false);
   const [openedEdit, editModal] = useDisclosure(false);
@@ -683,7 +682,13 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
       filterOptions: activeFilters
     })
       .then(content => {
-        LogItem(content);
+        //LogItem(content);
+        console.log("Section content count: ", content.length);
+
+        if (content.length == 0) {
+          return;
+        }
+
         setSectionContent(content);
 
         if(!filtersActive)
@@ -705,11 +710,13 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
   });
 
   let ContentComponent;
-  switch(section.display.display_format?.toLowerCase()) {
+  const displayFormat = section.display.display_format?.toLowerCase();
+  switch(displayFormat) {
     case "carousel":
       ContentComponent = SectionContentCarousel;
       break;
     case "banner":
+      console.log("Section Banner");
       ContentComponent = SectionContentBanner;
       break;
     default:
@@ -718,10 +725,11 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
   }
 
   if(
-    allContentLength === 0 ||
+    (displayFormat != "banner" && allContentLength === 0) ||
     sectionPermissions.authorized === false &&
     sectionPermissions.behavior === mediaPropertyStore.PERMISSION_BEHAVIORS.HIDE
   ) {
+    console.log("section content is not displayable");
     return null;
   }
 
