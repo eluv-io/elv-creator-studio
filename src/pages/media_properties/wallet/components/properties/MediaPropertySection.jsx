@@ -862,13 +862,15 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
                 }
                 {
                   !showAllLink ? null :
-                    <Link to={UrlJoin(MediaPropertyBasePath(match.params), "s", section.slug || sectionId)} 
-                      className={S("section__title-link")}>
+                    <div className={S("section__title-link")}>
+                    {/*<Link to={UrlJoin(MediaPropertyBasePath(match.params), "s", section.slug || sectionId)} 
+                      className={S("section__title-link")}> */}
                       <div>
                         { rootStore.l10n.media_properties.sections.view_all }
                       </div>
                       <ImageIcon icon={RightArrow} />
-                    </Link>
+                    {/* </Link> */}
+                    </div>
                 }
               </div>
               {
