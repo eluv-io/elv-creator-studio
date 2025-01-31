@@ -425,7 +425,6 @@ class MediaPropertyStore {
 
   MediaPropertySection({mediaPropertySlugOrId, sectionSlugOrId, mediaListSlugOrId}) {
     const mediaProperty = this.MediaProperty({mediaPropertySlugOrId});
-    //console.log("mediaProperty ", mediaProperty?.metadata.slug_map);
     if(!mediaProperty) { return; }
 
     const sectionId = mediaProperty.metadata?.slug_map?.sections[sectionSlugOrId]?.section_id || sectionSlugOrId;
@@ -549,7 +548,6 @@ class MediaPropertyStore {
     } else {
       // Manual Section
       content = section.content;
-      console.log("manual section.");
 
       const hasActiveFilters = Object.keys(filterOptions.attributes || {}).length > 0 || !!filterOptions.mediaType;
       if(hasActiveFilters) {
@@ -971,8 +969,6 @@ class MediaPropertyStore {
       id: "media-property-slugs",
       anonymous: true,
       Load: async () => {
-        console.log("LoadMediaPropertyHashes");
-
         const metadataUrl = new URL(
           this.rootStore.network === "demo" ?
             "https://demov3.net955210.contentfabric.io/s/demov3" :

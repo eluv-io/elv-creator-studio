@@ -682,9 +682,6 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
       filterOptions: activeFilters
     })
       .then(content => {
-        //LogItem(content);
-        console.log("Section content count: ", content.length);
-
         if (content.length == 0) {
           return;
         }
@@ -716,7 +713,6 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
       ContentComponent = SectionContentCarousel;
       break;
     case "banner":
-      console.log("Section Banner");
       ContentComponent = SectionContentBanner;
       break;
     default:
@@ -729,7 +725,6 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
     sectionPermissions.authorized === false &&
     sectionPermissions.behavior === mediaPropertyStore.PERMISSION_BEHAVIORS.HIDE
   ) {
-    console.log("section content is not displayable");
     return null;
   }
 
@@ -787,9 +782,6 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
   const path = `/public/asset_metadata/info/pages/${pageId}/layout`;
   const fieldLabel = "section";
   const itemName = "section";
-
-  //XXX:
-  console.log("MediaProperty index", index);
 
   return (
     <div

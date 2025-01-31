@@ -1485,9 +1485,7 @@ const MediaPropertySection = observer(({ mediaPropertyId, sectionId, options={sh
   if (!sectionId) {
     sectionId = params.sectionId;
   }
-
-  console.log(`CS MediaPropertySection ${mediaPropertyId} ${sectionId}`);
-
+  
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
   if(!mediaProperty) { return null; }

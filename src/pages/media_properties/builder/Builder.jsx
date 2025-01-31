@@ -3,9 +3,10 @@ import {observer} from "mobx-react-lite";
 import {mediaPropertyStore} from "@/stores";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
-import PageStyles from "./media-property-builder.module.scss";
+//import PageStyles from "./media-property-builder.module.scss";
 import MediaPropertyPage from "@/wallet/components/properties/MediaPropertyPage";
 import UrlJoin from "url-join";
+import {S} from "./CssHelper.jsx";
 
 import {default as CSMediaPropertyPage} from "@/pages/media_properties/MediaPropertyPage.jsx" ;
 import {
@@ -17,7 +18,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-const S = (...classes) => classes.map(c => PageStyles[c] || "").join(" ");
+//const S = (...classes) => classes.map(c => PageStyles[c] || "").join(" ");
 
 const Builder = observer(({basePath}) => {
   const { mediaPropertyId } = useParams();
@@ -25,8 +26,6 @@ const Builder = observer(({basePath}) => {
   const [openedEdit, editModal] = useDisclosure(false);
 
   const pageId = value;
-
-  console.log("basePath: ", basePath);
 
   if(!basePath){
     return null;

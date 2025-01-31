@@ -129,9 +129,6 @@ export const BuilderScaledText = observer(({
 
             <Button fullWidth mt="xl"
               onClick={()=>{
-
-                console.log("onSubmit Value ", value);
-
                 close();
                 setValue("");
               }
@@ -192,9 +189,6 @@ export const BuilderExpandableDescription = observer(({
 
             <Button fullWidth mt="xl"
               onClick={()=>{
-
-                console.log("onSubmit Value ", value);
-
                 close();
                 setValue("");
               }
@@ -246,8 +240,6 @@ export const BuilderTextInput = observer(({text = "", classNames = [], setText =
 
             <Button fullWidth mt="xl"
               onClick={()=>{
-
-                console.log("onSubmit Value ", value);
                 if (setText != null) {
                   setText(value);
                 }
@@ -301,8 +293,6 @@ export const BuilderTextArea = observer(({text = "", classNames = [], setText = 
 
             <Button fullWidth mt="xl"
               onClick={()=>{
-
-                console.log("onSubmit Value ", value);
                 if (setText != null) {
                   setText(value);
                 }

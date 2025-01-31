@@ -632,8 +632,6 @@ export const CarouselOld = observer(({
   // eslint-disable-next-line no-empty
   } catch(error) {}
 
-  console.log("slides per page ", slidesPerPage);
-
   return (
     <Swiper
       className={[S("carousel"), className].join(" ")}

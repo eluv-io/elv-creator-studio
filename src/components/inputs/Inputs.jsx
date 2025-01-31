@@ -1726,23 +1726,6 @@ const CollectionTableRows = observer(({
                     color="red.5"
                     Icon={IconTrashX}
                     onClick={() => {
-
-                        //XXX:
-                        console.log("listItem ", !name);
-                        console.log("name ", name);
-                        console.log("itemName ", name || fieldLabel);
-                        console.log("page: ",locationPath);
-                        console.log("objectId", objectId);
-                        console.log("path", path);
-                        console.log("field", field);
-                        console.log("category", category);
-                        console.log("subcategory", subcategory);
-                        console.log("fieldLabel", fieldLabel);
-                        console.log("actionLabel", actionLabel);
-                        console.log("index ", index);
-                        console.log("label ", name || actionLabel || fieldLabel);
-                        console.log("useLabel ", !!name);
-
                       ConfirmDelete({
                         listItem: !name,
                         itemName: name || fieldLabel,
@@ -1824,9 +1807,6 @@ const CollectionTable = observer(({
     subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
   }
 
-  //XXX:
-  console.log("CollectionTable");
-
   // Only show bottom add button if there are a lot of entries
   const showBottomAddButton = values.length >= 10;
   const addButton = (
@@ -1834,7 +1814,6 @@ const CollectionTable = observer(({
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
       onClick={async () => {
-        console.log("Add Button onClick");
         if(AddItem) {
           const id = await AddItem();
 
@@ -1995,9 +1974,6 @@ const ReferenceTable = observer(({
   Actions
 }) => {
   const navigate = useNavigate();
-
-  //XXX:
-  console.log("ReferenceTable");
 
   if (!locationPath) {
     const location = useLocation();

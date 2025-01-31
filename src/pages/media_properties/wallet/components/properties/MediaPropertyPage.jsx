@@ -29,7 +29,6 @@ import {S} from "@/builder/CSSHelper.jsx";
 
 export const MediaPropertyPageContent = observer(({mediaPropertyId, isMediaPage, page, className=""}) => {
   if(!mediaPropertyId || !page) {
-    console.log("mediaPropertyId or page undefined.");
     return null; 
   }
 
@@ -43,7 +42,6 @@ export const MediaPropertyPageContent = observer(({mediaPropertyId, isMediaPage,
           });
 
           if (!section) {
-            console.log("section undefined.");
             return null;
           }
 
@@ -108,25 +106,19 @@ const MediaPropertyPage = observer(({mediaPropertyId,page}) => {
 
 const AddSection = observer(({mediaPropertyId, pageId, className=""}) => {
   const [openedEdit, editModal] = useDisclosure(false);
-  console.log("AddSection ",mediaPropertyId);
-  console.log("pageId ",pageId);
 
   if(!mediaPropertyId || !pageId) { 
-    console.log("AddSection - no mediaPropertyId or pageId for params.");
     return null; 
   }
 
   const mediaProperty = CSMediaPropertyStore.mediaProperties[mediaPropertyId];
 
   if(!mediaProperty) { 
-    console.log("AddSection - could not find mediaProperty");
     return null; 
   }
 
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
   const page = info.pages?.[pageId];
-  console.log("Test ",pageId);
-
   if(!page) {
     return null;
   }

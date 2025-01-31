@@ -19,7 +19,6 @@ import MediaPropertySectionHeroItem, {
 import MediaPropertyThemeSettings from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
-  console.log("rootpath", rootPath);
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.media_property.nav.overview, path: "/media-properties/:mediaPropertyId", Component: <MediaPropertyOverview /> },
     { root: false, navRoute: true, label: rootStore.l10n.pages.media_property.nav.builder, path: "/media-properties/:mediaPropertyId/build", Component: <MediaPropertyBuilder basePath={rootPath}/> },
