@@ -67,8 +67,7 @@
     "stream-browserify": "^3.0.0",
     "swiper": "^11.1.15",
     "url-join": "^5.0.0",
-    "uuid": "^9.0.0",
-    "vite-plugin-static-copy": "^0.17.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.0.4",
@@ -91,6 +90,7 @@
     "stylelint-order": "^6.0.3",
     "vite": "^4.4.5",
     "vite-plugin-node-polyfills": "^0.16.0",
+    "vite-plugin-static-copy": "^0.17.0",
     "vite-svg-loader": "^5.1.0"
   }
 }

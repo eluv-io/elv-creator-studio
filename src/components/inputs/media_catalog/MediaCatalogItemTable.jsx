@@ -398,11 +398,14 @@ export const MediaCatalogItemSelectionModal = observer(({
       title={rootStore.l10n.pages.media_catalog.form.media.modal.media}
       size={uiStore.inputWidthWide}
       opened
+      centered
       onClose={Close}
       style={{position: "relative", zIndex: 1000000}}
+      p={0}
     >
       <Paper p="xl" pt="md" withBorder>
         <MediaCatalogItemTable
+          perPage={5}
           {...props}
           key={`catalog-items-${props.type}`}
           disableActions

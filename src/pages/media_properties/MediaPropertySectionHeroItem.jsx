@@ -18,7 +18,7 @@ import {MediaPropertySectionItemPurchaseItems} from "@/pages/media_properties/Me
 
 
 const ActionConditions = {
-  "always": "Always",
+  "always": "Always Visible",
   "authorized": "User has permissions",
   "unauthorized": "User is signed in but lacks permissions",
   "authenticated": "User is signed in",

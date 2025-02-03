@@ -459,6 +459,8 @@ const MarketplaceItems = observer(() => {
         field="items"
         idField="sku"
         filterable
+        filterId="marketplaceItems"
+        filterKey={marketplaceId}
         Filter={({value, filter}) =>
           value.name?.toLowerCase().includes(filter.toLowerCase()) ||
           value.sku?.toLowerCase().includes(filter.toLowerCase())

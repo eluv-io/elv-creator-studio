@@ -13,18 +13,23 @@ import UrlJoin from "url-join";
 import {IconButton, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";
 import {DataTable} from "mantine-datatable";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDebouncedValue} from "@mantine/hooks";
 import {SortTable} from "@/helpers/Misc.js";
 import {Link} from "react-router-dom";
 import {IconEdit, IconGauge} from "@tabler/icons-react";
 import {ScaleImage} from "@/helpers/Fabric";
 
+let savedFilter = "";
 const ItemTemplateList = observer(() => {
   const l10n = rootStore.l10n.pages.item_template.form;
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState(savedFilter);
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+
+  useEffect(() => {
+    savedFilter = filter;
+  }, [filter]);
 
   const itemTemplates =
     (itemTemplateStore.allItemTemplates || [])

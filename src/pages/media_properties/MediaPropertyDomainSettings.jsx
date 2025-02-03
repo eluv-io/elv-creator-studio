@@ -321,6 +321,25 @@ const MediaPropertyDomainSettings = observer(() => {
         defaultValue={false}
         field="disable_registration"
       />
+      {
+        info.login?.settings?.disable_registration ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.login.disable_third_party_login}
+            category={l10n.categories.login_settings}
+            path="/public/asset_metadata/info/login/settings"
+            defaultValue={false}
+            field="disable_third_party_login"
+          />
+      }
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.login.enable_metamask}
+        category={l10n.categories.login_settings}
+        path="/public/asset_metadata/info/login/settings"
+        defaultValue={false}
+        field="enable_metamask"
+      />
       <LoginStyling />
       <LoginTerms />
       <LoginConsentOptions />

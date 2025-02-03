@@ -40,7 +40,7 @@ import {
 } from "@/specs/MediaPropertySpecs.js";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
-const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
+const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
   const [creating, setCreating] = useState(false);
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
@@ -297,13 +297,10 @@ const CreateSectionItemForm = observer(({mediaProperty, section, Create}) => {
             data-autofocus
             {...l10n.section_items.type}
             defaultValue="media"
-            data={[
-              ...Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
-                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key})),
-              section.display?.display_format === "banner" ?
-                { value: "visual_only", label: "Visual Only" } :
-                undefined
-            ].filter(option => option)}
+            data={
+              Object.keys(mediaPropertyStore.SECTION_CONTENT_TYPES)
+                .map(key => ({label: mediaPropertyStore.SECTION_CONTENT_TYPES[key], value: key}))
+            }
             {...form.getInputProps("type")}
           />
           { formContent }
@@ -430,7 +427,6 @@ const SectionContentList = observer(({ mediaPropertyId, sectionId }) => {
                   <CreateSectionItemForm
                     mediaPropertyId={mediaPropertyId}
                     mediaProperty={info}
-                    section={section}
                     Create={async args => {
                       let id;
                       if(args.type === "media") {
@@ -686,6 +682,7 @@ const AutomaticSectionFilters = observer(({ mediaPropertyId, sectionId }) => {
                 options={[
                   { label: "Any Time", value: "" },
                   { label: "Live Now", value: "live" },
+                  { label: "Live and Upcoming", value: "live_and_upcoming" },
                   { label: "Upcoming", value: "upcoming" },
                   { label: "Past", value: "past" },
                   { label: "Specific Time Period", value: "period" }
@@ -700,7 +697,7 @@ const AutomaticSectionFilters = observer(({ mediaPropertyId, sectionId }) => {
                   />
               }
               {
-                !["upcoming", "period"].includes(section.select.schedule) ? null :
+                !["live_and_upcoming", "upcoming", "period"].includes(section.select.schedule) ? null :
                   <Inputs.DateTime
                     {...inputProps}
                     {...l10n.sections.filters.end_time}
@@ -1330,12 +1327,53 @@ const ContainerSectionSettings = observer(({ mediaPropertyId, sectionId, locatio
     <>
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
 
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.sections.display.title_icon}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="title_icon"
+        baseSize={75}
+        horizontal
+        p="md"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.display.title}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="title"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.sections.display.subtitle}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="subtitle"
+      />
+
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.sections.container.filter_tags}
         subcategory={l10n.categories.section_presentation}
         field="filter_tags"
         options={tags.map(tag => ({label: tag, value: tag}))}
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.container.justification}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        defaultValue="left"
+        field="justification"
+        options={[
+          {label: "Left", value: "left"},
+          {label: "Center", value: "center"},
+          {label: "Right", value: "right"},
+        ]}
       />
 
       <Inputs.CollectionTable
@@ -1573,6 +1611,7 @@ const MediaPropertySection = observer(({ mediaPropertyId, sectionId, options={sh
 
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+
       <Inputs.Select
         {...inputProps}
         {...l10n.sections.permission_behavior}
@@ -1643,6 +1682,20 @@ const MediaPropertySection = observer(({ mediaPropertyId, sectionId, options={sh
             />
           </>
       }
+
+      <Title order={3} mb="md" mt={50}>{l10n.categories.visibility}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.visibility}
+        subcategory={l10n.categories.visibility}
+        field="visibility"
+        defaultValue=""
+        options={[
+          { label: "Always Visible", value: "" },
+          { label: "Hide if User is Not Signed In", value: "authenticated" },
+          { label: "Hide if User is Signed In", value: "unauthenticated" }
+        ]}
+      />
 
       {
         section.type === "container" ?
