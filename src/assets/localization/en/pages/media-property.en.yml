@@ -395,8 +395,9 @@ form:
       description: If specified, the user will be redirected to this page after purchasing an item in this property. May be overridden for individual purchase items.
 
   login:
-    provider:
-      label: Login Provider
+    disable_login:
+      label: Disable Login
+      description: If checked, users will not be able to log in
     disable_registration:
       label: Disable Registration
       description: If checked, users will not be able to create new accounts
@@ -656,6 +657,9 @@ form:
       text_justification:
         label: Text Justification
         description: Text alignment of items in this section
+      wrap_titles:
+        label: Wrap Titles
+        description: Allow long item titles in this section to wrap
       content_display_text:
         label: Content Display Text
         description: Choose which text fields will be shown for items in this section
