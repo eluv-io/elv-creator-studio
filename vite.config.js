@@ -4,7 +4,7 @@ import { fileURLToPath, URL } from "url";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import react from "@vitejs/plugin-react-swc";
 import ViteYaml from "@modyfi/vite-plugin-yaml";
-import svgLoader from 'vite-svg-loader'
+import svgLoader from "vite-svg-loader";
 
 export default defineConfig(({command}) => {
   let plugins = [

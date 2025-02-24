@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {observer} from "mobx-react-lite";
-import {mediaPropertyStore} from "@/stores";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
 //import PageStyles from "./media-property-builder.module.scss";
@@ -8,7 +7,13 @@ import MediaPropertyPage from "@/wallet/components/properties/MediaPropertyPage"
 import UrlJoin from "url-join";
 import {S} from "./CssHelper.jsx";
 
+import {mediaPropertyStore as CSMediaPropertyStore, rootStore as CSRootStore} from "@/stores";
+
 import {default as CSMediaPropertyPage} from "@/pages/media_properties/MediaPropertyPage.jsx" ;
+import {default as CSMediaPropertySection} from "@/pages/media_properties/MediaPropertySection.jsx" ;
+
+import {CreateSectionForm} from "@/pages/media_properties/MediaPropertySections.jsx";
+
 import {
   Select, 
   Container, 
@@ -24,6 +29,10 @@ const Builder = observer(({basePath}) => {
   const { mediaPropertyId } = useParams();
   const [value, setValue] = useState("ppge187QRk4oGNTPB1NF4HZswe");
   const [openedEdit, editModal] = useDisclosure(false);
+  const [openedNewSection, newSectionModal] = useDisclosure(false);
+  const [openedEditSection, editSectionModal] = useDisclosure(false);
+
+  const [sectionId, setSectionId] = useState("");
 
   const pageId = value;
 
@@ -33,7 +42,7 @@ const Builder = observer(({basePath}) => {
 
   const propertyPath = UrlJoin(basePath, "mediaPropertyId");
 
-  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+  const mediaProperty = CSMediaPropertyStore.mediaProperties[mediaPropertyId];
   if(!mediaProperty) { return null; }
 
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
@@ -55,10 +64,17 @@ const Builder = observer(({basePath}) => {
 
     if(!section) {continue;}
     sections.push(section);
-
-    //LogItem(section);
   }
-  //LogItem(sections);
+
+  const pageSectionPath = UrlJoin("/media-properties", pageId, "section");
+  const l10n = CSRootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: CSMediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: CSMediaPropertyStore.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: page.label}),
+    subcategory: l10n.categories.general,
+    path: UrlJoin("/public/asset_metadata/info/pages", pageId)
+  };
 
   return (
     <PageContent >
@@ -70,6 +86,48 @@ const Builder = observer(({basePath}) => {
           centered >
           <CSMediaPropertyPage mediaPropertyId={mediaPropertyId} pageId={pageId} options={{showBacklink:false}}/>
       </MantineModal>
+
+      <MantineModal size="xl" opened={openedNewSection} 
+          onClose={()=>{
+            newSectionModal.close();
+          }} 
+          withCloseButton={true} 
+          centered >
+            <CreateSectionForm
+              Create={async ({label, type}) => {
+                const id = CSMediaPropertyStore.CreateSection({
+                  label,
+                  type,
+                  page: pageSectionPath,
+                  mediaPropertyId,
+                });
+
+                setSectionId(id);
+                newSectionModal.close();
+                editSectionModal.open();
+                return id;
+              }}
+            />
+      </MantineModal>
+
+      <MantineModal size="xl" opened={openedEditSection} 
+          onClose={()=>{
+            CSMediaPropertyStore.InsertListElement({
+              ...inputProps,
+              path: UrlJoin("/public/asset_metadata/info/pages", pageId, "layout"),
+              subcategory: l10n.categories.sections,
+              page: location.pathname,
+              field: "sections",
+              value: sectionId,
+              label: info.sections[sectionId]?.label || sectionId
+            });
+
+            editSectionModal.close();
+          }} 
+          withCloseButton={false} 
+          centered >
+            <CSMediaPropertySection mediaPropertyId={mediaPropertyId} sectionId={sectionId} options={{showBacklink:false}}/>
+        </MantineModal>
 
       <Flex
         mih={50}
@@ -101,6 +159,18 @@ const Builder = observer(({basePath}) => {
         >
           {"Edit Page"}
         </Button>
+
+        <Button 
+          className={S("toolbar__button")}
+          onClick={
+            ()=>{
+              newSectionModal.open();
+            }
+          }
+        >
+          {"New Section"}
+        </Button>
+
       </Flex>
 
       <Container fluid className={S("property", "page")}>

@@ -10,7 +10,8 @@ import {useForm} from "@mantine/form";
 import {Button, Container, Group, Modal, Paper, Select, TextInput, Text} from "@mantine/core";
 import {MediaPropertySectionPermissionIcon} from "@/components/common/MediaCatalog";
 
-const CreateSectionForm = ({Create}) => {
+export const CreateSectionForm = ({Create}) => {
+  console.log("CreateSectionForm");
   const [creating, setCreating] = useState(false);
 
   const l10n = rootStore.l10n.pages.media_property.form;
@@ -85,6 +86,7 @@ export const MediaPropertySectionsTable = observer(({
     mediaPropertyStore.LoadMediaProperty({mediaPropertyId});
   }, [mediaPropertyId]);
 
+  console.log("MediaPropertySectionsTable");
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
   if(!mediaProperty) { return null; }
@@ -113,6 +115,10 @@ export const MediaPropertySectionsTable = observer(({
       width="ExtraWide"
       CopyItem={({item}) => mediaPropertyStore.CreateSection({mediaPropertyId, copySectionId: item.id})}
       AddItem={async () => {
+        console.log("Inputs.ReferenceTable AddItem");0
+        console.log("page ", location.pathname);
+        console.log("mediaPropertyId ", mediaPropertyId);
+        
         return new Promise((resolve) => {
           modals.open({
             title: LocalizeString(l10n.create.create, {type: l10n.categories.section}),
@@ -121,6 +127,12 @@ export const MediaPropertySectionsTable = observer(({
             children:
               <CreateSectionForm
                 Create={async ({label, type}) => {
+                  console.log("Create Section");
+                  console.log("label ", label);
+                  console.log("type ", type);
+                  console.log("page ", location.pathname);
+                  console.log("mediaPropertyId ", mediaPropertyId);
+
                   const id = mediaPropertyStore.CreateSection({
                     label,
                     type,
