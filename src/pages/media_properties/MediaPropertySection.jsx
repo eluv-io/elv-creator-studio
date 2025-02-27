@@ -1091,6 +1091,14 @@ const ContentSectionDisplaySettings = observer(({ mediaPropertyId, sectionId }) 
                 {label: "Right", value: "right"},
               ]}
             />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.sections.display.wrap_titles}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              defaultValue={false}
+              field="wrap_titles"
+            />
             {
               section.display?.display_format !== "grid" || !section.display?.aspect_ratio ? null :
                 <>

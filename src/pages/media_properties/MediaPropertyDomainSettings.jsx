@@ -301,48 +301,49 @@ const MediaPropertyDomainSettings = observer(() => {
       <Title order={3} mt={50} mb="md">
         { l10n.categories.login_settings }
       </Title>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.login.provider}
-        category={l10n.categories.login_settings}
-        path="/public/asset_metadata/info/login/settings"
-        defaultValue="auth0"
-        field="provider"
-        options={[
-          { label: "Auth0 (Deprecated)", value: "auth0" },
-          { label: "Ory", value: "ory" }
-        ]}
-      />
       <Inputs.Checkbox
         {...inputProps}
-        {...l10n.login.disable_registration}
+        {...l10n.login.disable_login}
         category={l10n.categories.login_settings}
         path="/public/asset_metadata/info/login/settings"
         defaultValue={false}
-        field="disable_registration"
+        field="disable_login"
       />
       {
-        info.login?.settings?.disable_registration ? null :
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.login.disable_third_party_login}
-            category={l10n.categories.login_settings}
-            path="/public/asset_metadata/info/login/settings"
-            defaultValue={false}
-            field="disable_third_party_login"
-          />
+        info?.login?.settings?.disable_login ? null :
+          <>
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.login.disable_registration}
+              category={l10n.categories.login_settings}
+              path="/public/asset_metadata/info/login/settings"
+              defaultValue={false}
+              field="disable_registration"
+            />
+            {
+              info.login?.settings?.disable_registration ? null :
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.login.disable_third_party_login}
+                  category={l10n.categories.login_settings}
+                  path="/public/asset_metadata/info/login/settings"
+                  defaultValue={false}
+                  field="disable_third_party_login"
+                />
+            }
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.login.enable_metamask}
+              category={l10n.categories.login_settings}
+              path="/public/asset_metadata/info/login/settings"
+              defaultValue={false}
+              field="enable_metamask"
+            />
+            <LoginStyling />
+            <LoginTerms />
+            <LoginConsentOptions />
+          </>
       }
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.login.enable_metamask}
-        category={l10n.categories.login_settings}
-        path="/public/asset_metadata/info/login/settings"
-        defaultValue={false}
-        field="enable_metamask"
-      />
-      <LoginStyling />
-      <LoginTerms />
-      <LoginConsentOptions />
 
       <Title order={3} mt={50} mb="md">
         { l10n.categories.feature_settings }
