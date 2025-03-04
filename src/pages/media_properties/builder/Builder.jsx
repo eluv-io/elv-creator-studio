@@ -2,7 +2,6 @@ import { useState } from "react";
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import PageContent from "@/components/common/PageContent.jsx";
-//import PageStyles from "./media-property-builder.module.scss";
 import MediaPropertyPage from "@/wallet/components/properties/MediaPropertyPage";
 import UrlJoin from "url-join";
 import {S} from "./CssHelper.jsx";
@@ -23,22 +22,39 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-//const S = (...classes) => classes.map(c => PageStyles[c] || "").join(" ");
-
 const Builder = observer(({basePath}) => {
+
   const { mediaPropertyId } = useParams();
-  const [value, setValue] = useState("ppge187QRk4oGNTPB1NF4HZswe");
+
   const [openedEdit, editModal] = useDisclosure(false);
   const [openedNewSection, newSectionModal] = useDisclosure(false);
   const [openedEditSection, editSectionModal] = useDisclosure(false);
 
   const [sectionId, setSectionId] = useState("");
 
-  const pageId = value;
+
 
   if(!basePath){
     return null;
   }
+
+  //Getting pages to display in pull down switcher
+  const field = "pages";
+  const path = "/public/asset_metadata/info";
+  const excludedKeys = ["main"];
+  const pagesMap = CSMediaPropertyStore.GetMetadata({objectId:mediaPropertyId, path, field}) || {};
+  const pagesValues = Object.keys(pagesMap)
+    .filter(key => !excludedKeys.includes(key))
+    .map(key => {
+      var page = pagesMap[key];
+      page.value = page.id;
+      return page;
+    });
+
+  const defaultPageId = pagesValues[0]?.id || "";
+
+  const [value, setValue] = useState(defaultPageId);
+  const pageId = value;
 
   const propertyPath = UrlJoin(basePath, "mediaPropertyId");
 
@@ -141,9 +157,7 @@ const Builder = observer(({basePath}) => {
         className={S("toolbar")}>
 
         <Select
-          data={[{ value: "ppge187QRk4oGNTPB1NF4HZswe", label: "Main Page" },
-            { value: "ppgeKvByXHSsMAtAhqyXUnDJqi", label: "No Access Page" }
-          ]}
+          data={pagesValues}
           value={value}
           onChange={setValue}
           className={S("page-select")}
