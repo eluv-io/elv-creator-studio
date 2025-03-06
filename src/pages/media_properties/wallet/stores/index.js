@@ -420,45 +420,6 @@ class RootStore {
       this.loaded = false;
       this.SetLanguage(this.language || navigator.languages);
 
-      if(window.sessionStorageAvailable) {
-        let oryUrl = EluvioConfiguration.ory_configuration.url;
-        if(this.isCustomDomain) {
-          const parsedUrl = parseDomain(window.location.hostname);
-          if(parsedUrl.type !== "INVALID" && parsedUrl.type !== "RESERVED") {
-            oryUrl = new URL(`https://ory.svc.${parsedUrl.domain}.${parsedUrl.topLevelDomains.join(".")}`).toString();
-          }
-        }
-
-        // Initialize Ory client
-        const {Configuration, FrontendApi} = yield import("@ory/client");
-        this.oryClient = new FrontendApi(
-          new Configuration({
-            features: {
-              kratos_feature_flags_use_continue_with_transitions: true,
-              use_continue_with_transitions: true
-            },
-            basePath: oryUrl,
-            // we always want to include the cookies in each request
-            // cookies are used for sessions and CSRF protection
-            baseOptions: {
-              withCredentials: true
-            }
-          })
-        );
-
-        //const {Auth0Client} = yield import("auth0-spa-js");
-/*
-        this.auth0 = new Auth0Client({
-          domain: EluvioConfiguration["auth0-domain"],
-          client_id: EluvioConfiguration["auth0-configuration-id"],
-          redirect_uri: UrlJoin(window.location.origin, window.location.pathname).replace(/\/$/, ""),
-          cacheLocation: "localstorage",
-          useRefreshTokens: true,
-          useCookiesForTransactions: true
-        });
-        */
-      }
-
       // Start loading media properties
       this.mediaPropertyStore.LoadMediaPropertyHashes();
 
