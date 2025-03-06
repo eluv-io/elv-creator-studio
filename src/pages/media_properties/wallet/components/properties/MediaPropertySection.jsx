@@ -89,60 +89,62 @@ const ActionVisible = ({permissions, behavior, visibility}) => {
   }*/
 };
 
-const Action = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, action}) => {
+const Action = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, action, active=true}) => {
   let match = {params:{mediaPropertySlugOrId: mediaPropertyId, sectionSlugOrId:sectionId}};
   let buttonParams = {};
 
   const [showVideoModal, setShowVideoModal] = useState(false);
 
-  switch(action.behavior) {
-    case "sign_in":
-      buttonParams.onClick = () => rootStore.ShowLogin();
-      break;
+  if  (active) {
+    switch(action.behavior) {
+      case "sign_in":
+        buttonParams.onClick = () => rootStore.ShowLogin();
+        break;
 
-    case "video":
-      buttonParams.onClick = () => setShowVideoModal(true);
-      break;
+      case "video":
+        buttonParams.onClick = () => setShowVideoModal(true);
+        break;
 
-    case "page_link":
-      buttonParams.to = MediaPropertyBasePath({...match.params, pageSlugOrId: action.page_id});
-      break;
+      case "page_link":
+        buttonParams.to = MediaPropertyBasePath({...match.params, pageSlugOrId: action.page_id});
+        break;
 
-    case "show_purchase":
-      const purchaseParams = CreateMediaPropertyPurchaseParams({
-        id: action.id,
-        sectionSlugOrId: sectionId,
-        sectionItemId,
-        actionId: action.id
-      });
+      case "show_purchase":
+        const purchaseParams = CreateMediaPropertyPurchaseParams({
+          id: action.id,
+          sectionSlugOrId: sectionId,
+          sectionItemId,
+          actionId: action.id
+        });
 
-      if(
-        // Purchase action but can't purchase
-        PurchaseParamsToItems(
-          purchaseParams,
-          sectionItem?.permissions?.secondaryPurchaseOption
-        ).length === 0
-      ) {
-        return null;
-      }
+        if(
+          // Purchase action but can't purchase
+          PurchaseParamsToItems(
+            purchaseParams,
+            sectionItem?.permissions?.secondaryPurchaseOption
+          ).length === 0
+        ) {
+          return null;
+        }
 
-      const params = new URLSearchParams(location.search);
-      params.set("p", purchaseParams);
-      buttonParams.to = location.pathname + "?" + params.toString();
-      break;
+        const params = new URLSearchParams(location.search);
+        params.set("p", purchaseParams);
+        buttonParams.to = location.pathname + "?" + params.toString();
+        break;
 
-    case "media_link":
-      const mediaItem = CSMediaPropertyStore.GetMediaItem({mediaItemId:action.media_id});
-      buttonParams.to = MediaPropertyLink({match, mediaItem}).linkPath;
-      break;
+      case "media_link":
+        const mediaItem = CSMediaPropertyStore.GetMediaItem({mediaItemId:action.media_id});
+        buttonParams.to = MediaPropertyLink({match, mediaItem}).linkPath;
+        break;
 
-    case "link":
-      buttonParams = {
-        href: action.url,
-        rel: "noopener",
-        target: "_blank"
-      };
-      break;
+      case "link":
+        buttonParams = {
+          href: action.url,
+          rel: "noopener",
+          target: "_blank"
+        };
+        break;
+    }
   }
 
   return (
@@ -165,7 +167,7 @@ const Action = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem
   );
 });
 
-const Actions = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, actions}) => {
+const Actions = observer(({mediaPropertyId, sectionId, sectionItemId, sectionItem, actions, active=true}) => {
   actions = (actions || [])
     .filter(action => ActionVisible({
       visibility: action.visibility,
@@ -187,6 +189,7 @@ const Actions = observer(({mediaPropertyId, sectionId, sectionItemId, sectionIte
             sectionId={sectionId}
             sectionItemId={sectionItemId}
             sectionItem={sectionItem}
+            active={active}
           />
         )
       }
@@ -332,6 +335,7 @@ export const MediaPropertyHeroSection = observer(({mediaPropertyId,section, page
                 sectionId={section.id}
                 sectionItemId={heroItem.id}
                 sectionItem={heroItem}
+                active={false}
               />
             </PageHeader>
             {

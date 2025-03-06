@@ -714,8 +714,8 @@ const MediaCard = observer(({
     livePreviewUrl,
     textDisplay,
     textJustification,
-    linkPath,
-    url,
+    linkPath:"", //TODO: Fix link to for CS
+    url:"", //TODO: Fix link to for CS
     onClick,
     scheduleInfo,
     imageContainerRef,
