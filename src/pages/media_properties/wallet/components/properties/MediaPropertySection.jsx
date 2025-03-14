@@ -703,12 +703,13 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
     return null;
   }
 
-
+/*
   let sectionPermissions = mediaPropertyStore.ResolvePermission({
     ...match.params,
     sectionSlugOrId: !mediaListId && sectionId,
     mediaListSlugOrId: mediaListId
   });
+  */
 
   let ContentComponent;
   const displayFormat = section.display.display_format?.toLowerCase();
@@ -725,9 +726,9 @@ export const MediaPropertySection = observer(({mediaPropertyId, pageId, sectionI
   }
 
   if(
-    (displayFormat != "banner" && allContentLength === 0) ||
+    (displayFormat != "banner" && allContentLength === 0) /*||
     sectionPermissions.authorized === false &&
-    sectionPermissions.behavior === mediaPropertyStore.PERMISSION_BEHAVIORS.HIDE
+    sectionPermissions.behavior === mediaPropertyStore.PERMISSION_BEHAVIORS.HIDE */
   ) {
     return null;
   }

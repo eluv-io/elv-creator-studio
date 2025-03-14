@@ -18,6 +18,7 @@ class MediaPropertyStore {
   mediaPropertySlugs;
   mediaProperties = {};
   mediaCatalogs = {};
+  //Use the media from CSMediaPropertyStore
   //media = {};
   permissionItems = {};
   previewPropertyId;
@@ -66,9 +67,11 @@ class MediaPropertyStore {
     }
   }
 
+  /*
   get media() {
     return mediaPropertyStore.media;
   }
+  */
 
   get appId() {
     return this.rootStore.appId;
@@ -80,6 +83,15 @@ class MediaPropertyStore {
 
   get walletClient() {
     return this.rootStore.walletClient;
+  }
+
+  media(mediaId) {
+    return mediaProperty.GetMediaItem({mediaItemId:mediaId})
+  }
+
+  GetPropertyMedia(mediaPropertySlugOrId) {
+    const mediaProperty = this.MediaProperty({mediaPropertySlugOrId});
+    return Object.values(mediaProperty.mediaItems);
   }
 
   MediaPropertyIdToSlug(mediaPropertyId) {
@@ -199,13 +211,13 @@ class MediaPropertyStore {
         .filter((value, index, array) => array.findIndex(({id}) => id === value.id) === index)
         .map(result => ({
           ...result,
-          mediaItem: this.media[result.id]
+          mediaItem: this.media(result.id) // this.media[result.id]
         }))
         .filter(result => result.mediaItem);
     } else {
       // All content
       const associatedCatalogIds = mediaProperty.metadata.media_catalogs || [];
-      results = Object.values(this.media)
+      results = Object.values(mediaProperty.mediaItems)
         .filter(mediaItem =>
           associatedCatalogIds.includes(mediaItem.media_catalog_id)
         )
@@ -498,6 +510,7 @@ class MediaPropertyStore {
     
     let content;
     if(section.type === "automatic") {
+      console.log("Automatic Section ", section.label);
       // Automatic filter
       let mediaCatalogIds = section.select.media_catalog ?
         [section.select.media_catalog] :
@@ -514,9 +527,9 @@ class MediaPropertyStore {
 
       select.media_types = filterOptions.mediaType ? [filterOptions.mediaType] : select.media_types;
 
-      content = (
+      content = (        
         yield this.FilteredMedia({
-          media: Object.values(this.media),
+          media: mediaPropertyStore.GetAutomaticSectionContent({mediaPropertyId:mediaPropertySlugOrId, sectionId:sectionSlugOrId}),
           mediaCatalogIds,
           select
         })
@@ -546,6 +559,8 @@ class MediaPropertyStore {
           }
         });
     } else {
+      console.log("Manual Section ", section.label);
+
       // Manual Section
       content = section.content;
 
@@ -573,7 +588,7 @@ class MediaPropertyStore {
         (yield this.FilteredMedia({
           select,
           media: content
-            .map(sectionItem => this.media[sectionItem.media_id])
+            .map(sectionItem => this.media(sectionItem.media_id))
             .filter(mediaItem => mediaItem)
         })).forEach(mediaItem => filteredMediaIds[mediaItem.id] = true);
 
@@ -587,7 +602,7 @@ class MediaPropertyStore {
           }
 
           // Expanded collection or list
-          const mediaItem = this.media[sectionItem.media_id];
+          const mediaItem = this.media(sectionItem.media_id);
 
           if(!mediaItem) { return; }
 
@@ -1012,8 +1027,6 @@ class MediaPropertyStore {
         this.mediaPropertyIds = mediaPropertyIds;
         this.mediaPropertySlugs = mediaPropertySlugs;
 
-        console.log("LoadMediaPropertyHashes finished.");
-
       }
     });
   });
@@ -1210,12 +1223,14 @@ class MediaPropertyStore {
           allMedia = Object.assign(allMedia, media)
         );
 
+        /*
         this.media = {
           ...(this.media || {}),
           ...allMedia
         };
+        */
 
-        const indexableMedia = Object.values(this.media)
+        const indexableMedia = this.GetPropertyMedia(mediaPropertyId) //Object.values(this.media)
           .filter(mediaItem => mediaItem.authorized || mediaItem.permissions?.length > 0)
           .filter(mediaItem => metadata.media_catalogs.includes(mediaItem.media_catalog_id))
           .map(mediaItem => ({
