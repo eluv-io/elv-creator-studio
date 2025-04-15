@@ -190,6 +190,15 @@ a {
   color: #FFFFFF;
   background: {{button_color}};
   border-radius: 4px;
+  min-width: 200px;
+}
+
+.btn.stream a {
+  background: {{share_button_color}};
+}
+
+.btn.download a {
+  background: {{download_button_color}};
 }
 
 .footer {

@@ -1,11 +1,12 @@
 import fs from "fs";
 import Path from "path";
 
-const baseTemplate = fs.readFileSync(Path.join(import.meta.dirname, "/parts/BaseTemplate.html"), "utf8");
+let baseTemplate = fs.readFileSync(Path.join(import.meta.dirname, "/parts/BaseTemplate.html"), "utf8");
 const css = fs.readFileSync(Path.join(import.meta.dirname, "/parts/template.css"), "utf8");
 
 const codeTemplateContent = fs.readFileSync(Path.join(import.meta.dirname, "./parts/CodeTemplateContent.html"), "utf8");
 const linkTemplateContent = fs.readFileSync(Path.join(import.meta.dirname, "./parts/LinkTemplateContent.html"), "utf8");
+const shareTemplateContent = fs.readFileSync(Path.join(import.meta.dirname, "./parts/ShareTemplateContent.html"), "utf8");
 const receiptTemplateContent = fs.readFileSync(Path.join(import.meta.dirname, "./parts/PurchaseReceiptTemplateContent.html"), "utf8");
 
 const BuildTemplates = () => {
@@ -21,6 +22,13 @@ const BuildTemplates = () => {
     baseTemplate
       .replace("{{css}}", css)
       .replace("{{content}}", linkTemplateContent)
+  );
+
+  fs.writeFileSync(
+    Path.join(import.meta.dirname, "./ShareTemplate.html"),
+    baseTemplate
+      .replace("{{css}}", css)
+      .replace("{{content}}", shareTemplateContent)
   );
 
   fs.writeFileSync(

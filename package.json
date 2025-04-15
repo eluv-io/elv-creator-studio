@@ -6,6 +6,7 @@
     "serve": "rm -rf node_modules/.vite; vite",
     "serve-db": "firebase emulators:start",
     "build": "rm -rf dist/* ; vite build",
+    "build-templates": "node ./src/assets/email_templates/BuildTemplates.js",
     "preview": "vite preview",
     "lint": "npm-run-all -s -c lint-js-fix lint-scss-fix",
     "lint-js": "eslint ./src --ext js,jsx --report-unused-disable-directives",

@@ -8,7 +8,10 @@ import UrlJoin from "url-join";
 
 import CodeTemplate from "@/assets/email_templates/CodeTemplate.html?raw";
 import LinkTemplate from "@/assets/email_templates/LinkTemplate.html?raw";
+import ShareTemplate from "@/assets/email_templates/ShareTemplate.html?raw";
 import PurchaseReceiptTemplate from "@/assets/email_templates/PurchaseReceiptTemplate.html?raw";
+
+const defaultButtonColor = "#393939";
 
 const EmailPreview = observer(() => {
   const [preview, setPreview] = useState("");
@@ -16,6 +19,7 @@ const EmailPreview = observer(() => {
 
   const l10n = rootStore.l10n.pages.tenant.form;
   const info = tenant?.metadata?.public?.asset_metadata?.info || {};
+  const commonSettings = info?.email_template_settings?.common || {};
 
   let html, defaults, settings;
   switch(preview) {
@@ -43,13 +47,22 @@ const EmailPreview = observer(() => {
       settings = info.email_template_settings?.purchase_receipt || {};
       defaults = l10n.email_templates.defaults.purchase_receipt;
       html = PurchaseReceiptTemplate;
+      break;
+    case "share":
+      settings = info.email_template_settings?.share || {};
+      defaults = l10n.email_templates.defaults.share;
+      html = ShareTemplate;
+
+      defaults.stream_button_color = commonSettings.button_color || defaultButtonColor;
+      defaults.download_button_color = commonSettings.button_color || defaultButtonColor;
+
+      break;
   }
 
   if(html) {
-    const commonSettings = info?.email_template_settings?.common || {};
-    html = html.replaceAll("{{banner_image_url}}", commonSettings.banner_image || defaults.banner_image);
+    html = html.replaceAll("{{banner_image_url}}", settings.share_banner_image || commonSettings.banner_image || defaults.banner_image);
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
-    html = html.replaceAll("{{button_color}}", commonSettings.button_color || "#393939");
+    html = html.replaceAll("{{button_color}}", commonSettings.button_color || defaultButtonColor);
     html = html.replaceAll("{{copyright}}", commonSettings.copyright || l10n.email_templates.defaults.common.copyright);
     html = html.replaceAll("{{year}}", new Date().getFullYear());
 
@@ -71,6 +84,7 @@ const EmailPreview = observer(() => {
           { label: "Email Verification", value: "email_verification"},
           { label: "Password Reset", value: "password_reset"},
           { label: "Invite", value: "invite"},
+          { label: "Share", value: "share"},
           { label: "Purchase Receipt", value: "purchase_receipt"}
         ]}
       />
@@ -157,7 +171,7 @@ const TenantGeneralSettings = observer(() => {
           {...l10n.email_templates.button_color}
           path={UrlJoin(inputProps.path, "common")}
           subcategory={l10n.categories.email_templates_common}
-          defaultValue="#393939"
+          defaultValue={defaultButtonColor}
           defaultOnBlankString
           field="button_color"
         />
@@ -422,6 +436,106 @@ const TenantGeneralSettings = observer(() => {
               subcategory={l10n.categories.invite_template}
               placeholder={l10n.email_templates.defaults.invite.preheader || ""}
               field="preheader"
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item value="share_template">
+          <Accordion.Control>
+            { l10n.categories.share_template }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.subject || ""}
+              field="subject"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.title}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.title || ""}
+              field="title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subtitle}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.subtitle || ""}
+              field="subtitle"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.text}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.text || ""}
+              field="text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.stream_button_text}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.stream_button_text || ""}
+              field="stream_button_text"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.stream_button_color}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={info?.email_template_settings?.common?.button_color || defaultButtonColor}
+              field="stream_button_color"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.download_button_text}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.download_button_text || ""}
+              field="download_button_text"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.download_button_color}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={info?.email_template_settings?.common?.button_color || defaultButtonColor}
+              field="download_button_color"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.secondary_text || ""}
+              field="secondary_text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.preheader}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              placeholder={l10n.email_templates.defaults.share.preheader || ""}
+              field="preheader"
+            />
+
+            <Inputs.SingleImageInput
+              {...inputProps}
+              {...l10n.email_templates.share_banner_image}
+              path={UrlJoin(inputProps.path, "share")}
+              subcategory={l10n.categories.share_template}
+              url
+              aspectRatio={3}
+              maw={400}
+              baseSize={115}
+              field="share_banner_image"
             />
           </Accordion.Panel>
         </Accordion.Item>
