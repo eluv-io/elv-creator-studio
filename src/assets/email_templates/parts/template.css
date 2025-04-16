@@ -194,7 +194,7 @@ a {
 }
 
 .btn.stream a {
-  background: {{share_button_color}};
+  background: {{stream_button_color}};
 }
 
 .btn.download a {
