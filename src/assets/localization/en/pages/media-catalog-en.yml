@@ -107,6 +107,9 @@ form:
       label: Permission
     permission_item:
       label: Permission Item
+    test_content:
+      label: Test Content
+      description: If specified, this content will be marked as test content. It will not be shown anywhere unless the user has permissions.
   media:
     list:
       columns:
