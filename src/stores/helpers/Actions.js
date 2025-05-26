@@ -52,6 +52,9 @@ export const ACTIONS = {
   REMOVE_LIST_ELEMENT: {
     stackable: false
   },
+  TRANSACTION: {
+    stackable: false
+  },
   CUSTOM: {
     stackable: false
   },
@@ -599,7 +602,8 @@ const ApplyAction = function ({
   info={},
   Apply,
   Undo,
-  Write
+  Write,
+  skipApply=false
 }) {
   id = id || crypto.randomUUID();
 
@@ -607,7 +611,9 @@ const ApplyAction = function ({
 
   const { stackable } = ACTIONS[actionType];
 
-  runInAction(() => Apply());
+  if(!skipApply) {
+    runInAction(() => Apply());
+  }
 
   if(stackable) {
     let stackableActions = [];
@@ -659,6 +665,33 @@ const ApplyAction = function ({
   this.actionStack[objectId] = actionStack;
   this.redoStack[objectId] = [];
 };
+
+// Batch multiple actions into a single transaction by running the actions and grouping the resultant action records
+const ApplyTransaction = flow(function * ({
+  Apply,
+  objectId,
+  ...args
+}) {
+  const startIndex = this.actionStack[objectId]?.length || 0;
+
+  yield Apply();
+
+  const txActions = this.actionStack[objectId].slice(startIndex);
+  this.actionStack[objectId] = this.actionStack[objectId].slice(0, startIndex);
+
+  this.ApplyAction({
+    ...args,
+    actionType: "TRANSACTION",
+    objectId,
+    Apply: () => txActions.forEach(action => action.Apply()),
+    Undo: () => txActions.forEach(action => action.Undo()),
+    Write: async (objectParams) => {
+      for(const action of txActions) {
+        await action.Write(objectParams);
+      }
+    }
+  });
+});
 
 const UndoQueue = function({objectId, page}) {
   return (this.actionStack[objectId] || [])
@@ -792,6 +825,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.ApplyMigration = ApplyMigration;
 
   storeClass.prototype.ApplyAction = ApplyAction;
+  storeClass.prototype.ApplyTransaction = ApplyTransaction;
   storeClass.prototype.UndoAction = UndoAction;
   storeClass.prototype.RedoAction = RedoAction;
   storeClass.prototype.UndoQueue = UndoQueue;

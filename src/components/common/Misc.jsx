@@ -1,10 +1,30 @@
+import CommonStyles from "@/assets/stylesheets/modules/common.module.scss";
+
 import {Box, Button, Group, Image, Tooltip, ActionIcon, CopyButton} from "@mantine/core";
 import {Link} from "react-router-dom";
 import {rootStore, marketplaceStore} from "@/stores";
 import {ExtractHashFromLink, FabricUrl} from "@/helpers/Fabric.js";
+import SVG from "react-inlinesvg";
+import {CreateModuleClassMatcher, JoinClassNames} from "@/helpers/Misc.js";
+import UrlJoin from "url-join";
+
+const S = CreateModuleClassMatcher(CommonStyles);
 
 export const LinkButton = (props) => {
   return <Button component={Link} variant="outline" {...props} />;
+};
+
+export const SVGIcon = ({
+  icon,
+  ...props
+}) => {
+  return (
+    <SVG
+      {...props}
+      src={icon}
+      className={JoinClassNames(S("icon"), props.className)}
+    />
+  );
 };
 
 export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
@@ -160,5 +180,21 @@ export const AnnotatedText = ({text, referenceImages=[], withInput, ...component
     >
       { LocalizeString(text, referenceMap, {reactNode: true}) }
     </Group>
+  );
+};
+
+// For collection table, automatically generate category/subcategory label determination function from params specifying the label and where to find the data
+export const CategoryFn = ({store, objectId, path, field, params}) => {
+  return (
+    (action) => {
+      const index = action.actionType === "MOVE_LIST_ELEMENT" ? action.info.newIndex : action.info.index;
+      let label = params.fields
+        .map(labelField =>
+          store.GetMetadata({objectId, path: UrlJoin(path, field, index.toString()), field: labelField})
+        )
+        .filter(f => f)[0];
+
+      return LocalizeString(params.l10n, { label });
+    }
   );
 };

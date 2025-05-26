@@ -217,81 +217,91 @@ const MediaConfiguration = observer(({mediaItem}) => {
           <Inputs.FabricBrowser
             {...inputProps}
             {...l10n.media.media_link}
+            fabricBrowserProps={{
+              video: true,
+              allowCompositions: true,
+              allowClips: true
+            }}
             autoUpdate={false}
             field="media_link"
             previewable
           />
-          <Inputs.List
-            {...inputProps}
-            {...l10n.media.offerings}
-            field="offerings"
-          />
-          <Inputs.Checkbox
-            {...inputProps}
-            {...l10n.media.live_video}
-            field="live_video"
-          />
           {
-            !mediaItem.live_video ? null :
+            !mediaItem.media_link || mediaItem.media_link_info?.type !== "main" ? null :
               <>
-                <Inputs.Date
+                <Inputs.List
                   {...inputProps}
-                  {...l10n.media.date}
-                  subcategory={l10n.categories.media}
-                  field="date"
-                />
-                <Inputs.DateTime
-                  {...inputProps}
-                  {...l10n.media.start_time}
-                  subcategory={l10n.categories.media}
-                  field="start_time"
-                  componentProps={{withSeconds: true}}
-                />
-                <Inputs.DateTime
-                  {...inputProps}
-                  {...l10n.media.stream_start_time}
-                  subcategory={l10n.categories.media}
-                  field="stream_start_time"
-                  componentProps={{withSeconds: true}}
-                />
-                <Inputs.DateTime
-                  {...inputProps}
-                  {...l10n.media.end_time}
-                  subcategory={l10n.categories.media}
-                  field="end_time"
+                  {...l10n.media.offerings}
+                  field="offerings"
                 />
                 <Inputs.Checkbox
                   {...inputProps}
-                  {...l10n.media.enable_dvr}
-                  subcategory={l10n.categories.media}
-                  field="enable_dvr"
+                  {...l10n.media.live_video}
+                  field="live_video"
                 />
-              </>
-          }
-          {
-            mediaItem.live_video ? null :
-              <Inputs.Checkbox
-                {...inputProps}
-                {...l10n.media.clip}
-                field="clip"
-              />
-          }
-          {
-            !mediaItem.clip || mediaItem.live_video ? null :
-              <>
-                <Inputs.Number
-                  {...inputProps}
-                  {...l10n.media.clip_start_time}
-                  field="clip_start_time"
-                  min={0}
-                  max={mediaItem.clip_end_time}
-                />
-                <Inputs.Number
-                  {...inputProps}
-                  {...l10n.media.clip_end_time}
-                  field="clip_end_time"
-                  min={mediaItem.clip_start_time || 0}
-                />
+                {
+                  !mediaItem.live_video ? null :
+                    <>
+                      <Inputs.Date
+                        {...inputProps}
+                        {...l10n.media.date}
+                        subcategory={l10n.categories.media}
+                        field="date"
+                      />
+                      <Inputs.DateTime
+                        {...inputProps}
+                        {...l10n.media.start_time}
+                        subcategory={l10n.categories.media}
+                        field="start_time"
+                        componentProps={{withSeconds: true}}
+                      />
+                      <Inputs.DateTime
+                        {...inputProps}
+                        {...l10n.media.stream_start_time}
+                        subcategory={l10n.categories.media}
+                        field="stream_start_time"
+                        componentProps={{withSeconds: true}}
+                      />
+                      <Inputs.DateTime
+                        {...inputProps}
+                        {...l10n.media.end_time}
+                        subcategory={l10n.categories.media}
+                        field="end_time"
+                      />
+                      <Inputs.Checkbox
+                        {...inputProps}
+                        {...l10n.media.enable_dvr}
+                        subcategory={l10n.categories.media}
+                        field="enable_dvr"
+                      />
+                    </>
+                }
+                {
+                  mediaItem.live_video ? null :
+                    <Inputs.Checkbox
+                      {...inputProps}
+                      {...l10n.media.clip}
+                      field="clip"
+                    />
+                }
+                {
+                  !mediaItem.clip || mediaItem.live_video ? null :
+                    <>
+                      <Inputs.Number
+                        {...inputProps}
+                        {...l10n.media.clip_start_time}
+                        field="clip_start_time"
+                        min={0}
+                        max={mediaItem.clip_end_time}
+                      />
+                      <Inputs.Number
+                        {...inputProps}
+                        {...l10n.media.clip_end_time}
+                        field="clip_end_time"
+                        min={mediaItem.clip_start_time || 0}
+                      />
+                    </>
+                }
               </>
           }
 

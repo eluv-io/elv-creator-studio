@@ -101,6 +101,8 @@ components:
       name: Name
       library_id: Library ID
       object_id: Object ID
+      duration: Duration
+      source: Source
     validation:
       invalid_content_id: Invalid Content ID
   save_modal:
@@ -151,6 +153,7 @@ actions:
   REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list
   MOVE_LIST_ELEMENT: Move '{label}' list position
   MOVE_LIST_ELEMENT_UNLABELLED: Move list position
+  TRANSACTION: Modify `{label}`
   CUSTOM: <Custom Action>
   MIGRATION: "{label}"
   MIGRATION_LABEL: Migrate to Version {version}

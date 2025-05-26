@@ -27,13 +27,13 @@ import {observer} from "mobx-react-lite";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import UrlJoin from "url-join";
 import {modals} from "@mantine/modals";
-import {rootStore, uiStore} from "@/stores";
-import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
+import {rootStore, uiStore, fabricBrowserStore} from "@/stores";
+import {CategoryFn, IconButton, LocalizeString, SVGIcon} from "@/components/common/Misc.jsx";
 import {ExtractHashFromLink, FabricUrl, ScaleImage} from "@/helpers/Fabric";
 import {useEffect, useState} from "react";
 import FileBrowser from "./FileBrowser";
 import RichTextEditor from "./RichTextEditor.jsx";
-import {CategoryFn, GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
+import {GenerateUUID, ParseDate, SortTable} from "@/helpers/Misc";
 import {Prism} from "@mantine/prism";
 import {ValidateUrl, ValidateCSS} from "@/components/common/Validation.jsx";
 import SanitizeHTML from "sanitize-html";
@@ -57,9 +57,14 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
   IconLink,
-  IconUnlink, IconCopy
+  IconUnlink,
+  IconCopy
 } from "@tabler/icons-react";
 import {DataTable} from "mantine-datatable";
+
+import VideoIcon from "@/assets/icons/video.svg";
+import CompositionIcon from "@/assets/icons/composition.svg";
+import ClipIcon from "@/assets/icons/clip.svg";
 
 export const Confirm = ({title, text, onConfirm, ...modalProps}) => {
   modals.openConfirmModal({
@@ -1057,10 +1062,28 @@ export const FabricBrowserInput = observer(({
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
   let value = store.GetMetadata({objectId, path, field});
+  const infoValue = store.GetMetadata({objectId, path, field: `${field}_info`});
   const targetHash = ExtractHashFromLink(value);
   const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
+  const targetDetails = fabricBrowserStore.objectDetails[targetId];
 
-  const name = value ? GetName(value) : "";
+  let name = value ? GetName(value) : "";
+  let duration, subtitle;
+
+  if(infoValue?.type === "clip") {
+    subtitle = targetDetails?.name;
+    name = `Clip - ${infoValue.name}`;
+    duration = fabricBrowserStore.FormatDuration(infoValue.clip_end_time - infoValue.clip_start_time);
+  } else if(infoValue?.type === "composition") {
+    const composition = targetDetails?.compositions
+      ?.find(composition => composition.compositionKey === infoValue.composition_key);
+    name = `Composition - ${composition?.name || infoValue.name}`;
+    duration = composition?.duration;
+  } else if(infoValue?.type === "main") {
+    name = targetDetails.name;
+    duration = targetDetails.duration;
+  }
+
   const imageUrl = GetImage?.(value);
 
   useEffect(() => {
@@ -1076,7 +1099,66 @@ export const FabricBrowserInput = observer(({
 
     rootStore.client.LatestVersionHash({versionHash: targetHash})
       .then(latestHash => setUpdatable(targetHash !== latestHash));
+
+    fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
+
+
+  const Update = async (target) => {
+    await store.ApplyTransaction({
+      objectId,
+      path,
+      page: location.pathname,
+      field,
+      category,
+      subcategory,
+      label,
+      Apply: async () => {
+        await store.SetLink({
+          objectId,
+          page: location.pathname,
+          path,
+          field,
+          linkPath,
+          linkObjectId: target?.objectId,
+          category,
+          subcategory,
+          label,
+          autoUpdate
+        });
+
+        if(
+          !target ||
+          !fabricBrowserProps.video ||
+          !(fabricBrowserProps.allowCompositions || fabricBrowserProps.allowClips)
+        ) {
+          store.SetMetadata({
+            objectId,
+            page: location.pathname,
+            path,
+            field: `${field}_info`,
+            value: undefined,
+            label: "Remove link info"
+          });
+        } else {
+          store.SetMetadata({
+            objectId,
+            page: location.pathname,
+            path,
+            field: `${field}_info`,
+            value: {
+              name: target.name,
+              type: target.type,
+              composition_key: target.compositionKey,
+              clip_start_time: target.startTime,
+              clip_end_time: target.endTime
+            },
+            label: "Add link info"
+          });
+        }
+      }
+    });
+  };
 
   return (
     <>
@@ -1086,19 +1168,7 @@ export const FabricBrowserInput = observer(({
             {...fabricBrowserProps}
             label={label}
             Close={() => setShowBrowser(false)}
-            Submit={async (target) => {
-              await store.SetLink({
-                objectId,
-                path,
-                field,
-                linkPath,
-                linkObjectId: target.objectId,
-                category,
-                subcategory,
-                label,
-                autoUpdate
-              });
-            }}
+            Submit={Update}
           />
       }
       <InputWrapper
@@ -1111,7 +1181,7 @@ export const FabricBrowserInput = observer(({
       >
         <Group spacing="xs" style={{position: "absolute", top: -4, right: 0}}>
           {
-            !value ? null :
+            !value || fabricBrowserProps.video ? null :
               <IconButton
                 variant="transparent"
                 disabled={!updatable}
@@ -1125,16 +1195,7 @@ export const FabricBrowserInput = observer(({
                 onClick={() => {
                   Confirm({
                     text: LocalizeString(rootStore.l10n.components.fabric_browser.update_link_confirm, {item: name || label}),
-                    onConfirm: () => store.SetLink({
-                      objectId,
-                      page: location.pathname,
-                      path,
-                      field,
-                      linkObjectId: targetId,
-                      category,
-                      subcategory,
-                      label
-                    })
+                    onConfirm: () => Update({objectId: targetId})
                   });
                 }}
               />
@@ -1165,25 +1226,19 @@ export const FabricBrowserInput = observer(({
                       color={showPreview ? "red.7" : "purple.6"}
                     />
                 }
-                <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label})}
-                  icon={<IconX size={15} />}
-                  onClick={() => {
-                    ConfirmDelete({
-                      itemName: name || label,
-                      onConfirm: () => store.SetLink({
-                        objectId,
-                        page: location.pathname,
-                        path,
-                        field,
-                        linkObjectId: undefined,
-                        category,
-                        subcategory,
-                        label
-                      })
-                    });
-                  }}
-                />
+                {
+                  showPreview ? null :
+                    <IconButton
+                      label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: label})}
+                      icon={<IconX size={15} />}
+                      onClick={() => {
+                        ConfirmDelete({
+                          itemName: name || label,
+                          onConfirm: () => Update({})
+                        });
+                      }}
+                    />
+                }
               </Group>
               <Container p={0} pr={75}>
                 {
@@ -1199,15 +1254,43 @@ export const FabricBrowserInput = observer(({
                       p="xs"
                     />
                 }
-                <Text fz="sm" fw={500} maw={400} truncate>
-                  { name || label }
-                </Text>
+                <Group align="center" spacing={10} pb={5}>
+                  {
+                    !fabricBrowserProps.video ? null :
+                      <SVGIcon
+                        style={{height: 20, width: 20}}
+                        icon={
+                          infoValue.type === "main" ? VideoIcon :
+                            infoValue.type === "composition" ?
+                            CompositionIcon : ClipIcon
+                        }
+                      />
+                  }
+                  <Text fz="md" fw={600} maw={400} truncate>
+                    { name || label }
+                  </Text>
+                  {
+                    !duration ? null :
+                      <Text pt={2} pl={5} fz={12} color="dimmed">
+                        ({ duration })
+                      </Text>
+                  }
+                </Group>
+                {
+                  !subtitle ? null :
+                    <Text fz={11} color="dimmed">
+                      { subtitle }
+                    </Text>
+                }
                 <Text fz={11} color="dimmed">
                   { targetId }
                 </Text>
-                <Text fz={8} color="dimmed">
-                  { targetHash }
-                </Text>
+                {
+                  fabricBrowserProps.video ? null :
+                    <Text fz={8} color="dimmed">
+                      { targetHash }
+                    </Text>
+                }
               </Container>
 
               {
@@ -1215,6 +1298,7 @@ export const FabricBrowserInput = observer(({
                   <Paper mt="sm">
                     <Video
                       videoLink={value}
+                      videoLinkInfo={infoValue}
                       animation={previewIsAnimation}
                       playerOptions={previewOptions}
                       aspectRatio={previewAspectRatio}

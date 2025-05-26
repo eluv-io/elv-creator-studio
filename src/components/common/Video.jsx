@@ -4,7 +4,7 @@ import {rootStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
-const Video = observer(({videoLink, videoHash, animation, playerOptions={}, aspectRatio=16/9, className=""}) => {
+const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerOptions={}, aspectRatio=16/9, className=""}) => {
   const targetRef = useRef();
 
   useEffect(() => {
@@ -36,7 +36,10 @@ const Video = observer(({videoLink, videoHash, animation, playerOptions={}, aspe
           },
           sourceOptions: {
             playoutParameters: {
-              versionHash: videoHash || ExtractHashFromLink(videoLink)
+              versionHash: videoHash || ExtractHashFromLink(videoLink),
+              channel: videoLinkInfo.composition_key,
+              clipStart: videoLinkInfo?.clip_start_time,
+              clipEnd: videoLinkInfo?.clip_end_time
             }
           },
           playerOptions: {
