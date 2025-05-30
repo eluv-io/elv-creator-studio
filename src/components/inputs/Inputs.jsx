@@ -1080,8 +1080,8 @@ export const FabricBrowserInput = observer(({
     name = `Composition - ${composition?.name || infoValue.name}`;
     duration = composition?.duration;
   } else if(infoValue?.type === "main") {
-    name = targetDetails.name;
-    duration = targetDetails.duration;
+    name = targetDetails?.name;
+    duration = targetDetails?.duration;
   }
 
   const imageUrl = GetImage?.(value);
@@ -1260,8 +1260,8 @@ export const FabricBrowserInput = observer(({
                       <SVGIcon
                         style={{height: 20, width: 20}}
                         icon={
-                          infoValue.type === "main" ? VideoIcon :
-                            infoValue.type === "composition" ?
+                          infoValue?.type === "main" ? VideoIcon :
+                            infoValue?.type === "composition" ?
                             CompositionIcon : ClipIcon
                         }
                       />
