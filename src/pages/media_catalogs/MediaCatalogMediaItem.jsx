@@ -290,15 +290,17 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       <Inputs.Number
                         {...inputProps}
                         {...l10n.media.clip_start_time}
+                        path={UrlJoin(inputProps.path, "media_link_info")}
                         field="clip_start_time"
                         min={0}
-                        max={mediaItem.clip_end_time}
+                        max={mediaItem.media_link_info?.clip_end_time}
                       />
                       <Inputs.Number
                         {...inputProps}
                         {...l10n.media.clip_end_time}
+                        path={UrlJoin(inputProps.path, "media_link_info")}
                         field="clip_end_time"
-                        min={mediaItem.clip_start_time || 0}
+                        min={mediaItem.media_link_info?.clip_start_time || 0}
                       />
                     </>
                 }

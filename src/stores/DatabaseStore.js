@@ -99,7 +99,7 @@ class DatabaseStore {
     this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
 
     const typeNames = {
-      tenant: "Tenant",
+      tenant: "Media Wallet Settings",
       marketplace: "Marketplace",
       site: "Drop Event Site",
       template: "Template",
@@ -118,7 +118,8 @@ class DatabaseStore {
         const name = typeNames[key];
         const existingType = Object.values(allTypes)
           .find(type =>
-            type.name?.toLowerCase()?.includes(name.toLowerCase())
+            type.name?.toLowerCase()?.includes(name.toLowerCase()) ||
+            (key === "tenant" && type.name?.toLowerCase()?.includes("tenant"))
           );
 
         if(existingType) {
@@ -163,6 +164,7 @@ class DatabaseStore {
       throw Error("Shouldn't create tenant");
     }
 
+    const name = "Eluvio Media Wallet Settings";
     const {id} = yield this.client.CreateAndFinalizeContentObject({
       libraryId: propertiesLibraryId,
       options: {
@@ -178,7 +180,7 @@ class DatabaseStore {
             "asset_metadata": {
               "info": {
                 "branding": {},
-                "name": "Tenant",
+                "name": name,
                 "open_id": {
                   "issuer_id": "",
                   "issuer_url": ""
@@ -198,11 +200,11 @@ class DatabaseStore {
               "media_properties": {},
               "media_catalogs": {},
               "slug": GenerateUUID(),
-              "title": "Tenant",
+              "title": name,
             },
             "content_spec": "Tenant",
             "description": "",
-            "name": "Tenant"
+            "name": name
           }
         });
       }
