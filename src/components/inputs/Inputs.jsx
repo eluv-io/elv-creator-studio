@@ -10,7 +10,7 @@ import {
   TextInput,
   Textarea,
   Container,
-  Image,
+  Image as MantineImage,
   NumberInput,
   Stack,
   MultiSelect as MantineMultiSelect,
@@ -42,6 +42,7 @@ import FabricBrowser from "./FabricBrowser.jsx";
 import CheckboxCard from "./CheckboxCard.jsx";
 import InputWrapper, {InputLabel} from "./InputWrapper.jsx";
 import Video from "@/components/common/Video.jsx";
+import * as ThumbHash from "thumbhash";
 
 import {
   IconX,
@@ -726,6 +727,22 @@ const CodeInput = observer(({
   );
 });
 
+const HashImage = async url => {
+  const image = new Image();
+  image.src = url;
+  image.crossOrigin = "anonymous";
+  await new Promise(resolve => image.onload = resolve);
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  const scale = 100 / Math.max(image.width, image.height);
+  canvas.width = Math.round(image.width * scale);
+  canvas.height = Math.round(image.height * scale);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+  const binaryThumbHash = ThumbHash.rgbaToThumbHash(pixels.width, pixels.height, pixels.data);
+  return btoa(String.fromCharCode(...binaryThumbHash));
+};
+
 // Single image
 const SingleImageInput = observer(({
   store,
@@ -778,7 +795,7 @@ const SingleImageInput = observer(({
             style={!horizontal ? undefined : {display: "flex", alignItems: "center", flexDirection: "row-reverse", gap: 20}}
           >
             <HoverCard.Target>
-              <Image
+              <MantineImage
                 mb={hasText ? "xs" : 0}
                 withPlaceholder
                 height={height}
@@ -802,7 +819,7 @@ const SingleImageInput = observer(({
             }
           </UnstyledButton>
           <HoverCard.Dropdown bg="gray.1" p="xl" >
-            <Image
+            <MantineImage
               mb="xs"
               withPlaceholder
               height={height * 2}
@@ -826,16 +843,32 @@ const SingleImageInput = observer(({
                 event.stopPropagation();
                 ConfirmDelete({
                   itemName: label || "this image",
-                  onConfirm: () => store.SetMetadata({
-                    page: location.pathname,
-                    objectId,
-                    path,
-                    field,
-                    value: null,
-                    category,
-                    subcategory,
-                    label: actionLabel || label
-                  })
+                  onConfirm: () => {
+                    store.ApplyTransaction({
+                      page: location.pathname,
+                      objectId,
+                      path,
+                      field,
+                      value: null,
+                      category,
+                      subcategory,
+                      label: actionLabel || label,
+                      Apply: () => {
+                        store.SetMetadata({
+                          objectId,
+                          path,
+                          field,
+                          value: null
+                        });
+                        store.SetMetadata({
+                          objectId,
+                          path,
+                          field: `${field}_hash`,
+                          value: null
+                        });
+                      }
+                    });
+                  }
                 });
               }}
             />
@@ -850,31 +883,44 @@ const SingleImageInput = observer(({
             objectId={objectId}
             extensions="image"
             Submit={record => {
-              if(url) {
-                store.SetMetadata({
-                  page: location.pathname,
-                  objectId,
-                  path,
-                  field,
-                  value: record.publicUrl,
-                  category,
-                  subcategory,
-                  label: actionLabel || label
-                });
-              } else {
-                store.SetLink({
-                  page: location.pathname,
-                  objectId,
-                  path,
-                  field,
-                  linkObjectId: record.objectId,
-                  linkType: "files",
-                  linkPath: record.fullPath,
-                  category,
-                  subcategory,
-                  label: actionLabel || label
-                });
-              }
+              store.ApplyTransaction({
+                page: location.pathname,
+                objectId,
+                path,
+                field,
+                value: null,
+                category,
+                subcategory,
+                label: actionLabel || label,
+                Apply: async () => {
+                  if(url) {
+                    store.SetMetadata({
+                      page: location.pathname,
+                      objectId,
+                      path,
+                      field,
+                      value: record.publicUrl,
+                    });
+                  } else {
+                    store.SetLink({
+                      page: location.pathname,
+                      objectId,
+                      path,
+                      field,
+                      linkObjectId: record.objectId,
+                      linkType: "files",
+                      linkPath: record.fullPath
+                    });
+                  }
+
+                  store.SetMetadata({
+                    objectId,
+                    path,
+                    field: `${field}_hash`,
+                    value: await HashImage(imageUrl)
+                  });
+                }
+              });
             }}
             Close={() => setShowFileBrowser(false)}
           />
@@ -1080,7 +1126,7 @@ export const FabricBrowserInput = observer(({
     name = `Composition - ${composition?.name || infoValue.name}`;
     duration = composition?.duration;
   } else if(infoValue?.type === "main") {
-    name = targetDetails?.name;
+    name = targetDetails?.name || name;
     duration = targetDetails?.duration;
   }
 
@@ -1243,7 +1289,7 @@ export const FabricBrowserInput = observer(({
               <Container p={0} pr={75}>
                 {
                   !imageUrl ? null :
-                    <Image
+                    <MantineImage
                       mb="xs"
                       height={200}
                       fit="contain"
