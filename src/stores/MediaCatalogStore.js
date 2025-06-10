@@ -16,6 +16,7 @@ import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {mediaCatalogStore} from "@/stores/index.js";
 import Set from "lodash/set.js";
+import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
 class MediaCatalogStore {
   allMediaCatalogs;
@@ -343,6 +344,32 @@ class MediaCatalogStore {
       return LocalizeString(this.rootStore.l10n.pages.media_catalog.form.categories[category], { label: title });
     };
   }
+
+  GetOfferings = flow(function * (link) {
+    const versionHash = ExtractHashFromLink(link);
+
+    if(!versionHash) { return; }
+
+    try {
+      const offerings = (yield this.client.ContentObjectMetadata({
+        versionHash,
+        metadataSubtree: "offerings",
+        select: [
+          "*/ready",
+          "*/media_struct/label",
+        ]
+      })) || {};
+
+      return Object.keys(offerings)
+        .map(offeringKey =>
+          !offerings[offeringKey].ready ? null :
+            { value: offeringKey, label: offerings[offeringKey]?.media_struct?.label || offeringKey }
+        )
+        .filter(o => o);
+    } catch(error) {
+      this.DebugLog({error});
+    }
+  });
 
   MigrateItemTemplateMedia = flow(function * ({itemTemplateId, mediaCatalogId, type, itemTemplateName}) {
     yield this.LoadMediaCatalog({mediaCatalogId});

@@ -12,6 +12,7 @@ import {
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
 import {MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
+import {useEffect, useState} from "react";
 
 const aspectRatioOptions = Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
   .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}));
@@ -122,6 +123,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
 
 const MediaConfiguration = observer(({mediaItem}) => {
   const { mediaCatalogId, mediaItemId } = useParams();
+  const [offerings, setOfferings] = useState(undefined);
 
   const l10n = rootStore.l10n.pages.media_catalog.form;
   const inputProps = {
@@ -131,6 +133,13 @@ const MediaConfiguration = observer(({mediaItem}) => {
     subcategory: l10n.categories.media,
     path: UrlJoin("/public/asset_metadata/info/media/", mediaItemId)
   };
+
+  useEffect(() => {
+    setOfferings(undefined);
+
+    mediaCatalogStore.GetOfferings(mediaItem?.media_link)
+      .then(offerings => setOfferings(offerings));
+  }, [mediaItem?.media_link]);
 
   let content;
   switch(mediaItem.media_type) {
@@ -227,13 +236,17 @@ const MediaConfiguration = observer(({mediaItem}) => {
             previewable
           />
           {
-            !mediaItem.media_link || mediaItem.media_link_info?.type !== "main" ? null :
+            !mediaItem.media_link || (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
               <>
-                <Inputs.List
-                  {...inputProps}
-                  {...l10n.media.offerings}
-                  field="offerings"
-                />
+                {
+                  !offerings || offerings.length <= 1 ? null :
+                    <Inputs.MultiSelect
+                      {...inputProps}
+                      {...l10n.media.offerings}
+                      options={offerings || []}
+                      field="offerings"
+                    />
+                }
                 <Inputs.Checkbox
                   {...inputProps}
                   {...l10n.media.live_video}
