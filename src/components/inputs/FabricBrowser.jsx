@@ -8,7 +8,8 @@ import {
   Group,
   Modal,
   Text,
-  TextInput
+  TextInput,
+  Tooltip
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore, uiStore} from "@/stores";
@@ -76,8 +77,7 @@ const DirectSelectionForm = ({Submit}) => {
 
           try {
             const objectId = ParseContentID(values.contentId);
-            const libraryId = await rootStore.LibraryId({objectId});
-            await Submit({libraryId, objectId});
+            await Submit(await fabricBrowserStore.LoadObjectDetails({objectId}));
             modals.closeAll();
           } catch(error) {
             rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
@@ -167,7 +167,7 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
           onClick={Back}
           tooltipProps={{position: "bottom"}}
         />
-        <Text>{ library.name }</Text>
+        <Text>{ library?.name || libraryId }</Text>
       </Group>
       <Group align="end" mb="md">
         <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
@@ -249,7 +249,7 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
           onClick={Back}
           tooltipProps={{position: "bottom"}}
         />
-        <Text>{ library.name }</Text>
+        <Text>{ library?.name || libraryId }</Text>
       </Group>
       <Group align="end" mb="md">
         <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
@@ -276,6 +276,9 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
             await Submit({
               libraryId,
               objectId: record.objectId,
+              source: "Main Content",
+              type: "main",
+              duration: record.duration,
               hasCompositions: record.hasCompositions,
               hasClips: record.hasClips,
             });
@@ -291,20 +294,22 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
             title: rootStore.l10n.components.fabric_browser.columns.name,
             sortable: true,
             render: ({name, isVideo, hasClips, hasCompositions}) =>
-              <Group>
-                <Group spacing={3}>
+              <Group noWrap align="center" maw={500}>
+                <Group noWrap spacing={3}>
                   {
                     !allowCompositions && !allowClips ? null :
                       <SVGIcon icon={ChevronRightIcon} className={S("chevron", !hasCompositions && !hasClips ? "chevron--hidden" : "")} />
                   }
                   <SVGIcon icon={isVideo ? VideoIcon : ObjectIcon} />
                 </Group>
-                <Text style={{wordWrap: "anywhere"}}>{name}</Text>
+                <Tooltip label={name} openDelay={500} offset={10}>
+                  <Text fz={12} className="ellipsis">{name}</Text>
+                </Tooltip>
               </Group>
           },
           !video ? null :
-            { accessor: "duration", width: 150, title: rootStore.l10n.components.fabric_browser.columns.duration, render: ({duration}) => duration },
-          { accessor: "objectId", title: rootStore.l10n.components.fabric_browser.columns.object_id },
+            { accessor: "duration", width: 120, title: rootStore.l10n.components.fabric_browser.columns.duration, render: ({duration}) => <Text fz={12}>{duration}</Text> },
+          { accessor: "objectId", title: rootStore.l10n.components.fabric_browser.columns.object_id, render: ({objectId}) => <Text fz={12}>{objectId}</Text> },
         ].filter(c => c)}
       />
     </Container>
@@ -373,6 +378,7 @@ export const FabricBrowser = observer(({title, label, video, allowCompositions, 
     if(!objectId) {
       setLibraryId(libraryId);
     } else if((allowClips && hasClips) || (allowCompositions && hasCompositions)) {
+      setLibraryId(libraryId);
       setObjectId(objectId);
     } else {
       await Submit({libraryId, objectId, ...info});

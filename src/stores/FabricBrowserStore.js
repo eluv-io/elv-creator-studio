@@ -140,6 +140,8 @@ class FabricBrowserStore {
       }
 
       this.objectDetails[objectId] = {
+        libraryId,
+        objectId,
         name: metadata?.public?.name || objectId,
         isVideo,
         duration,

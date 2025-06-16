@@ -19,7 +19,7 @@ import {
   ScrollArea,
   Table,
   HoverCard,
-  ColorInput, Code
+  ColorInput, Code, Tooltip
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -1300,11 +1300,11 @@ export const FabricBrowserInput = observer(({
                       p="xs"
                     />
                 }
-                <Group align="center" spacing={10} pb={5}>
+                <Group align="center" noWrap spacing={10} pb={5}>
                   {
                     !fabricBrowserProps.video ? null :
                       <SVGIcon
-                        style={{height: 20, width: 20}}
+                        style={{height: 20, width: 20, minWidth: 20}}
                         icon={
                           infoValue?.type === "main" ? VideoIcon :
                             infoValue?.type === "composition" ?
@@ -1312,9 +1312,11 @@ export const FabricBrowserInput = observer(({
                         }
                       />
                   }
-                  <Text fz="md" fw={600} maw={400} truncate>
-                    { name || label }
-                  </Text>
+                  <Tooltip label={name || label} offset={10} openDelay={500}>
+                    <Text fz="sm" fw={600} maw={400} truncate>
+                      { name || label }
+                    </Text>
+                  </Tooltip>
                   {
                     !duration ? null :
                       <Text pt={2} pl={5} fz={12} color="dimmed">
