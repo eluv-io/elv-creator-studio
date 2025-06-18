@@ -232,20 +232,6 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
               />
           },
           {
-            accessor: "record.productionDeployed",
-            title: l10n.overview.status.production,
-            render: record => (
-              !record.latestHash ? null :
-                <DeployStatus
-                  linked={!!record.latestHash}
-                  deployed={record.productionDeployed}
-                  mediaCatalogsBehind={record.mediaCatalogsBehind}
-                  permissionSetsBehind={record.permissionSetsBehind}
-                  hash={record.productionHash}
-                />
-            )
-          },
-          {
             accessor: "record.stagingDeployed",
             title: l10n.overview.status.staging,
             render: record => (
@@ -256,6 +242,20 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
                   mediaCatalogsBehind={record.mediaCatalogsBehind}
                   permissionSetsBehind={record.permissionSetsBehind}
                   hash={record.stagingHash}
+                />
+            )
+          },
+          {
+            accessor: "record.productionDeployed",
+            title: l10n.overview.status.production,
+            render: record => (
+              !record.latestHash ? null :
+                <DeployStatus
+                  linked={!!record.latestHash}
+                  deployed={record.productionDeployed}
+                  mediaCatalogsBehind={record.mediaCatalogsBehind}
+                  permissionSetsBehind={record.permissionSetsBehind}
+                  hash={record.productionHash}
                 />
             )
           },
