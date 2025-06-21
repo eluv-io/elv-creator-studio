@@ -185,7 +185,7 @@ class FabricBrowserStore {
         frameRate,
         hasCompositions,
         compositions,
-        hasClips,
+        hasClips: clips.length > 0,
         clips
       };
     }
