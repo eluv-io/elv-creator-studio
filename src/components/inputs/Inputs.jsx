@@ -1314,7 +1314,7 @@ export const FabricBrowserInput = observer(({
                   }
                   <Tooltip label={name || label} offset={10} openDelay={500}>
                     <Text fz="sm" fw={600} maw={400} truncate>
-                      { targetDetails.name || name || label }
+                      { targetDetails?.name || name || label }
                     </Text>
                   </Tooltip>
                   {

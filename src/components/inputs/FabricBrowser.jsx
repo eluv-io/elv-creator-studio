@@ -130,6 +130,7 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
   const [loading, setLoading] = useState(false);
   const [debouncedFilter] = useDebouncedValue(filter, 500);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
+  const info = fabricBrowserStore.objectDetails[objectId];
 
   useEffect(() => {
     fabricBrowserStore.LoadObjectDetails({
@@ -137,8 +138,6 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
       objectId
     });
   }, [libraryId, objectId]);
-
-  const info = fabricBrowserStore.objectDetails[objectId];
 
   let records = [
     { libraryId, objectId, id: objectId, name: info.name, source: "Main Content", type: "main", duration: info.duration },

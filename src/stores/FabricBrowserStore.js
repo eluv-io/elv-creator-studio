@@ -79,7 +79,8 @@ class FabricBrowserStore {
           "public/name",
           "channel",
           "clips",
-          "offerings/*/media_struct/duration_rat"
+          "offerings/*/media_struct/duration_rat",
+          "offerings/*/media_struct/streams/*/rate",
         ]
       });
 
@@ -89,10 +90,24 @@ class FabricBrowserStore {
 
       let duration = metadata?.offerings?.[offering]?.media_struct?.duration_rat;
 
-      let isVideo;
+      let isVideo, frameRate;
       if(duration) {
         isVideo = true;
         duration = this.FormatDuration(duration);
+
+        const videoKey = Object.keys(metadata?.offerings?.[offering]?.media_struct?.streams).find(key => key.startsWith("video"));
+        if(videoKey) {
+          frameRate = (metadata.offerings[offering].media_struct.streams[videoKey].rate)?.toString() || "";
+
+          if(frameRate.includes("/")) {
+            const num = parseFloat(frameRate.split("/")[0]);
+            const denom = parseFloat(frameRate.split("/")[1]);
+
+            frameRate = num / denom;
+          } else {
+            frameRate = parseFloat(frameRate);
+          }
+        }
       }
 
       let hasCompositions = Object.keys(metadata?.channel?.offerings || {}).length > 0;
@@ -120,6 +135,28 @@ class FabricBrowserStore {
       }
 
       let clips = [];
+
+      if(frameRate) {
+        const myClips = yield this.LoadMyClips({objectId});
+        if(myClips?.length > 0) {
+          myClips.forEach((clip, index) => {
+            const startTime = clip.clipInFrame / frameRate;
+            const endTime = clip.clipOutFrame / frameRate;
+
+            clips.push({
+              ...clip,
+              id: `my-clip-${clip.clipKey || index}`,
+              type: "clip",
+              source: "My Clips",
+              trackKey: "my_clips",
+              startTime,
+              endTime,
+              duration: this.FormatDuration(endTime - startTime)
+            });
+          });
+        }
+      }
+
       if(hasClips) {
         Object.keys(metadata.clips?.metadata_tags || {}).forEach(trackKey => {
           (metadata.clips.metadata_tags[trackKey]?.tags || []).forEach((tag, index) =>
@@ -145,6 +182,7 @@ class FabricBrowserStore {
         name: metadata?.public?.name || objectId,
         isVideo,
         duration,
+        frameRate,
         hasCompositions,
         compositions,
         hasClips,
@@ -209,6 +247,26 @@ class FabricBrowserStore {
       objects,
       paging
     };
+  });
+
+  LoadMyClips = flow(function * ({objectId}) {
+    const clips = yield this.client.walletClient.ProfileMetadata({
+      type: "app",
+      appId: "video-editor",
+      mode: "private",
+      key: `my-clips-${objectId}${this.rootStore.localhost ? "-dev" : ""}`
+    });
+
+    if(!clips) { return []; }
+
+    try {
+      return JSON.parse(this.client.utils.FromB64(clips))
+        .filter(clip => clip.objectId === objectId);
+    } catch(error) {
+      this.Log({error});
+
+      return [];
+    }
   });
 
   get client() {

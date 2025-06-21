@@ -27,6 +27,7 @@ configure({
 });
 
 class RootStore {
+  localhost = window.location.hostname === "localhost";
   loaded = false;
 
   libraryIds = {};
