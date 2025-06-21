@@ -290,14 +290,6 @@ const MediaConfiguration = observer(({mediaItem}) => {
                     </>
                 }
                 {
-                  mediaItem.live_video ? null :
-                    <Inputs.Checkbox
-                      {...inputProps}
-                      {...l10n.media.clip}
-                      field="clip"
-                    />
-                }
-                {
                   !mediaItem.clip || mediaItem.live_video ? null :
                     <>
                       <Inputs.Number

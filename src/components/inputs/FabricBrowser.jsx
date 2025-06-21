@@ -197,8 +197,9 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
             title: rootStore.l10n.components.fabric_browser.columns.name,
             sortable: true,
             render: ({name, type}) =>
-              <Group>
+              <Group noWrap>
                 <SVGIcon
+                  className="icon"
                   icon={
                     type === "composition" ? CompositionIcon :
                       type === "clip" ? ClipIcon : VideoIcon
@@ -207,7 +208,7 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
                 <Text style={{wordWrap: "anywhere"}}>{name}</Text>
               </Group>
           },
-          { accessor: "source", sortable: true, title: rootStore.l10n.components.fabric_browser.columns.source },
+          { accessor: "source", sortable: true, width: 150, title: rootStore.l10n.components.fabric_browser.columns.source },
           { accessor: "duration", sortable: true, width: 150, title: rootStore.l10n.components.fabric_browser.columns.duration, render: ({duration}) => duration },
         ].filter(c => c)}
       />
@@ -300,7 +301,7 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
                     !allowCompositions && !allowClips ? null :
                       <SVGIcon icon={ChevronRightIcon} className={S("chevron", !hasCompositions && !hasClips ? "chevron--hidden" : "")} />
                   }
-                  <SVGIcon icon={isVideo ? VideoIcon : ObjectIcon} />
+                  <SVGIcon icon={isVideo ? VideoIcon : ObjectIcon} className="icon" />
                 </Group>
                 <Tooltip label={name} openDelay={500} offset={10}>
                   <Text fz={12} className="ellipsis">{name}</Text>

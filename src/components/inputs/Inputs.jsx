@@ -1149,7 +1149,6 @@ export const FabricBrowserInput = observer(({
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
 
-
   const Update = async (target) => {
     await store.ApplyTransaction({
       objectId,
@@ -1306,6 +1305,7 @@ export const FabricBrowserInput = observer(({
                       <SVGIcon
                         style={{height: 20, width: 20, minWidth: 20}}
                         icon={
+                          !infoValue?.type ? VideoIcon :
                           infoValue?.type === "main" ? VideoIcon :
                             infoValue?.type === "composition" ?
                             CompositionIcon : ClipIcon
@@ -1314,7 +1314,7 @@ export const FabricBrowserInput = observer(({
                   }
                   <Tooltip label={name || label} offset={10} openDelay={500}>
                     <Text fz="sm" fw={600} maw={400} truncate>
-                      { name || label }
+                      { targetDetails.name || name || label }
                     </Text>
                   </Tooltip>
                   {
