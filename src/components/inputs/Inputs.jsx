@@ -1111,6 +1111,7 @@ export const FabricBrowserInput = observer(({
   const targetHash = ExtractHashFromLink(value);
   const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
   const targetDetails = fabricBrowserStore.objectDetails[targetId] || {};
+  const updatable = targetHash === targetDetails?.versionHash;
 
   let name = value ? GetName(value) : "";
   let duration, subtitle;
@@ -1140,8 +1141,6 @@ export const FabricBrowserInput = observer(({
 
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
-
-  const updatable = !(targetHash !== targetDetails?.versionHash);
 
   const Update = async (target) => {
     await store.ApplyTransaction({
