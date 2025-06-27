@@ -192,6 +192,8 @@ class FabricBrowserStore {
       };
     }
 
+    this.objectDetails[objectId].versionHash  = yield this.client.LatestVersionHash({objectId: objectId});
+
     return this.objectDetails[objectId];
   });
 

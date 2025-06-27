@@ -1103,7 +1103,6 @@ export const FabricBrowserInput = observer(({
   const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
-  const [updatable, setUpdatable] = useState(false);
 
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
@@ -1111,7 +1110,8 @@ export const FabricBrowserInput = observer(({
   const infoValue = store.GetMetadata({objectId, path, field: `${field}_info`});
   const targetHash = ExtractHashFromLink(value);
   const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
-  const targetDetails = fabricBrowserStore.objectDetails[targetId];
+  const targetDetails = fabricBrowserStore.objectDetails[targetId] || {};
+  const updatable = targetHash === targetDetails?.versionHash;
 
   let name = value ? GetName(value) : "";
   let duration, subtitle;
@@ -1138,13 +1138,6 @@ export const FabricBrowserInput = observer(({
   }, [value, previewable, previewIsAnimation]);
 
   useEffect(() => {
-    if(!targetHash) {
-      setUpdatable(false);
-      return;
-    }
-
-    rootStore.client.LatestVersionHash({versionHash: targetHash})
-      .then(latestHash => setUpdatable(targetHash !== latestHash));
 
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
@@ -1336,7 +1329,8 @@ export const FabricBrowserInput = observer(({
                 {
                   fabricBrowserProps.video ? null :
                     <Text fz={8} color="dimmed">
-                      { targetHash }
+                      Linked version: { targetHash } <br/>
+                      Latest version: { targetDetails.versionHash }
                     </Text>
                 }
               </Container>

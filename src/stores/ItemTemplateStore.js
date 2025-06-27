@@ -32,8 +32,11 @@ class ItemTemplateStore {
 
     const libraryId = yield this.rootStore.LibraryId({objectId: itemTemplateId});
 
+    const versionHash = yield this.client.LatestVersionHash({objectId: itemTemplateId});
+
     this.itemTemplates[itemTemplateId] = {
       ...info,
+      versionHash,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
           libraryId: libraryId,
