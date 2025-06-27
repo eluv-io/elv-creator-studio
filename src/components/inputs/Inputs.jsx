@@ -1141,6 +1141,8 @@ export const FabricBrowserInput = observer(({
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
 
+  const updatable = !(targetHash !== targetDetails?.versionHash);
+
   const Update = async (target) => {
     await store.ApplyTransaction({
       objectId,
@@ -1221,13 +1223,13 @@ export const FabricBrowserInput = observer(({
             !value || fabricBrowserProps.video ? null :
               <IconButton
                 variant="transparent"
-                disabled={targetHash !== targetDetails?.versionHash}
+                disabled={!updatable}
                 label={
-                  !(targetHash !== targetDetails?.versionHash) ?
+                  updatable ?
                     LocalizeString(rootStore.l10n.components.fabric_browser.update_link, {item: name || label}) :
                     rootStore.l10n.components.fabric_browser.link_at_latest
                 }
-                Icon={!(targetHash !== targetDetails?.versionHash) ? IconUnlink : IconLink}
+                Icon={updatable ? IconUnlink : IconLink}
                 color="purple.6"
                 onClick={() => {
                   Confirm({
