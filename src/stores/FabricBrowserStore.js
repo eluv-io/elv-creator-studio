@@ -186,7 +186,9 @@ class FabricBrowserStore {
         hasCompositions,
         compositions,
         hasClips: clips.length > 0,
-        clips
+        clips,
+        type: "main",
+        source: "Main Content"
       };
     }
 
