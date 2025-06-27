@@ -95,7 +95,7 @@ class FabricBrowserStore {
         isVideo = true;
         duration = this.FormatDuration(duration);
 
-        const videoKey = Object.keys(metadata?.offerings?.[offering]?.media_struct?.streams).find(key => key.startsWith("video"));
+        const videoKey = Object.keys(metadata?.offerings?.[offering]?.media_struct?.streams || {}).find(key => key.startsWith("video"));
         if(videoKey) {
           frameRate = (metadata.offerings[offering].media_struct.streams[videoKey].rate)?.toString() || "";
 
