@@ -23,7 +23,7 @@ class ItemTemplateStore {
       }));
   });
 
-  LoadItemTemplate = flow(async function * ({itemTemplateId, force=false}) {
+  LoadItemTemplate = flow(function * ({itemTemplateId, force=false}) {
     if(this.itemTemplates[itemTemplateId] && !force) { return; }
 
     yield this.LoadItemTemplates();
@@ -32,11 +32,11 @@ class ItemTemplateStore {
 
     const libraryId = yield this.rootStore.LibraryId({objectId: itemTemplateId});
 
-    const latestHash = await this.client.LatestVersionHash({objectId: itemTemplateId});
+    const versionHash = yield this.client.LatestVersionHash({objectId: itemTemplateId});
 
     this.itemTemplates[itemTemplateId] = {
       ...info,
-      latestHash,
+      versionHash,
       metadata: {
         public: (yield this.client.ContentObjectMetadata({
           libraryId: libraryId,

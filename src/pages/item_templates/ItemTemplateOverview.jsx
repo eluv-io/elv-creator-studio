@@ -44,7 +44,7 @@ const ItemTemplateOverview = observer(() => {
               }
               <Text fz="sm" color="dimmed">{ itemTemplate.objectId }</Text>
               <Text fz="xs" color="dimmed">{metadata?.nft?.address}</Text>
-              <Text fz="xs" color="dimmed">{itemTemplate.latestHash}</Text>
+              <Text fz="xs" color="dimmed">{itemTemplate.versionHash}</Text>
               <Text fz="sm" mt="md">{metadata?.nft?.description}</Text>
             </Container>
           </Group>

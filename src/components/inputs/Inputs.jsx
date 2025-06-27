@@ -1103,8 +1103,6 @@ export const FabricBrowserInput = observer(({
   const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
-  const [updatable, setUpdatable] = useState(false);
-  const [latestHashState, setLatestHashState] = useState("");
 
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
@@ -1112,7 +1110,7 @@ export const FabricBrowserInput = observer(({
   const infoValue = store.GetMetadata({objectId, path, field: `${field}_info`});
   const targetHash = ExtractHashFromLink(value);
   const targetId = !targetHash ? "" : rootStore.utils.DecodeVersionHash(targetHash).objectId;
-  const targetDetails = fabricBrowserStore.objectDetails[targetId];
+  const targetDetails = fabricBrowserStore.objectDetails[targetId] || {};
 
   let name = value ? GetName(value) : "";
   let duration, subtitle;
@@ -1139,16 +1137,6 @@ export const FabricBrowserInput = observer(({
   }, [value, previewable, previewIsAnimation]);
 
   useEffect(() => {
-    if(!targetHash) {
-      setUpdatable(false);
-      return;
-    }
-
-    rootStore.client.LatestVersionHash({versionHash: targetHash})
-      .then(latestHash => {
-          setUpdatable(targetHash !== latestHash);
-          setLatestHashState(latestHash);
-      });
 
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
@@ -1233,13 +1221,13 @@ export const FabricBrowserInput = observer(({
             !value || fabricBrowserProps.video ? null :
               <IconButton
                 variant="transparent"
-                disabled={!updatable}
+                disabled={targetHash !== targetDetails?.versionHash}
                 label={
-                  updatable ?
+                  !(targetHash !== targetDetails?.versionHash) ?
                     LocalizeString(rootStore.l10n.components.fabric_browser.update_link, {item: name || label}) :
                     rootStore.l10n.components.fabric_browser.link_at_latest
                 }
-                Icon={updatable ? IconUnlink : IconLink}
+                Icon={!(targetHash !== targetDetails?.versionHash) ? IconUnlink : IconLink}
                 color="purple.6"
                 onClick={() => {
                   Confirm({
@@ -1341,7 +1329,7 @@ export const FabricBrowserInput = observer(({
                   fabricBrowserProps.video ? null :
                     <Text fz={8} color="dimmed">
                       Linked version: { targetHash } <br/>
-                      Latest version: { latestHashState }
+                      Latest version: { targetDetails.versionHash }
                     </Text>
                 }
               </Container>
