@@ -188,7 +188,7 @@ class EditStore {
 
     this.writeInfo[objectId] = {
       writeToken,
-      fabricNodeUrl: yield this.client.WriteTokenNodeUrl({writeToken})
+      fabricNodeUrl: yield this.client.WriteTokenNodeUrlNetwork({writeToken})
     };
 
     this.SaveWriteInfo();
