@@ -421,7 +421,100 @@ class TenantStore {
 
     yield new Promise(resolve => setTimeout(resolve, 5000));
 
+    this.ClearCaches({mode});
+
     yield this.Reload();
+  });
+
+  ClearCaches = flow(function * ({mode}) {
+    yield this.rootStore.mediaPropertyStore.LoadMediaProperties(true);
+
+    const propertyInfo = yield Promise.all(
+      this.rootStore.mediaPropertyStore.allMediaProperties.map(async property =>
+        (this.rootStore.mediaPropertyStore.mediaProperties?.[property.objectId]
+          ?.metadata?.public?.asset_metadata?.info) ||
+          await this.client.ContentObjectMetadata({
+            libraryId: property.libraryId,
+            objectId: property.objectId,
+            metadataSubtree: "public/asset_metadata/info",
+            select: [
+              "slug",
+              "domain"
+            ]
+          })
+      )
+    );
+
+    let urls = [];
+    if(this.rootStore.network === "main") {
+      if(mode === "staging") {
+        urls = [
+          "https://wallet.preview.contentfabric.io",
+          // Secondary custom domains
+          ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
+        ];
+      } else {
+        urls = [
+          "https://wallet.contentfabric.io",
+          // All custom domains
+          ...(propertyInfo.map(info => info?.domain?.custom_domain)),
+          ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
+        ];
+      }
+    } else {
+      urls = [
+        "https://wallet.demov3.contentfabric.io",
+        // All custom domains
+        ...(propertyInfo.map(info => info?.domain?.custom_domain)),
+        ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
+      ];
+    }
+
+    urls = urls
+      .map(u => (u || "").trim())
+      .filter(u => u)
+      .map(u => u.startsWith("http") ? u : `https://${u}`)
+      .filter((x, i, a) => a.indexOf(x) == i);
+
+    const propertySlugs = [
+      ...(propertyInfo
+        .map(property => property.slug)
+        .filter(s => s)
+      ),
+      ...this.rootStore.mediaPropertyStore.allMediaProperties.map(property => property.mediaPropertySlug)
+    ]
+      .filter((x, i, a) => a.indexOf(x) == i)
+
+    yield Promise.all(
+      urls.map(async url => {
+        // Clear URL
+        await this.client.walletClient.PurgeUrl({
+          tenantId: this.rootStore.tenantId,
+          url
+        });
+
+        // Clear all property slugs for this url
+        await Promise.all(
+          propertySlugs.map(async slug => {
+            try {
+              const propertyUrl = new URL(url);
+              propertyUrl.pathname = slug;
+
+              await this.client.walletClient.PurgeUrl({
+                tenantId: this.rootStore.tenantId,
+                url: propertyUrl
+              });
+            } catch(error) {
+              this.DebugLog({
+                message: `Failed to purge url ${url} ${slug}`,
+                error,
+                level: this.logLevels.DEBUG_LEVEL_ERROR
+              });
+            }
+          })
+        );
+      })
+    );
   });
 
   get client() {

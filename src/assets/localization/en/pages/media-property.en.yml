@@ -343,8 +343,12 @@ form:
 
   domain:
     custom_domain:
-      label: Custom Domain
+      label: Primary Custom Domain
       description: Specify the custom domain that will be used for this property
+    secondary_custom_domains:
+      label: Secondary Custom Domains
+      description: Specify any additional custom domains that will be used for this property, such as for staging environments
+      fieldLabel: Secondary Custom Domain
     features:
       features:
         label: Features

@@ -269,6 +269,13 @@ const MediaPropertyDomainSettings = observer(() => {
         field="custom_domain"
         defaultValue=""
       />
+      <Inputs.List
+        {...inputProps}
+        {...l10n.domain.secondary_custom_domains}
+        subcategory={l10n.categories.domain_settings}
+        path="/public/asset_metadata/info/domain"
+        field="secondary_custom_domains"
+      />
       <Title order={3} mt={50} mb="md">
         { l10n.categories.purchase_settings }
       </Title>
