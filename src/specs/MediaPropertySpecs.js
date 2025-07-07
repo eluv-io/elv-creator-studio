@@ -353,7 +353,10 @@ export const MediaPropertySpec = {
   login: {
     styling: {},
     terms: {},
-    consent: {}
+    consent: {},
+    settings: {
+      provider: "ory"
+    }
   },
   pages: {},
   page_ids: {
