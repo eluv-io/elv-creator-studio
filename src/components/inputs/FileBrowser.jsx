@@ -559,13 +559,13 @@ const FileBrowserTable = observer(({
   );
 });
 
-const FileBrowser = observer(({store, objectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
+const FileBrowser = observer(({store, objectId, initialSelectedObjectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
   const [path, setPath] = useState("/");
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [selectedRecords, setSelectedRecords] = useState([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
-  const [selectedObjectId, setSelectedObjectId] = useState(objectId);
+  const [selectedObjectId, setSelectedObjectId] = useState(initialSelectedObjectId || objectId);
   const [showFabricBrowser, setShowFabricBrowser] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -592,7 +592,7 @@ const FileBrowser = observer(({store, objectId, multiple, title, extensions=[], 
           />
       }
       <Modal opened={opened} withCloseButton={false} onClose={() => {}} centered size={1000} title={title} padding="xl">
-        { showUploadForm ? <UploadForm objectId={objectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
+        { showUploadForm ? <UploadForm objectId={selectedObjectId} path={path} Close={() => setShowUploadForm(false)} /> : null }
         <Container px={0}>
           <Group mb="xs" align="center" spacing="xs">
             <IconButton

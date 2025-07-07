@@ -768,6 +768,9 @@ const SingleImageInput = observer(({
 
   const imageMetadata = store.GetMetadata({objectId, path, field});
 
+  let targetHash = imageMetadata ? ExtractHashFromLink(imageMetadata) : undefined;
+  let targetId = targetHash ? rootStore.client.utils.DecodeVersionHash(targetHash)?.objectId : undefined;
+
   let imageUrl;
   if(url) {
     imageUrl = typeof imageMetadata === "string" ? imageMetadata : undefined;
@@ -881,6 +884,7 @@ const SingleImageInput = observer(({
             url={url}
             title={LocalizeString(rootStore.l10n.components.inputs[label ? "select_file_label" : "select_file"], {item: label})}
             objectId={objectId}
+            initialSelectedObjectId={targetId}
             extensions="image"
             Submit={record => {
               store.ApplyTransaction({

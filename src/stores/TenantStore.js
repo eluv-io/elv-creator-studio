@@ -483,7 +483,7 @@ class TenantStore {
       ),
       ...this.rootStore.mediaPropertyStore.allMediaProperties.map(property => property.mediaPropertySlug)
     ]
-      .filter((x, i, a) => a.indexOf(x) == i)
+      .filter((x, i, a) => a.indexOf(x) == i);
 
     yield Promise.all(
       urls.map(async url => {

@@ -71,128 +71,141 @@ class FabricBrowserStore {
 
   LoadObjectDetails = flow(function * ({libraryId, objectId}) {
     if(!this.objectDetails[objectId]) {
-      libraryId = libraryId || (yield this.client.ContentObjectLibraryId({objectId}));
-      const metadata = yield this.client.ContentObjectMetadata({
-        libraryId,
-        objectId,
-        select: [
-          "public/name",
-          "channel",
-          "clips",
-          "offerings/*/media_struct/duration_rat",
-          "offerings/*/media_struct/streams/*/rate",
-        ]
-      });
+      try {
+        libraryId = libraryId || (yield this.client.ContentObjectLibraryId({objectId}));
+        const metadata = yield this.client.ContentObjectMetadata({
+          libraryId,
+          objectId,
+          select: [
+            "public/name",
+            "channel",
+            "clips",
+            "offerings/*/media_struct/duration_rat",
+            "offerings/*/media_struct/streams/*/rate",
+          ]
+        });
 
-      const offering = metadata?.offerings?.default ?
-        "default" :
-        Object.keys(metadata?.offerings || {})[0];
+        const offering = metadata?.offerings?.default ?
+          "default" :
+          Object.keys(metadata?.offerings || {})[0];
 
-      let duration = metadata?.offerings?.[offering]?.media_struct?.duration_rat;
+        let duration = metadata?.offerings?.[offering]?.media_struct?.duration_rat;
 
-      let isVideo, frameRate;
-      if(duration) {
-        isVideo = true;
-        duration = this.FormatDuration(duration);
+        let isVideo, frameRate;
+        if(duration) {
+          isVideo = true;
+          duration = this.FormatDuration(duration);
 
-        const videoKey = Object.keys(metadata?.offerings?.[offering]?.media_struct?.streams || {}).find(key => key.startsWith("video"));
-        if(videoKey) {
-          frameRate = (metadata.offerings[offering].media_struct.streams[videoKey].rate)?.toString() || "";
+          const videoKey = Object.keys(metadata?.offerings?.[offering]?.media_struct?.streams || {}).find(key => key.startsWith("video"));
+          if(videoKey) {
+            frameRate = (metadata.offerings[offering].media_struct.streams[videoKey].rate)?.toString() || "";
 
-          if(frameRate.includes("/")) {
-            const num = parseFloat(frameRate.split("/")[0]);
-            const denom = parseFloat(frameRate.split("/")[1]);
+            if(frameRate.includes("/")) {
+              const num = parseFloat(frameRate.split("/")[0]);
+              const denom = parseFloat(frameRate.split("/")[1]);
 
-            frameRate = num / denom;
-          } else {
-            frameRate = parseFloat(frameRate);
+              frameRate = num / denom;
+            } else {
+              frameRate = parseFloat(frameRate);
+            }
           }
         }
-      }
 
-      let hasCompositions = Object.keys(metadata?.channel?.offerings || {}).length > 0;
-      let hasClips = !!Object.keys(metadata?.clips?.metadata_tags || {})
-        .find(category => metadata.clips.metadata_tags[category]?.tags?.length > 0);
+        let hasCompositions = Object.keys(metadata?.channel?.offerings || {}).length > 0;
+        let hasClips = !!Object.keys(metadata?.clips?.metadata_tags || {})
+          .find(category => metadata.clips.metadata_tags[category]?.tags?.length > 0);
 
-      let compositions = [];
-      if(hasCompositions) {
-        compositions = Object.keys(metadata.channel?.offerings || {})?.map(compositionKey => {
-          return {
-            id: `composition-${compositionKey}`,
-            type: "composition",
-            source: "Composition",
-            libraryId,
-            objectId,
-            compositionKey,
-            name: metadata.channel?.offerings[compositionKey]?.display_name || compositionKey,
-            duration: this.FormatDuration(
-              (metadata.channel?.offerings[compositionKey]?.items || [])
-                .map(item => this.ParseRat(item.slice_end_rat) - this.ParseRat(item.slice_start_rat))
-                .reduce((a, b) => a + b, 0)
-            )
-          };
-        });
-      }
-
-      let clips = [];
-
-      if(frameRate) {
-        const myClips = yield this.LoadMyClips({objectId});
-        if(myClips?.length > 0) {
-          myClips.forEach((clip, index) => {
-            const startTime = clip.clipInFrame / frameRate;
-            const endTime = clip.clipOutFrame / frameRate;
-
-            clips.push({
-              ...clip,
-              id: `my-clip-${clip.clipKey || index}`,
-              type: "clip",
-              source: "My Clips",
-              trackKey: "my_clips",
-              startTime,
-              endTime,
-              duration: this.FormatDuration(endTime - startTime)
-            });
-          });
-        }
-      }
-
-      if(hasClips) {
-        Object.keys(metadata.clips?.metadata_tags || {}).forEach(trackKey => {
-          (metadata.clips.metadata_tags[trackKey]?.tags || []).forEach((tag, index) =>
-            clips.push({
-              id: `clip-${trackKey}-${index}`,
-              type: "clip",
-              source: metadata.clips.metadata_tags[trackKey]?.label || trackKey,
+        let compositions = [];
+        if(hasCompositions) {
+          compositions = Object.keys(metadata.channel?.offerings || {})?.map(compositionKey => {
+            return {
+              id: `composition-${compositionKey}`,
+              type: "composition",
+              source: "Composition",
               libraryId,
               objectId,
-              trackKey,
-              name: tag.text,
-              startTime: tag.start_time / 1000,
-              endTime: tag.end_time / 1000,
-              duration: this.FormatDuration(tag.end_time / 1000 - (tag.start_time || 0) / 1000)
-            })
-          );
-        });
-      }
+              compositionKey,
+              name: metadata.channel?.offerings[compositionKey]?.display_name || compositionKey,
+              duration: this.FormatDuration(
+                (metadata.channel?.offerings[compositionKey]?.items || [])
+                  .map(item => this.ParseRat(item.slice_end_rat) - this.ParseRat(item.slice_start_rat))
+                  .reduce((a, b) => a + b, 0)
+              )
+            };
+          });
+        }
 
-      this.objectDetails[objectId] = {
-        libraryId,
-        objectId,
-        name: metadata?.public?.name || objectId,
-        isVideo,
-        duration,
-        frameRate,
-        hasCompositions,
-        compositions,
-        hasClips: clips.length > 0,
-        clips,
-        type: "main",
-        source: "Main Content"
-      };
+        let clips = [];
+
+        if(frameRate) {
+          const myClips = yield this.LoadMyClips({objectId});
+          if(myClips?.length > 0) {
+            myClips.forEach((clip, index) => {
+              const startTime = clip.clipInFrame / frameRate;
+              const endTime = clip.clipOutFrame / frameRate;
+
+              clips.push({
+                ...clip,
+                id: `my-clip-${clip.clipKey || index}`,
+                type: "clip",
+                source: "My Clips",
+                trackKey: "my_clips",
+                startTime,
+                endTime,
+                duration: this.FormatDuration(endTime - startTime)
+              });
+            });
+          }
+        }
+
+        if(hasClips) {
+          Object.keys(metadata.clips?.metadata_tags || {}).forEach(trackKey => {
+            (metadata.clips.metadata_tags[trackKey]?.tags || []).forEach((tag, index) =>
+              clips.push({
+                id: `clip-${trackKey}-${index}`,
+                type: "clip",
+                source: metadata.clips.metadata_tags[trackKey]?.label || trackKey,
+                libraryId,
+                objectId,
+                trackKey,
+                name: tag.text,
+                startTime: tag.start_time / 1000,
+                endTime: tag.end_time / 1000,
+                duration: this.FormatDuration(tag.end_time / 1000 - (tag.start_time || 0) / 1000)
+              })
+            );
+          });
+        }
+
+        this.objectDetails[objectId] = {
+          libraryId,
+          objectId,
+          name: metadata?.public?.name || objectId,
+          isVideo,
+          duration,
+          frameRate,
+          hasCompositions,
+          compositions,
+          hasClips: clips.length > 0,
+          clips,
+          type: "main",
+          source: "Main Content"
+        };
+      } catch(error) {
+        this.DebugLog({error});
+
+        return {
+          libraryId,
+          objectId,
+          name: objectId,
+          isVideo: false,
+          type: "main",
+          source: "Main Content"
+        };
+      }
     }
 
-    this.objectDetails[objectId].versionHash  = yield this.client.LatestVersionHash({objectId: objectId});
+    this.objectDetails[objectId].versionHash = yield this.client.LatestVersionHash({objectId: objectId});
 
     return this.objectDetails[objectId];
   });
