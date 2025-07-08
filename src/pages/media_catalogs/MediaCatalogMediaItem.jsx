@@ -280,6 +280,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
                         {...l10n.media.end_time}
                         subcategory={l10n.categories.media}
                         field="end_time"
+                        componentProps={{withSeconds: true}}
                       />
                       <Inputs.Checkbox
                         {...inputProps}
