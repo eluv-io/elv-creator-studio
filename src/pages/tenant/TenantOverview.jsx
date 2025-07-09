@@ -333,8 +333,6 @@ const TenantOverview = observer(() => {
       <Title fw={500} order={3} mt={50} mb="md">{ l10n.marketplace.plural }</Title>
       <StatusTable type="marketplace" path="/marketplaces" Load={async () => await tenantStore.MarketplaceStatus()} />
 
-      <Title fw={500} order={3} mt={50} mb="md">{ l10n.site.plural }</Title>
-      <StatusTable type="site" path="/sites" aspectRatio={16/9} Load={async () => await tenantStore.SiteStatus()} />
     </PageContent>
   );
 });

@@ -15,7 +15,6 @@ class EditStore {
   types = {
     "tenant": { storeKey: "tenantStore"},
     "marketplace": { storeKey: "marketplaceStore", namePath: "/public/asset_metadata/info/branding/name"},
-    "site": { storeKey: "siteStore", namePath: "/public/asset_metadata/info/name"},
     "item_template": { storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"},
     "media_catalog": { storeKey: "mediaCatalogStore", namePath: "/public/asset_metadata/info/name"},
     "media_property": { storeKey: "mediaPropertyStore", namePath: "/public/asset_metadata/info/name"},

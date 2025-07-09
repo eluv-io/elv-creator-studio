@@ -9,7 +9,6 @@ import {
   rootStore,
   marketplaceStore,
   tenantStore,
-  siteStore,
   itemTemplateStore,
   mediaCatalogStore,
   mediaPropertyStore, permissionSetStore
