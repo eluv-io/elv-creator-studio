@@ -4,7 +4,6 @@ components:
     media_properties: Media Properties
     media_catalogs: Media Catalogs
     marketplaces: Marketplaces
-    sites: Sites
     item_templates: Item Templates
     permission_sets: Permission Sets
   actions:
@@ -111,7 +110,6 @@ components:
     error: There was an error saving this object
     types:
       tenant: Tenant
-      site: Site
       marketplace: Marketplace
       item_template: Item Template
       media_catalog: Media Catalog

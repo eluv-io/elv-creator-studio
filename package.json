@@ -15,7 +15,7 @@
     "lint-scss-fix": "npx stylelint \"src/**/*.{css,scss}\" --fix"
   },
   "dependencies": {
-    "@eluvio/elv-client-js": "^4.0.144",
+    "@eluvio/elv-client-js": "^4.0.147",
     "@eluvio/elv-player-js": "^2.0.47",
     "@emotion/react": "^11.11.1",
     "@hello-pangea/dnd": "^16.3.0",
@@ -48,7 +48,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-inlinesvg": "^4.2.0",
-    "react-router-dom": "^6.14.2",
+    "react-router-dom": "^6.30.1",
     "sanitize-html": "^2.11.0",
     "stream-browserify": "^3.0.0",
     "thumbhash": "^0.1.1",
