@@ -143,7 +143,10 @@ const MediaCatalogItemTable = observer(({
 
   const mediaItems =
     Object.values(content)
-      .filter(mediaItem => !excludedMediaIds.includes(mediaItem.id))
+      .filter(mediaItem =>
+        mediaItem.id &&
+        !excludedMediaIds.includes(mediaItem.id)
+      )
       .filter(mediaItem =>
         selectedContentType !== "media" ||
         !mediaTypeFilter ||
