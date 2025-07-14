@@ -1171,8 +1171,7 @@ export const FabricBrowserInput = observer(({
 
         if(
           !target?.objectId ||
-          !fabricBrowserProps.video ||
-          !(fabricBrowserProps.allowCompositions || fabricBrowserProps.allowClips)
+          !fabricBrowserProps.video
         ) {
           store.SetMetadata({
             objectId,

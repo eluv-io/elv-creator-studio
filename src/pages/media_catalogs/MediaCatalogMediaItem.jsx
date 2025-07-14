@@ -11,7 +11,7 @@ import {
 } from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
 import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
-import {MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
+import {MediaCatalogAdditionalViewSpec, MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
 import {useEffect, useState} from "react";
 
 const aspectRatioOptions = Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
@@ -310,6 +310,43 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       />
                     </>
                 }
+                {
+                  (mediaItem.additional_views || []).length === 0 ? null :
+                    <Inputs.Text
+                      {...inputProps}
+                      {...l10n.media.additional_views_label}
+                      subcategory={l10n.categories.additional_views}
+                      field="additional_views_label"
+                    />
+                }
+                <Inputs.List
+                  {...inputProps}
+                  {...l10n.media.additional_views}
+                  subcategory={l10n.categories.additional_views}
+                  field="additional_views"
+                  newItemSpec={MediaCatalogAdditionalViewSpec}
+                  renderItem={props =>
+                    <>
+                      <Inputs.Text
+                        {...props}
+                        {...l10n.common.label}
+                        subcategory={l10n.categories.additional_views}
+                        field="label"
+                      />
+                      <Inputs.FabricBrowser
+                        {...props}
+                        {...l10n.media.media_link}
+                        subcategory={l10n.categories.additional_views}
+                        fabricBrowserProps={{
+                          video: true,
+                        }}
+                        autoUpdate={false}
+                        field="media_link"
+                        previewable
+                      />
+                    </>
+                  }
+                />
               </>
           }
 
