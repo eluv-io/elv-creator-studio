@@ -236,7 +236,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
             previewable
           />
           {
-            !mediaItem.media_link || (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
+            (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
               <>
                 {
                   !offerings || offerings.length <= 1 ? null :
