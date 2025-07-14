@@ -184,55 +184,6 @@ class TenantStore {
     );
   }
 
-  async SiteStatus() {
-    await this.rootStore.siteStore.LoadSites();
-
-    return await Promise.all(
-      this.rootStore.siteStore.allSites.map(async site => {
-        const siteHash = await this.client.LatestVersionHash({objectId: site.objectId});
-
-        // Prefer name from modified metadata, otherwise load directly
-        let name = this.rootStore.siteStore.sites?.[site.objectId]?.metadata?.public?.asset_metadata?.info?.name;
-        if(!name) {
-          name = (await this.client.ContentObjectMetadata({
-            versionHash: siteHash,
-            metadataSubtree: "public/asset_metadata/info/name",
-          })) || site.name;
-        }
-
-        const latestLink = this.TenantLinkSlugAndHash({objectId: site.objectId, links: tenantStore.latestTenant.metadata.public.asset_metadata.sites});
-        const productionLink = this.TenantLinkSlugAndHash({objectId: site.objectId, links: tenantStore.productionTenant?.metadata.public.asset_metadata.sites});
-        const stagingLink = this.TenantLinkSlugAndHash({objectId: site.objectId, links: tenantStore.stagingTenant?.metadata.public.asset_metadata.sites});
-
-
-        return {
-          name,
-          slug: site.siteSlug,
-          imageUrl: FabricUrl({
-            libraryId: site.libraryId,
-            objectId: site.objectId,
-            path: "/meta/public/asset_metadata/info/event_images/hero_background",
-            width: 400
-          }),
-          libraryId: site.libraryId,
-          objectId: site.objectId,
-          siteId: site.objectId,
-          siteHash,
-          versionHash: siteHash,
-          latestHash: latestLink.versionHash,
-          latestDeployed: latestLink.versionHash === siteHash,
-          latestSlug: latestLink.slug,
-          productionHash: productionLink.versionHash,
-          productionDeployed: productionLink.versionHash === siteHash,
-          productionSlug: productionLink.slug,
-          stagingHash: stagingLink.versionHash,
-          stagingDeployed: stagingLink.versionHash === siteHash,
-          stagingSlug: stagingLink.slug
-        };
-      })
-    );
-  }
-
   constructor(rootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
@@ -280,23 +231,13 @@ class TenantStore {
         versionHash: marketplaceHash,
         marketplaceSlug
       };
-    });
-
-    const sites = {};
-    Object.keys(metadata.public?.asset_metadata?.sites || {}).forEach(siteSlug => {
-      const siteHash = ExtractHashFromLink(metadata.public.asset_metadata.sites[siteSlug]);
-      sites[this.utils.DecodeVersionHash(siteHash).objectId] = {
-        versionHash: siteHash,
-        siteSlug
-      };
-    });
+    });;
 
     const tenant = {
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
       versionHash: tenantHash,
       metadata,
-      marketplaces,
-      sites
+      marketplaces
     };
 
     if(environment === "latest") {
@@ -318,11 +259,7 @@ class TenantStore {
     const objectId = this.client.utils.DecodeVersionHash(versionHash).objectId;
 
     let path, metadataPath, store;
-    if(type === "site") {
-      path = "/public/asset_metadata/sites";
-      metadataPath = "/meta/public/asset_metadata";
-      store = this.rootStore.siteStore;
-    } else if(type === "marketplace") {
+    if(type === "marketplace") {
       path = "/public/asset_metadata/marketplaces";
       metadataPath = "/meta/public/asset_metadata";
       store = this.rootStore.marketplaceStore;
@@ -385,9 +322,7 @@ class TenantStore {
     const objectId = this.client.utils.DecodeVersionHash(versionHash).objectId;
 
     let path;
-    if(type === "site") {
-      path = "/public/asset_metadata/sites";
-    } else if(type === "marketplace") {
+    if(type === "marketplace") {
       path = "/public/asset_metadata/marketplaces";
     } else if(type === "mediaProperty") {
       path = "/public/asset_metadata/media_properties";

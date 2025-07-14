@@ -101,7 +101,6 @@ class DatabaseStore {
     const typeNames = {
       tenant: "Media Wallet Settings",
       marketplace: "Marketplace",
-      site: "Drop Event Site",
       template: "Template",
       mezzanine: "Title",
       mediaCatalog: "Media Catalog",
@@ -196,7 +195,6 @@ class DatabaseStore {
                 }
               },
               "marketplaces": {},
-              "sites": {},
               "media_properties": {},
               "media_catalogs": {},
               "slug": GenerateUUID(),
@@ -296,7 +294,6 @@ class DatabaseStore {
     let content = {
       tenant: undefined,
       marketplaces: {},
-      sites: {},
       templates: {},
       mediaCatalogs: {},
       mediaProperties: {},
@@ -316,10 +313,6 @@ class DatabaseStore {
           object.description = object.metadata.public?.asset_metadata?.info?.branding?.description || "";
 
           content.marketplaces[object.objectId] = object;
-          break;
-        case "site":
-          object.brandedName = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
-          content.sites[object.objectId] = object;
           break;
         case "tenant":
           content.tenant = object;
@@ -368,24 +361,6 @@ class DatabaseStore {
       content.mediaProperties[mediaPropertyId].tenantSlug = tenantSlug;
       content.mediaProperties[mediaPropertyId].mediaPropertySlug = content.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.slug;
     });
-
-    yield Promise.all(
-      Object.keys(content.sites).map(async siteId => {
-        content.sites[siteId].tenantSlug = tenantSlug;
-        content.sites[siteId].siteSlug = content.sites[siteId].metadata.public.asset_metadata.slug || "";
-
-        // Determine marketplaces
-        content.sites[siteId].primaryMarketplace = await this.MarketplaceInfo(
-          content.sites[siteId].metadata.public?.asset_metadata?.info.marketplace_info || {}
-        );
-
-        content.sites[siteId].additionalMarketplaces = await Promise.all(
-          (content.sites[siteId].metadata.public?.asset_metadata?.info.additional_marketplaces || []).map(async marketplaceInfo =>
-            await this.MarketplaceInfo(marketplaceInfo)
-          )
-        );
-      })
-    );
 
     yield Promise.all(
       Object.keys(content.mediaCatalogs).map(async mediaCatalogId => {
@@ -593,15 +568,6 @@ class DatabaseStore {
     );
 
     yield Promise.all(
-      Object.values(content.sites).map(async site => {
-        site = { ...site };
-        delete site.metadata;
-
-        await this.WriteDocument({batch, collection: "sites", document: site.objectId, content: site});
-      })
-    );
-
-    yield Promise.all(
       Object.values(content.mediaCatalogs).map(async mediaCatalog => {
         mediaCatalog = { ...mediaCatalog };
         delete mediaCatalog.metadata;
@@ -723,43 +689,6 @@ class DatabaseStore {
       batch,
       collection: "marketplaces",
       document: marketplaceId,
-      content: object
-    });
-  });
-
-  SaveSite = flow(function * ({batch, siteId}) {
-    const libraryId = yield this.client.ContentObjectLibraryId({objectId: siteId});
-    const metadata = {
-      public: yield this.client.ContentObjectMetadata({
-        libraryId,
-        objectId: siteId,
-        metadataSubtree: "/public"
-      })
-    };
-
-    const marketplaceInfo = metadata.public?.asset_metadata?.info.marketplace_info || {};
-    const additionalMarketplaces = metadata.public?.asset_metadata?.info.additional_marketplaces || [];
-
-    let object = {
-      libraryId,
-      objectId: siteId,
-      tenantSlug: this.rootStore.tenantInfo.tenantSlug,
-      siteSlug: metadata.public?.asset_metadata?.slug,
-      name: metadata.public?.name,
-      brandedName:
-        metadata.public?.asset_metadata?.info?.name ||
-        metadata.public?.name,
-      description: metadata.public?.asset_metadata?.info?.branding?.description || "",
-      primaryMarketplace: yield this.MarketplaceInfo(marketplaceInfo),
-      additionalMarketplaces: yield Promise.all(
-        additionalMarketplaces.map(async marketplaceInfo => await this.MarketplaceInfo(marketplaceInfo))
-      )
-    };
-
-    yield this.WriteDocument({
-      batch,
-      collection: "sites",
-      document: siteId,
       content: object
     });
   });

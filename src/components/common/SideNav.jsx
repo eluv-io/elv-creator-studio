@@ -6,7 +6,6 @@ import {NavLink, useLocation} from "react-router-dom";
 import {rootStore} from "@/stores";
 
 import {
-  IconAppWindow,
   IconBuildingStore,
   IconSitemap,
   IconArrowBackUp,
@@ -25,8 +24,7 @@ const mainLinks = [
   { label: rootStore.l10n.components.nav.media_catalogs, icon: <IconPlaylist />, path: "/media-catalogs"},
   { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBuildingStore />, path: "/marketplaces"},
   { label: rootStore.l10n.components.nav.item_templates, icon: <IconTemplate />, path: "/item-templates"},
-  { label: rootStore.l10n.components.nav.permission_sets, icon: <IconLockOpen />, path: "/permission-sets"},
-  { label: rootStore.l10n.components.nav.sites, icon: <IconAppWindow />, path: "/sites"}
+  { label: rootStore.l10n.components.nav.permission_sets, icon: <IconLockOpen />, path: "/permission-sets"}
 ];
 
 const SideNav = observer(({links, backLink}) => {
