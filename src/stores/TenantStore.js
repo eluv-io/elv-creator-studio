@@ -231,23 +231,13 @@ class TenantStore {
         versionHash: marketplaceHash,
         marketplaceSlug
       };
-    });
-
-    const sites = {};
-    Object.keys(metadata.public?.asset_metadata?.sites || {}).forEach(siteSlug => {
-      const siteHash = ExtractHashFromLink(metadata.public.asset_metadata.sites[siteSlug]);
-      sites[this.utils.DecodeVersionHash(siteHash).objectId] = {
-        versionHash: siteHash,
-        siteSlug
-      };
-    });
+    });;
 
     const tenant = {
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
       versionHash: tenantHash,
       metadata,
-      marketplaces,
-      sites
+      marketplaces
     };
 
     if(environment === "latest") {
@@ -332,9 +322,7 @@ class TenantStore {
     const objectId = this.client.utils.DecodeVersionHash(versionHash).objectId;
 
     let path;
-    if(type === "site") {
-      path = "/public/asset_metadata/sites";
-    } else if(type === "marketplace") {
+    if(type === "marketplace") {
       path = "/public/asset_metadata/marketplaces";
     } else if(type === "mediaProperty") {
       path = "/public/asset_metadata/media_properties";
