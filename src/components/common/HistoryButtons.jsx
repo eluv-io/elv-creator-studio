@@ -31,10 +31,6 @@ const HistoryButtons = observer(({section}) => {
       store = marketplaceStore;
       objectId = params.marketplaceId;
       break;
-    case "site":
-      store = siteStore;
-      objectId = params.siteId;
-      break;
     case "itemTemplate":
       store = itemTemplateStore;
       objectId = params.itemTemplateId;

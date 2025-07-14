@@ -600,6 +600,7 @@ const ApplyAction = function ({
   label,
   useLabel=true,
   info={},
+  _details,
   Apply,
   Undo,
   Write,
@@ -657,6 +658,7 @@ const ApplyAction = function ({
     label,
     useLabel,
     info,
+    _details,
     Apply,
     Undo,
     Write
@@ -683,6 +685,7 @@ const ApplyTransaction = flow(function * ({
     ...args,
     actionType: "TRANSACTION",
     objectId,
+    _details: txActions.map(action => action.label).join(", "),
     Apply: () => txActions.forEach(action => action.Apply()),
     Undo: () => txActions.forEach(action => action.Undo()),
     Write: async (objectParams) => {

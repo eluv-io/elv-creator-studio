@@ -1170,7 +1170,7 @@ export const FabricBrowserInput = observer(({
         });
 
         if(
-          !target ||
+          !target?.objectId ||
           !fabricBrowserProps.video ||
           !(fabricBrowserProps.allowCompositions || fabricBrowserProps.allowClips)
         ) {
@@ -1197,6 +1197,20 @@ export const FabricBrowserInput = observer(({
             },
             label: "Add link info"
           });
+
+          if(
+            store.GetMetadata({objectId, path, field: "live_video"}) &&
+            (target.startTime || target.endTime || target.compositionKey)
+          ) {
+            store.SetMetadata({
+            objectId,
+            page: location.pathname,
+            path,
+            field: "live_video",
+            value: false,
+            label: "Unset live"
+          });
+          }
         }
       }
     });

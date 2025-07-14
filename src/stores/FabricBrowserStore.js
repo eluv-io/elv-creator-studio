@@ -70,6 +70,8 @@ class FabricBrowserStore {
   });
 
   LoadObjectDetails = flow(function * ({libraryId, objectId}) {
+    if(!objectId) { return; }
+
     if(!this.objectDetails[objectId]) {
       try {
         libraryId = libraryId || (yield this.client.ContentObjectLibraryId({objectId}));
