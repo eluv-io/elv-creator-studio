@@ -124,19 +124,6 @@ class MarketplaceStore {
     yield this.rootStore.databaseStore.SaveMarketplace({marketplaceId: objectId});
   });
 
-  DeployedHash({environment, marketplaceId}) {
-    return this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId]?.versionHash;
-  }
-
-  IsMarketplaceDeployed({environment="latest", marketplaceId}) {
-    return !!this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.marketplaces?.[marketplaceId];
-  }
-
-  IsLatestMarketplaceDeployed({environment, marketplaceId}) {
-    return this.DeployedHash({environment: "latest", marketplaceId}) === this.DeployedHash({environment, marketplaceId});
-  }
-
-
   get client() {
     return this.rootStore.client;
   }

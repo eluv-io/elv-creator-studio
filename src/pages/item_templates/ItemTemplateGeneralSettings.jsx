@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, itemTemplateStore} from "@/stores";
+import {rootStore, itemTemplateStore, mediaCatalogStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import {Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
@@ -119,6 +119,11 @@ const ItemTemplateAttribute = observer(({item, ...props}) => {
 const ItemTemplateGeneralSettings = observer(() => {
   const { itemTemplateId } = useParams();
 
+  useEffect(() => {
+    mediaCatalogStore.LoadMediaCatalogs();
+    mediaPropertyStore.LoadMediaProperties();
+  }, []);
+
   const itemTemplate = itemTemplateStore.itemTemplates[itemTemplateId];
 
   const info = itemTemplate?.metadata?.public?.asset_metadata?.nft || {};
@@ -203,12 +208,6 @@ const ItemTemplateGeneralSettings = observer(() => {
         subcategory={l10n.categories.info}
         field="collection_name"
       />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.general.style_variant}
-        subcategory={l10n.categories.info}
-        field="style"
-      />
       <Inputs.TextArea
         {...inputProps}
         {...l10n.general.description}
@@ -221,27 +220,11 @@ const ItemTemplateGeneralSettings = observer(() => {
         subcategory={l10n.categories.info}
         field="description_rich_text"
       />
-      <Inputs.List
-        {...inputProps}
-        {...l10n.general.tags}
-        subcategory={l10n.categories.item_info}
-        field="tags"
-      />
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.general.hide_share}
         subcategory={l10n.categories.item_info}
         field="hide_share"
-      />
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.minting_results_page}
-        subcategory={l10n.categories.item_info}
-        field="minting_results_page"
-        options={[
-          { label: "Item Details", value: "item_details" },
-          { label: "Media", value: "media" }
-        ]}
       />
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.item_details }</Title>

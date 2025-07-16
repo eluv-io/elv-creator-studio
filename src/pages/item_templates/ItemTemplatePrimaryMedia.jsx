@@ -1,8 +1,9 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, itemTemplateStore} from "@/stores";
+import {rootStore, itemTemplateStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
+import {Title} from "@mantine/core";
 
 const ItemTemplatePrimaryMedia = observer(() => {
   const { itemTemplateId } = useParams();
@@ -18,6 +19,11 @@ const ItemTemplatePrimaryMedia = observer(() => {
     category: l10n.categories.primary_media,
     path: "/public/asset_metadata/nft"
   };
+
+  const mediaProperties = (mediaPropertyStore.allMediaProperties || []).map(({name, objectId}) => ({
+    label: name,
+    value: objectId
+  }));
 
   return (
     <PageContent
@@ -101,12 +107,30 @@ const ItemTemplatePrimaryMedia = observer(() => {
             ]}
           />
       }
-      <Inputs.Checkbox
+
+      <br/>
+      <Title order={3} mb="md">{ l10n.categories.bundled_media_property }</Title>
+
+      <Inputs.Select
         {...inputProps}
-        {...l10n.media.generative}
-        field="generative"
-        defaultValue={false}
+        {...l10n.additional_media.bundled_property}
+        field="bundled_property_id"
+        options={mediaProperties}
       />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.additional_media.additional_media_type}
+        field="additional_media_type"
+        defaultValue="property"
+        hidden
+        options={[
+          { label: "Bundled Media Property", value: "property" },
+          "List",
+          "Sections"
+        ]}
+      />
+
     </PageContent>
   );
 });
