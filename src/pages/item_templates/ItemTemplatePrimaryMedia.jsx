@@ -118,17 +118,11 @@ const ItemTemplatePrimaryMedia = observer(() => {
         options={mediaProperties}
       />
 
-      <Inputs.Select
+      <Inputs.Hidden
         {...inputProps}
         {...l10n.additional_media.additional_media_type}
         field="additional_media_type"
         defaultValue="property"
-        hidden
-        options={[
-          { label: "Bundled Media Property", value: "property" },
-          "List",
-          "Sections"
-        ]}
       />
 
     </PageContent>

@@ -94,9 +94,6 @@ form:
       label: Show on Global Marketplace
       description: Make your marketplace visible in the global marketplace list
     card_images:
-      label: Marketplace Card Image
-      description: This image will be shown in the global marketplace list
-    card_front:
       label: Image
     tv_images:
       label: Marketplace TV Images
