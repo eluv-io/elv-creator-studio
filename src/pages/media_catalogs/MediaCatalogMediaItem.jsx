@@ -263,16 +263,16 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       />
                       <Inputs.DateTime
                         {...inputProps}
-                        {...l10n.media.start_time}
+                        {...l10n.media.stream_start_time}
                         subcategory={l10n.categories.media}
-                        field="start_time"
+                        field="stream_start_time"
                         componentProps={{withSeconds: true}}
                       />
                       <Inputs.DateTime
                         {...inputProps}
-                        {...l10n.media.stream_start_time}
+                        {...l10n.media.start_time}
                         subcategory={l10n.categories.media}
-                        field="stream_start_time"
+                        field="start_time"
                         componentProps={{withSeconds: true}}
                       />
                       <Inputs.DateTime
