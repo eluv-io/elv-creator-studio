@@ -4,9 +4,6 @@ nav:
   general: General
   settings: Settings
   primary_media: Primary Media
-  additional_media: Additional Media
-  reference_images: Reference Images
-  pack_settings: Pack Settings
   redeemable_offers: Redeemable Offers
 form:
   categories:
@@ -20,21 +17,11 @@ form:
     item_attributes: Attributes
     display: Display Settings
     primary_media: Primary Media
-    additional_media: Additional Media
-    additional_media_settings: Additional Media Settings
-    additional_media_label: Media Item '{label}'
-    additional_media_sections: Media Sections
-    additional_media_section_label: Media Section '{label}'
-    additional_media_collections: Media Collections
-    additional_media_collection_label: Media Collection '{label}'
+    bundled_media_property: Bundled Media Property
     featured_media: Featured Media
     media_item: Media Item
     reference_images: Reference Images
     reference_image: Reference Image
-    reference_image_label: Reference Image '{label}'
-    pack_settings: Pack Settings
-    pack_open_status_page: Pack Open Status Page
-    pack_items: Pack Items
     redeemable_offers: Redeemable Offers
     redeemable_offer: Redeemable Offer
     redeemable_offer_label: Redeemable Offer '{label}'

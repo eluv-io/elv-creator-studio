@@ -67,62 +67,6 @@ export const MarketplaceCollectionSpec = {
   hide_text: false
 };
 
-export const MarketplaceVotingEventSpec = {
-  id: undefined,
-  title: "<New Voting Event>",
-  description: "",
-  exclusive: false,
-  start_date: undefined,
-  end_date: undefined,
-  type: "specified",
-  items: []
-};
-
-export const MarketplaceStorefrontSectionSpec = {
-  id: undefined,
-  name: "<New Storefront Section>",
-  section_header: "",
-  section_subheader: "",
-  section_header_rich_text: "",
-  section_footer: "",
-  type: "Standard",
-  items: [],
-  featured_view_justification: "Left",
-  show_carousel_gallery: false,
-  show_countdown: false,
-  countdown: {
-    header: "",
-    date: undefined
-  }
-};
-
-export const MarketplaceStorefrontBannerSpec = {
-  sku: undefined,
-  image: undefined,
-  image_mobile: undefined,
-  video: undefined,
-  video_muted: true,
-  modal_video: undefined,
-  link: ""
-};
-
-export const MarketplaceFooterLinkSpec = {
-  id: undefined,
-  text: "",
-  url: "",
-  image: "",
-  image_alt: "",
-  content_rich_text: "",
-  content_html: undefined
-};
-
-export const MarketplaceLoginConsentOption = {
-  key: "",
-  message: "",
-  initially_checked: false,
-  required: false
-};
-
 export const MarketplaceSpec = {
   tenant_id: undefined,
   tenant_slug: undefined,

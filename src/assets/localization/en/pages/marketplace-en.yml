@@ -3,13 +3,8 @@ nav:
   overview: Overview
   general: General
   images: Images
-  theme: Theme
-  login: Login
   items: Items
-  storefront: Storefront
   collections: Collections
-  voting_events: Voting Events
-  analytics: Analytics
 
 form:
   categories:
@@ -99,12 +94,7 @@ form:
       label: Show on Global Marketplace
       description: Make your marketplace visible in the global marketplace list
     card_images:
-      label: Marketplace Card Images
-      description: These images will be shown in the global marketplace list
-    card_front:
-      label: Card Image (Front)
-    card_back:
-      label: Card Image (Back)
+      label: Image
     tv_images:
       label: Marketplace TV Images
       description: These images will be used in the TV apps

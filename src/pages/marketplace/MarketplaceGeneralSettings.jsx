@@ -5,9 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import {Accordion, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import CountryCodesList from "country-codes-list";
-
-import {IconReportMoney, IconSettings} from "@tabler/icons-react";
-import {MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
+import {IconSettings} from "@tabler/icons-react";
 import {useEffect} from "react";
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
@@ -128,45 +126,6 @@ const MarketplaceGeneralSettings = observer(() => {
         field="property_redirect"
       />
 
-      <Title order={3} mt={50} mb="md">{ l10n.categories.global_settings }</Title>
-
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.show_global}
-        subcategory={l10n.categories.global_settings}
-        path="/public/asset_metadata/info/branding"
-        field="show"
-        defaultValue={false}
-      />
-
-      {
-        !info?.branding?.show ? null :
-          <Inputs.URL
-            {...inputProps}
-            {...l10n.general.external_link}
-            subcategory={l10n.categories.global_settings}
-            path="/public/asset_metadata/info/branding"
-            field="external_link"
-          />
-      }
-
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.general.tags}
-        subcategory={l10n.categories.tags}
-        path="/public/asset_metadata/info/branding"
-        field="tags"
-        fieldLabel="Tag"
-        clearable
-        searchable
-        options={[
-          "Movies",
-          "TV",
-          "Music",
-          "Software"
-        ]}
-      />
-
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.general.card_images}
@@ -174,223 +133,91 @@ const MarketplaceGeneralSettings = observer(() => {
         path="/public/asset_metadata/info/branding"
         altTextField="card_banner_alt"
         fields={[
-          { field: "card_banner_front", ...l10n.general.card_front },
-          { field: "card_banner_back", ...l10n.general.card_back },
+          { field: "card_banner_front", ...l10n.general.card_front }
         ]}
       />
 
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.tv_images}
-        subcategory={l10n.categories.global_settings}
-        path="/public/asset_metadata/info/branding/tv"
-        fields={[
-          { field: "logo", ...l10n.general.tv_logo },
-          { field: "image", ...l10n.general.tv_image },
-          { field: "header_image", ...l10n.general.tv_header_image },
-        ]}
-      />
+      <br/>
 
-
-      <Title order={3} mt={50} mb="md">{ l10n.categories.notification }</Title>
+      <Title order={3} my="md">{ l10n.categories.payment_options }</Title>
 
       <Inputs.Checkbox
         {...inputProps}
-        {...l10n.general.show_notification}
-        subcategory={l10n.categories.notification}
-        path="/public/asset_metadata/info/branding/notification"
-        field="active"
+        {...l10n.general.prices_inclusive}
+        subcategory={l10n.categories.payment_options}
+        path="/public/asset_metadata/info"
+        field="prices_inclusive"
         defaultValue={false}
       />
-
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.stripe}
+        subcategory={l10n.categories.payment_options}
+        path="/public/asset_metadata/info/payment_options/stripe"
+        field="enabled"
+        defaultValue={true}
+      />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.wallet_balance}
+        subcategory={l10n.categories.payment_options}
+        path="/public/asset_metadata/info/payment_options/wallet_balance"
+        field="enabled"
+        defaultValue={true}
+      />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.coinbase}
+        subcategory={l10n.categories.payment_options}
+        path="/public/asset_metadata/info/payment_options/coinbase"
+        field="enabled"
+        defaultValue={true}
+      />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.ebanx}
+        subcategory={l10n.categories.payment_options}
+        path="/public/asset_metadata/info/payment_options/ebanx"
+        field="enabled"
+        defaultValue={false}
+      />
       {
-        !info.branding?.notification?.active ? null :
+        !info.payment_options?.ebanx?.enabled ? null :
           <>
-            <Inputs.Text
+            <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.notification_header}
-              subcategory={l10n.categories.notification}
-              path="/public/asset_metadata/info/branding/notification"
-              field="header"
+              {...l10n.general.ebanx_preferred}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/ebanx"
+              field="preferred"
+              defaultValue={false}
             />
-            <Inputs.RichText
+            <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.notification_text}
-              subcategory={l10n.categories.notification}
-              path="/public/asset_metadata/info/branding/notification"
-              field="text"
+              {...l10n.general.ebanx_pix_enabled}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/ebanx"
+              field="pix_enabled"
+              defaultValue={false}
+            />
+            <Inputs.MultiSelect
+              {...inputProps}
+              {...l10n.general.ebanx_allowed_countries}
+              subcategory={l10n.categories.payment_options}
+              path="/public/asset_metadata/info/payment_options/ebanx"
+              field="allowed_countries"
+              options={ebanxSupportedCountries}
+              searchable
             />
           </>
       }
 
       <Accordion mt={50} maw={uiStore.inputWidth} variant="contained">
-        <Accordion.Item value="payment_options">
-          <Accordion.Control icon={<IconReportMoney />}>
-            { l10n.categories.payment_options }
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.prices_inclusive}
-              subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info"
-              field="prices_inclusive"
-              defaultValue={false}
-            />
-            <br />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.stripe}
-              subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/stripe"
-              field="enabled"
-              defaultValue={true}
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.wallet_balance}
-              subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/wallet_balance"
-              field="enabled"
-              defaultValue={true}
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.coinbase}
-              subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/coinbase"
-              field="enabled"
-              defaultValue={true}
-            />
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.ebanx}
-              subcategory={l10n.categories.payment_options}
-              path="/public/asset_metadata/info/payment_options/ebanx"
-              field="enabled"
-              defaultValue={false}
-            />
-            {
-              !info.payment_options?.ebanx?.enabled ? null :
-                <>
-                  <Inputs.Checkbox
-                    {...inputProps}
-                    {...l10n.general.ebanx_preferred}
-                    subcategory={l10n.categories.payment_options}
-                    path="/public/asset_metadata/info/payment_options/ebanx"
-                    field="preferred"
-                    defaultValue={false}
-                  />
-                  <Inputs.Checkbox
-                    {...inputProps}
-                    {...l10n.general.ebanx_pix_enabled}
-                    subcategory={l10n.categories.payment_options}
-                    path="/public/asset_metadata/info/payment_options/ebanx"
-                    field="pix_enabled"
-                    defaultValue={false}
-                  />
-                  <Inputs.MultiSelect
-                    {...inputProps}
-                    {...l10n.general.ebanx_allowed_countries}
-                    subcategory={l10n.categories.payment_options}
-                    path="/public/asset_metadata/info/payment_options/ebanx"
-                    field="allowed_countries"
-                    options={ebanxSupportedCountries}
-                    searchable
-                  />
-                </>
-            }
-          </Accordion.Panel>
-        </Accordion.Item>
         <Accordion.Item value="advanced_settings">
           <Accordion.Control icon={<IconSettings />}>
             { l10n.categories.advanced_settings }
           </Accordion.Control>
           <Accordion.Panel>
-            <Inputs.List
-              {...inputProps}
-              {...l10n.general.additional_marketplaces}
-              subcategory={l10n.categories.advanced_settings}
-              path="/public/asset_metadata/info/branding"
-              field="additional_marketplaces"
-              maw="100%"
-              renderItem={props => (
-                <MarketplaceSelect
-                  {...props}
-                  {...l10n.general.additional_marketplace}
-                  field="marketplace_slug"
-                  tenantSlugField="tenant_slug"
-                  marketplaceIdField="marketplace_id"
-                  excludedSlugs={[marketplace.metadata.public.asset_metadata.slug]}
-                  defaultFirst
-                />
-              )}
-            />
-
-            <Inputs.InputWrapper
-              {...l10n.general.page_tabs}
-              mt="md"
-            >
-              <Inputs.Text
-                {...inputProps}
-                {...l10n.general.page_tab_store}
-                subcategory={l10n.categories.page_tabs}
-                path="/public/asset_metadata/info/branding/tabs"
-                field="store"
-                placeholder="Store"
-                componentProps={{mt: "md"}}
-              />
-
-              {
-                !(info?.branding?.additional_marketplaces?.length > 0) ? null :
-                  <Inputs.Text
-                    {...inputProps}
-                    {...l10n.general.page_tab_stores}
-                    subcategory={l10n.categories.page_tabs}
-                    path="/public/asset_metadata/info/branding/tabs"
-                    field="stores"
-                    placeholder="Stores"
-                  />
-              }
-
-              <Inputs.Text
-                {...inputProps}
-                {...l10n.general.page_tab_listings}
-                subcategory={l10n.categories.page_tabs}
-                path="/public/asset_metadata/info/branding/tabs"
-                field="listings"
-                placeholder="Listings"
-              />
-
-              <Inputs.Text
-                {...inputProps}
-                {...l10n.general.page_tab_my_items}
-                subcategory={l10n.categories.page_tabs}
-                path="/public/asset_metadata/info/branding/tabs"
-                field="my_items"
-                placeholder="My Items"
-              />
-            </Inputs.InputWrapper>
-
-            <Inputs.Checkbox
-              INVERTED
-              {...inputProps}
-              {...l10n.general.show_global_nav}
-              subcategory={l10n.categories.advanced_settings}
-              path="/public/asset_metadata/info/branding"
-              field="hide_global_navigation"
-              defaultValue={false}
-            />
-
-            <Inputs.Checkbox
-              INVERTED
-              {...inputProps}
-              {...l10n.general.show_leaderboard}
-              subcategory={l10n.categories.advanced_settings}
-              path="/public/asset_metadata/info/branding"
-              field="hide_leaderboard"
-              defaultValue={false}
-            />
 
             <Inputs.Checkbox
               INVERTED
@@ -401,19 +228,6 @@ const MarketplaceGeneralSettings = observer(() => {
               field="disable_secondary_market"
               defaultValue={false}
             />
-
-            {
-              // Irrelevant if header image is set
-              info?.branding?.header_image ? null :
-                <Inputs.Checkbox
-                  {...inputProps}
-                  {...l10n.general.hide_name}
-                  subcategory={l10n.categories.advanced_settings}
-                  path="/public/asset_metadata/info/branding"
-                  field="hide_name"
-                  defaultValue={false}
-                />
-            }
 
             <Inputs.Checkbox
               INVERTED
