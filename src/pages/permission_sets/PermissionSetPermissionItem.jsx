@@ -99,7 +99,7 @@ const PermissionSetPermissionItem = observer(() => {
         {...inputProps}
         {...l10n.permission_item.display.description}
         subcategory={l10n.categories.permission_item_display}
-        field="description"
+        field="external_description"
       />
     </PageContent>
   );
