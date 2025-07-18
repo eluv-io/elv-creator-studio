@@ -400,7 +400,7 @@ const FileBrowserTable = observer(({
   }, [objectId]);
 
   let directory = fileBrowserStore.Directory({objectId, path})
-    .filter(record => !filter || record.filename.toLowerCase().includes(filter))
+    .filter(record => !filter || record.filename.toLowerCase().includes(filter.toLowerCase()))
     .sort(
       SortTable({
         sortStatus,

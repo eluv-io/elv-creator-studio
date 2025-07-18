@@ -1,12 +1,18 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, itemTemplateStore, mediaPropertyStore} from "@/stores";
+import {rootStore, itemTemplateStore, mediaPropertyStore, mediaCatalogStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
+import {useEffect} from "react";
 
 const ItemTemplatePrimaryMedia = observer(() => {
   const { itemTemplateId } = useParams();
+
+  useEffect(() => {
+    mediaCatalogStore.LoadMediaCatalogs();
+    mediaPropertyStore.LoadMediaProperties();
+  }, []);
 
   const itemTemplate = itemTemplateStore.itemTemplates[itemTemplateId];
 
