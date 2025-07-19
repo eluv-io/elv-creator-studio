@@ -1142,7 +1142,6 @@ export const FabricBrowserInput = observer(({
   }, [value, previewable, previewIsAnimation]);
 
   useEffect(() => {
-
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
 
