@@ -55,11 +55,6 @@ const PermissionSetPermissionItem = observer(() => {
         {...l10n.permission_item.label}
         field="label"
       />
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.permission_item.description}
-        field="description"
-      />
       <MarketplaceSelect
         disabled
         {...inputProps}
@@ -99,7 +94,7 @@ const PermissionSetPermissionItem = observer(() => {
         {...inputProps}
         {...l10n.permission_item.display.description}
         subcategory={l10n.categories.permission_item_display}
-        field="external_description"
+        field="description"
       />
     </PageContent>
   );
