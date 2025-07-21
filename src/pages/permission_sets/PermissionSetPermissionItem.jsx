@@ -55,11 +55,6 @@ const PermissionSetPermissionItem = observer(() => {
         {...l10n.permission_item.label}
         field="label"
       />
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.permission_item.description}
-        field="description"
-      />
       <MarketplaceSelect
         disabled
         {...inputProps}
