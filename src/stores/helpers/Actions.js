@@ -336,7 +336,7 @@ const SetLink = flow(function * ({
   const originalValue = this.GetMetadata({objectId, path, field});
 
   // Local metadata must contain resolved link, but must write out link structure to fabric
-  let metadataValue, writeValue;
+  let link;
   if(linkObjectId) {
     const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
     const originalHash = ExtractHashFromLink(originalValue);
@@ -350,40 +350,23 @@ const SetLink = flow(function * ({
       actionType = "UPDATE_LINK";
     }
 
-    writeValue = {
+    link = {
       "/": objectId === linkObjectId ?
         UrlJoin("./", linkType, linkPath) :
         UrlJoin("/qfab", targetHash, linkType, linkPath)
     };
 
     if(autoUpdate) {
-      writeValue["."] = {
+      link["."] = {
         "auto_update": {
           "tag": "latest"
         }
       };
     }
 
-    if(linkType === "meta") {
-      // Metadata links should contain resolved metadata
-      metadataValue = (yield this.client.ContentObjectMetadata({
-        versionHash: targetHash,
-        metadataSubtree: linkPath,
-        produceMetadataLinks: true,
-      })) || {};
-
-      metadataValue["."] = {
-        source: targetHash
-      };
-    } else {
+    if(linkType === "file") {
       // File links should contain regular fabric link content, in addition to URL to file
-      metadataValue = {
-        ...writeValue,
-        url: FabricUrl({
-          objectId,
-          path: writeValue["/"]
-        })
-      };
+      link.url = FabricUrl({objectId, path: link["/"]});
     }
   } else if(originalValue) {
     actionType = "REMOVE_LINK";
@@ -393,22 +376,22 @@ const SetLink = flow(function * ({
     objectId,
     page,
     path: fullPath,
-    target: writeValue ? writeValue["/"] : "",
+    target: link ? link["/"] : "",
     actionType,
     category,
     subcategory,
     label,
     info: {
-      cleared: !writeValue
+      cleared: !link
     },
-    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, metadataValue),
+    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, link),
     Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalValue),
     Write: async (objectParams) => {
-      if(writeValue) {
+      if(link) {
         await this.client.ReplaceMetadata({
           ...objectParams,
           metadataSubtree: fullPath,
-          metadata: toJS(writeValue)
+          metadata: toJS(link)
         });
       } else {
         await this.client.DeleteMetadata({

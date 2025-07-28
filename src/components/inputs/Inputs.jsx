@@ -1142,7 +1142,6 @@ export const FabricBrowserInput = observer(({
   }, [value, previewable, previewIsAnimation]);
 
   useEffect(() => {
-
     fabricBrowserStore.LoadObjectDetails({objectId: targetId});
   }, [targetHash]);
 
@@ -1171,8 +1170,7 @@ export const FabricBrowserInput = observer(({
 
         if(
           !target?.objectId ||
-          !fabricBrowserProps.video ||
-          !(fabricBrowserProps.allowCompositions || fabricBrowserProps.allowClips)
+          !fabricBrowserProps.video
         ) {
           store.SetMetadata({
             objectId,

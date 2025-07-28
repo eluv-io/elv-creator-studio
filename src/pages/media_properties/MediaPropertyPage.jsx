@@ -74,6 +74,12 @@ const MediaPropertyPage = observer(() => {
         field="description"
       />
 
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.pages.background_color}
+        field="background_color"
+      />
+
       {
         info.page_ids.main === pageId ?
           <Text italic fz="xs">This is the main page for this property</Text> :

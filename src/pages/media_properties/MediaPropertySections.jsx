@@ -51,6 +51,7 @@ const CreateSectionForm = ({Create}) => {
             { label: "Automatic Content Section", value: "automatic" },
             { label: "Hero Section", value: "hero" },
             { label: "Container Section", value: "container" },
+            { label: "Spacer", value: "spacer" },
           ]}
           {...form.getInputProps("type")}
         />

@@ -231,7 +231,7 @@ class TenantStore {
         versionHash: marketplaceHash,
         marketplaceSlug
       };
-    });;
+    });
 
     const tenant = {
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),

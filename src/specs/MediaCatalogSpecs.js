@@ -1,3 +1,8 @@
+export const MediaCatalogAdditionalViewSpec = {
+  media_link: undefined,
+  label: ""
+};
+
 export const MediaCatalogPermissionSpec = {
   permission_item_id: undefined
 };

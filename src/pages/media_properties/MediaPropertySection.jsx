@@ -1202,15 +1202,6 @@ const ContentSectionDisplaySettings = observer(() => {
           />
       }
 
-      <Inputs.Color
-        {...inputProps}
-        {...l10n.sections.display.inline_background_color}
-        subcategory={l10n.categories.section_presentation}
-        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        field="inline_background_color"
-      />
-
-
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.sections.display.inline_background_image}
@@ -1221,6 +1212,45 @@ const ContentSectionDisplaySettings = observer(() => {
           { field: "inline_background_image_mobile", ...l10n.sections.display.background_image_mobile, aspectRatio: 2, baseSize: 125 },
         ]}
       />
+
+      {
+        section.display.inline_background_image ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.inline_background_gradient}
+              subcategory={l10n.categories.section_presentation}
+              defaultValue=""
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="inline_background_gradient"
+              options={[
+                {label: "Solid", value: ""},
+                {label: "Vertical Gradient", value: "vertical"},
+                {label: "Horizontal Gradient", value: "horizontal"},
+              ]}
+            />
+
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.sections.display.inline_background_color}
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="inline_background_color"
+            />
+
+            {
+              !section.display.inline_background_gradient ? null :
+                <Inputs.Color
+                  {...inputProps}
+                  {...l10n.sections.display.inline_background_color_2}
+                  subcategory={l10n.categories.section_presentation}
+                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                  field="inline_background_color_2"
+                />
+            }
+          </>
+      }
+
 
       {
         section.display?.display_format === "banner" ? null :
@@ -1469,6 +1499,127 @@ const HeroSectionSettings = observer(() => {
   );
 });
 
+const SpacerSectionSettings = observer(() => {
+  const { mediaPropertyId, sectionId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const section = info.sections?.[sectionId];
+
+  if(!section) {
+    return null;
+  }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: mediaPropertyStore.MediaPropertyCategory({category: "section_label", mediaPropertyId, type: "sections", id: sectionId, label: section.label}),
+    subcategory: l10n.categories.general,
+    path: UrlJoin("/public/asset_metadata/info/sections", sectionId)
+  };
+
+  return (
+    <>
+      <Title order={3} mb="md" mt={50}>{l10n.categories.section_presentation}</Title>
+
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.sections.display.spacer_color}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="spacer_color"
+      />
+
+      <Inputs.Integer
+        {...inputProps}
+        {...l10n.sections.display.spacer_thickness}
+        min={0}
+        max={10}
+        defaultValue={1}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="spacer_thickness"
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sections.display.spacer_full_bleed}
+        subcategory={l10n.categories.section_presentation}
+        defaultValue={false}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="spacer_full_bleed"
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.padding_top}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="padding_top"
+        defaultValue="Medium"
+        options={[
+          { label: "Small", value: 20 },
+          { label: "Medium", value: 50 },
+          { label: "Large", value: 100 }
+        ]}
+      />
+
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.padding_bottom}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="padding_bottom"
+        defaultValue="Medium"
+        options={[
+          { label: "Small", value: 20 },
+          { label: "Medium", value: 50 },
+          { label: "Large", value: 100 }
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.inline_background_gradient}
+        subcategory={l10n.categories.section_presentation}
+        defaultValue=""
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="inline_background_gradient"
+        options={[
+          {label: "Solid", value: ""},
+          {label: "Vertical Gradient", value: "vertical"},
+          {label: "Horizontal Gradient", value: "horizontal"},
+        ]}
+      />
+
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.sections.display.inline_background_color}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="inline_background_color"
+      />
+
+      {
+        !section.display.inline_background_gradient ? null :
+          <Inputs.Color
+            {...inputProps}
+            {...l10n.sections.display.inline_background_color_2}
+            subcategory={l10n.categories.section_presentation}
+            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+            field="inline_background_color_2"
+          />
+      }
+    </>
+  );
+});
+
 const MediaPropertySection = observer(() => {
   const { mediaPropertyId, sectionId } = useParams();
 
@@ -1533,7 +1684,8 @@ const MediaPropertySection = observer(() => {
           { label: "Manual Content Section", value: "manual" },
           { label: "Automatic Content Section", value: "automatic" },
           { label: "Hero Section", value: "hero" },
-          { label: "Container Section", value: "container" }
+          { label: "Container Section", value: "container" },
+          { label: "Spacer Section", value: "spacer" },
         ]}
       />
 
@@ -1646,11 +1798,13 @@ const MediaPropertySection = observer(() => {
       />
 
       {
-        section.type === "container" ?
-          <ContainerSectionSettings /> :
-          section.type === "hero" ?
-            <HeroSectionSettings /> :
-            <ContentSectionDisplaySettings />
+        section.type === "spacer" ?
+          <SpacerSectionSettings /> :
+          section.type === "container" ?
+            <ContainerSectionSettings /> :
+            section.type === "hero" ?
+              <HeroSectionSettings /> :
+              <ContentSectionDisplaySettings />
       }
 
 

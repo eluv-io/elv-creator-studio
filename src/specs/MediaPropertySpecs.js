@@ -173,11 +173,11 @@ export const MediaPropertySectionBaseSpec = {
     justification: "left",
     aspect_ratio: "Landscape",
     content_display_text: "titles",
+    inline_background_gradient: "",
     inline_background_color: "",
+    inline_background_color_2: "",
     inline_background_image: undefined,
-    inline_background_image_mobile: undefined,
-    background_image: undefined,
-    background_image_mobile: undefined
+    inline_background_image_mobile: undefined
   },
   permissions: {
     ...MediaPropertyPermissionSpec
@@ -229,7 +229,7 @@ export const MediaPropertyHeroSectionSpec = {
 export const MediaPropertyContainerSectionSpec = {
   ...MediaPropertySectionBaseSpec,
   display: {
-    ...MediaPropertySectionBaseSpec,
+    ...MediaPropertySectionBaseSpec.display,
     display_format: "container"
   },
   label: "<New Container Section>",
@@ -238,6 +238,22 @@ export const MediaPropertyContainerSectionSpec = {
   sections: [],
   permissions: {
     ...MediaPropertyPermissionSpec
+  }
+};
+
+export const MediaPropertySpacerSectionSpec = {
+  ...MediaPropertySectionBaseSpec,
+  label: "<New Spacer Section>",
+  type: "spacer",
+  display: {
+    line_color: "",
+    line_thickness: 1,
+    padding_top: 20,
+    padding_bottom: 20,
+    full_bleed: false,
+    inline_background_gradient: "",
+    inline_background_color: "",
+    inline_background_color_2: "",
   }
 };
 

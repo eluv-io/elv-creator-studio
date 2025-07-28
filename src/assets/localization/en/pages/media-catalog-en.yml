@@ -26,6 +26,7 @@ form:
     media_collections: Media Collections
     media_collection: Media Collection
     media_collection_label: Media Collection '{label}'
+    additional_views: Additional Views
     display: Display Settings
     permissions: Permission Settings
     associated_media: Associated Media
@@ -54,6 +55,8 @@ form:
   common:
     name:
       label: Name
+    label:
+      label: Label
     description:
       label: Description
     id:
@@ -261,6 +264,12 @@ form:
     always_show_poster:
       label: Always Show Poster
       description: If specified, the poster will be permanently visible even when the poster is playing. This is useful in cases where the content is audio only.
+    additional_views:
+      label: Additional Views
+      fieldLabel: Additional View
+      description: Add additional videos that can be simultaneously viewed along with the main video
+    additional_views_label:
+      label: Additional Views Label
     image_aspect_ratio:
       label: Image Orientation
     full_image:
