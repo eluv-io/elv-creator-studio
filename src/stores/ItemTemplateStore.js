@@ -3,6 +3,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {FabricUrl} from "@/helpers/Fabric.js";
+import urlJoin from "url-join";
 
 class ItemTemplateStore {
   allItemTemplates;
@@ -86,6 +87,54 @@ class ItemTemplateStore {
 
     return embedUrl.toString();
   }
+
+  Validate = flow(function * ({objectId}) {
+    const address = this.itemTemplates[objectId]?.metadata?.public?.asset_metadata?.nft.address;
+    let problemsList = [];
+
+    // Case 1: check for missing or invalid contract address
+    if(!(address && this.client.utils.ValidAddress(address))) {
+      // Get link to the item template's settings page
+      const link = urlJoin("item-templates", objectId, "settings");
+
+      // Add to list with the link
+      problemsList.push({
+        type: "error",
+        message: "No or invalid contract address configured",
+        link
+      });
+    }
+
+    // Case 2: check for contract addresses used by multiple templates
+    // Load list of templates via database
+    yield this.LoadItemTemplates();
+
+    for (let i=0; i<this.allItemTemplates.length; i++) {
+      // Use database version by default
+      let address2 = this.allItemTemplates[i].address;
+      const objectId2 = this.allItemTemplates[i].objectId;
+
+      // If template is loaded, compare loaded version
+      if (this.itemTemplates[objectId2]?.metadata?.public?.asset_metadata?.nft.address) {
+        address2 = this.itemTemplates[objectId2].metadata?.public?.asset_metadata?.nft.address;
+      }
+
+      if (objectId !== objectId2 && this.client.utils.EqualAddress(address, address2)) {
+        // Get link to each offending item template
+        const link1 = urlJoin("item-templates", objectId);
+        const link2 = urlJoin("item-templates", objectId2);
+
+        // Add to list with a link to each template
+        problemsList.push({
+          type: "warning",
+          message: "Same contract address used by multiple item templates",
+          link1,
+          link2
+        });
+      }
+    }
+    return problemsList;
+  });
 
   PostSave = flow(function * ({libraryId, objectId}) {
     const versionHash = yield this.client.LatestVersionHash({objectId});
