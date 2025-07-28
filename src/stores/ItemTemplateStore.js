@@ -3,7 +3,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {FabricUrl} from "@/helpers/Fabric.js";
-import urlJoin from "url-join";
+import UrlJoin from "url-join";
 
 class ItemTemplateStore {
   allItemTemplates;
@@ -93,15 +93,12 @@ class ItemTemplateStore {
     let problemsList = [];
 
     // Case 1: check for missing or invalid contract address
-    if(!(address && this.client.utils.ValidAddress(address))) {
-      // Get link to the item template's settings page
-      const link = urlJoin("item-templates", objectId, "settings");
-
-      // Add to list with the link
+    if (!(address && this.client.utils.ValidAddress(address))) {
+      // Add to list with link to the item template's settings page
       problemsList.push({
         type: "error",
         message: "No or invalid contract address configured",
-        link
+        link: UrlJoin("item-templates", objectId, "settings")
       });
     }
 
@@ -109,30 +106,45 @@ class ItemTemplateStore {
     // Load list of templates via database
     yield this.LoadItemTemplates();
 
-    for (let i=0; i<this.allItemTemplates.length; i++) {
-      // Use database version by default
-      let address2 = this.allItemTemplates[i].address;
-      const objectId2 = this.allItemTemplates[i].objectId;
-
-      // If template is loaded, compare loaded version
-      if (this.itemTemplates[objectId2]?.metadata?.public?.asset_metadata?.nft.address) {
-        address2 = this.itemTemplates[objectId2].metadata?.public?.asset_metadata?.nft.address;
-      }
-
-      if (objectId !== objectId2 && this.client.utils.EqualAddress(address, address2)) {
-        // Get link to each offending item template
-        const link1 = urlJoin("item-templates", objectId);
-        const link2 = urlJoin("item-templates", objectId2);
-
-        // Add to list with a link to each template
+    // OPTION 1 for case 2
+    this.allItemTemplates.forEach(template => {
+      if (this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address) {
+        // If template is loaded, compare loaded version
+        if (objectId !== template.objectId && this.client.utils.EqualAddress(address, this.itemTemplates[template.objectId].metadata.public.asset_metadata.nft.address)) {
+          // Add to list with a link to the other template
+          problemsList.push({
+            type: "warning",
+            message: "Same contract address used by multiple item templates",
+            link: UrlJoin("item-templates", template.objectId)
+          });
+        }
+      } else if (objectId !== template.objectId && this.client.utils.EqualAddress(address, template.address)) {
+        // If template is not loaded, check database version by default
         problemsList.push({
           type: "warning",
           message: "Same contract address used by multiple item templates",
-          link1,
-          link2
+          link: UrlJoin("item-templates", template.objectId)
         });
       }
-    }
+    });
+
+
+    // OPTION 2 for case 2
+    this.allItemTemplates.forEach(template => {
+      // Use loaded version if template is loaded; else use database version
+      const address2 = this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address ?
+        this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address : template.address;
+
+      if (objectId !== template.objectId && this.client.utils.EqualAddress(address, address2)) {
+        // Add to list with a link to the other template
+        problemsList.push({
+          type: "warning",
+          message: "Same contract address used by multiple item templates",
+          link: UrlJoin("item-templates", template.objectId)
+        });
+      }
+    });
+
     return problemsList;
   });
 
