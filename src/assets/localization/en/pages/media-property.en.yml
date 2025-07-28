@@ -496,6 +496,9 @@ form:
     description:
       label: Description
       description: For internal reference, not displayed
+    background_color:
+      label: Background Color
+      description: Set a custom background color for this page.
     header:
       position:
         label: Header Content Position
@@ -688,11 +691,17 @@ form:
       logo_alignment:
         label: Logo Alignment
         description: Vertical alignment for the logo
+      inline_background_gradient:
+        label: Section Background Gradient
+        description: The background color for this section can be a solid color or a gradient
       inline_background_color:
-        label: Inline Background Color
+        label: Section Background Color
         description: Select a color for the background of this section (overridden by inline background images)
+      inline_background_color_2:
+        label: Section Background Color 2
+        description: Select a second color for the background gradient
       inline_background_image:
-        label: Inline Background Image
+        label: Section Background Image
         description: Displayed behind the section when displayed on on a page
       section_page_background_image:
         label: "'View All' Page Background Image"
@@ -713,6 +722,20 @@ form:
       show_primary_filter_in_page_view:
         label: Show Primary Filter in Page View
         description: If specified, the primary filter options will be shown for this section when displayed on a page.
+      spacer_color:
+        label: Spacer Line Color
+      spacer_thickness:
+        label: Spacer Line Thickness (pixels)
+        description: Set to 0 for no line
+      padding_top:
+        label: Top Padding
+        description: Amount of empty space above the spacer
+      padding_bottom:
+        label: Bottom Padding
+        description: Amount of empty space below the spacer
+      spacer_full_bleed:
+        label: Full Bleed
+        description: If checked, the spacer line will extend for the full width of the page.
     section_content:
       label: Section Content
       fieldLabel: Section Item

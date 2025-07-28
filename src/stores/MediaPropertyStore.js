@@ -14,8 +14,10 @@ import {
   MediaPropertySectionItemPropertyLinkSpec,
   MediaPropertySectionItemPurchaseSpec,
   MediaPropertySectionItemRedeemableOfferSpec,
-  MediaPropertySectionItemSubpropertyLinkSpec, MediaPropertySectionItemVisualSpec,
+  MediaPropertySectionItemSubpropertyLinkSpec,
+  MediaPropertySectionItemVisualSpec,
   MediaPropertySectionManualSpec,
+  MediaPropertySpacerSectionSpec,
   MediaPropertySpec
 } from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
@@ -37,6 +39,7 @@ class MediaPropertyStore {
     "section_hero": "psch",
     "section_hero_item": "pshi",
     "section_container": "pscc",
+    "section_spacer": "pssp",
     "section_item": "psci"
   };
 
@@ -432,6 +435,9 @@ class MediaPropertyStore {
           break;
         case "container":
           spec = Clone(MediaPropertyContainerSectionSpec);
+          break;
+        case "spacer":
+          spec = Clone(MediaPropertySpacerSectionSpec);
           break;
       }
     }
