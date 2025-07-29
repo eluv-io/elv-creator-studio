@@ -106,30 +106,6 @@ class ItemTemplateStore {
     // Load list of templates via database
     yield this.LoadItemTemplates();
 
-    // OPTION 1 for case 2
-    this.allItemTemplates.forEach(template => {
-      if (this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address) {
-        // If template is loaded, compare loaded version
-        if (objectId !== template.objectId && this.client.utils.EqualAddress(address, this.itemTemplates[template.objectId].metadata.public.asset_metadata.nft.address)) {
-          // Add to list with a link to the other template
-          problemsList.push({
-            type: "warning",
-            message: "Same contract address used by multiple item templates",
-            link: UrlJoin("item-templates", template.objectId)
-          });
-        }
-      } else if (objectId !== template.objectId && this.client.utils.EqualAddress(address, template.address)) {
-        // If template is not loaded, check database version by default
-        problemsList.push({
-          type: "warning",
-          message: "Same contract address used by multiple item templates",
-          link: UrlJoin("item-templates", template.objectId)
-        });
-      }
-    });
-
-
-    // OPTION 2 for case 2
     this.allItemTemplates.forEach(template => {
       // Use loaded version if template is loaded; else use database version
       const address2 = this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address ?
