@@ -1563,6 +1563,7 @@ const SpacerSectionSettings = observer(() => {
         field="padding_top"
         defaultValue="Medium"
         options={[
+          { label: "None", value: 0 },
           { label: "Small", value: 20 },
           { label: "Medium", value: 50 },
           { label: "Large", value: 100 }
@@ -1578,6 +1579,7 @@ const SpacerSectionSettings = observer(() => {
         field="padding_bottom"
         defaultValue="Medium"
         options={[
+          { label: "None", value: 0 },
           { label: "Small", value: 20 },
           { label: "Medium", value: 50 },
           { label: "Large", value: 100 }

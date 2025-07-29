@@ -23,6 +23,7 @@ form:
     theme: Theme
     main_page_display: Discover Page Display Settings
     domain_settings: Customization Settings
+    social_links: Social Links
     footer: Footer Settings
     footer_item: Footer Item
     footer_item_label: Footer Item '{label}'
@@ -296,6 +297,22 @@ form:
         tag_display:
           label: Tag Display
           description: Choose whether this option should be displayed as a select component (only one tag selectable) or a list of checkboxes (multiple selectable)
+    social_links:
+      label: Social Links
+      description: Specify links to your social media pages to display in the footer
+      options:
+        facebook:
+          label: Facebook
+        instagram:
+          label: Instagram
+        tiktok:
+          label: TikTok
+        x:
+          label: X
+        linkedin:
+          label: LinkedIn
+        bluesky:
+          label: Bluesky
     footer_items:
       footer_items:
         label: Footer Items
@@ -377,6 +394,9 @@ form:
     button_style:
       label: Button Style
       description: Customize the look of buttons in your property
+    filter_color:
+      label: Filter Button Color
+      description: Specify the color of filter buttons for the 'box' filter variant
     colors:
       background_color:
         label: Background Color

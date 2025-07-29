@@ -521,6 +521,55 @@ const MediaPropertyGeneralSettings = observer(() => {
             { l10n.categories.footer }
           </Accordion.Control>
           <Accordion.Panel>
+            <Inputs.InputWrapper
+              {...l10n.general.social_links}
+            >
+              <Inputs.URL
+                componentProps={{mt:10}}
+                {...inputProps}
+                {...l10n.general.social_links.options.facebook}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="facebook"
+              />
+              <Inputs.URL
+                {...inputProps}
+                {...l10n.general.social_links.options.instagram}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="instagram"
+              />
+              <Inputs.URL
+                {...inputProps}
+                {...l10n.general.social_links.options.tiktok}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="tiktok"
+              />
+              <Inputs.URL
+                {...inputProps}
+                {...l10n.general.social_links.options.x}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="x"
+              />
+              <Inputs.URL
+                {...inputProps}
+                {...l10n.general.social_links.options.linkedin}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="linkedin"
+              />
+              <Inputs.URL
+                {...inputProps}
+                {...l10n.general.social_links.options.bluesky}
+                subcategory={l10n.categories.social_links}
+                path="/public/asset_metadata/info/footer/social_links"
+                field="bluesky"
+              />
+
+            </Inputs.InputWrapper>
+
             <Inputs.List
               {...inputProps}
               {...l10n.general.footer_items.footer_items}

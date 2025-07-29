@@ -45,6 +45,14 @@ const MediaPropertyThemeSettings = observer(() => {
           border_radius: 5
         }}
       />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.theme.filter_color}
+        subcategory={l10n.categories.theme}
+        path="/public/asset_metadata/info/styling"
+        defaultValue="#FFFFFF"
+        field="filter_color"
+      />
       <Inputs.Select
         {...inputProps}
         {...l10n.theme.font}
