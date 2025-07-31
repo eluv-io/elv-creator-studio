@@ -114,6 +114,15 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="preview_password_digest"
       />
 
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.general.image}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        subcategory={l10n.categories.info}
+        aspectRatio={2/3}
+        field="image"
+      />
+
       <Inputs.ImageInput
         {...inputProps}
         label="Images"

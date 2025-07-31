@@ -21,7 +21,7 @@ export const MarketplaceSelect = observer(({
   let marketplaces = (marketplaceStore.allMarketplaces || [])
     .filter(marketplace => !excludedSlugs.includes(marketplace.marketplaceSlug))
     .map(marketplace => ({
-      label: marketplaceStore.marketplaces[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.name || marketplace.brandedName,
+      label: marketplaceStore.marketplaces[marketplace.objectId]?.metadata?.public?.asset_metadata?.info?.name || marketplace.brandedName || marketplace.marketplaceSlug,
       value: marketplace.marketplaceSlug,
       additionalValues: [
         { field: tenantSlugField, value: marketplace.tenantSlug },

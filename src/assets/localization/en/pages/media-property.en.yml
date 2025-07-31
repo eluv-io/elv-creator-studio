@@ -397,6 +397,9 @@ form:
     filter_color:
       label: Filter Button Color
       description: Specify the color of filter buttons for the 'box' filter variant
+    filter_style:
+      label: Filter Button Style
+      description: Specify the border style of filter buttons for the 'box' filter variant
     colors:
       background_color:
         label: Background Color
@@ -711,6 +714,9 @@ form:
       logo_alignment:
         label: Logo Alignment
         description: Vertical alignment for the logo
+      show_app_links:
+        label: Show App Links
+        description: If specified, links to the various Eluvio TV applications will be displayed below this section.
       inline_background_gradient:
         label: Section Background Gradient
         description: The background color for this section can be a solid color or a gradient
@@ -763,6 +769,9 @@ form:
       media_catalog:
         label: Media Catalog
         description: Limit the displayed content to a specific media catalog
+      sort_order:
+        label: Sort Order
+        description: Specify how the content should be ordered
       content_type:
         label: Content Type
         description: Content of the specified type

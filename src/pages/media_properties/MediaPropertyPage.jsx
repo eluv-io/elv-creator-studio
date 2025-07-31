@@ -273,7 +273,10 @@ const MediaPropertyPage = observer(() => {
         !showSectionSelectionModal ? null :
           <MediaPropertySectionSelectionModal
             mediaPropertyId={mediaPropertyId}
-            excludedSectionIds={page.layout?.sections || []}
+            excludedSectionIds={
+              (page.layout?.sections || [])
+                .filter(sectionId => !sectionId.startsWith("pssp"))
+            }
             Close={() => setShowSectionSelectionModal(false)}
             Submit={sectionIds => {
               sectionIds.forEach(sectionId => {

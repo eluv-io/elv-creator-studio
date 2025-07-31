@@ -47,6 +47,14 @@ class EditStore {
 
   // Gather changelists from each relevant store
   ChangeLists() {
+    const saveOrder = [
+      "itemTemplateStore",
+      "marketplaceStore",
+      "permissionSetStore",
+      "mediaCatalogStore",
+      "mediaPropertyStore"
+    ];
+
     const GetChangeList = ({type, storeKey, namePath="/public/asset_metadata/info/name"}) => {
       const store = this.rootStore[storeKey];
 
@@ -76,7 +84,8 @@ class EditStore {
 
     return Object.keys(this.types)
       .map(type => GetChangeList({type, ...this.types[type]}))
-      .flat();
+      .flat()
+      .sort((a, b) => saveOrder.indexOf(a.storeKey) < saveOrder.indexOf(b.storeKey) ? -1 : 1);
   }
 
   ToggleSaveModal(show) {

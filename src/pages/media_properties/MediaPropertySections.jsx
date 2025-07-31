@@ -7,7 +7,7 @@ import {modals} from "@mantine/modals";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
-import {Button, Container, Group, Modal, Paper, Select, TextInput, Text} from "@mantine/core";
+import {Button, Container, Group, Modal, Select, TextInput, Text} from "@mantine/core";
 import {MediaPropertySectionPermissionIcon} from "@/components/common/MediaCatalog";
 
 const CreateSectionForm = ({Create}) => {
@@ -191,27 +191,25 @@ export const MediaPropertySectionSelectionModal = observer(({
       opened
       onClose={Close}
     >
-      <Paper p="xl" pt="md" withBorder>
-        <MediaPropertySectionsTable
-          editable={false}
-          excludedSectionIds={excludedSectionIds}
-          mediaPropertyId={mediaPropertyId}
-          selectedRecords={selectedRecords}
-          setSelectedRecords={setSelectedRecords}
-        />
-        <Group position="right" spacing="md" mt={50}>
-          <Button variant="subtle" w={200} onClick={Close}>
-            { rootStore.l10n.components.actions.cancel }
-          </Button>
-          <Button
-            w={200}
-            disabled={selectedRecords.length === 0}
-            onClick={() => Submit(selectedRecords.map(section => section.id))}
-          >
-            { rootStore.l10n.components.actions.submit }
-          </Button>
-        </Group>
-      </Paper>
+      <MediaPropertySectionsTable
+        editable={false}
+        excludedSectionIds={excludedSectionIds}
+        mediaPropertyId={mediaPropertyId}
+        selectedRecords={selectedRecords}
+        setSelectedRecords={setSelectedRecords}
+      />
+      <Group position="right" spacing="md" mt={50}>
+        <Button variant="subtle" w={200} onClick={Close}>
+          { rootStore.l10n.components.actions.cancel }
+        </Button>
+        <Button
+          w={200}
+          disabled={selectedRecords.length === 0}
+          onClick={() => Submit(selectedRecords.map(section => section.id))}
+        >
+          { rootStore.l10n.components.actions.submit }
+        </Button>
+      </Group>
     </Modal>
   );
 });

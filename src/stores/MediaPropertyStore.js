@@ -225,11 +225,35 @@ class MediaPropertyStore {
       )
         .flat()
         .sort((a, b) => {
-          if(a.live_video && b.live_video) {
-            // Sort live content by start time
-            return a.start_time < b.start_time ? -1 : 1;
-          } else {
-            return a.catalog_title < b.catalog_title ? -1 : 1;
+          let titleComparison = (a.catalog_title || a.title) < (b.catalog_title || b.title) ? -1 : 1;
+          let scheduleComparison = 0;
+          let timeComparison = 0;
+
+          // For live comparison, regardless of direction we want live content to show first, followed by vod content
+          if(a.live_video) {
+            if(b.live_video) {
+              timeComparison =
+                a.start_time === b.start_time ? titleComparison :
+                  a.start_time < b.start_time ? -1 : 1;
+            } else {
+              timeComparison = -1;
+              scheduleComparison = -1;
+            }
+          } else if(b.live_video) {
+            scheduleComparison = 1;
+            timeComparison = 1;
+          }
+
+          switch(section.select.sort_order) {
+            case "title_asc":
+              return titleComparison;
+            case "title_desc":
+              return -1 * titleComparison;
+            case "time_desc":
+              return scheduleComparison || (-1 * timeComparison) || titleComparison;
+            // "time_asc" is the default case
+            default:
+              return scheduleComparison || timeComparison || titleComparison;
           }
         })
     );

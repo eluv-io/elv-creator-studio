@@ -577,6 +577,18 @@ const AutomaticSectionFilters = observer(() => {
             }))
           ]}
         />
+        <Inputs.Select
+          {...inputProps}
+          {...l10n.sections.filters.sort_order}
+          field="sort_order"
+          defaultValue=""
+          options={[
+            { label: "Title (A-Z)", value: "title_asc" },
+            { label: "Title (Z-A)", value: "title_desc" },
+            { label: "Start Time (Earliest to Latest)", value: "time_asc" },
+            { label: "Start Time (Latest to Earliest)", value: "time_desc" },
+          ]}
+        />
         <Inputs.MultiSelect
           {...inputProps}
           {...l10n.sections.filters.tags}
@@ -1213,43 +1225,47 @@ const ContentSectionDisplaySettings = observer(() => {
         ]}
       />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.inline_background_gradient}
+        subcategory={l10n.categories.section_presentation}
+        defaultValue=""
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="inline_background_gradient"
+        options={[
+          {label: "Solid", value: ""},
+          {label: "Vertical Gradient", value: "vertical"},
+          {label: "Horizontal Gradient", value: "horizontal"},
+        ]}
+      />
+
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.sections.display.inline_background_color}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="inline_background_color"
+      />
+
       {
-        section.display.inline_background_image ? null :
-          <>
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.sections.display.inline_background_gradient}
-              subcategory={l10n.categories.section_presentation}
-              defaultValue=""
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              field="inline_background_gradient"
-              options={[
-                {label: "Solid", value: ""},
-                {label: "Vertical Gradient", value: "vertical"},
-                {label: "Horizontal Gradient", value: "horizontal"},
-              ]}
-            />
-
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.sections.display.inline_background_color}
-              subcategory={l10n.categories.section_presentation}
-              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-              field="inline_background_color"
-            />
-
-            {
-              !section.display.inline_background_gradient ? null :
-                <Inputs.Color
-                  {...inputProps}
-                  {...l10n.sections.display.inline_background_color_2}
-                  subcategory={l10n.categories.section_presentation}
-                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-                  field="inline_background_color_2"
-                />
-            }
-          </>
+        !section.display.inline_background_gradient ? null :
+          <Inputs.Color
+            {...inputProps}
+            {...l10n.sections.display.inline_background_color_2}
+            subcategory={l10n.categories.section_presentation}
+            path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+            field="inline_background_color_2"
+          />
       }
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sections.display.show_app_links}
+        defaultValue={false}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="show_app_links"
+      />
 
 
       {

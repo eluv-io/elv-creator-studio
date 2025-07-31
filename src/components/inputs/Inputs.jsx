@@ -1780,7 +1780,12 @@ const CollectionTableRows = observer(({
 }) => {
   return (
     values.map((value, index) => {
-      const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+      let id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
+
+      if(idField === "." && values.find(otherItem => otherItem === value).length > 1) {
+        id = `${id}-${index}`;
+      }
+
       const name = (GetName && GetName(value)) || nameField && value[nameField];
 
       return (

@@ -55,6 +55,19 @@ const MediaPropertyThemeSettings = observer(() => {
       />
       <Inputs.Select
         {...inputProps}
+        {...l10n.theme.filter_style}
+        subcategory={l10n.categories.theme}
+        path="/public/asset_metadata/info/styling"
+        defaultValue="rounded"
+        field="filter_style"
+        options={[
+          { label: "Rounded", value: "rounded" },
+          { label: "Squared", value: "squared" },
+          { label: "Alternating", value: "alternating" }
+        ]}
+      />
+      <Inputs.Select
+        {...inputProps}
         {...l10n.theme.font}
         subcategory={l10n.categories.theme}
         path="/public/asset_metadata/info/styling"
