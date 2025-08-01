@@ -27,19 +27,17 @@ export const SVGIcon = ({
   );
 };
 
-export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
+export const IconButton = ({label, Icon, icon, tooltipProps={}, style={}, ...props}) => {
   if(props.disabled) {
     props.onClick = undefined;
   }
 
-  const button = (
-    <ActionIcon {...props} aria-label={label}>
-      {icon ? icon : <Icon/>}
-    </ActionIcon>
-  );
-
   if(!label) {
-    return button;
+    return (
+      <ActionIcon style={style} {...props} aria-label={label}>
+        {icon ? icon : <Icon/>}
+      </ActionIcon>
+    );
   }
 
   return (
@@ -51,9 +49,13 @@ export const IconButton = ({label, Icon, icon, tooltipProps={}, ...props}) => {
     >
       {
         !props.disabled ?
-          button :
-          <Group {...props}>
-            {button}
+          <ActionIcon style={style} {...props} aria-label={label}>
+            {icon ? icon : <Icon/>}
+          </ActionIcon> :
+          <Group style={style} {...props}>
+            <ActionIcon {...props} aria-label={label}>
+              {icon ? icon : <Icon/>}
+            </ActionIcon>
           </Group>
       }
     </Tooltip>

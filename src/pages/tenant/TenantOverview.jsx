@@ -10,7 +10,7 @@ import {
   Container,
   Button,
   Image,
-  Stack
+  Stack, Modal, Loader, Accordion
 } from "@mantine/core";
 import {DataTable} from "mantine-datatable";
 import {IconButton, LocalizeString} from "@/components/common/Misc.jsx";
@@ -21,8 +21,163 @@ import {Confirm, ConfirmDelete} from "@/components/inputs/Inputs.jsx";
 import {
   IconUnlink,
   IconLinkOff,
-  IconWorldUpload
+  IconWorldUpload,
+  IconClock, IconEdit, IconLink
 } from "@tabler/icons-react";
+import Markdown from "@/components/common/Markdown.jsx";
+
+const Version = observer(({record, version, Submit, Close}) => {
+  const l10n = rootStore.l10n.pages.tenant.form.overview;
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <Paper withBorder p="md" mb="md" style={{position: "relative"}}>
+      <Stack spacing={0}>
+        <Text fz="md">
+          { version.commit?.message || "No Commit Message" }
+        </Text>
+        <Text fz="xs">
+          by {version.commit?.author}
+        </Text>
+        {
+          !version.commitDate ? null :
+            <Text fz="xs" className="ellipsis">
+              { version.commitDate.toLocaleString("en-uk", {dateStyle: "full", timeStyle: "long"}) }
+            </Text>
+        }
+        <Text fz={10} className="ellipsis" color="gray.6">
+          { version.versionHash }
+        </Text>
+      </Stack>
+      {
+        !version.commitHistoryEntry ? null :
+          <Accordion mt="md" variant="contained">
+            <Accordion.Item value="default">
+              <Accordion.Control icon={<IconEdit />}>
+                { rootStore.l10n.components.save_modal.changelist }
+              </Accordion.Control>
+              <Accordion.Panel mx="md">
+                <Markdown
+                  content={version.commitHistoryEntry.changelist}
+                  className="changelist"
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+      }
+
+      <IconButton
+        label={LocalizeString(l10n.update_link, {name: record.name})}
+        disabled={record.linkedHash === version.versionHash}
+        variant="transparent"
+        color="purple.6"
+        loading={loading}
+        Icon={IconLink}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10
+        }}
+        onClick={async () => {
+          await Confirm({
+            title: LocalizeString(l10n.select_link, {name: record.name}),
+            text: LocalizeString(l10n.select_link_confirm, {name: record.name}),
+            onConfirm: async () => {
+              setLoading(true);
+
+              try {
+                await Submit(version.versionHash);
+                Close();
+              } catch(error) {
+                tenantStore.DebugLog({error});
+              } finally {
+                setLoading(false);
+              }
+            }
+          });
+        }}
+      />
+    </Paper>
+  );
+});
+
+const VersionSelectModal = observer(({record, Submit, Close}) => {
+  const l10n = rootStore.l10n.pages.tenant.form.overview;
+
+  const [versionHistory, setVersionHistory] = useState(undefined);
+
+  useEffect(() => {
+    tenantStore.LoadVersionHistory({objectId: record.objectId})
+      .then(setVersionHistory);
+  }, []);
+
+  return (
+    <Modal
+      opened
+      onClose={Close}
+      centered
+      size={uiStore.inputWidth + 40}
+      title={LocalizeString(l10n.select_link, {name: record.name})}
+      padding="xl"
+    >
+      {
+        !versionHistory ? <Group py="xl" position="center"><Loader/></Group> :
+          versionHistory.map(version =>
+            <Version
+              key={`version-${version.versionHash}`}
+              record={record}
+              version={version}
+              Submit={Submit}
+              Close={Close}
+            />
+          )
+      }
+    </Modal>
+  );
+});
+
+const SelectVersionButton = ({type, record}) => {
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const l10n = rootStore.l10n.pages.tenant.form.overview;
+  return (
+    <>
+      <IconButton
+        label={LocalizeString(l10n.select_link_label, {name: record.name})}
+        variant="transparent"
+        loading={loading}
+        color="blue.3"
+        Icon={IconClock}
+        onClick={() => setShowModal(true)}
+      />
+      {
+        !showModal ? null :
+          <VersionSelectModal
+            type={type}
+            record={record}
+            Submit={async versionHash => {
+              setLoading(true);
+              try {
+                await tenantStore.UpdateLink({
+                  type,
+                  name: record.name,
+                  slug: record.slug,
+                  versionHash,
+                  skipDeployCallbacks: true
+                });
+              } catch(error) {
+                rootStore.DebugLog({error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+              } finally {
+                setLoading(false);
+              }
+            }}
+            Close={() => setShowModal(false)}
+          />
+      }
+    </>
+  );
+};
 
 const DeployStatus = ({linked=true, deployed, mediaCatalogsBehind, permissionSetsBehind, hash, isTenantLink}) => {
   let labelKey = "not_linked";
@@ -70,7 +225,7 @@ const UpdateLinkButton = ({type, record}) => {
   const [loading, setLoading] = useState(false);
 
   const l10n = rootStore.l10n.pages.tenant.form.overview;
-  const linked = !!record?.latestHash;
+  const linked = !!record?.linkedHash;
   return (
     <IconButton
       label={LocalizeString(linked ? l10n.update_link_label : l10n.add_link_label, {name: record.name})}
@@ -224,7 +379,7 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             title: l10n.overview.status.link,
             render: record =>
               <DeployStatus
-                linked={!!record.latestHash}
+                linked={!!record.linkedHash}
                 deployed={record.latestDeployed}
                 mediaCatalogsBehind={record.mediaCatalogsBehind}
                 permissionSetsBehind={record.permissionSetsBehind}
@@ -235,9 +390,9 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             accessor: "record.stagingDeployed",
             title: l10n.overview.status.staging,
             render: record => (
-              !record.latestHash ? null :
+              !record.linkedHash ? null :
                 <DeployStatus
-                  linked={!!record.latestHash}
+                  linked={!!record.linkedHash}
                   deployed={record.stagingDeployed}
                   mediaCatalogsBehind={record.mediaCatalogsBehind}
                   permissionSetsBehind={record.permissionSetsBehind}
@@ -249,9 +404,9 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             accessor: "record.productionDeployed",
             title: l10n.overview.status.production,
             render: record => (
-              !record.latestHash ? null :
+              !record.linkedHash ? null :
                 <DeployStatus
-                  linked={!!record.latestHash}
+                  linked={!!record.linkedHash}
                   deployed={record.productionDeployed}
                   mediaCatalogsBehind={record.mediaCatalogsBehind}
                   permissionSetsBehind={record.permissionSetsBehind}
@@ -266,8 +421,9 @@ const StatusTable = observer(({Load, type, path, aspectRatio=1}) => {
             render: record => (
               <Group position="center" align="center" spacing={5}>
                 <UpdateLinkButton type={type} record={record} />
+                <SelectVersionButton type={type} record={record} />
                 {
-                  !record.latestHash ? null :
+                  !record.linkedHash ? null :
                     <UnlinkButton type={type} record={record}/>
                 }
               </Group>

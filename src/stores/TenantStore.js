@@ -115,9 +115,9 @@ class TenantStore {
           mediaPropertyId: mediaProperty.objectId,
           versionHash: mediaPropertyHash,
           mediaPropertyHash,
-          latestHash: latestLink.versionHash,
+          linkedHash: latestLink.versionHash,
           latestDeployed: latestLink.versionHash === mediaPropertyHash,
-          latestSlug: latestLink.slug,
+          linkedSlug: latestLink.slug,
           productionHash: productionLink.versionHash,
           productionDeployed: productionLink.versionHash === mediaPropertyHash,
           productionSlug: productionLink.slug,
@@ -170,9 +170,9 @@ class TenantStore {
           marketplaceId: marketplace.objectId,
           marketplaceHash,
           versionHash: marketplaceHash,
-          latestHash: latestLink.versionHash,
+          linkedHash: latestLink.versionHash,
           latestDeployed: latestLink.versionHash === marketplaceHash,
-          latestSlug: latestLink.slug,
+          linkedSlug: latestLink.slug,
           productionHash: productionLink.versionHash,
           productionDeployed: productionLink.versionHash === marketplaceHash,
           productionSlug: productionLink.slug,
@@ -253,7 +253,7 @@ class TenantStore {
     yield this.RetrieveTenant({environment: "staging"});
   });
 
-  UpdateLink = flow(function * ({type, name, slug, versionHash}) {
+  UpdateLink = flow(function * ({type, name, slug, versionHash, skipDeployCallbacks=false}) {
     const writeToken = yield this.rootStore.editStore.InitializeWrite({objectId: this.tenantObjectId});
 
     const objectId = this.client.utils.DecodeVersionHash(versionHash).objectId;
@@ -270,7 +270,7 @@ class TenantStore {
     }
 
     // Some things may need updating before deploying
-    versionHash = (yield (store.BeforeDeploy && store.BeforeDeploy({objectId}))) || versionHash;
+    versionHash = (yield (!skipDeployCallbacks && store.BeforeDeploy && store.BeforeDeploy({objectId}))) || versionHash;
 
     const writeParams = {
       libraryId: yield this.rootStore.LibraryId({objectId: this.tenantObjectId}),
@@ -450,6 +450,53 @@ class TenantStore {
         );
       })
     );
+  });
+
+  LoadVersionHistory = flow(function * ({objectId}) {
+    const versions = ((yield this.client.ContentObjectVersions({
+      libraryId: yield this.client.ContentObjectLibraryId({objectId}),
+      objectId
+    }))?.versions || [])
+      .slice(0, 20);
+
+    return (yield Promise.all(
+      versions.map(async ({hash}) => {
+        try {
+          if(!hash) {
+            return;
+          }
+
+          const metadata = (await this.client.ContentObjectMetadata({
+            versionHash: hash,
+            select: [
+              "commit",
+              "commit_history"
+            ]
+          })) || {};
+
+          let commitHistoryEntry, commitDate;
+          try {
+            commitDate = new Date(metadata.commit.timestamp);
+            commitHistoryEntry = metadata.commit_history.find(entry => {
+              const entryDate = new Date(entry.timestamp);
+
+              return Math.abs(entryDate.getTime() - commitDate.getTime()) < 5000;
+            });
+          } catch(error) {
+            this.DebugLog({error});
+          }
+
+          return {
+            versionHash: hash,
+            commit: metadata.commit,
+            commitDate,
+            commitHistoryEntry
+          };
+        } catch(error) {
+          this.DebugLog({error});
+        }
+      })
+    )).filter(v => v);
   });
 
   get client() {

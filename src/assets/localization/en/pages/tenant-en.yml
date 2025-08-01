@@ -43,11 +43,14 @@ form:
     deploy: Deploy
     deploy_confirm: Are you sure you want to deploy your changes?
     add_link: Add Link
-    add_link_label: Add Link to {name}
+    add_link_label: Add link to {name}
     add_link_label_confirm: Are you sure you want to link {name}?
     update_link: Update Link
-    update_link_label: Update Link to {name}
+    update_link_label: Update link to latest version of {name}
     update_link_confirm: Are you sure you want to update the link to {name}?
+    select_link: '{name} - Version History'
+    select_link_label: View version history for {name}
+    select_link_confirm: Are you sure you want to update the link for {name} to this version?
     remove_link: Remove Link
     remove_link_label: Remove Link to {name}
     remove_link_confirm: Are you sure you want to remove the link to {name}?

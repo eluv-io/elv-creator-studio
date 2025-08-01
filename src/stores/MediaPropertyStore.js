@@ -773,6 +773,7 @@ class MediaPropertyStore {
     const oldCatalogLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
 
     modified = JSON.stringify(Object.keys(catalogLinks).sort()) !== JSON.stringify(Object.keys(oldCatalogLinks).sort());
+
     if(!modified) {
       Object.keys(catalogLinks).forEach(catalogId => {
         if(catalogLinks[catalogId]?.["/"] !== oldCatalogLinks[catalogId]?.["/"]) {
