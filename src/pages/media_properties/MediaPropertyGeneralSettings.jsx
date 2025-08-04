@@ -125,12 +125,23 @@ const MediaPropertyGeneralSettings = observer(() => {
 
       <Inputs.ImageInput
         {...inputProps}
-        label="Images"
+        label="Header Logo"
         componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.info}
         fields={[
           { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
           { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
+        ]}
+      />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.start_screen}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        subcategory={l10n.categories.info}
+        fields={[
+          { field: "start_screen_background", aspectRatio: 16/9, ...l10n.general.start_screen_background },
+          { field: "start_screen_logo", aspectRatio: 1, ...l10n.general.start_screen_logo },
         ]}
       />
 

@@ -660,12 +660,14 @@ const ApplyTransaction = flow(function * ({
   const startIndex = this.actionStack[objectId]?.length || 0;
 
   yield Apply();
+  yield new Promise(resolve => setTimeout(resolve, 500));
 
   const txActions = this.actionStack[objectId].slice(startIndex);
   this.actionStack[objectId] = this.actionStack[objectId].slice(0, startIndex);
 
   this.ApplyAction({
     ...args,
+    path: UrlJoin(args.path || "/", args.field || ""),
     actionType: "TRANSACTION",
     objectId,
     _details: txActions.map(action => action.label).join(", "),

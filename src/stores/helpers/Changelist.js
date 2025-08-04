@@ -157,7 +157,9 @@ export const FormatChangeList = changeList => {
   changeList
     .filter(action => action.actionType !== "SET_DEFAULT")
     .forEach((action) => {
-      if(!rootStore.l10n.actions[action.actionType]) { return; }
+      if(!rootStore.l10n.actions[action.actionType]) {
+        return;
+      }
 
       if(!action.label) {
         rootStore.DebugLog({message: "Unlabelled action", level: rootStore.logLevels.DEBUG_LEVEL_MEDIUM});

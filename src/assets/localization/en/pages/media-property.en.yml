@@ -113,6 +113,12 @@ form:
       label: Header Logo
     tv_header_logo:
       label: Header Logo (TV)
+    start_screen:
+      label: TV Start Screen
+    start_screen_background:
+      label: Background
+    start_screen_logo:
+      label: Logo
     profile_background:
       label: User Profile Page Background Images
     profile_background_desktop:

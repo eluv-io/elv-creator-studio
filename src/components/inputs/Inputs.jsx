@@ -729,9 +729,16 @@ const CodeInput = observer(({
 
 const HashImage = async url => {
   const image = new Image();
-  image.src = url;
-  image.crossOrigin = "anonymous";
-  await new Promise(resolve => image.onload = resolve);
+  await Promise.race([
+    new Promise(resolve => {
+      image.onload = resolve;
+      image.onerror = resolve;
+      image.crossOrigin = "anonymous";
+      image.src = url;
+    }),
+    new Promise(resolve => setTimeout(() => resolve, 2000))
+  ]);
+
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
   const scale = 100 / Math.max(image.width, image.height);
@@ -903,6 +910,7 @@ const SingleImageInput = observer(({
                       objectId,
                       path,
                       field,
+                      label: "Set Image URL",
                       value: record.publicUrl,
                     });
                   } else {
@@ -911,6 +919,7 @@ const SingleImageInput = observer(({
                       objectId,
                       path,
                       field,
+                      label: "Set Image Link",
                       linkObjectId: record.objectId,
                       linkType: "files",
                       linkPath: record.fullPath
@@ -921,7 +930,8 @@ const SingleImageInput = observer(({
                     objectId,
                     path,
                     field: `${field}_hash`,
-                    value: await HashImage(imageUrl)
+                    label: "Set Image Hash",
+                    value: await HashImage(ScaleImage(record.publicUrl, 500))
                   });
                 }
               });
