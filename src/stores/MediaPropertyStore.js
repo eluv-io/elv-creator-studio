@@ -27,6 +27,7 @@ import {LocalizeString} from "@/components/common/Misc.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
 
 import {Migrations, latestVersion} from "@/migrations/MediaPropertyMigrations.js";
+import {mediaCatalogStore, marketplaceStore, permissionSetStore, mediaPropertyStore} from "@/stores/index.js";
 
 class MediaPropertyStore {
   allMediaProperties;
@@ -627,6 +628,131 @@ class MediaPropertyStore {
       Migrations[version]({mediaPropertyId, mediaProperty, store: this})
     );
   }
+
+  RemoveSection = (mediaPropertyId, sectionId) => {
+    // Remove all references from every page in the property with mediaPropertyId to the page section with sectionId
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+    // Check each page in the media property
+    for (const pageId in info.pages) {
+      const sections = info.pages[pageId].layout.sections || [];
+      for(let i = sections.length - 1; i >= 0 ; i--) {
+        if (sections[i] === sectionId) {
+          // Remove section each time it is referenced by the page
+          mediaPropertyStore.RemoveListElement({
+            objectId: mediaPropertyId,
+            page: UrlJoin("media-properties", mediaPropertyId, "pages", pageId),
+            path: UrlJoin("/public/asset_metadata/info/pages", pageId, "layout"),
+            field: "sections",
+            index: i
+          });
+        }
+      }
+    }
+  };
+
+  ValidateSections = mediaPropertyId => {
+    // Check for missing sections referenced by pages
+    const missingSections = [];
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+    for (const pageId in info.pages) {
+      const sectionIds = info.pages[pageId].layout.sections || [];
+      sectionIds.forEach(sectionId => {
+        if (!(sectionId in info.sections)) {
+          missingSections.push({
+            type: "error",
+            message: "Missing/invalid section: " + sectionId,
+            link: UrlJoin("media-properties", mediaPropertyId, "pages", pageId)
+          });
+        }
+      });
+    }
+    return missingSections;
+  };
+
+  ValidateGeneral = flow(function * ({mediaPropertyId}) {
+    // Check for missing media catalogs, marketplaces, permission sets referenced in general settings
+    const missing = [];
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+    // Load media catalogs, marketplaces, and permission sets via database
+    yield mediaCatalogStore.LoadMediaCatalogs();
+    yield marketplaceStore.LoadMarketplaces();
+    yield permissionSetStore.LoadPermissionSets();
+
+    // Media Catalogs
+    info.media_catalogs?.forEach(catalogId => {
+      if (!(catalogId in mediaCatalogStore.allMediaCatalogs)) {
+        missing.push({
+          type: "error",
+          message: "Missing/invalid media catalog: " + catalogId,
+          link: UrlJoin("media-properties", mediaPropertyId, "general")
+        });
+      }
+    });
+
+    // Marketplaces
+    info.associated_marketplaces?.forEach(marketplace => {
+      if (!(marketplace.marketplace_id in marketplaceStore.allMarketplaces)) {
+        missing.push({
+          type: "error",
+          message: "Missing/invalid marketplace: " + marketplace.marketplace_id,
+          link: UrlJoin("media-properties", mediaPropertyId, "general")
+        });
+      }
+    });
+
+    // Permission Sets
+    info.permission_sets?.forEach(permissionSetId => {
+      if (!(permissionSetId in permissionSetStore.allPermissionSets)) {
+        missing.push({
+          type: "error",
+          message: "Missing/invalid permission set: " + permissionSetId,
+          link: UrlJoin("media-properties", mediaPropertyId, "general")
+        });
+      }
+    });
+    return missing;
+  });
+
+  ValidateSectionContent = mediaPropertyId => {
+    const missingItems = [];
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+    for (const sectionId in info.sections) {
+      if (info.sections[sectionId].content) {
+        info.sections[sectionId].content?.forEach(sectionItem => {
+          if (sectionItem.type === "media") {
+            // Check media section items
+            const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId: sectionItem.media_id});
+            if (!mediaItem) {
+              missingItems.push({
+                type: "error",
+                message: "Missing/invalid media item: " + sectionItem.id,
+                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId)
+              });
+            }
+          } else if (sectionItem.type === "page_link") {
+            // Check pages referenced by page link section items
+            const pageId = sectionItem.page_id;
+            if (!(pageId in info.pages)) {
+              missingItems.push({
+                type: "error",
+                message: "Missing/invalid page link: " + pageId,
+                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId, "content", sectionItem.id)
+              });
+            }
+          }
+        });
+      }
+    }
+    return missingItems;
+  };
 
   Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
     let mediaProperty = yield this.client.ContentObjectMetadata({

@@ -5,6 +5,7 @@ import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {PermissionItemOwnedSpec, PermissionSetSpec} from "@/specs/PermissionSetSpecs.js";
+import {marketplaceStore} from "@/stores/index.js";
 
 class PermissionSetStore {
   allPermissionSets;
@@ -144,6 +145,26 @@ class PermissionSetStore {
       return LocalizeString(this.rootStore.l10n.pages.permission_set.form.categories.permission_item_label, { label: label });
     };
   }
+
+  ValidatePermissionItemLinks = permissionSetId => {
+    // Detect missing marketplaces that are linked from permission items
+    const missingMarketplaces = [];
+    const permissionSet = this.permissionSets[permissionSetId];
+    const info = permissionSet?.metadata?.public?.asset_metadata?.info || {};
+
+    for (const permissionItemId in info.permission_items) {
+      const permissionItem = info.permission_items[permissionItemId];
+      const marketplace = marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === permissionItem.marketplace.marketplace_id);
+      if (!marketplace) {
+        missingMarketplaces.push({
+          type: "error",
+          message: "Missing marketplace linked: " + permissionItem.marketplace.marketplace_id,
+          link: UrlJoin("permission-sets", permissionSetId, "permission-items", permissionItemId)
+        });
+      }
+    }
+    return missingMarketplaces;
+  };
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadPermissionSet({permissionSetId: objectId, force: true});
