@@ -146,9 +146,10 @@ class PermissionSetStore {
     };
   }
 
-  ValidatePermissionItemLinks = permissionSetId => {
+  ValidatePermissionItemLinks = flow(function * (permissionSetId) {
     // Detect missing marketplaces that are linked from permission items
     const missingMarketplaces = [];
+    yield this.LoadPermissionSet({permissionSetId});
     const permissionSet = this.permissionSets[permissionSetId];
     const info = permissionSet?.metadata?.public?.asset_metadata?.info || {};
 
@@ -164,7 +165,7 @@ class PermissionSetStore {
       }
     }
     return missingMarketplaces;
-  };
+  });
 
   Reload = flow(function * ({objectId}) {
     yield this.LoadPermissionSet({permissionSetId: objectId, force: true});
