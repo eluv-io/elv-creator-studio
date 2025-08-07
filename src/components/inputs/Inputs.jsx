@@ -2235,6 +2235,12 @@ const ReferenceTable = observer(({
                             onConfirm: () => {
                               store.ApplyTransaction( {
                                 objectId,
+                                page,
+                                path: UrlJoin(path, field),
+                                field: item.id,
+                                category,
+                                subcategory,
+                                label: itemName,
                                 Apply: () => {
                                   store.RemoveField({
                                     objectId,
