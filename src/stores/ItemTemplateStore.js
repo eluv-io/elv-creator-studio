@@ -3,6 +3,7 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {FabricUrl} from "@/helpers/Fabric.js";
+import UrlJoin from "url-join";
 
 class ItemTemplateStore {
   allItemTemplates;
@@ -86,6 +87,39 @@ class ItemTemplateStore {
 
     return embedUrl.toString();
   }
+
+  ValidateTemplateAddresses = flow(function * (itemTemplateId) {
+    const address = this.itemTemplates[itemTemplateId]?.metadata?.public?.asset_metadata?.nft.address;
+    let problemsList = [];
+
+    // Case 1: check for missing or invalid contract address
+    if (!(address && this.client.utils.ValidAddress(address))) {
+      problemsList.push({
+        type: "Error",
+        message: "No or invalid contract address configured",
+        link: UrlJoin("item-templates", itemTemplateId, "settings")
+      });
+    }
+
+    // Case 2: check for contract addresses used by multiple templates
+    // Load list of templates via database
+    yield this.LoadItemTemplates();
+
+    this.allItemTemplates.forEach(template => {
+      // Use loaded version if template is loaded; else use database version
+      const address2 = this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address ?
+        this.itemTemplates[template.objectId]?.metadata?.public?.asset_metadata?.nft.address : template.address;
+
+      if (itemTemplateId !== template.objectId && this.client.utils.EqualAddress(address, address2)) {
+        problemsList.push({
+          type: "Warning",
+          message: "Same contract address used by multiple item templates",
+          link: UrlJoin("item-templates", template.objectId)
+        });
+      }
+    });
+    return problemsList;
+  });
 
   PostSave = flow(function * ({libraryId, objectId}) {
     const versionHash = yield this.client.LatestVersionHash({objectId});

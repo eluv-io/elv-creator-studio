@@ -663,7 +663,7 @@ class MediaPropertyStore {
       sectionIds.forEach(sectionId => {
         if (!(sectionId in info.sections)) {
           missingSections.push({
-            type: "error",
+            type: "Error",
             message: "Missing/invalid section: " + sectionId,
             link: UrlJoin("media-properties", mediaPropertyId, "pages", pageId)
           });
@@ -673,7 +673,43 @@ class MediaPropertyStore {
     return missingSections;
   };
 
-  ValidateGeneral = flow(function * ({mediaPropertyId}) {
+  ValidateSectionContent = mediaPropertyId => {
+    // Check for missing media items referenced by media section items, and missing pages
+    const missingItems = [];
+    const mediaProperty = this.mediaProperties[mediaPropertyId];
+    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+    for (const sectionId in info.sections) {
+      if (info.sections[sectionId].content) {
+        info.sections[sectionId].content?.forEach(sectionItem => {
+          if (sectionItem.type === "media") {
+            // Check media section items
+            const mediaItem = this.GetMediaItem({mediaItemId: sectionItem.media_id});
+            if (!mediaItem) {
+              missingItems.push({
+                type: "Error",
+                message: "Missing/invalid media item: " + sectionItem.id,
+                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId)
+              });
+            }
+          } else if (sectionItem.type === "page_link") {
+            // Check pages referenced by page link section items
+            const pageId = sectionItem.page_id;
+            if (!(pageId in info.pages)) {
+              missingItems.push({
+                type: "Error",
+                message: "Missing/invalid page link: " + pageId,
+                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId, "content", sectionItem.id)
+              });
+            }
+          }
+        });
+      }
+    }
+    return missingItems;
+  };
+
+  ValidateGeneral = flow(function * (mediaPropertyId) {
     // Check for missing media catalogs, marketplaces, permission sets referenced in general settings
     const missing = [];
     const mediaProperty = this.mediaProperties[mediaPropertyId];
@@ -688,7 +724,7 @@ class MediaPropertyStore {
     info.media_catalogs?.forEach(catalogId => {
       if (!(catalogId in mediaCatalogStore.allMediaCatalogs)) {
         missing.push({
-          type: "error",
+          type: "Error",
           message: "Missing/invalid media catalog: " + catalogId,
           link: UrlJoin("media-properties", mediaPropertyId, "general")
         });
@@ -699,7 +735,7 @@ class MediaPropertyStore {
     info.associated_marketplaces?.forEach(marketplace => {
       if (!(marketplace.marketplace_id in marketplaceStore.allMarketplaces)) {
         missing.push({
-          type: "error",
+          type: "Error",
           message: "Missing/invalid marketplace: " + marketplace.marketplace_id,
           link: UrlJoin("media-properties", mediaPropertyId, "general")
         });
@@ -710,7 +746,7 @@ class MediaPropertyStore {
     info.permission_sets?.forEach(permissionSetId => {
       if (!(permissionSetId in permissionSetStore.allPermissionSets)) {
         missing.push({
-          type: "error",
+          type: "Error",
           message: "Missing/invalid permission set: " + permissionSetId,
           link: UrlJoin("media-properties", mediaPropertyId, "general")
         });
@@ -718,41 +754,6 @@ class MediaPropertyStore {
     });
     return missing;
   });
-
-  ValidateSectionContent = mediaPropertyId => {
-    const missingItems = [];
-    const mediaProperty = this.mediaProperties[mediaPropertyId];
-    const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
-
-    for (const sectionId in info.sections) {
-      if (info.sections[sectionId].content) {
-        info.sections[sectionId].content?.forEach(sectionItem => {
-          if (sectionItem.type === "media") {
-            // Check media section items
-            const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId: sectionItem.media_id});
-            if (!mediaItem) {
-              missingItems.push({
-                type: "error",
-                message: "Missing/invalid media item: " + sectionItem.id,
-                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId)
-              });
-            }
-          } else if (sectionItem.type === "page_link") {
-            // Check pages referenced by page link section items
-            const pageId = sectionItem.page_id;
-            if (!(pageId in info.pages)) {
-              missingItems.push({
-                type: "error",
-                message: "Missing/invalid page link: " + pageId,
-                link: UrlJoin("media-properties", mediaPropertyId, "sections", sectionId, "content", sectionItem.id)
-              });
-            }
-          }
-        });
-      }
-    }
-    return missingItems;
-  };
 
   Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
     let mediaProperty = yield this.client.ContentObjectMetadata({

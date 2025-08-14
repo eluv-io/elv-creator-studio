@@ -5,7 +5,6 @@ import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {PermissionItemOwnedSpec, PermissionSetSpec} from "@/specs/PermissionSetSpecs.js";
-import {marketplaceStore} from "@/stores/index.js";
 
 class PermissionSetStore {
   allPermissionSets;
@@ -155,10 +154,10 @@ class PermissionSetStore {
 
     for (const permissionItemId in info.permission_items) {
       const permissionItem = info.permission_items[permissionItemId];
-      const marketplace = marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === permissionItem.marketplace.marketplace_id);
+      const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === permissionItem.marketplace.marketplace_id);
       if (!marketplace) {
         missingMarketplaces.push({
-          type: "error",
+          type: "Error",
           message: "Missing marketplace linked: " + permissionItem.marketplace.marketplace_id,
           link: UrlJoin("permission-sets", permissionSetId, "permission-items", permissionItemId)
         });
