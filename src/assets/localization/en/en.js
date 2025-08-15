@@ -7,6 +7,7 @@ import MediaLocalization from "./pages/media-en.yml";
 import MediaCatalogLocalization from "./pages/media-catalog-en.yml";
 import MediaPropertyLocalization from "./pages/media-property.en.yml";
 import PermissionSetLocalization from "./pages/permission-set.yml";
+import PocketLocalization from "./pages/pocket.en.yml";
 
 Localization.pages = {
   tenant: TenantLocalization,
@@ -15,7 +16,8 @@ Localization.pages = {
   media: MediaLocalization,
   media_catalog: MediaCatalogLocalization,
   media_property: MediaPropertyLocalization,
-  permission_set: PermissionSetLocalization
+  permission_set: PermissionSetLocalization,
+  pocket: PocketLocalization
 };
 
 export default Localization;

@@ -18,6 +18,7 @@ class EditStore {
     "item_template": { storeKey: "itemTemplateStore", namePath: "/public/asset_metadata/nft/name"},
     "media_catalog": { storeKey: "mediaCatalogStore", namePath: "/public/asset_metadata/info/name"},
     "media_property": { storeKey: "mediaPropertyStore", namePath: "/public/asset_metadata/info/name"},
+    "pocket": { storeKey: "pocketStore", namePath: "/public/asset_metadata/info/name"},
     "permission_set": { storeKey: "permissionSetStore", namePath: "/public/asset_metadata/info/name"},
   };
 
@@ -52,7 +53,8 @@ class EditStore {
       "marketplaceStore",
       "permissionSetStore",
       "mediaCatalogStore",
-      "mediaPropertyStore"
+      "mediaPropertyStore",
+      "pocketStore"
     ];
 
     const GetChangeList = ({type, storeKey, namePath="/public/asset_metadata/info/name"}) => {

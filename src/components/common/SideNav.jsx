@@ -12,15 +12,15 @@ import {
   IconTemplate,
   IconPlaylist,
   IconBrandPagekit,
-  IconLockOpen
+  IconLockOpen, IconBrandPocket
 } from "@tabler/icons-react";
-
 
 const S = (...classes) => classes.map(c => NavStyles[c] || "").join(" ");
 
 const mainLinks = [
   { label: rootStore.l10n.components.nav.home, icon: <IconSitemap />, path: "/tenant"},
   { label: rootStore.l10n.components.nav.media_properties, icon: <IconBrandPagekit />, path: "/media-properties"},
+  { label: rootStore.l10n.components.nav.pockets, icon: <IconBrandPocket />, path: "/pocket"},
   { label: rootStore.l10n.components.nav.media_catalogs, icon: <IconPlaylist />, path: "/media-catalogs"},
   { label: rootStore.l10n.components.nav.marketplaces, icon: <IconBuildingStore />, path: "/marketplaces"},
   { label: rootStore.l10n.components.nav.item_templates, icon: <IconTemplate />, path: "/item-templates"},

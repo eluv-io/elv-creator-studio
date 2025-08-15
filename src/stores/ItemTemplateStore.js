@@ -13,8 +13,8 @@ class ItemTemplateStore {
     makeAutoObservable(this);
   }
 
-  LoadItemTemplates = flow(function * () {
-    if(this.allItemTemplates) { return; }
+  LoadItemTemplates = flow(function * (force=false) {
+    if(this.allItemTemplates && !force) { return; }
 
     this.allItemTemplates = (yield this.rootStore.databaseStore.GetCollection({collection: "templates"}))
       .map(itemTemplate => ({
