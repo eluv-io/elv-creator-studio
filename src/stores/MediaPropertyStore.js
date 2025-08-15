@@ -27,7 +27,6 @@ import {LocalizeString} from "@/components/common/Misc.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
 
 import {Migrations, latestVersion} from "@/migrations/MediaPropertyMigrations.js";
-import {mediaCatalogStore, marketplaceStore, permissionSetStore, mediaPropertyStore} from "@/stores/index.js";
 
 class MediaPropertyStore {
   allMediaProperties;
@@ -640,7 +639,7 @@ class MediaPropertyStore {
       for(let i = sections.length - 1; i >= 0 ; i--) {
         if (sections[i] === sectionId) {
           // Remove section each time it is referenced by the page
-          mediaPropertyStore.RemoveListElement({
+          this.rootStore.mediaPropertyStore.RemoveListElement({
             objectId: mediaPropertyId,
             page: UrlJoin("media-properties", mediaPropertyId, "pages", pageId),
             path: UrlJoin("/public/asset_metadata/info/pages", pageId, "layout"),
@@ -716,13 +715,13 @@ class MediaPropertyStore {
     const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
     // Load media catalogs, marketplaces, and permission sets via database
-    yield mediaCatalogStore.LoadMediaCatalogs();
-    yield marketplaceStore.LoadMarketplaces();
-    yield permissionSetStore.LoadPermissionSets();
+    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs();
+    yield this.rootStore.marketplaceStore.LoadMarketplaces();
+    yield this.rootStore.permissionSetStore.LoadPermissionSets();
 
     // Media Catalogs
     info.media_catalogs?.forEach(catalogId => {
-      if (!(catalogId in mediaCatalogStore.allMediaCatalogs)) {
+      if (!this.rootStore.mediaCatalogStore.allMediaCatalogs.find(catalog => catalog.objectId === catalogId)) {
         missing.push({
           type: "Error",
           message: "Missing/invalid media catalog: " + catalogId,
@@ -733,7 +732,7 @@ class MediaPropertyStore {
 
     // Marketplaces
     info.associated_marketplaces?.forEach(marketplace => {
-      if (!(marketplace.marketplace_id in marketplaceStore.allMarketplaces)) {
+      if (!this.rootStore.marketplaceStore.allMarketplaces.find(marketplace2 => marketplace2.objectId === marketplace.marketplace_id)) {
         missing.push({
           type: "Error",
           message: "Missing/invalid marketplace: " + marketplace.marketplace_id,
@@ -744,7 +743,7 @@ class MediaPropertyStore {
 
     // Permission Sets
     info.permission_sets?.forEach(permissionSetId => {
-      if (!(permissionSetId in permissionSetStore.allPermissionSets)) {
+      if (!this.rootStore.permissionSetStore.allPermissionSets.find(permissionSet => permissionSet.objectId === permissionSetId)) {
         missing.push({
           type: "Error",
           message: "Missing/invalid permission set: " + permissionSetId,
