@@ -1,0 +1,87 @@
+nav:
+  list: Pocket TV Properties
+  overview: Overview
+  general: General Settings
+form:
+  categories:
+    pockets: Pocket TV Properties
+    pocket: Pocket TV Property
+    general: General Settings
+    search: Search and Social Preview
+    analytics: Analytics
+  create:
+    create: Create New {type}
+    name:
+      label: Name
+    slug:
+      label: Slug
+    validation:
+      name: Name must be specified
+  common:
+    name:
+      label: Name
+    description:
+      label: Description
+    id:
+      label: ID
+    image:
+      label: Image
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
+  general:
+    slug:
+      label: Property Slug
+      description: "Warning: This value should not be changed after deployment as it will invalidate existing URLs to this property"
+    page_title:
+      label: Page Title
+      description: The title of the page in the browser
+    image:
+      label: Image
+      description: Square
+    permission_sets:
+      label: Permission Sets
+      description: Select permission sets to associate with this property
+    splash_screen:
+      label: Splash Screen
+      description: Displayed on initial load of app
+    splash_screen_background:
+      label: Splash Screen Background (Desktop)
+    splash_screen_background_mobile:
+      label: Splash Screen Background (Mobile)
+    media_catalogs:
+      label: Media Catalogs
+      description: Media from these catalogs will be available in this property
+    meta_tags:
+      meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
+      site_name:
+        label: Site Name
+      title:
+        label: Title
+      description:
+        label: Description
+      image:
+        label: Image
+        description: 1.91:1 Aspect Ratio (1200px x 630px)
+      favicon:
+        label: Favicon
+        description: Icon appearing next to page title in browser tab. 16x16 Square
+    analytics:
+      analytics_ids:
+        label: Analytics IDs
+        description: Add your analytics IDs to track page views for this property
+        fieldLabel: Analytics ID
+      label:
+        label: Label
+      analytics_type:
+        label: Analytics Type
+      id:
+        label: ID
+      google_conversion_label:
+        label: Google Conversion Label
+      google_conversion_id:
+        label: Google Conversion ID
+      facebook_event_id:
+        label: Facebook Event Id
+      twitter_event_id:
+        label: X Pixel ID

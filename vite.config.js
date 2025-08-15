@@ -1,4 +1,4 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
+import { defineConfig } from "vite";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import { fileURLToPath, URL } from "url";
 import { viteStaticCopy } from "vite-plugin-static-copy";
@@ -8,7 +8,6 @@ import ViteYaml from "@modyfi/vite-plugin-yaml";
 export default defineConfig(({command}) => {
   let plugins = [
     react(),
-    splitVendorChunkPlugin(),
     ViteYaml(),
     viteStaticCopy({
       targets: [

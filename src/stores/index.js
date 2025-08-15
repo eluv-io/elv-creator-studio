@@ -15,6 +15,7 @@ import MarketplaceStore from "@/stores/MarketplaceStore.js";
 import ItemTemplateStore from "@/stores/ItemTemplateStore.js";
 import MediaCatalogStore from "@/stores/MediaCatalogStore.js";
 import MediaPropertyStore from "@/stores/MediaPropertyStore.js";
+import PocketStore from "@/stores/PocketStore.js";
 
 import LocalizationEN from "@/assets/localization/en/en.js";
 import PermissionSetStore from "@/stores/PermissionSetStore.js";
@@ -72,6 +73,7 @@ class RootStore {
     this.mediaCatalogStore = new MediaCatalogStore(this);
     this.mediaPropertyStore = new MediaPropertyStore(this);
     this.permissionSetStore = new PermissionSetStore(this);
+    this.pocketStore = new PocketStore(this);
 
     this.Initialize();
   }
@@ -237,5 +239,6 @@ export const itemTemplateStore = rootStore.itemTemplateStore;
 export const mediaCatalogStore = rootStore.mediaCatalogStore;
 export const mediaPropertyStore = rootStore.mediaPropertyStore;
 export const permissionSetStore = rootStore.permissionSetStore;
+export const pocketStore = rootStore.pocketStore;
 
 window.rootStore = rootStore;

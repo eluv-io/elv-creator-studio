@@ -105,6 +105,7 @@ class DatabaseStore {
       mezzanine: "Title",
       mediaCatalog: "Media Catalog",
       mediaProperty: "Media Property",
+      pocket: "Pocket TV Property",
       permissionSet: "Permission Set"
     };
 
@@ -127,6 +128,7 @@ class DatabaseStore {
           // Create type
           this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           this.rootStore.DebugLog({message: allTypes, level: this.logLevels.DEBUG_LEVEL_ERROR});
+          const tenantInfo = await this.GetDocument({collection: "tenant", document: "info"});
 
           if(await window.confirm(`Should content type ${name} be created?`)) {
             typeIds[key] = await this.client.CreateContentType({
@@ -134,7 +136,7 @@ class DatabaseStore {
                 "bitcode_flags": "abrmaster",
                 "bitcode_format": "builtin",
                 "description": "",
-                "name": name,
+                "name": tenantInfo ? `${tenantInfo.slug} - ${name}` : name,
                 "public": {
                   "description": "",
                   "eluv.manageApp": "default",
@@ -222,6 +224,8 @@ class DatabaseStore {
 
     const isOldDB = !dbInfo || dbInfo.version < DATABASE_VERSION;
 
+    yield this.InitializeTypes();
+
     if(tenantInfo && !isOldDB && !force) {
       this.rootStore.DebugLog({message: "Database already set up - skipping", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
       return;
@@ -297,7 +301,8 @@ class DatabaseStore {
       templates: {},
       mediaCatalogs: {},
       mediaProperties: {},
-      permisisonSets: {}
+      permissionSets: {},
+      pockets: {}
     };
 
     const typeIds = yield this.InitializeTypes();
@@ -325,9 +330,13 @@ class DatabaseStore {
           object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
           content.mediaProperties[object.objectId] = object;
           break;
+        case "pocket":
+          object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
+          content.pockets[object.objectId] = object;
+          break;
         case "permissionSet":
           object.name = object.metadata.public?.asset_metadata?.info?.name || object.metadata.public?.name;
-          content.permisisonSets[object.objectId] = object;
+          content.permissionSets[object.objectId] = object;
           break;
         default:
           this.DebugLog({message: `Unknown type ${object.metadata?.public?.name} (${object.objectId}, type ${object.typeId})`, level: this.logLevels.DEBUG_LEVEL_INFO});
@@ -356,10 +365,14 @@ class DatabaseStore {
       content.marketplaces[marketplaceId].marketplaceSlug = content.marketplaces[marketplaceId].metadata.public.asset_metadata.slug;
     });
 
-
     Object.keys(content.mediaProperties).forEach(mediaPropertyId => {
       content.mediaProperties[mediaPropertyId].tenantSlug = tenantSlug;
       content.mediaProperties[mediaPropertyId].mediaPropertySlug = content.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.slug;
+    });
+
+    Object.keys(content.pockets).forEach(pocketId => {
+      content.pockets[pocketId].tenantSlug = tenantSlug;
+      content.pockets[pocketId].pocketSlug = content.pockets[pocketId].metadata.public.asset_metadata.slug;
     });
 
     yield Promise.all(
@@ -375,8 +388,8 @@ class DatabaseStore {
     );
 
     yield Promise.all(
-      Object.keys(content.permisisonSets).map(async permissionSetId => {
-        content.permisisonSets[permissionSetId].tenantSlug = tenantSlug;
+      Object.keys(content.permissionSets).map(async permissionSetId => {
+        content.permissionSets[permissionSetId].tenantSlug = tenantSlug;
       })
     );
 
@@ -586,7 +599,16 @@ class DatabaseStore {
     );
 
     yield Promise.all(
-      Object.values(content.permisisonSets).map(async permissionSet => {
+      Object.values(content.pockets).map(async pocket => {
+        pocket = { ...pocket };
+        delete pocket.metadata;
+
+        await this.WriteDocument({batch, collection: "pockets", document: pocket.objectId, content: pocket});
+      })
+    );
+
+    yield Promise.all(
+      Object.values(content.permissionSets).map(async permissionSet => {
         permissionSet = { ...permissionSet };
         delete permissionSet.metadata;
 
@@ -623,6 +645,13 @@ class DatabaseStore {
     yield batch.commit();
 
      */
+
+    yield this.rootStore.mediaPropertyStore.LoadMediaProperties(true);
+    yield this.rootStore.pocketStore.LoadPockets(true);
+    yield this.rootStore.mediaCatalogStore.LoadMediaCatalogs(true);
+    yield this.rootStore.permissionSetStore.LoadPermissionSets(true);
+    yield this.rootStore.itemTemplateStore.LoadItemTemplates(true);
+    yield this.rootStore.marketplaceStore.LoadMarketplaces(true);
   });
 
   // Retrieve marketplace ID by resolving link, if necessary
@@ -804,6 +833,34 @@ class DatabaseStore {
       batch,
       collection: "mediaProperties",
       document: mediaPropertyId,
+      content: object
+    });
+  });
+
+  SavePocket = flow(function * ({batch, pocketId}) {
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: pocketId});
+    const metadata = {
+      public: yield this.client.ContentObjectMetadata({
+        libraryId,
+        objectId: pocketId,
+        metadataSubtree: "/public"
+      })
+    };
+
+    let object = {
+      libraryId,
+      objectId: pocketId,
+      tenantSlug: this.rootStore.tenantInfo.tenantSlug || "",
+      pocketSlug: metadata.public?.asset_metadata?.info?.slug || "",
+      name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
+      description: metadata.public?.asset_metadata?.info?.description || "",
+      id: metadata.public?.asset_metadata?.info?.id
+    };
+
+    yield this.WriteDocument({
+      batch,
+      collection: "pockets",
+      document: pocketId,
       content: object
     });
   });
