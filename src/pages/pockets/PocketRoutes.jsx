@@ -7,12 +7,14 @@ import PocketList from "@/pages/pockets/PocketList.jsx";
 import PocketOverview from "@/pages/pockets/PocketOverview.jsx";
 import PocketGeneralSettings from "@/pages/pockets/PocketGeneralSettings.jsx";
 import PocketMedia from "@/pages/pockets/PocketMedia.jsx";
+import PocketMediaItem from "@/pages/pockets/PocketMediaItem.jsx";
 
 const PocketRoutes = observer(({rootPath}) => {
   const routes = [
     { root: true, navRoute: true, label: rootStore.l10n.pages.pocket.nav.overview, path: "/pocket/:pocketId", Component: <PocketOverview /> },
     { navRoute: true, label: rootStore.l10n.pages.pocket.nav.general, path: "/pocket/:pocketId/general", Component: <PocketGeneralSettings /> },
-    { navRoute: true, label: rootStore.l10n.pages.pocket.nav.media, path: "/pocket/:pocketId/media", Component: <PocketMedia /> }
+    { navRoute: true, label: rootStore.l10n.pages.pocket.nav.media, path: "/pocket/:pocketId/media", Component: <PocketMedia /> },
+    { label: rootStore.l10n.pages.pocket.nav.media_item, path: "/pocket/:pocketId/media/:pocketMediaItemId", Component: <PocketMediaItem /> }
   ]
     .map(route => ({
       ...route,

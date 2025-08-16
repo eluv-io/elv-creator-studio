@@ -13,6 +13,8 @@ form:
     media: Media
     media_item: Media Item
     media_item_label: Media Item `{label}`
+    display: Display Settings
+    tags: Tags
   create:
     create: Create New {type}
     name:
@@ -107,3 +109,17 @@ form:
       fieldLabel: Permission
     media_permissions:
       label: Media Permissions
+  media_item:
+    slug:
+      label: Slug
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    media_item:
+      label: Media Item
+    use_media_settings:
+      label: Use Media Presentation Settings
+      description: If checked, this item will be presented in the according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item.

@@ -3,12 +3,10 @@ import {useParams} from "react-router-dom";
 import {rootStore, pocketStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {Accordion, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {LocalizeString} from "@/components/common/Misc.jsx";
+
 import CountryCodesList from "country-codes-list";
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
