@@ -37,7 +37,7 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
           sourceOptions: {
             playoutParameters: {
               versionHash: videoHash || ExtractHashFromLink(videoLink),
-              channel: videoLinkInfo.composition_key,
+              channel: videoLinkInfo?.composition_key,
               clipStart: videoLinkInfo?.clip_start_time,
               clipEnd: videoLinkInfo?.clip_end_time
             }

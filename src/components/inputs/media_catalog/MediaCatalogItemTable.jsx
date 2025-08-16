@@ -100,7 +100,7 @@ const MediaCatalogItemTable = observer(({
   const urlParams = new URLSearchParams(location.search);
   initialFilter = decodeURIComponent(urlParams.get("filter") || "");
   initialTagFilter = decodeURIComponent(initialTagFilter || urlParams.get("tags") || "")?.split(",").filter(tag => tag);
-  initialMediaTypeFilter = decodeURIComponent(mediaType, initialMediaTypeFilter || urlParams.get("media_type") || "");
+  initialMediaTypeFilter = decodeURIComponent(mediaType || initialMediaTypeFilter || urlParams.get("media_type") || "");
 
   const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(mediaCatalogId || settingsCache?.mediaCatalogId || mediaCatalogIds[0]);
   const [selectedContentType, setSelectedContentType] = useState(type || settingsCache?.type || "media");
