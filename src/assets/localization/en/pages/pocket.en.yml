@@ -2,13 +2,17 @@ nav:
   list: Pocket TV Properties
   overview: Overview
   general: General Settings
+  media: Media
 form:
   categories:
     pockets: Pocket TV Properties
     pocket: Pocket TV Property
     general: General Settings
-    search: Search and Social Preview
+    meta_tags: Search and Social Preview
     analytics: Analytics
+    media: Media
+    media_item: Media Item
+    media_item_label: Media Item `{label}`
   create:
     create: Create New {type}
     name:
@@ -85,3 +89,21 @@ form:
         label: Facebook Event Id
       twitter_event_id:
         label: X Pixel ID
+  media:
+    create:
+      create: Create New Page
+      label:
+        label: Label
+      validation:
+        label: Label must be specified
+    label:
+      label: Label
+    media_items:
+      label: Media Items
+      fieldLabel: Media Item
+    permissions:
+      label: Permissions
+      description: If specified, a user must have access to at least one of the following permissions to access this item
+      fieldLabel: Permission
+    media_permissions:
+      label: Media Permissions

@@ -111,7 +111,7 @@ const PocketGeneralSettings = observer(() => {
         ]}
       />
 
-      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.search}</Title>
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.meta_tags}</Title>
       <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
 
       <Inputs.Text

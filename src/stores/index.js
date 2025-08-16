@@ -178,18 +178,16 @@ class RootStore {
   });
 
   VersionHash = flow(function * ({objectId, versionHash, force}) {
-    if(versionHash) {
-      objectId = this.utils.DecodeVersionHash(versionHash).objectId;
-    }
+    objectId = versionHash ? this.client.utils.DecodeVersionHash(versionHash).objectId : objectId;
+    const latestHash = yield this.LoadResource({
+      key: "versionHash",
+      id: objectId,
+      force,
+      ttl: 30,
+      Load: async () => await this.client.LatestVersionHash({objectId})
+    });
 
-    if(force || !this.versionHashes[objectId] || Date.now() - this.versionHashes[objectId].retrievedAt > 30000) {
-      this.versionHashes[objectId] = {
-        versionHash: yield this.client.LatestVersionHash({objectId}),
-        retrievedAt: Date.now()
-      };
-    }
-
-    return this.versionHashes[objectId].versionHash;
+    return this.versionHashes[objectId] = latestHash;
   });
 
   DebugLog({message, error, level=this.logLevels.DEBUG_LEVEL_INFO}) {
@@ -225,6 +223,24 @@ class RootStore {
 
     StorageHandler.set({type: "local", key: "debug-level", value: level?.toString()});
   }
+
+  // Ensure the specified load method is called only once unless forced
+  LoadResource = flow(function * ({key, id, force, Load}) {
+    key = `_load-${key}`;
+
+    if(force) {
+      // Force - drop all loaded content
+      this[key] = {};
+    }
+
+    this[key] = this[key] || {};
+
+    if(force || !this[key][id]) {
+      this[key][id] = Load();
+    }
+
+    return yield this[key][id];
+  });
 }
 
 export const rootStore = new RootStore();
