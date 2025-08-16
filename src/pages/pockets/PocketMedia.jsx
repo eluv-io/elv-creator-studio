@@ -207,11 +207,11 @@ const PocketMedia = observer(() => {
   const pocket = pocketStore.pockets[pocketId];
 
   useEffect(() => {
-    pocket.metadata.public.asset_metadata.info?.media_catalogs?.forEach(mediaCatalogId =>
+    pocket?.metadata.public.asset_metadata.info?.media_catalogs?.forEach(mediaCatalogId =>
       mediaCatalogStore.LoadMediaCatalog({mediaCatalogId: mediaCatalogId})
     );
 
-    pocket.metadata.public.asset_metadata.info?.permission_sets?.forEach(permissionSetId =>
+    pocket?.metadata.public.asset_metadata.info?.permission_sets?.forEach(permissionSetId =>
       permissionSetStore.LoadPermissionSet({permissionSetId})
     );
   }, [pocket]);

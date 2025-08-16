@@ -1,4 +1,4 @@
-import {flow, makeAutoObservable, toJS} from "mobx";
+import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
   PocketMediaItemSpec,
@@ -32,6 +32,8 @@ class PocketStore {
   });
 
   LoadPocket = flow(function * ({pocketId, force=false}) {
+    yield this.LoadPockets();
+
     yield this.LoadResource({
       key: "pocket",
       id: pocketId,
@@ -198,6 +200,23 @@ class PocketStore {
       objectId,
       writeToken,
       metadataSubtree: "/public/asset_metadata/info"
+    });
+
+    // Media slug map
+    let mediaSlugs = {};
+    Object.keys(pocket.media).forEach(pocketMediaItemId => {
+      const slug = pocket.media[pocketMediaItemId].slug;
+      if(slug) {
+        mediaSlugs[slug] = pocketMediaItemId;
+      }
+    });
+
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/media_slug_map",
+      metadata: mediaSlugs
     });
 
     // Set last updated time
