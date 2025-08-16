@@ -9,6 +9,9 @@ const PocketOverview = observer(() => {
   const { pocketId } = useParams();
 
   const pocket = pocketStore.pockets[pocketId];
+
+  if(!pocket) { return null; }
+
   const metadata = pocket.metadata.public.asset_metadata;
 
   return (

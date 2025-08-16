@@ -1,12 +1,14 @@
 import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import {
+  PocketMediaItemSpec,
   PocketSpec
 } from "@/specs/PocketSpecs.js";
 import Clone from "lodash/clone";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {Slugify} from "@/components/common/Validation.jsx";
+import {LocalizeString} from "@/components/common/Misc.jsx";
 
 class PocketStore {
   allPockets;
@@ -320,6 +322,71 @@ class PocketStore {
   });
 
    */
+
+  CreatePocketMediaItem({
+    page,
+    pocketId,
+    mediaItemId
+  }) {
+    let id = `${this.ID_PREFIXES.media_item}${GenerateUUID()}`;
+
+    const mediaItem = this.GetMediaItem({mediaItemId});
+
+    if(!mediaItem) { return; }
+
+    let spec = Clone(PocketMediaItemSpec);
+    spec.media_id = mediaItemId;
+    spec.media_type = "Video";
+    spec.id = id;
+    spec.label = mediaItem.label || spec.label;
+
+    delete spec.display.id;
+    delete spec.display.label;
+
+    const path = "/public/asset_metadata/info/media";
+
+    this.AddField({
+      objectId: pocketId,
+      page,
+      path,
+      field: id,
+      value: spec,
+      category: this.PocketCategory({
+        category: "media_item_label",
+        pocketId,
+        path: UrlJoin("/public", "asset_metadata", "info", "media", id),
+        id,
+        label: this.pockets[pocketId].metadata.public.asset_metadata.info.media[id]?.label || "Media Item"
+      }),
+      label: mediaItem.label
+    });
+
+    return id;
+  }
+
+  PocketCategory({category, pocketId, path, label}) {
+    return () => {
+      label = this.GetMetadata({objectId: pocketId, path: path, field: "label"}) || label;
+
+      return LocalizeString(this.rootStore.l10n.pages.pocket.form.categories[category], { label: label });
+    };
+  }
+
+  GetResolvedPocketMediaItem({pocketId, pocketMediaItemId, pocketMediaItem}) {
+    const pocket = this.pockets[pocketId];
+    if(!pocketMediaItem) {
+      pocketMediaItem = pocket.metadata.public.asset_metadata.info.media[pocketMediaItemId];
+    }
+
+    const mediaItem = this.GetMediaItem({mediaItemId: pocketMediaItem?.media_id});
+    return {
+      ...pocketMediaItem,
+      mediaItem,
+      display: {
+        ...(mediaItem || pocketMediaItem.display)
+      }
+    };
+  }
 
   UpdateDatabaseRecord = flow(function * ({objectId}) {
     yield this.rootStore.databaseStore.SavePocket({pocketId: objectId});
