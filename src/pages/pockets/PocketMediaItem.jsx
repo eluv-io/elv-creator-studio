@@ -1,12 +1,10 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, pocketStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
+import {rootStore, pocketStore, mediaCatalogStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {Slugify} from "@/components/common/Validation.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
 
 const PocketGeneralSettings = observer(() => {
@@ -37,7 +35,7 @@ const PocketGeneralSettings = observer(() => {
     }),
     path: UrlJoin("/public/asset_metadata/info/media", pocketMediaItemId)
   };
-  
+
   return (
     <PageContent
       title={`${pocket.name || "Pocket TV Property"} - ${pocketMediaItem.label}`}

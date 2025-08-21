@@ -24,7 +24,11 @@ export const PocketSpec = {
   media_catalogs: [],
   permission_sets: [],
   sidebar_config: {
-    banners: []
+    hide: false,
+    banners: [],
+    sort: "start_time",
+    content: "all",
+    manual_content: [],
   },
   media: {},
   meta_tags: {

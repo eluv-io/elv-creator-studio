@@ -80,3 +80,6 @@ form:
         label: Subtitle
       description:
         label: Description
+      access_title:
+        label: Access Title
+        description: A title for this access level

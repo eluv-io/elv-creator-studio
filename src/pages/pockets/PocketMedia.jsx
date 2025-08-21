@@ -7,7 +7,7 @@ import {modals} from "@mantine/modals";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useEffect, useState} from "react";
 import {useForm} from "@mantine/form";
-import {Input as MantineInput, Button, Checkbox, Container, Group, Stack, Text, TextInput} from "@mantine/core";
+import {Input as MantineInput, Button, Checkbox, Container, Group, Stack, Text} from "@mantine/core";
 import {
   MediaItemCard,
   MediaItemImage,
@@ -120,55 +120,6 @@ const CreatePocketMediaItemsForm = observer(({pocket, Create}) => {
     </Container>
   );
 });
-
-const CreatePocketMediaItemForm2 = ({Create}) => {
-  const [creating, setCreating] = useState(false);
-
-  const l10n = rootStore.l10n.pages.pocket.form;
-
-  const form = useForm({
-    initialValues: {
-      label: ""
-    },
-    validate: {
-      label: value => value ? null : l10n.media.create.validation.label
-    }
-  });
-
-  return (
-    <Container p={0}>
-      <form
-        onSubmit={form.onSubmit(values => {
-          setCreating(true);
-          Create({label: values.label, type: values.type})
-            .catch(error => {
-              rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-              setCreating(false);
-            })
-            .then(() => {
-              modals.closeAll();
-            });
-        })}
-      >
-        <TextInput
-          data-autofocus
-          mb="md"
-          {...l10n.media.create.label}
-          {...form.getInputProps("label")}
-        />
-        <Group mt="md">
-          <Button
-            w="100%"
-            loading={creating}
-            type="submit"
-          >
-            { rootStore.l10n.components.actions.submit }
-          </Button>
-        </Group>
-      </form>
-    </Container>
-  );
-};
 
 export const PocketMediaItemTitle = observer(({pocketMediaItem, aspectRatio}) => {
   pocketMediaItem = pocketStore.GetResolvedPocketMediaItem({pocketMediaItem});

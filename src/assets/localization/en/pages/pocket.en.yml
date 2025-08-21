@@ -3,6 +3,7 @@ nav:
   overview: Overview
   general: General Settings
   media: Media
+  sidebar: Sidebar Settings
 form:
   categories:
     pockets: Pocket TV Properties
@@ -15,6 +16,9 @@ form:
     media_item_label: Media Item `{label}`
     display: Display Settings
     tags: Tags
+    sidebar: Sidebar Settings
+    sidebar_banners: Sidebar Banners
+    sidebar_content: Sidebar Content
   create:
     create: Create New {type}
     name:
@@ -123,3 +127,31 @@ form:
     use_media_settings:
       label: Use Media Presentation Settings
       description: If checked, this item will be presented in the according to the media item settings as defined in the media catalog. Uncheck this to override display settings for this item.
+  sidebar:
+    hide_sidebar:
+      label: Hide Sidebar
+      description: If specified, the sidebar will be hidden and only the active content will be visible.
+    banners:
+      label: Banner Links
+      description: Specify banner links to be displayed at the top of the sidebar that can link to specific content or external URLs
+      fieldLabel: Banner
+    banner_image:
+      label: Banner Image
+    link_type:
+      label: Link Type
+    media:
+      label: Media
+      description: Select the media this banner will link to
+    link:
+      label: Link URL
+    content:
+      label: Sidebar Content
+      description: Select which content will show in the sidebar
+    sort_order:
+      label: Sort Order
+      description: Specify how the content should be ordered
+    content_ids:
+      label: Content
+      fieldLabel: Item
+    content_id:
+      label: Item

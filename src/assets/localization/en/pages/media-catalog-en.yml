@@ -226,8 +226,7 @@ form:
       description: Specify, in order of preference, which offerings should be used when playing this media. If the offering is default or only one offering will be available, specifying the offering is not necessary
       fieldLabel: Offering
     date:
-      label: Date
-      description: Date of this live video
+      label: Release Date
     start_time:
       label: Start Time
       description: Scheduled start time of this live video

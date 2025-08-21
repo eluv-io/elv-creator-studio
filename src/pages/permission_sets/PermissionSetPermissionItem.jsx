@@ -90,6 +90,12 @@ const PermissionSetPermissionItem = observer(() => {
         required
         field="title"
       />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.permission_item.display.access_title}
+        subcategory={l10n.categories.permission_item_display}
+        field="access_title"
+      />
 
       <Inputs.Text
         {...inputProps}

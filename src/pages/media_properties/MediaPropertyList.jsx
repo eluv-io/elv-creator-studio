@@ -14,7 +14,7 @@ import {
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
 import {rootStore, mediaPropertyStore} from "@/stores";
-import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
+import {FabricUrl} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton, LocalizeString} from "@/components/common/Misc";
 import PageContent from "@/components/common/PageContent.jsx";

@@ -494,16 +494,6 @@ const MediaPropertyGeneralSettings = observer(() => {
               ]}
             />
 
-
-            <Inputs.FabricBrowser
-              {...inputProps}
-              {...l10n.general.video}
-              subcategory={l10n.categories.main_page_display}
-              field="video"
-              previewable
-              previewIsAnimation
-            />
-
             <Inputs.Checkbox
               {...inputProps}
               {...l10n.general.show_on_main_page}
