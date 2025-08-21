@@ -9,6 +9,7 @@ form:
     pockets: Pocket TV Properties
     pocket: Pocket TV Property
     general: General Settings
+    post_content_screen: Content End Screen
     meta_tags: Search and Social Preview
     analytics: Analytics
     media: Media
@@ -62,6 +63,17 @@ form:
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
+    post_content_screen_images:
+      label: Content End Screen Images
+    post_content_screen_toggle:
+      label: Show Content End Screen
+      description: Specify an image and link to show after the content has ended
+    post_content_screen_background:
+      label: Desktop (3:2)
+    post_content_screen_background_mobile:
+      label: Mobile (1:1)
+    post_content_screen_link:
+      label: Link URL
     meta_tags:
       meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
       site_name:
@@ -137,6 +149,10 @@ form:
       fieldLabel: Banner
     banner_image:
       label: Banner Image
+    banner_image_desktop:
+      label: Desktop
+    banner_image_mobile:
+      label: Mobile
     link_type:
       label: Link Type
     media:

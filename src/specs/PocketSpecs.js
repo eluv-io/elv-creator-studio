@@ -23,6 +23,12 @@ export const PocketSpec = {
   image: undefined,
   media_catalogs: [],
   permission_sets: [],
+  post_content_screen: {
+    enabled: false,
+    background: undefined,
+    background_mobile: undefined,
+    link: ""
+  },
   sidebar_config: {
     hide: false,
     banners: [],
