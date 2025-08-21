@@ -96,7 +96,6 @@ class DatabaseStore {
 
   InitializeTypes = flow(function * () {
     this.rootStore.DebugLog({message: "Initializing Types", level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-    this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
 
     const typeNames = {
       tenant: "Media Wallet Settings",
@@ -126,6 +125,7 @@ class DatabaseStore {
           typeIds[key] = existingType.id;
         } else {
           // Create type
+          this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
           this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
           this.rootStore.DebugLog({message: allTypes, level: this.logLevels.DEBUG_LEVEL_ERROR});
           const tenantInfo = await this.GetDocument({collection: "tenant", document: "info"});

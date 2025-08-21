@@ -159,7 +159,11 @@ class EditStore {
         }
 
         if(store.UpdateDatabaseRecord) {
-          yield store.UpdateDatabaseRecord({objectId});
+          try {
+            yield store.UpdateDatabaseRecord({objectId});
+          } catch(error) {
+            this.DebugLog({error, level: this.logLevels.DEBUG_LEVEL_ERROR});
+          }
         }
 
         // Force reload object after saving

@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, pocketStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
+import {rootStore, pocketStore, mediaCatalogStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Slugify} from "@/components/common/Validation.jsx";
@@ -32,7 +32,7 @@ const PocketGeneralSettings = observer(() => {
     category: l10n.categories.general,
     path: "/public/asset_metadata/info"
   };
-  
+
   return (
     <PageContent
       title={`${info.name || pocket.name || "Pocket TV Property"} - General`}
@@ -83,21 +83,6 @@ const PocketGeneralSettings = observer(() => {
         }
       />
 
-
-
-
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.general.permission_sets}
-        subcategory={l10n.categories.permissions}
-        field="permission_sets"
-        options={
-          (permissionSetStore.allPermissionSets || []).map(permissionSet => ({
-            label: permissionSet.name,
-            value: permissionSet.objectId
-          }))
-        }
-      />
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.general.splash_screen}

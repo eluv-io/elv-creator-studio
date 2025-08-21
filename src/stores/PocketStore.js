@@ -219,6 +219,27 @@ class PocketStore {
       metadata: mediaSlugs
     });
 
+    // Get permission sets
+    // Get permission sets
+    const permissionSetIds = (yield Promise.all(
+      pocket.media_catalogs.map(async mediaCatalogId => {
+        await this.rootStore.mediaCatalogStore.LoadMediaCatalog({mediaCatalogId});
+
+        return this.rootStore.mediaCatalogStore.mediaCatalogs[mediaCatalogId]
+          ?.metadata?.public?.asset_metadata?.info?.permission_sets || [];
+      })
+    ))
+      .flat()
+      .filter((v, i, a) => a.indexOf(v) === i);
+
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/permission_sets",
+      metadata: permissionSetIds
+    });
+
     // Set last updated time
     yield this.client.ReplaceMetadata({
       libraryId,
