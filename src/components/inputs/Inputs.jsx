@@ -811,7 +811,7 @@ const SingleImageInput = observer(({
   if(url) {
     imageUrl = typeof imageMetadata === "string" ? imageMetadata : undefined;
   } else if(imageMetadata) {
-    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
+    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? Math.ceil(aspectRatio || 1) * 200 : undefined});
   }
 
   let width, height;

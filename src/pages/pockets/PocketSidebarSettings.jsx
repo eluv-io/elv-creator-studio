@@ -67,7 +67,8 @@ const PocketSidebarSettings = observer(() => {
                     {...l10n.sidebar.banner_image}
                     altTextField="image_alt"
                     fields={[
-                      { field: "image", aspectRatio: 3 }
+                      { ...l10n.sidebar.banner_image_desktop, field: "image", aspectRatio: 3 },
+                      { ...l10n.sidebar.banner_image_mobile, field: "image_mobile", aspectRatio: 3 }
                     ]}
                   />
                   <Inputs.Select

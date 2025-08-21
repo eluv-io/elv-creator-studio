@@ -43,21 +43,18 @@ const PocketGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.slug}
         defaultValue={Slugify(info.name)}
-        subcategory={l10n.categories.general}
         field="slug"
       />
 
       <Inputs.Text
         {...inputProps}
         {...l10n.common.name}
-        subcategory={l10n.categories.general}
         field="name"
       />
 
       <Inputs.TextArea
         {...inputProps}
         {...l10n.common.description}
-        subcategory={l10n.categories.general}
         field="description"
       />
 
@@ -65,7 +62,6 @@ const PocketGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.image}
         componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.general}
         aspectRatio={1}
         field="image"
       />
@@ -87,12 +83,47 @@ const PocketGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.splash_screen}
         componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.general}
         fields={[
           { field: "splash_screen_background", aspectRatio: 16/9, ...l10n.general.splash_screen_background },
           { field: "splash_screen_background_mobile", aspectRatio: 1/2, ...l10n.general.splash_screen_background_mobile },
         ]}
       />
+
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.post_content_screen}</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.post_content_screen_toggle}
+        path={UrlJoin(inputProps.path, "post_content_screen")}
+        subcategory={l10n.categories.post_content_screen_toggle}
+        field="enabled"
+      />
+
+      {
+        !info.post_content_screen?.enabled ? null :
+          <>
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.post_content_screen_images}
+              path={UrlJoin(inputProps.path, "post_content_screen")}
+              subcategory={l10n.categories.post_content_screen}
+              componentProps={{maw: uiStore.inputWidthWide}}
+              altTextField="background_alt"
+              fields={[
+                { field: "background", aspectRatio: 3/2, ...l10n.general.post_content_screen_background },
+                { field: "background_mobile", aspectRatio: 1, ...l10n.general.post_content_screen_background_mobile },
+              ]}
+            />
+
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.general.post_content_screen_link}
+              path={UrlJoin(inputProps.path, "post_content_screen")}
+              subcategory={l10n.categories.post_content_screen}
+              field="link"
+            />
+          </>
+      }
 
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.meta_tags}</Title>
       <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
