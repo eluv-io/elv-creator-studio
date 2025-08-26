@@ -31,6 +31,7 @@ form:
     feature_settings: Features
     purchase_settings: Purchase Settings
     login_settings: Login Settings
+    advanced_login_settings: Advanced Login Settings
     login_theme: Login Theme
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
@@ -440,6 +441,14 @@ form:
     enable_metamask:
       label: Enable Login via MetaMask
       description: If checked, users will be able to log in with their MetaMask accounts
+    advanced:
+      use_auth0:
+        label: Use Auth0
+        description: If checked, users of your property will log in via a your provided Auth0 login server
+      auth0_domain:
+        label: Auth0 Domain
+      auth0_client_id:
+        label: Auth0 Client ID
     styling:
       logos:
         label: Logos

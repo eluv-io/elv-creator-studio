@@ -73,6 +73,14 @@ const PermissionSetPermissionItem = observer(() => {
         field="marketplace_sku"
       />
 
+      { /* TODO: Remove when fabric policy supports this */ }
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.permission_item.dvr}
+        defaultValue={false}
+        field="dvr"
+      />
+
       <Title mt={50} order={3}>{ l10n.categories.permission_item_display }</Title>
 
       <Inputs.Text
