@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {Group, Stack, Title} from "@mantine/core";
+import {Accordion, Group, Stack, Title} from "@mantine/core";
 import {MediaPropertyLoginConsentSpec} from "@/specs/MediaPropertySpecs.js";
 import ColorOptions from "@/components/inputs/media_property/Components.jsx";
 
@@ -338,14 +338,48 @@ const MediaPropertyDomainSettings = observer(() => {
                   field="disable_third_party_login"
                 />
             }
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.login.enable_metamask}
-              category={l10n.categories.login_settings}
-              path="/public/asset_metadata/info/login/settings"
-              defaultValue={false}
-              field="enable_metamask"
-            />
+
+            <Accordion maw={uiStore.inputWidth} variant="contained">
+              <Accordion.Item value="advanced">
+                <Accordion.Control>
+                  { l10n.categories.advanced_login_settings }
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.login.advanced.use_auth0}
+                    category={l10n.categories.login_settings}
+                    subcategory={l10n.categories.advanced_login_settings}
+                    path="/public/asset_metadata/info/login/settings"
+                    defaultValue={false}
+                    field="use_auth0"
+                  />
+                  {
+                    !info.login?.settings?.use_auth0 ? null :
+                      <>
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.auth0_domain}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="auth0_domain"
+                        />
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.auth0_client_id}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="auth0_client_id"
+                        />
+                      </>
+                  }
+
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+
             <LoginStyling />
             <LoginTerms />
             <LoginConsentOptions />
