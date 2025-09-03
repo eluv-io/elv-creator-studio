@@ -155,6 +155,9 @@ form:
       label: Mobile
     link_type:
       label: Link Type
+    mobile_position:
+      label: Mobile Position
+      description: Select whether this banner should be displayed above or below the main content on mobile devices.
     media:
       label: Media
       description: Select the media this banner will link to

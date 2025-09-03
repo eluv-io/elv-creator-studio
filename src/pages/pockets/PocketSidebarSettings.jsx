@@ -59,6 +59,7 @@ const PocketSidebarSettings = observer(() => {
             <Inputs.List
               {...inputProps}
               {...l10n.sidebar.banners}
+              subcategory={l10n.categories.sidebar_banners}
               field="banners"
               renderItem={props =>
                 <>
@@ -73,13 +74,24 @@ const PocketSidebarSettings = observer(() => {
                   />
                   <Inputs.Select
                     {...props}
+                    {...l10n.sidebar.mobile_position}
+                    field="mobile_position"
+                    defaultValue=""
+                    options={[
+                      { label: "Below", value: "" },
+                      { label: "Above", value: "above" }
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...props}
                     {...l10n.sidebar.link_type}
                     field="link_type"
                     defaultValue=""
                     options={[
                       { label: "Visual Only", value: "" },
                       { label: "Media", value: "media" },
-                      { label: "External Link", value: "external" }
+                      { label: "External Link", value: "external" },
+                      { label: "Reset Account", value: "reset" }
                     ]}
                   />
                   {
