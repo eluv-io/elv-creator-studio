@@ -288,6 +288,58 @@ class FabricBrowserStore {
     }
   });
 
+  LookupContent = flow(function * (contentId) {
+    contentId = contentId.replace(/ /g, "");
+
+    if(!contentId) { return {}; }
+
+    try {
+      const client = this.client;
+
+      let libraryId, objectId, accessType, versionHash;
+      if(contentId.startsWith("ilib")) {
+        libraryId = contentId;
+        accessType = "library";
+      } else if(contentId.startsWith("hq__")) {
+        versionHash = contentId;
+        objectId = client.utils.DecodeVersionHash(contentId).objectId;
+      } else if(contentId.startsWith("iq__")) {
+        objectId = contentId;
+      } else if(contentId.startsWith("0x")) {
+        const id = client.utils.AddressToObjectId(contentId);
+        accessType = yield client.AccessType({id});
+
+        if(accessType === "library") {
+          libraryId = client.utils.AddressToLibraryId(contentId);
+        } else {
+          objectId = id;
+        }
+      } else {
+        objectId = client.utils.AddressToObjectId(client.utils.HashToAddress(contentId));
+      }
+
+      if(objectId && !libraryId) {
+        libraryId = yield client.ContentObjectLibraryId({objectId});
+      }
+
+      if(!accessType) {
+        accessType = yield client.AccessType({id: objectId});
+      }
+
+      switch(accessType) {
+        case "library":
+          return { libraryId };
+        case "object":
+          return yield this.LoadObjectDetails({objectId, versionHash, force: true});
+      }
+    } catch(error) {
+      this.DebugLog({
+        message: `Failed to look up content ID ${contentId}`,
+        error
+      });
+    }
+  });
+
   get client() {
     return this.rootStore.client;
   }

@@ -14,10 +14,7 @@ import {
 import {DataTable} from "mantine-datatable";
 import {rootStore, fabricBrowserStore, uiStore} from "@/stores";
 import {CreateModuleClassMatcher, SortTable} from "@/helpers/Misc.js";
-import {useDebouncedValue} from "@mantine/hooks";
 import {IconButton, LocalizeString, SVGIcon} from "@/components/common/Misc.jsx";
-import {useForm} from "@mantine/form";
-import {modals} from "@mantine/modals";
 
 import FolderIcon from "@/assets/icons/folder.svg";
 import ObjectIcon from "@/assets/icons/file.svg";
@@ -30,105 +27,55 @@ const S = CreateModuleClassMatcher(FabricBrowserStyles);
 
 import {
   IconArrowBackUp,
-  IconSelect,
+  IconCircleArrowUp,
 } from "@tabler/icons-react";
 
-const ParseContentID = value => {
-  if(!value) { return; }
+const Filter = observer(({value, setValue, Submit}) => {
+  const [filter, setFilter] = useState(value);
 
-  try {
-    let objectId;
-    if(value.startsWith("iq__")) {
-      objectId = value;
-    } else if(value.startsWith("hq__")) {
-      objectId = rootStore.utils.DecodeVersionHash(value).objectId;
-    } else {
-      objectId = rootStore.utils.AddressToObjectId(value);
-    }
+  useEffect(() => {
+    setFilter(value);
+  }, [value]);
 
-    if(rootStore.utils.HashToAddress(objectId).length === 42) {
-      // Valid
-      return objectId;
-    }
-    // eslint-disable-next-line no-empty
-  } catch(error) {}
-};
+  const Search = async () => {
+    if(["0x", "hq__", "iq__", "ilib"].find(prefix => filter.startsWith(prefix))) {
+      const result = await fabricBrowserStore.LookupContent(filter);
 
-// Form for inputing object id / hash / contract directly
-const DirectSelectionForm = ({Submit}) => {
-  const [submitting, setSubmitting] = useState(false);
-
-  const form = useForm({
-    initialValues: { contentId: "" },
-    validate: {
-      contentId: contentId => {
-        if(!ParseContentID(contentId)) {
-          return rootStore.l10n.components.fabric_browser.validation.invalid_content_id;
-        }
+      if(result) {
+        Submit(result);
+        return;
       }
     }
-  });
+
+    setValue(filter);
+  };
 
   return (
-    <Container p={0}>
-      <form
-        onSubmit={form.onSubmit(async values => {
-          setSubmitting(true);
-
-          try {
-            const objectId = ParseContentID(values.contentId);
-            await Submit(await fabricBrowserStore.LoadObjectDetails({objectId}));
-            modals.closeAll();
-          } catch(error) {
-            rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
-            form.setFieldError("contentId", rootStore.l10n.components.fabric_browser.validation.invalid_content_id);
-            setSubmitting(false);
-          }
-        })}
-      >
-        <TextInput
-          data-autofocus
-          label={rootStore.l10n.components.fabric_browser.content_id}
-          placeholder={rootStore.l10n.components.fabric_browser.direct_selection_placeholder}
-          {...form.getInputProps("contentId")}
+    <TextInput
+      label={rootStore.l10n.components.fabric_browser.filter}
+      value={filter}
+      onChange={event => setFilter(event.target.value)}
+      mb="md"
+      onKeyDown={event => {
+        if(event.key === "Enter") {
+          Search();
+        }
+      }}
+      rightSection={
+        <IconButton
+          label={rootStore.l10n.components.fabric_browser.filter}
+          Icon={IconCircleArrowUp}
+          onClick={Search}
+          tooltipProps={{position: "bottom"}}
         />
-        <Group mt="md">
-          <Button
-            w="100%"
-            loading={submitting}
-            type="submit"
-          >
-            { rootStore.l10n.components.actions.submit }
-          </Button>
-        </Group>
-      </form>
-    </Container>
-  );
-};
-
-const DirectSelectionButton = observer(({label, Submit}) => {
-  return (
-    <IconButton
-      label={LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label})}
-      size={36}
-      Icon={IconSelect}
-      tooltipProps={{position: "bottom"}}
-      onClick={() =>
-        modals.open({
-          title: LocalizeString(rootStore.l10n.components.fabric_browser.title_with_label, {item: label}),
-          centered: true,
-          children:
-            <DirectSelectionForm Submit={Submit} />
-        })
       }
     />
   );
 });
 
-const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, allowClips, Back, Submit}) => {
+const VideoBrowser = observer(({libraryId, objectId, allowCompositions, allowClips, Back, Submit}) => {
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(false);
-  const [debouncedFilter] = useDebouncedValue(filter, 500);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
   const info = fabricBrowserStore.objectDetails[objectId];
 
@@ -145,9 +92,9 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
     ...(allowClips ? info.clips.slice().sort(SortTable({sortStatus})) : [])
   ]
     .filter(record =>
-      !debouncedFilter ||
-      record.name.toLowerCase().includes(debouncedFilter) ||
-      record.source.toLowerCase().includes(debouncedFilter)
+      !filter ||
+      record.name.toLowerCase().includes(filter) ||
+      record.source.toLowerCase().includes(filter)
     );
 
   if(sortStatus.columnAccessor !== "name") {
@@ -167,11 +114,9 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
           tooltipProps={{position: "bottom"}}
         />
         <Text>{ library?.name || libraryId }</Text>
+        <Text maw={500} truncate>{ info?.name || objectId }</Text>
       </Group>
-      <Group align="end" mb="md">
-        <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
-        <DirectSelectionButton label={label} Submit={Submit} />
-      </Group>
+      <Filter value={filter} setValue={setFilter} Submit={Submit} />
       <DataTable
         height={Math.max(250, uiStore.viewportHeight - 350)}
         fetching={loading}
@@ -215,9 +160,8 @@ const VideoBrowser = observer(({label, libraryId, objectId, allowCompositions, a
   );
 });
 
-const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, allowClips, Back, Submit}) => {
+const ObjectBrowser = observer(({libraryId, video, allowCompositions, allowClips, Back, Submit}) => {
   const [filter, setFilter] = useState("");
-  const [debouncedFilter] = useDebouncedValue(filter, 500);
   const [loading, setLoading] = useState(true);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
   const [page, setPage] = useState(1);
@@ -229,13 +173,13 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
     fabricBrowserStore.LoadObjects({
       libraryId,
       sortStatus,
-      filter: debouncedFilter,
+      filter,
       page,
       perPage
     })
       .then(setResults)
       .finally(() => setLoading(false));
-  }, [libraryId, page, sortStatus, debouncedFilter]);
+  }, [libraryId, page, sortStatus, filter]);
 
   const library = fabricBrowserStore.libraries[libraryId];
 
@@ -251,10 +195,7 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
         />
         <Text>{ library?.name || libraryId }</Text>
       </Group>
-      <Group align="end" mb="md">
-        <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
-        <DirectSelectionButton label={label} Submit={Submit} />
-      </Group>
+      <Filter value={filter} setValue={setFilter} Submit={Submit} />
       <DataTable
         page={page}
         onPageChange={newPage => setPage(newPage)}
@@ -316,9 +257,8 @@ const ObjectBrowser = observer(({label, libraryId, video, allowCompositions, all
   );
 });
 
-const LibraryBrowser = observer(({label, Submit}) => {
+const LibraryBrowser = observer(({Submit}) => {
   const [filter, setFilter] = useState("");
-  const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [loading, setLoading] = useState(false);
   const [sortStatus, setSortStatus] = useState({columnAccessor: "name", direction: "asc"});
 
@@ -329,15 +269,12 @@ const LibraryBrowser = observer(({label, Submit}) => {
   }, []);
 
   const records = Object.values(fabricBrowserStore.libraries)
-    .filter(record => !debouncedFilter || record.name.toLowerCase().includes(filter) || record.libraryId.includes(filter))
+    .filter(record => !filter || record.name.toLowerCase().includes(filter) || record.libraryId.includes(filter))
     .sort(SortTable({sortStatus}));
 
   return (
     <Container p={0}>
-      <Group align="end" mb="md">
-        <TextInput style={{flexGrow: 1}} label={rootStore.l10n.components.fabric_browser.filter} value={filter} onChange={event => setFilter(event.target.value)} />
-        <DirectSelectionButton label={label} Submit={Submit} />
-      </Group>
+      <Filter value={filter} setValue={setFilter} Submit={Submit} />
       <DataTable
         height={Math.max(250, uiStore.viewportHeight - 350)}
         fetching={loading}
