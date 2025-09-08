@@ -1583,8 +1583,24 @@ const List = observer(({
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
   const location = useLocation();
-  const values = (store.GetMetadata({objectId, path, field}) || []);
+  let values = (store.GetMetadata({objectId, path, field}) || []);
   simpleList = simpleList || (!renderItem && (!fields || fields.length === 0));
+
+  if(!Array.isArray(values)) {
+    rootStore.DebugLog({
+      message: `Warning: List field ${label} somehow ended up with non-list value - attempting to fix`,
+      error: values,
+      logLevel: rootStore.logLevels.DEBUG_LEVEL_CRITICAL
+    });
+
+    if(typeof values === "object") {
+      values = Object.values(values).filter(item => item);
+    } else {
+      values = [];
+    }
+
+    store.SetDefaultValue({objectId, path, field, category, subcategory, label, value: values});
+  }
 
   if(categoryFnParams) {
     category = CategoryFn({store, objectId, path, field, params: categoryFnParams});
