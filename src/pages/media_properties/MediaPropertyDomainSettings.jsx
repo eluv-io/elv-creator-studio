@@ -373,6 +373,14 @@ const MediaPropertyDomainSettings = observer(() => {
                           path="/public/asset_metadata/info/login/settings"
                           field="auth0_client_id"
                         />
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.auth0_native_client_id}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="auth0_native_client_id"
+                        />
                       </>
                   }
 

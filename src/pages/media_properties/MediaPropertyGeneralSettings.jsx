@@ -597,7 +597,7 @@ const MediaPropertyGeneralSettings = observer(() => {
               field="items"
               idField="id"
               newItemSpec={MediaPropertyFooterItemSpec}
-              showBottomAddButton
+              showBottomAddButton={info.footer?.items?.length > 0}
               subcategoryFnParams={{fields: ["label", "text", "id"], l10n: l10n.categories.footer_item_label}}
               renderItem={({item, ...props}) => {
                 const subcategory = () => LocalizeString(l10n.categories.footer_item_label, { label: item.label });
@@ -697,6 +697,13 @@ const MediaPropertyGeneralSettings = observer(() => {
               path="/public/asset_metadata/info/footer"
               subcategory={l10n.categories.footer}
               field="rich_text"
+            />
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.general.support_url}
+              path="/public/asset_metadata/info/footer"
+              subcategory={l10n.categories.footer}
+              field="support_url"
             />
           </Accordion.Panel>
         </Accordion.Item>

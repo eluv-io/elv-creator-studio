@@ -320,6 +320,8 @@ form:
           label: LinkedIn
         bluesky:
           label: Bluesky
+    support_url:
+      label: Support URL
     footer_items:
       footer_items:
         label: Footer Items
@@ -449,6 +451,8 @@ form:
         label: Auth0 Domain
       auth0_client_id:
         label: Auth0 Client ID
+      auth0_native_client_id:
+        label: Auth0 Native Client ID
     styling:
       logos:
         label: Logos
