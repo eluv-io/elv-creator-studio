@@ -143,6 +143,9 @@ form:
     currency:
       label: Currency
       description: Select the currency used to purchase items in this property
+    localizations:
+      label: Localizations
+      description: Select alternative languages that your content will be available in.
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment

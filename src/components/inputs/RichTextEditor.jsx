@@ -12,7 +12,17 @@ import {
 } from "@tabler/icons-react";
 
 
-const RichTextEditor = observer(({store, objectId, page, path, field, category, subcategory, label, componentProps={}}) => {
+const RichTextEditor = observer(({
+  store,
+  objectId,
+  page,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  componentProps={}
+}) => {
   const [value] = useState(store.GetMetadata({objectId, path, field}));
   const editorRef = useRef(null);
 

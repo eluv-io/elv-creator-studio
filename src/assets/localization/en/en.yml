@@ -115,6 +115,8 @@ components:
       media_catalog: Media Catalog
       media_property: Media Property
       permission_set: Permission Set
+  localization_modal:
+    title: Select Localization
 
 stores:
   initialization:

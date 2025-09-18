@@ -11,6 +11,7 @@ import PermissionItemSelect from "@/components/inputs/permission_set/PermissionI
 import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec, MediaPropertyFAQSpec} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
+import LanguageCodes from "@/assets/localization/LanguageCodes.js";
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
 Object.keys(currencies).forEach(currencyCode => {
@@ -219,6 +220,20 @@ const MediaPropertyGeneralSettings = observer(() => {
               label: `${currencies[currencyCode]} (${currencyCode})`,
               value: currencyCode
             }))
+        }
+      />
+
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.general.localizations}
+        searchable
+        subcategory={l10n.categories.info}
+        field="localizations"
+        options={
+          Object.keys(LanguageCodes).map(key => ({
+            label: `[${key}] - ${LanguageCodes[key]}`,
+            value: key
+          }))
         }
       />
 
