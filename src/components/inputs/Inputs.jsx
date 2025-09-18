@@ -118,6 +118,8 @@ const MultiSelect = observer(({
   disabled,
   componentProps={}
 }) => {
+  disabled = disabled || rootStore.localizing;
+
   const location = useLocation();
 
   let values = value || store.GetMetadata({objectId, path, field}) || [];
@@ -241,6 +243,7 @@ const Input = observer(({
   clearable,
   searchable,
   disabled,
+  localizable,
   hidden,
   required,
   Validate,
@@ -250,6 +253,8 @@ const Input = observer(({
   const [error, setError] = useState(undefined);
   const location = useLocation();
   const [changed, setChanged] = useState(false);
+
+  disabled = disabled || (rootStore.localizing && !localizable);
 
   value = typeof value !== "undefined" ? value : store.GetMetadata({objectId, path, field});
 
@@ -471,8 +476,11 @@ const Password = observer(({
   label,
   description,
   hint,
+  disabled,
   componentProps={}
 }) => {
+  disabled = disabled || rootStore.localizing;
+
   const location = useLocation();
 
   const value = store.GetMetadata({objectId, path, field});
@@ -487,6 +495,7 @@ const Password = observer(({
       label={<InputLabel label={label} hint={hint} />}
       description={description}
       mb="md"
+      disabled={disabled}
       onFocus={() => setPassword("")}
       onBlur={async () => {
         if(!changed) {
@@ -529,9 +538,12 @@ const CheckboxInput = observer(({
   description,
   hint,
   defaultValue=false,
+  disabled,
   componentProps={}
 }) => {
   const location = useLocation();
+
+  disabled = disabled || rootStore.localizing;
 
   useEffect(() => {
     // Ensure the default value is set for this field if the field is not yet defined
@@ -549,6 +561,7 @@ const CheckboxInput = observer(({
       hint={hint}
       INVERTED={INVERTED}
       checked={value}
+      disabled={disabled}
       onChange={() => store.SetMetadata({
         actionType: "TOGGLE_FIELD",
         objectId,
@@ -577,12 +590,15 @@ const RichTextInput = observer(({
   label,
   description,
   hint,
+  disabled,
+  localizable,
   componentProps={},
   componentPropsVisible={}
 }) => {
   const location = useLocation();
   const [showEditor, setShowEditor] = useState(false);
   const [editorKey, setEditorKey] = useState(Math.random());
+  disabled = disabled || (!localizable && rootStore.localizing);
 
   const value = store.GetMetadata({objectId, path, field});
   // React to undo/redo when the editor is open
@@ -590,14 +606,17 @@ const RichTextInput = observer(({
     setEditorKey(Math.random());
   }, [value]);
 
+  const show = showEditor && !disabled;
+
   return (
     <InputWrapper
       label={label}
       description={description}
       hint={hint}
-      maw={showEditor ? uiStore.inputWidthWide : uiStore.inputWidth}
+      maw={show ? uiStore.inputWidthWide : uiStore.inputWidth}
       w="100%"
       wrapperProps={{
+        style: disabled ? {opacity: 0.5} : {},
         styles: {
           description: {
             paddingRight: "50px"
@@ -605,10 +624,10 @@ const RichTextInput = observer(({
         }
       }}
       {...componentProps}
-      {...(showEditor ? componentPropsVisible : {})}
+      {...(show ? componentPropsVisible : {})}
     >
       {
-        showEditor ?
+        show ?
           <Container p={0} m={0} my="xl">
             <RichTextEditor
               key={`editor-${editorKey}`}
@@ -621,6 +640,7 @@ const RichTextInput = observer(({
               subcategory={subcategory}
               label={label}
               componentProps={{mih: 250}}
+              disabled={disabled}
             />
           </Container> :
           value ?
@@ -635,9 +655,10 @@ const RichTextInput = observer(({
             </Paper> : null
       }
       <IconButton
-        label={rootStore.l10n.components.inputs[showEditor ? "hide_editor" : "show_editor"]}
-        Icon={showEditor ? IconEditOff : IconEdit}
+        label={rootStore.l10n.components.inputs[show ? "hide_editor" : "show_editor"]}
+        Icon={show ? IconEditOff : IconEdit}
         onClick={() => setShowEditor(!showEditor)}
+        disabled={disabled}
         style={{position: "absolute", top: 0, right: 0}}
       />
     </InputWrapper>
@@ -657,10 +678,13 @@ const CodeInput = observer(({
   defaultValue,
   language="css",
   inputProps={},
+  disabled,
   ...componentProps
 }) => {
   const [editing, setEditing] = useState(false);
   const [validationResults, setValidationResults] = useState(undefined);
+
+  disabled = disabled || rootStore.localizing;
 
   let value = store.GetMetadata({objectId, path, field}) || "";
 
@@ -687,12 +711,13 @@ const CodeInput = observer(({
     >
       <IconButton
         label={rootStore.l10n.components.actions.edit}
+        disabled={disabled}
         Icon={editing ? IconEditOff : IconEdit}
         onClick={() => setEditing(!editing)}
         style={{position: "absolute", top: 0, right: 0}}
       />
       {
-        editing ?
+        editing && !disabled ?
           <Input
             type="textarea"
             store={store}
@@ -767,8 +792,12 @@ const SingleImageInput = observer(({
   aspectRatio=1,
   baseSize=150,
   horizontal=false,
+  disabled,
+  localizable,
   ...componentProps
 }) => {
+  disabled = disabled || (rootStore.localizing && !localizable);
+
   const location = useLocation();
 
   const [showFileBrowser, setShowFileBrowser] = useState(false);
@@ -798,9 +827,19 @@ const SingleImageInput = observer(({
 
   return (
     <>
-      <Paper maw={uiStore.inputWidth} shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
+      <Paper
+        maw={uiStore.inputWidth}
+        shadow="sm"
+        withBorder
+        w="max-content"
+        p={30}
+        mb="md"
+        style={{position: "relative", display: "flex", opacity: disabled ? 0.5 : 1}}
+        {...componentProps}
+      >
         <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
           <UnstyledButton
+            disabled={disabled}
             onClick={() => setShowFileBrowser(true)}
             style={!horizontal ? undefined : {display: "flex", alignItems: "center", flexDirection: "row-reverse", gap: 20}}
           >
@@ -955,10 +994,13 @@ export const FileInput = observer(({
   hint,
   extensions,
   url=false,
-  fileBrowserProps={}
+  fileBrowserProps={},
+  disabled
 }) => {
   const location = useLocation();
   const [showBrowser, setShowBrowser] = useState(false);
+
+  disabled = disabled || rootStore.localizing;
 
   let value = store.GetMetadata({objectId, path, field});
 
@@ -1013,6 +1055,7 @@ export const FileInput = observer(({
         mb="md"
         flex
         wrapperProps={{
+          style: disabled ? {opacity: 0.5} : {},
           styles: {
             description: {
               paddingRight: "50px"
@@ -1023,6 +1066,7 @@ export const FileInput = observer(({
         <Group spacing={0} style={{position: "absolute", top: -3, right: 0}}>
           <IconButton
             p={0}
+            disabled={disabled}
             label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             Icon={IconSelect}
             onClick={() => setShowBrowser(true)}
@@ -1112,11 +1156,14 @@ export const FabricBrowserInput = observer(({
   GetImage,
   fabricBrowserProps={},
   autoUpdate=true,
+  disabled,
   ...componentProps
 }) => {
   const location = useLocation();
   const [showPreview, setShowPreview] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
+
+  disabled = disabled || rootStore.localizing;
 
   GetName = GetName || ((metadata={}) => metadata.display_title || metadata.title || metadata.name || metadata["."]?.source);
 
@@ -1241,6 +1288,9 @@ export const FabricBrowserInput = observer(({
         hint={hint}
         flex
         mb="md"
+        wrapperProps={{
+          style: disabled ? { opacity: 0.5 } : {}
+        }}
         {...componentProps}
       >
         <Group spacing="xs" style={{position: "absolute", top: -4, right: 0}}>
@@ -1265,6 +1315,7 @@ export const FabricBrowserInput = observer(({
               />
           }
           <IconButton
+            disabled={disabled}
             label={LocalizeString(rootStore.l10n.components.fabric_browser.select, {item: label})}
             onClick={() => setShowBrowser(true)}
             Icon={IconSelect}
@@ -1392,6 +1443,8 @@ const ImageInput = observer(({
   label,
   description,
   hint,
+  disabled,
+  localizable,
   componentProps={}
 }) => {
   const location = useLocation();
@@ -1426,6 +1479,8 @@ const ImageInput = observer(({
               url={field.url}
               baseSize={field.baseSize}
               horizontal={field.horizontal}
+              localizable={localizable || field.localizable}
+              disabled={disabled}
               {...(field.componentProps || {})}
             />
           )
@@ -1577,10 +1632,13 @@ const List = observer(({
   Filter,
   AddItem,
   shrink=false,
+  disabled,
   ...componentProps
 }) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+
+  disabled = disabled || rootStore.localizing;
 
   const location = useLocation();
   let values = (store.GetMetadata({objectId, path, field}) || []);
@@ -1639,6 +1697,8 @@ const List = observer(({
             <Group align="start" style={{position: "relative"}} pr={40} pl={sortable ? 40 : 0}>
               <div
                 style={{
+                  pointerEvents: disabled ? "none" : undefined,
+                  opacity: disabled ? 0.25 : 1,
                   display: sortable ? "block" : "none",
                   cursor: "grab",
                   position: "absolute",
@@ -1669,6 +1729,7 @@ const List = observer(({
               </Container>
 
               <IconButton
+                disabled={disabled}
                 label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: fieldLabel})}
                 style={{position: "absolute", top: 0, right: 0}}
                 Icon={IconX}
@@ -1698,6 +1759,7 @@ const List = observer(({
 
   const addButton = (
     <IconButton
+      disabled={disabled}
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
       onClick={async () => {
@@ -1742,6 +1804,7 @@ const List = observer(({
         maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
         w="min-content"
         miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
+        wrapperProps={{style: disabled ? { opacity: 0.5 } : {}}}
         {...componentProps}
       >
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
@@ -1802,6 +1865,7 @@ const CollectionTableRows = observer(({
   values,
   routePath="",
   editable=true,
+  disabled,
   Actions
 }) => {
   return (
@@ -1823,7 +1887,14 @@ const CollectionTableRows = observer(({
               key={`tr-${id}`}
             >
               <td style={{width: "40px", display: showDragHandle ? undefined : "none"}}>
-                <div style={{cursor: "grab"}} {...rowProvided.dragHandleProps}>
+                <div
+                  style={{
+                    cursor: "grab",
+                    opacity: disabled ? 0.25 : 1,
+                    pointerEvents: disabled ? "none" : undefined
+                  }}
+                  {...rowProvided.dragHandleProps}
+                >
                   <IconGripVertical size={15}/>
                 </div>
               </td>
@@ -1851,6 +1922,7 @@ const CollectionTableRows = observer(({
                       />
                   }
                   <IconButton
+                    disabled={disabled}
                     label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: name || fieldLabel})}
                     color="red.5"
                     Icon={IconTrashX}
@@ -1911,6 +1983,7 @@ const CollectionTable = observer(({
   Filter,
   editable=true,
   width="Wide",
+  disabled,
   AddItem,
   Actions
 }) => {
@@ -1922,6 +1995,8 @@ const CollectionTable = observer(({
   const filterInfo = collectionTableFilters[filterId];
   const [filter, setFilter] = useState(filterInfo?.filterKey === filterKey && filterInfo?.filter || "");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+
+  disabled = disabled || rootStore.localizing;
 
   // If filter key has changed, reset filter value
   useEffect(() => {
@@ -1960,6 +2035,7 @@ const CollectionTable = observer(({
   const showBottomAddButton = values.length >= 10;
   const addButton = (
     <IconButton
+      disabled={disabled}
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
       Icon={IconPlus}
       onClick={async () => {
@@ -2068,6 +2144,7 @@ const CollectionTable = observer(({
                     fieldLabel={fieldLabel}
                     routePath={routePath}
                     editable={editable}
+                    disabled={disabled}
                     Actions={Actions}
                   />
                   {containerProvided.placeholder}
@@ -2115,6 +2192,7 @@ const ReferenceTable = observer(({
   editable=true,
   selectedRecords,
   setSelectedRecords,
+  disabled,
   width="Wide",
   AddItem,
   CopyItem,
@@ -2133,6 +2211,8 @@ const ReferenceTable = observer(({
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [sortStatus, setSortStatus] = useState({columnAccessor: nameField, direction: "asc"});
   const [page, setPage] = useState(1);
+
+  disabled = disabled || rootStore.localizing;
 
   useEffect(() => {
     setPage(1);
@@ -2227,6 +2307,7 @@ const ReferenceTable = observer(({
                       {
                         !CopyItem ? null :
                           <IconButton
+                            disabled={disabled}
                             label={LocalizeString(rootStore.l10n.components.inputs.copy, {item: item.label})}
                             color="blue.6"
                             Icon={IconCopy}
@@ -2240,7 +2321,7 @@ const ReferenceTable = observer(({
                           />
                       }
                       <IconButton
-                        disabled={protectedKeys.includes(item.id)}
+                        disabled={disabled || protectedKeys.includes(item.id)}
                         label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: itemName})}
                         color="red.5"
                         Icon={IconTrashX}
