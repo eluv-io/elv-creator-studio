@@ -43,6 +43,8 @@ class RootStore {
   tenantInfo;
   typeInfo;
 
+  localizationKey;
+
   versionHashes = {};
 
   debugLevel = parseInt(StorageHandler.get({type: "local", key: "debug-level"}) || 0);
@@ -76,6 +78,14 @@ class RootStore {
 
   get utils() {
     return Utils;
+  }
+
+  get localizing() {
+    return !!this.localizationKey;
+  }
+
+  SetLocalizationKey(localizationKey) {
+    this.localizationKey = localizationKey;
   }
 
   Initialize = flow(function * () {
