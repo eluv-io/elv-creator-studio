@@ -357,6 +357,9 @@ form:
       description: Displayed below the footer items
     faq:
       faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      slug:
+        label: Page Slug
+        description: This page will be available at <your property url>/faq/<slug>
       header_image:
         label: Header Image
       header_image_mobile:
@@ -379,6 +382,8 @@ form:
         label: Question
       answer:
         label: Answer
+      additional_pages:
+        label: Additional Pages
 
   domain:
     custom_domain:

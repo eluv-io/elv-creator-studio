@@ -12,6 +12,13 @@ export const MediaPropertyFooterItemSpec = {
   content_html: undefined
 };
 
+export const MediaPropertyFAQSpec = {
+  slug: undefined,
+  title: "",
+  description: "",
+  questions: []
+};
+
 const MediaPropertyPermissionSpec = {
   behavior: "",
   alternate_page_id: undefined,

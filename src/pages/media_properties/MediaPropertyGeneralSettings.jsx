@@ -8,7 +8,7 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Accordion, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec} from "@/specs/MediaPropertySpecs.js";
+import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec, MediaPropertyFAQSpec} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
 
@@ -17,6 +17,90 @@ Object.keys(currencies).forEach(currencyCode => {
   if(!currencyCode || !currencies[currencyCode]) {
     delete currencies[currencyCode];
   }
+});
+
+const FAQForm = observer(({index}) => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: l10n.categories.general,
+    subcategory: l10n.categories.faq,
+    path: "/public/asset_metadata/info/faq"
+  };
+
+  if(typeof index !== "undefined") {
+    inputProps.path = UrlJoin(inputProps.path, "additional", index.toString());
+  }
+
+  return (
+    <>
+      {
+        typeof index === "undefined" ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.general.faq.slug}
+            field="slug"
+          />
+      }
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.faq.header_image}
+        componentProps={{
+          maw: "100%"
+        }}
+        altTextField="header_image_alt"
+        fields={[
+          { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 3, size: 100},
+          { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 3}
+        ]}
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.general.faq.background_color}
+        field="background_color"
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.general.faq.header_text_color}
+        field="header_text_color"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.faq.title}
+        field="title"
+      />
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.general.faq.description}
+        field="description"
+      />
+      <Inputs.List
+        {...inputProps}
+        {...l10n.general.faq.questions}
+        maw="100%"
+        w="100%"
+        field="questions"
+        fieldLabel="question"
+        fields={[
+          { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
+          { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer },
+          {
+            field: "video",
+            InputComponent: Inputs.FabricBrowser,
+            previewable: true,
+            ...l10n.general.faq.video
+          },
+        ]}
+      />
+    </>
+  );
 });
 
 const MediaPropertyGeneralSettings = observer(() => {
@@ -713,68 +797,18 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed">{l10n.general.faq.faq_description}</Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Inputs.ImageInput
-              {...inputProps}
-              {...l10n.general.faq.header_image}
-              componentProps={{
-                maw: uiStore.inputWidthWide
-              }}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              altTextField="header_image_alt"
-              fields={[
-                { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 3, size: 100},
-                { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 3}
-              ]}
-            />
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.general.faq.background_color}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="background_color"
-            />
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.general.faq.header_text_color}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="header_text_color"
-            />
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.general.faq.title}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="title"
-            />
-            <Inputs.TextArea
-              {...inputProps}
-              {...l10n.general.faq.description}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="description"
-            />
+            <FAQForm />
+
             <Inputs.List
               {...inputProps}
-              {...l10n.general.faq.questions}
-              maw={uiStore.inputWidthWide}
-              w={uiStore.inputWidthWide}
-              path={UrlJoin(inputProps.path, "faq")}
+              {...l10n.general.faq.additional_pages}
+              path="/public/asset_metadata/info/faq"
+              field="additional"
               subcategory={l10n.categories.faq}
-              field="questions"
-              fieldLabel="question"
-              fields={[
-                { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
-                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer },
-                {
-                  field: "video",
-                  InputComponent: Inputs.FabricBrowser,
-                  previewable: true,
-                  ...l10n.general.faq.video
-                },
-              ]}
+              newItemSpec={MediaPropertyFAQSpec}
+              renderItem={({index}) => <FAQForm index={index} />}
             />
+
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="meta_tags">
