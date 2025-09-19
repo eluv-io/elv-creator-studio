@@ -3,13 +3,19 @@ import NavStyles from "@/assets/stylesheets/modules/nav.module.scss";
 import {Modal, Button, Group, Select} from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import {editStore, rootStore, uiStore} from "@/stores";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import LanguageCodes from "@/assets/localization/LanguageCodes.js";
+import {StorageHandler} from "@/helpers/Misc.js";
 
 const S = (...classes) => classes.map(c => NavStyles[c] || "").join(" ");
 
+let recentLanguageKeys = (StorageHandler.get({type: "local", key: "recent-language-keys"}) || "").split(",").filter(k => k);
 const LocalizationModal = observer(({opened, Close}) => {
   const [localization, setLocalization] = useState(rootStore.localizationKey || "");
+
+  useEffect(() => {
+    setLocalization(rootStore.localizationKey || "");
+  }, [opened]);
 
   return (
     <Modal
@@ -28,24 +34,52 @@ const LocalizationModal = observer(({opened, Close}) => {
         defaultValue=""
         clearable
         placeholder="Select Language"
-        onChange={value => setLocalization(value)}
+        onChange={value => {
+          setLocalization(value);
+          recentLanguageKeys = [
+            value,
+            ...recentLanguageKeys
+          ]
+            .filter((v, i, a) => a.indexOf(v) === i);
+
+          StorageHandler.set({
+            type: "local",
+            key: "recent-language-keys",
+            value: recentLanguageKeys.join(",")
+          });
+        }}
         data={
-          Object.keys(LanguageCodes).map(key => ({
-            label: `[${key}] - ${LanguageCodes[key]}`,
-            value: key
-          }))
+          [
+            ...recentLanguageKeys,
+            ...Object.keys(LanguageCodes)
+          ]
+            .filter((v, i, a) => a.indexOf(v) === i)
+            .map(key => ({
+              label: `[${key}] - ${LanguageCodes[key]}`,
+              value: key
+            }))
         }
       />
       <Group position="right" mt={40}>
         <Button
-          w={200}
+          w={170}
           variant="subtle"
           onClick={() => Close(true)}
         >
           Cancel
         </Button>
         <Button
-          w={200}
+          variant="outline"
+          w={170}
+          onClick={() => {
+            rootStore.SetLocalizationKey(undefined);
+            Close(true);
+          }}
+        >
+          Clear Localization
+        </Button>
+        <Button
+          w={170}
           onClick={() => {
             rootStore.SetLocalizationKey(localization);
             Close(true);
