@@ -20,6 +20,7 @@ const CheckboxCard = observer(({
       w="100%"
       maw={uiStore.inputWidth}
       mb="md"
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       {...componentProps}
     >

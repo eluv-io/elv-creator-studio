@@ -65,9 +65,29 @@ export const ACTIONS = {
 
 // Metadata manipulation
 
-const GetMetadata = function({objectId, path, field}) {
+const LocalizePath = ({path, localizationKey}) => {
+  const relativePath = path.split("/public/asset_metadata/info")[1];
+  return UrlJoin("/public", "asset_metadata", "localizations", localizationKey, "info", relativePath);
+};
+
+const GetMetadata = function({objectId, path, field, localizationKey, localizationOnly}) {
   if(!objectId) {
     this.DebugLog({message: "Get metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
+  }
+
+  // Check for localized metadata
+  if(localizationKey) {
+    const localizedMetadata = this.GetMetadata({
+      objectId,
+      path: LocalizePath({path, localizationKey: rootStore.localizationKey}),
+      field
+    });
+
+    if(localizedMetadata) {
+      return localizedMetadata;
+    } else if(localizationOnly) {
+      return;
+    }
   }
 
   const pathComponents = UrlJoin(path, field || "").replace(/^\//, "").replace(/\/$/, "").split("/");
@@ -86,16 +106,22 @@ const SetMetadata = function({
   subcategory,
   label,
   inverted=false,
-  json=false
+  json=false,
+  localizationKey
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
   }
 
-  const fullPath = UrlJoin(path, field);
+  let fullPath = UrlJoin(path, field);
+
+  if(localizationKey) {
+    fullPath = LocalizePath({path: fullPath, localizationKey});
+  }
+
   const pathComponents = fullPath.replace(/^\//, "").replace(/\/$/, "").split("/");
 
-  const originalValue = this.GetMetadata({objectId, path, field});
+  const originalValue = this.GetMetadata({objectId, path, field, localizationKey});
 
   // Save JSON fields as objects, not strings
   let parsedValue;
@@ -115,6 +141,7 @@ const SetMetadata = function({
     category,
     subcategory,
     label,
+    localizationKey,
     info: {
       cleared: typeof value !== "number" && !value,
       inverted
@@ -320,7 +347,8 @@ const SetLink = flow(function * ({
   category,
   subcategory,
   label,
-  autoUpdate
+  localizationKey,
+  autoUpdate,
 }) {
   if(!objectId) {
     this.DebugLog({message: "Set metadata: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -330,10 +358,14 @@ const SetLink = flow(function * ({
     linkObjectId = Utils.DecodeVersionHash(linkHash).objectId;
   }
 
-  const fullPath = UrlJoin(path, field);
+  let fullPath = UrlJoin(path, field);
+  if(localizationKey) {
+    fullPath = LocalizePath({path: fullPath, localizationKey});
+  }
+
   const pathComponents = fullPath.replace(/^\//, "").replace(/\/$/, "").split("/");
 
-  const originalValue = this.GetMetadata({objectId, path, field});
+  const originalValue = this.GetMetadata({objectId, path, field, localizationKey});
 
   // Local metadata must contain resolved link, but must write out link structure to fabric
   let link;
@@ -381,6 +413,7 @@ const SetLink = flow(function * ({
     category,
     subcategory,
     label,
+    localizationKey,
     info: {
       cleared: !link
     },
@@ -415,7 +448,8 @@ const ListAction = function({
   category,
   subcategory,
   label,
-  useLabel=true
+  useLabel=true,
+  applyToLocalizations=true
 }) {
   if(!objectId) {
     this.DebugLog({message: "List Action: Missing objectId", level: this.logLevels.DEBUG_LEVEL_ERROR});
@@ -481,9 +515,9 @@ const ListAction = function({
       break;
     case "MOVE_LIST_ELEMENT":
       if(typeof index === "undefined" || index < 0 || index >= originalList.length) {
-        throw Error("Swap list element: index not specified or out of range: " + index);
+        throw Error(`Swap list element ${fullPath}: index not specified or out of range: ${index}`);
       } else if(typeof newIndex === "undefined" || newIndex < 0 || newIndex >= originalList.length) {
-        throw Error("Swap list element: newIndex not specified or out of range: " + newIndex);
+        throw Error(`Swap list element ${fullPath}: newIndex not specified or out of range: ${newIndex}`);
       }
 
       // eslint-disable-next-line no-case-declarations
@@ -493,7 +527,50 @@ const ListAction = function({
       break;
   }
 
-  this.ApplyAction({
+  const Apply = () => {
+    this.ApplyAction({
+      actionType,
+      objectId,
+      page,
+      path: UrlJoin(fullPath, (typeof newIndex !== "undefined" ? newIndex : index).toString()),
+      basePath: fullPath,
+      listIndex: index || originalList.length,
+      category,
+      subcategory,
+      label,
+      useLabel,
+      info: {
+        index,
+        newIndex
+      },
+      Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, newList),
+      Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalList),
+      Write: async (objectParams) => await this.client.ReplaceMetadata({
+        ...objectParams,
+        metadataSubtree: fullPath,
+        metadata: JSON.parse(JSON.stringify(newList))
+      })
+    });
+  };
+
+  if(!applyToLocalizations) {
+    Apply();
+    return;
+  }
+
+  const localizations = Object.keys(this.GetMetadata({objectId, path: "/public/asset_metadata", field: "localizations"}) || {})
+    .filter(localizationKey => !!this.GetMetadata({
+      objectId,
+      path: LocalizePath({path, localizationKey}),
+      field: field
+    }));
+
+  if(localizations.length === 0) {
+    Apply();
+    return;
+  }
+
+  this.ApplyTransaction({
     actionType,
     objectId,
     page,
@@ -508,13 +585,17 @@ const ListAction = function({
       index,
       newIndex
     },
-    Apply: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, newList),
-    Undo: () => Set(this[this.objectsMapKey][objectId].metadata, pathComponents, originalList),
-    Write: async (objectParams) => await this.client.ReplaceMetadata({
-      ...objectParams,
-      metadataSubtree: fullPath,
-      metadata: JSON.parse(JSON.stringify(newList))
-    })
+    Apply: () => {
+      Apply();
+
+      localizations.forEach(localizationKey =>
+        this.ListAction({
+          ...arguments[0],
+          path: LocalizePath({path: arguments[0].path, localizationKey}),
+          applyToLocalizations: false
+        })
+      );
+    }
   });
 };
 
@@ -581,6 +662,7 @@ const ApplyAction = function ({
   category,
   subcategory,
   label,
+  localizationKey,
   useLabel=true,
   info={},
   _details,
@@ -608,7 +690,8 @@ const ApplyAction = function ({
         action.objectId !== objectId ||
         action.actionType !== actionType ||
         action.page !== page ||
-        action.path !== path
+        action.path !== path ||
+        action.localizationKey !== localizationKey
       ) {
         break;
       }
@@ -641,6 +724,7 @@ const ApplyAction = function ({
     label,
     useLabel,
     info,
+    localizationKey,
     _details,
     Apply,
     Undo,
@@ -668,7 +752,7 @@ const ApplyTransaction = flow(function * ({
   this.ApplyAction({
     ...args,
     path: UrlJoin(args.path || "/", args.field || ""),
-    actionType: "TRANSACTION",
+    actionType: args.actionType || "TRANSACTION",
     objectId,
     _details: txActions.map(action => action.label).join(", "),
     Apply: () => txActions.forEach(action => action.Apply()),
@@ -681,26 +765,28 @@ const ApplyTransaction = flow(function * ({
   });
 });
 
-const UndoQueue = function({objectId, page}) {
+const UndoQueue = function({objectId, page, localizationKey}) {
   return (this.actionStack[objectId] || [])
     .filter(action =>
       action.objectId === objectId &&
-      action.page === page
+      action.page === page &&
+      action.localizationKey === localizationKey
     )
     .reverse();
 };
 
-const RedoQueue = function({objectId, page}) {
+const RedoQueue = function({objectId, page, localizationKey}) {
   return (this.redoStack[objectId] || [])
     .filter(action =>
       action.objectId === objectId &&
-      action.page === page
+      action.page === page &&
+      action.localizationKey === localizationKey
     )
     .reverse();
 };
 
-const UndoAction = flow(function * ({objectId, page}) {
-  const action = this.UndoQueue({objectId, page})[0];
+const UndoAction = flow(function * ({objectId, page, localizationKey}) {
+  const action = this.UndoQueue({objectId, page, localizationKey})[0];
 
   if(!action) { return; }
 
@@ -714,8 +800,8 @@ const UndoAction = flow(function * ({objectId, page}) {
   this.redoStack[objectId].push(action);
 });
 
-const RedoAction = flow(function * ({objectId, page}) {
-  const action = this.RedoQueue({objectId, page})[0];
+const RedoAction = flow(function * ({objectId, page, localizationKey}) {
+  const action = this.RedoQueue({objectId, page, localizationKey})[0];
 
   if(!action) { return; }
 

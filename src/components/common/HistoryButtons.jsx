@@ -51,8 +51,8 @@ const HistoryButtons = observer(({section}) => {
       rootStore.DebugLog({message: `History Buttons: Unknown section type '${section}'`, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
   }
 
-  const undoActions = store.UndoQueue({objectId, page});
-  const redoActions = store.RedoQueue({objectId, page});
+  const undoActions = store.UndoQueue({objectId, page, localizationKey: rootStore.localizationKey});
+  const redoActions = store.RedoQueue({objectId, page, localizationKey: rootStore.localizationKey});
 
   return (
     <Affix position={{bottom: 20, right: 20}} style={{zIndex: 10}}>
@@ -66,7 +66,7 @@ const HistoryButtons = observer(({section}) => {
           variant="filled"
           color="purple.6"
           disabled={undoActions.length === 0}
-          onClick={() => store.UndoAction({objectId, page})}
+          onClick={() => store.UndoAction({objectId, page, localizationKey: rootStore.localizationKey})}
         />
         <IconButton
           label={
@@ -77,7 +77,7 @@ const HistoryButtons = observer(({section}) => {
           variant="filled"
           color="purple.6"
           disabled={redoActions.length === 0}
-          onClick={() => store.RedoAction({objectId, page})}
+          onClick={() => store.RedoAction({objectId, page, localizationKey: rootStore.localizationKey})}
         />
       </Group>
     </Affix>

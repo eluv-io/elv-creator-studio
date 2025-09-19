@@ -256,13 +256,14 @@ const Input = observer(({
 
   disabled = disabled || (rootStore.localizing && !localizable);
 
-  value = typeof value !== "undefined" ? value : store.GetMetadata({objectId, path, field});
+  value = typeof value !== "undefined" ? value :
+    store.GetMetadata({objectId, path, field, localizationKey: localizable ? rootStore.localizationKey : undefined});
 
   useEffect(() => {
+    const currentValue = store.GetMetadata({objectId, path, field});
+
     // Ensure the default value is set for this field if the field is not yet defined
     if((type === "uuid" || typeof defaultValue !== "undefined")) {
-      const currentValue = store.GetMetadata({objectId, path, field});
-
       // Only set default value on blank string if explicitly specified - otherwise, only set on undefined
       if(!(typeof currentValue === "undefined" || ((currentValue === "" || currentValue === 0) && defaultOnBlankString))) {
         return;
@@ -284,7 +285,7 @@ const Input = observer(({
       }
     }
 
-    if(type === "json" && !value) {
+    if(type === "json" && !currentValue) {
       store.SetDefaultValue({objectId, path, field, category, subcategory, label, value: "{}", json: true});
     }
   });
@@ -449,7 +450,8 @@ const Input = observer(({
             category,
             subcategory,
             label: actionLabel || label,
-            json: type === "json"
+            json: type === "json",
+            localizationKey: rootStore.localizationKey
           });
         }
 
@@ -600,7 +602,7 @@ const RichTextInput = observer(({
   const [editorKey, setEditorKey] = useState(Math.random());
   disabled = disabled || (!localizable && rootStore.localizing);
 
-  const value = store.GetMetadata({objectId, path, field});
+  const value = store.GetMetadata({objectId, path, field, localizationKey: localizable && rootStore.localizationKey});
   // React to undo/redo when the editor is open
   useEffect(() => {
     setEditorKey(Math.random());
@@ -630,7 +632,7 @@ const RichTextInput = observer(({
         show ?
           <Container p={0} m={0} my="xl">
             <RichTextEditor
-              key={`editor-${editorKey}`}
+              key={`editor-${editorKey}-${rootStore.localizationKey}`}
               store={store}
               objectId={objectId}
               page={location.pathname}
@@ -641,6 +643,7 @@ const RichTextInput = observer(({
               label={label}
               componentProps={{mih: 250}}
               disabled={disabled}
+              localizable={localizable}
             />
           </Container> :
           value ?
@@ -797,12 +800,14 @@ const SingleImageInput = observer(({
   ...componentProps
 }) => {
   disabled = disabled || (rootStore.localizing && !localizable);
+  const localizationKey = localizable && rootStore.localizationKey;
 
   const location = useLocation();
 
   const [showFileBrowser, setShowFileBrowser] = useState(false);
 
-  const imageMetadata = store.GetMetadata({objectId, path, field});
+  const imageMetadata = store.GetMetadata({objectId, path, field, localizationKey});
+  const localizedImageMetadata = store.GetMetadata({objectId, path, field, localizationKey, localizationOnly: true});
 
   let targetHash = imageMetadata ? ExtractHashFromLink(imageMetadata) : undefined;
   let targetId = targetHash ? rootStore.client.utils.DecodeVersionHash(targetHash)?.objectId : undefined;
@@ -837,7 +842,7 @@ const SingleImageInput = observer(({
         style={{position: "relative", display: "flex", opacity: disabled ? 0.5 : 1}}
         {...componentProps}
       >
-        <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
+        <HoverCard offset={50} shadow="xl" openDelay={!disabled && imageUrl ? 500 : 100000}>
           <UnstyledButton
             disabled={disabled}
             onClick={() => setShowFileBrowser(true)}
@@ -888,6 +893,7 @@ const SingleImageInput = observer(({
               radius="100%"
               icon={<IconX size={15} />}
               style={{position: "absolute", top: "3px", right: "3px"}}
+              disabled={rootStore.localizing && !localizedImageMetadata}
               onClick={event => {
                 event.stopPropagation();
                 ConfirmDelete({
@@ -907,13 +913,15 @@ const SingleImageInput = observer(({
                           objectId,
                           path,
                           field,
-                          value: null
+                          value: null,
+                          localizationKey
                         });
                         store.SetMetadata({
                           objectId,
                           path,
                           field: `${field}_hash`,
-                          value: null
+                          value: null,
+                          localizationKey
                         });
                       }
                     });
@@ -942,6 +950,7 @@ const SingleImageInput = observer(({
                 category,
                 subcategory,
                 label: actionLabel || label,
+                localizationKey,
                 Apply: async () => {
                   if(url) {
                     store.SetMetadata({
@@ -951,6 +960,7 @@ const SingleImageInput = observer(({
                       field,
                       label: "Set Image URL",
                       value: record.publicUrl,
+                      localizationKey
                     });
                   } else {
                     store.SetLink({
@@ -961,7 +971,8 @@ const SingleImageInput = observer(({
                       label: "Set Image Link",
                       linkObjectId: record.objectId,
                       linkType: "files",
-                      linkPath: record.fullPath
+                      linkPath: record.fullPath,
+                      localizationKey
                     });
                   }
 
@@ -970,7 +981,8 @@ const SingleImageInput = observer(({
                     path,
                     field: `${field}_hash`,
                     label: "Set Image Hash",
-                    value: await HashImage(ScaleImage(record.publicUrl, 500))
+                    value: await HashImage(ScaleImage(record.publicUrl, 500)),
+                    localizationKey
                   });
                 }
               });
@@ -1501,6 +1513,7 @@ const ImageInput = observer(({
             path={path}
             field={altTextField}
             componentProps={{minRows: 1}}
+            localizable={localizable}
           />
       }
     </InputWrapper>
@@ -1521,6 +1534,7 @@ const ListInputs = observer(({
   fields=[],
   index,
   renderItem,
+  localizable,
   inputProps={}
 }) => {
   if(renderItem) {
@@ -1532,6 +1546,7 @@ const ListInputs = observer(({
       store,
       objectId,
       path: UrlJoin(path, field, index.toString()),
+      localizable,
       category,
       subcategory,
       actionLabel,
@@ -1556,6 +1571,7 @@ const ListInputs = observer(({
         subcategory={subcategory}
         label={fieldLabel}
         actionLabel={actionLabel}
+        localizable={localizable}
         componentProps={{mb: 0, style: {flexGrow: "1"}, ...(inputProps.componentProps || {})}}
         {...inputProps}
       />
@@ -1591,6 +1607,7 @@ const ListInputs = observer(({
                 field={props.field}
                 category={category}
                 subcategory={subcategory}
+                localizable={localizable}
                 {...props}
               />
             );
@@ -1632,13 +1649,13 @@ const List = observer(({
   Filter,
   AddItem,
   shrink=false,
-  disabled,
+  localizable,
   ...componentProps
 }) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
 
-  disabled = disabled || rootStore.localizing;
+  const disabled = rootStore.localizing;
 
   const location = useLocation();
   let values = (store.GetMetadata({objectId, path, field}) || []);
@@ -1725,6 +1742,7 @@ const List = observer(({
                   index={index}
                   renderItem={renderItem}
                   inputProps={inputProps}
+                  localizable={localizable}
                 />
               </Container>
 
@@ -1804,7 +1822,6 @@ const List = observer(({
         maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
         w="min-content"
         miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
-        wrapperProps={{style: disabled ? { opacity: 0.5 } : {}}}
         {...componentProps}
       >
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
