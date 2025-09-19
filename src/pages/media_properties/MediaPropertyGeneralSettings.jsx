@@ -710,9 +710,37 @@ const MediaPropertyGeneralSettings = observer(() => {
         <Accordion.Item value="faq">
           <Accordion.Control>
             { l10n.categories.faq }
+            <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed">{l10n.general.faq.faq_description}</Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed" mb="md">{l10n.general.faq.faq_description}</Title>
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.faq.header_image}
+              componentProps={{
+                maw: uiStore.inputWidthWide
+              }}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              altTextField="header_image_alt"
+              fields={[
+                { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 3, size: 100},
+                { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 3}
+              ]}
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.general.faq.background_color}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="background_color"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.general.faq.header_text_color}
+              path={UrlJoin(inputProps.path, "faq")}
+              subcategory={l10n.categories.faq}
+              field="header_text_color"
+            />
             <Inputs.Text
               {...inputProps}
               {...l10n.general.faq.title}
@@ -738,7 +766,13 @@ const MediaPropertyGeneralSettings = observer(() => {
               fieldLabel="question"
               fields={[
                 { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
-                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer }
+                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer },
+                {
+                  field: "video",
+                  InputComponent: Inputs.FabricBrowser,
+                  previewable: true,
+                  ...l10n.general.faq.video
+                },
               ]}
             />
           </Accordion.Panel>
@@ -746,10 +780,10 @@ const MediaPropertyGeneralSettings = observer(() => {
         <Accordion.Item value="meta_tags">
           <Accordion.Control>
             { l10n.categories.meta_tags }
+            <Title mt={5} order={6} fw={500} color="dimmed" maw={uiStore.inputWidth}>{l10n.general.meta_tags.meta_tags_description}</Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
-
+            <Title mt={5} order={6} fw={500} color="dimmed" maw={uiStore.inputWidth}>{l10n.general.meta_tags.meta_tags_description}</Title>
             <Inputs.Text
               {...inputProps}
               {...l10n.general.meta_tags.site_name}

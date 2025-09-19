@@ -1353,7 +1353,7 @@ export const FabricBrowserInput = observer(({
                   { targetId }
                 </Text>
                 {
-                  fabricBrowserProps.video ? null :
+                  previewable || fabricBrowserProps.video ? null :
                     <Text fz={8} color="dimmed">
                       Linked version: { targetHash } <br/>
                       Latest version: { targetDetails.versionHash }

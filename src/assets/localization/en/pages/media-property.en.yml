@@ -226,7 +226,8 @@ form:
       sidebar_content_section_id:
         label: Sidebar Content Section
     meta_tags:
-      meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
+      meta_tags_description: "This information will be used to populate search results and social media link previews for your site."
+      meta_tags_deploy_note: "Note: Changes to these values may take up to one minute after deploying your property before they are available."
       site_name:
         label: Site Name
       title:
@@ -356,6 +357,18 @@ form:
       description: Displayed below the footer items
     faq:
       faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      header_image:
+        label: Header Image
+      header_image_mobile:
+        label: Header Image (Mobile)
+      background_color:
+        label: Page Background Color
+      header_text_color:
+        label: Header Text Color
+        description: Set the text color for question text and header fields within your FAQ
+      video:
+        label: Video
+        description: Display a video at the top of your answer
       title:
         label: Title
       description:
