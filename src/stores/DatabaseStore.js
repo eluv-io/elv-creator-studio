@@ -769,7 +769,7 @@ class DatabaseStore {
       tenantSlug: this.rootStore.tenantInfo.tenantSlug,
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
       description: metadata.public?.asset_metadata?.info?.description || "",
-      id: metadata.public?.asset_metadata?.info?.id
+      id: mediaCatalogId
     };
 
     yield this.WriteDocument({

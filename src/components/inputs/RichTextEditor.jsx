@@ -21,9 +21,10 @@ const RichTextEditor = observer(({
   category,
   subcategory,
   label,
+  localizable,
   componentProps={}
 }) => {
-  const [value] = useState(store.GetMetadata({objectId, path, field}));
+  const [value] = useState(store.GetMetadata({objectId, path, field, localizationKey: localizable && rootStore.localizationKey}));
   const editorRef = useRef(null);
 
   const editor = useEditor({
@@ -46,7 +47,8 @@ const RichTextEditor = observer(({
         value: editor.getText().trim() === "" ? "" : editor.getHTML(),
         category,
         subcategory,
-        label
+        label,
+        localizationKey: localizable && rootStore.localizationKey
       });
       },
     content: value

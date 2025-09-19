@@ -39,7 +39,8 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
               versionHash: videoHash || ExtractHashFromLink(videoLink),
               channel: videoLinkInfo?.composition_key,
               clipStart: videoLinkInfo?.clip_start_time,
-              clipEnd: videoLinkInfo?.clip_end_time
+              clipEnd: videoLinkInfo?.clip_end_time,
+              offerings: playerOptions.offerings
             }
           },
           playerOptions: {
