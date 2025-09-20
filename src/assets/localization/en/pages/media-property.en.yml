@@ -352,6 +352,9 @@ form:
         label: Content (Rich Text)
       content_html:
         label: Content (HTML)
+      faq_slug:
+        label: FAQ Page Slug
+        description: If referring to an additional page of the FAQ, specify the slug
     footer_text:
       label: Footer Text
       description: Displayed below the footer items

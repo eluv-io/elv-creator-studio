@@ -771,6 +771,15 @@ const MediaPropertyGeneralSettings = observer(() => {
                           extensions={["html"]}
                         />
                     }
+                    {
+                      item.type !== "faq" ? null :
+                        <Inputs.Text
+                          {...props}
+                          {...l10n.general.footer_items.faq_slug}
+                          subcategory={subcategory}
+                          field="faq_slug"
+                        />
+                    }
                   </>
                 );
               }}
