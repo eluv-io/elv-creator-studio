@@ -39,7 +39,7 @@ export const MarketplaceItem = observer(() => {
       </div>
     );
   }
-  
+
   const l10n = rootStore.l10n.pages.marketplace.form;
   const listPath = "/public/asset_metadata/info/items";
   const inputProps = {
@@ -282,6 +282,11 @@ export const MarketplaceItem = observer(() => {
         renderItem={props =>
           <>
             <Inputs.Text
+              {...props}
+              {...l10n.common.label}
+              field="label"
+            />
+            <Inputs.Password
               {...props}
               {...l10n.item.discount_code}
               field="code"

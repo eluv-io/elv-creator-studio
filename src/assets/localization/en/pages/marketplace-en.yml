@@ -69,6 +69,8 @@ form:
       label: ID
     name:
       label: Name
+    label:
+      label: Label
     description:
       label: Description
   overview:
@@ -319,7 +321,7 @@ form:
       label: Subscription
       description: If specified, users will be charged the price of this item periodically. Otherwise, this item will be a one time purchase.
     subscription_period:
-      label: Subscription Period
+      label: Subscription Period (Months)
       description: Specify how often users will be charged for this subscription
     subscription_start_time:
       label: Subscription Start Time
