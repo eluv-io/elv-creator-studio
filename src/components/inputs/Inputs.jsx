@@ -477,6 +477,7 @@ const Password = observer(({
 
   const value = store.GetMetadata({objectId, path, field});
   const [password, setPassword] = useState(value);
+  const [hashed, setHashed] = useState(!!value);
   const [changed, setChanged] = useState(false);
 
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
@@ -487,10 +488,15 @@ const Password = observer(({
       label={<InputLabel label={label} hint={hint} />}
       description={description}
       mb="md"
-      onFocus={() => setPassword("")}
+      visible={!hashed}
+      onFocus={() => {
+        setPassword("");
+        setHashed(false);
+      }}
       onBlur={async () => {
         if(!changed) {
           setPassword(value);
+          setHashed(!!value);
         } else {
           const digest = await SHA512(password);
           setPassword(digest);
@@ -505,6 +511,7 @@ const Password = observer(({
             label
           });
           setChanged(false);
+          setHashed(true);
         }
       }}
       value={password}

@@ -39,7 +39,7 @@ export const MarketplaceItem = observer(() => {
       </div>
     );
   }
-
+  
   const l10n = rootStore.l10n.pages.marketplace.form;
   const listPath = "/public/asset_metadata/info/items";
   const inputProps = {
@@ -219,6 +219,38 @@ export const MarketplaceItem = observer(() => {
                 />
               )
             }
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.item.subscription}
+              defaultValue={false}
+              subcategory={l10n.categories.item_purchase_details}
+              field="is_subscription"
+            />
+            {
+              !item.is_subscription ? null :
+                <>
+                  <Inputs.Integer
+                    {...inputProps}
+                    {...l10n.item.subscription_period}
+                    defaultValue={1}
+                    max={12}
+                    subcategory={l10n.categories.item_purchase_details}
+                    field="subscription_period"
+                  />
+                  <Inputs.Date
+                    {...inputProps}
+                    {...l10n.item.subscription_start_time}
+                    subcategory={l10n.categories.item_purchase_details}
+                    field="subscription_start_time"
+                  />
+                  <Inputs.Date
+                    {...inputProps}
+                    {...l10n.item.subscription_end_time}
+                    subcategory={l10n.categories.item_purchase_details}
+                    field="subscription_end_time"
+                  />
+                </>
+            }
             <Inputs.Integer
               {...inputProps}
               {...l10n.item.max_per_checkout}
@@ -240,6 +272,61 @@ export const MarketplaceItem = observer(() => {
         subcategory={l10n.categories.item_purchase_details}
         path={UrlJoin(inputProps.path, "min_secondary_price")}
         field="USD"
+      />
+
+      <Inputs.List
+        {...inputProps}
+        {...l10n.item.discount_codes}
+        subcategory={l10n.categories.discount_codes}
+        field="discount_codes"
+        renderItem={props =>
+          <>
+            <Inputs.Text
+              {...props}
+              {...l10n.item.discount_code}
+              field="code"
+            />
+            <Inputs.Number
+              {...props}
+              {...l10n.item.discount_percent}
+              field="percent"
+            />
+            {
+              props.item.percent ? null :
+                <Inputs.InputWrapper
+                  {...l10n.item.discount_price}
+                >
+                  {(info.currencies || []).map(currencyCode =>
+                    <Inputs.Price
+                      key={`price-${currencyCode}`}
+                      {...inputProps}
+                      componentProps={{
+                        mt: "sm",
+                        max: item.price?.[currencyCode]
+                      }}
+                      label={LocalizeString(l10n.item.price_currency.label, {currencyCode})}
+                      path={UrlJoin(props.path, "price")}
+                      field={currencyCode}
+                    />
+                  )}
+                </Inputs.InputWrapper>
+            }
+            {
+              item.is_subscription ? null :
+                <Inputs.Number
+                  {...props}
+                  {...l10n.item.discount_period}
+                  field="period"
+                />
+
+            }
+          </>
+        }
+        fields={[
+          { field: "code", InputComponent: Inputs.Text, ...l10n.item.discount_code },
+          { field: "percent", InputComponent: Inputs.Number, min: 1, max: 99, ...l10n.item.discount_code_percentage, defaultValue: 10 },
+
+        ]}
       />
 
 
