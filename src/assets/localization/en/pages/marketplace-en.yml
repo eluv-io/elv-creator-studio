@@ -351,9 +351,9 @@ form:
     discount_price:
       label: Discount (Price)
       description: Use this field to specify a new discounted price
-    discount_period:
-      label: Discount Period (Months)
-      description: Specify how long this discount should apply to this subscription. Leave blank to apply it indefinitely.
+    discount_periods:
+      label: Discount Periods
+      description: Specify how long this discount should apply to this subscription in terms of billing periods. Leave blank to apply it indefinitely.
     discount_code:
       label: Code
     available_at:

@@ -301,7 +301,7 @@ export const MarketplaceItem = observer(() => {
                 <Inputs.InputWrapper
                   {...l10n.item.discount_price}
                 >
-                  {(info.currencies || []).map(currencyCode =>
+                  {["USD", ...(info.currencies || [])].map(currencyCode =>
                     <Inputs.Price
                       key={`price-${currencyCode}`}
                       {...inputProps}
@@ -317,11 +317,11 @@ export const MarketplaceItem = observer(() => {
                 </Inputs.InputWrapper>
             }
             {
-              item.is_subscription ? null :
+              !item.is_subscription ? null :
                 <Inputs.Number
                   {...props}
-                  {...l10n.item.discount_period}
-                  field="period"
+                  {...l10n.item.discount_periods}
+                  field="periods"
                 />
 
             }
