@@ -311,6 +311,35 @@ const MediaPropertySectionHeroItem = observer(() => {
         field="description"
       />
 
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="hide"
+        path={UrlJoin(basePath, "permissions")}
+        field="behavior"
+        options={[
+          { label: mediaPropertyStore.PERMISSION_BEHAVIORS.hide, value: "hide" },
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"}
+        ]}
+      />
+      {
+        (info.permission_sets || []).length === 0 ? null :
+          <>
+            <PermissionItemSelect
+              {...l10n.sections.permissions}
+              {...inputProps}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(basePath, "permissions")}
+              field="permission_item_ids"
+              multiple
+              permissionSetIds={info?.permission_sets}
+              defaultFirst
+            />
+          </>
+      }
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_hero_item_presentation}</Title>
 

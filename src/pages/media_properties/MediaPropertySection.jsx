@@ -1663,7 +1663,7 @@ const MediaPropertySection = observer(() => {
   };
 
   const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId}) || [];
-  const specialSectionType = !["manual", "automatic"].includes(section.type);
+  const specialSectionType = !["manual", "automatic", "hero"].includes(section.type);
   const secondaryEnabled = info.domain?.features?.secondary_marketplace;
 
   return (
@@ -1683,7 +1683,7 @@ const MediaPropertySection = observer(() => {
       />
 
       {
-        specialSectionType ? null :
+        specialSectionType || section.type === "hero" ? null :
           <Inputs.Text
             {...inputProps}
             {...l10n.common.slug}
@@ -1738,15 +1738,21 @@ const MediaPropertySection = observer(() => {
         path={UrlJoin(inputProps.path, "permissions")}
         field="behavior"
         disabled={specialSectionType}
-        options={[
-          { label: "Default", value: "" },
-          ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
-            label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
-            value: key
-          })),
-          { label: "Show If Not Authorized", value: "show_if_unauthorized"},
-          { label: "Show Alternate Page", value: "show_alternate_page"}
-        ]}
+        options={
+          section.type === "hero" ? [
+            { label: mediaPropertyStore.PERMISSION_BEHAVIORS.hide, value: "hide" },
+            { label: "Show If Not Authorized", value: "show_if_unauthorized"}
+          ] :
+          [
+            { label: "Default", value: "" },
+            ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS).map(key => ({
+              label: mediaPropertyStore.PERMISSION_BEHAVIORS[key],
+              value: key
+            })),
+            { label: "Show If Not Authorized", value: "show_if_unauthorized"},
+            { label: "Show Alternate Page", value: "show_alternate_page"}
+          ]
+        }
       />
       {
         section.permissions?.behavior !== "show_alternate_page" ? null :
