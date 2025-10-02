@@ -143,6 +143,9 @@ form:
     currency:
       label: Currency
       description: Select the currency used to purchase items in this property
+    language:
+      label: Primary Language
+      description: Specify the primary language that this property is defined in (i.e. the non-localized version)
     localizations:
       label: Localizations
       description: Select alternative languages that your content will be available in.
@@ -400,6 +403,7 @@ form:
         label: Description
       questions:
         label: Questions
+        fieldLabel: Question
       question:
         label: Question
       answer:

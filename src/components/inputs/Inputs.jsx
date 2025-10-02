@@ -15,7 +15,6 @@ import {
   Stack,
   MultiSelect as MantineMultiSelect,
   JsonInput,
-  PasswordInput,
   ScrollArea,
   Table,
   HoverCard,
@@ -150,6 +149,7 @@ const MultiSelect = observer(({
               index: i,
               category,
               subcategory,
+              fieldName: label,
               label: values[i]
             });
           }
@@ -188,7 +188,8 @@ const MultiSelect = observer(({
             index: values.findIndex(value => value === removedValue),
             category,
             subcategory,
-            label: option?.label || option || ""
+            fieldName: label,
+            label: `${label} | ${option?.label || option || ""}`
           });
         });
 
@@ -214,6 +215,7 @@ const MultiSelect = observer(({
             category,
             subcategory,
             label: option?.label || option || "",
+            fieldName: label,
             value: newValue
           });
         });
@@ -1770,6 +1772,7 @@ const List = observer(({
                       index,
                       category,
                       subcategory,
+                      fieldName: label,
                       label: actionLabel || fieldLabel
                     })
                   });
@@ -1801,6 +1804,7 @@ const List = observer(({
           value,
           category,
           subcategory,
+          fieldName: label,
           label: actionLabel || fieldLabel
         });
       }}
@@ -1844,6 +1848,7 @@ const List = observer(({
                 newIndex: destination.index,
                 category,
                 subcategory,
+                fieldName: label,
                 label: actionLabel || fieldLabel
               })
             }
@@ -1878,6 +1883,7 @@ const CollectionTableRows = observer(({
   objectId,
   path,
   field,
+  label,
   category,
   subcategory,
   actionLabel,
@@ -1962,6 +1968,7 @@ const CollectionTableRows = observer(({
                           index,
                           category,
                           subcategory,
+                          fieldName: label,
                           label: name || actionLabel || fieldLabel,
                           useLabel: !!name
                         })
@@ -2093,6 +2100,7 @@ const CollectionTable = observer(({
           value: newEntry,
           category,
           subcategory,
+          fieldName: label,
           label: actionLabel || fieldLabel,
           useLabel: false
         });
@@ -2123,6 +2131,7 @@ const CollectionTable = observer(({
               newIndex: destination.index,
               category,
               subcategory,
+              fieldName: label,
               label: actionLabel || fieldLabel,
               useLabel: false
             })
@@ -2271,6 +2280,7 @@ const ReferenceTable = observer(({
     addButton = (
       <IconButton
         label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+        disabled={disabled}
         Icon={IconPlus}
         onClick={async () => {
           const newKey = await AddItem();

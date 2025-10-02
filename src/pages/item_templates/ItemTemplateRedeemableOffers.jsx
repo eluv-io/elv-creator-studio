@@ -58,12 +58,14 @@ export const ItemTemplateRedeemableOffer = observer(() => {
         <Inputs.SingleImageInput
           {...inputProps}
           {...l10n.redeemable_offers.image}
+          localizable
           field="image"
           h="100%"
         />
         <Inputs.SingleImageInput
           {...inputProps}
           {...l10n.redeemable_offers.poster_image}
+          localizable
           field="poster_image"
         />
       </Group>
@@ -75,21 +77,25 @@ export const ItemTemplateRedeemableOffer = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.redeemable_offers.title}
+        localizable
         field="name"
       />
       <Inputs.Text
         {...inputProps}
         {...l10n.redeemable_offers.subtitle}
+        localizable
         field="subtitle"
       />
       <Inputs.TextArea
         {...inputProps}
         {...l10n.redeemable_offers.description_text}
+        localizable
         field="description_text"
       />
       <Inputs.RichText
         {...inputProps}
         {...l10n.redeemable_offers.description}
+        localizable
         field="description"
       />
       <Inputs.DateTime
@@ -160,6 +166,7 @@ export const ItemTemplateRedeemableOffer = observer(() => {
         {...inputProps}
         {...l10n.redeemable_offers.results_header}
         subcategory={l10n.categories.redeemable_offer_redemption_settings}
+        localizable
         field="results_header"
       />
 
@@ -167,6 +174,7 @@ export const ItemTemplateRedeemableOffer = observer(() => {
         {...inputProps}
         {...l10n.redeemable_offers.results_message}
         subcategory={l10n.categories.redeemable_offer_redemption_settings}
+        localizable
         field="results_message"
       />
 

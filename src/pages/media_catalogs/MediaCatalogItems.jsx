@@ -124,6 +124,7 @@ const MediaCatalogItems = observer(({type="media"}) => {
           <IconButton
             label={LocalizeString(rootStore.l10n.components.inputs.add, {item: category})}
             Icon={IconPlus}
+            disabled={rootStore.localizing}
             onClick={() => {
               modals.open({
                 title: LocalizeString(l10n.create.create, {type: category}),

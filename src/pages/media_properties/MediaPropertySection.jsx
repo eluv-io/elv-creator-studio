@@ -1438,6 +1438,7 @@ const ContainerSectionSettings = observer(() => {
                   ...inputProps,
                   page: location.pathname,
                   field: "sections",
+                  fieldName: l10n.pages.sections.label,
                   value: sectionId,
                   label: info.sections[sectionId]?.label || sectionId
                 });

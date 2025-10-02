@@ -35,7 +35,7 @@ const ItemTemplateAttribute = observer(({item, ...props}) => {
     });
 
     setAttributeType(item.type);
-   
+
   }, [item, attributeType, props.path, props.objectId]);
 
   if(!item) { return null; }
@@ -147,6 +147,7 @@ const ItemTemplateGeneralSettings = observer(() => {
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.general.image}
+        localizable
         subcategory={l10n.categories.info}
         field="image"
         url
@@ -154,6 +155,7 @@ const ItemTemplateGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.common.name}
+        localizable
         subcategory={l10n.categories.info}
         field="display_name"
       />
@@ -174,12 +176,14 @@ const ItemTemplateGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.general.subtitle}
+        localizable
         subcategory={l10n.categories.info}
         field="edition_name"
       />
       <Inputs.Text
         {...inputProps}
         {...l10n.general.subtitle_2}
+        localizable
         subcategory={l10n.categories.info}
         field="subtitle2"
       />
@@ -212,11 +216,13 @@ const ItemTemplateGeneralSettings = observer(() => {
         {...inputProps}
         {...l10n.general.description}
         subcategory={l10n.categories.info}
+        localizable
         field="description"
       />
       <Inputs.RichText
         {...inputProps}
         {...l10n.general.description_rich_text}
+        localizable
         subcategory={l10n.categories.info}
         field="description_rich_text"
       />

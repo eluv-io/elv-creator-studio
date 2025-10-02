@@ -149,7 +149,7 @@ export const ActionToString = action => {
     string = `[${action.localizationKey}] ${LanguageCodes[action.localizationKey]} - ${string}`;
   }
 
-  return LocalizeString(string, { label: action.label });
+  return LocalizeString(string, { label: action.label, fieldName: action.fieldName || "" });
 };
 
 export const FormatChangeList = changeList => {
