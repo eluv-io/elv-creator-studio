@@ -168,6 +168,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
                   subcategory: l10n.categories[subType],
                   page: location.pathname,
                   field,
+                  fieldName: l10n.media[subType].label,
                   value: mediaId,
                   label: l10n.media[subType].fieldLabel,
                 });

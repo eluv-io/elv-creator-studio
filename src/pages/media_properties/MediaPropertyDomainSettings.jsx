@@ -113,6 +113,7 @@ const LoginTerms = observer(() => {
       <Inputs.RichText
         {...inputProps}
         {...l10n.login.terms.terms_and_conditions}
+        localizable
         field="terms"
       />
       <Inputs.InputWrapper
@@ -123,11 +124,13 @@ const LoginTerms = observer(() => {
           <Inputs.Text
             {...inputProps}
             {...l10n.login.terms.terms_document_link_text}
+            localizable
             field="terms_document_link_text"
           />
           <Inputs.File
             {...inputProps}
             {...l10n.login.terms.terms_document_file}
+            localizable
             extensions={["pdf", "html"]}
             field="terms_document"
           />
@@ -184,7 +187,7 @@ const LoginConsentOptions = observer(() => {
           { ...l10n.login.consent.key, InputComponent: Inputs.Text, field: "key" },
           { ...l10n.login.consent.initially_checked, InputComponent: Inputs.Checkbox, defaultValue: true, field: "initially_checked" },
           { ...l10n.login.consent.required, InputComponent: Inputs.Checkbox, defaultValue: false, field: "required" },
-          { ...l10n.login.consent.message, InputComponent: Inputs.RichText, field: "message" },
+          { ...l10n.login.consent.message, InputComponent: Inputs.RichText, field: "message", localizable: true },
         ]}
       />
     </>

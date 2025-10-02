@@ -115,11 +115,13 @@ class DatabaseStore {
     yield Promise.all(
       Object.keys(typeNames).map(async key => {
         const name = typeNames[key];
-        const existingType = Object.values(allTypes)
-          .find(type =>
-            type.name?.toLowerCase()?.includes(name.toLowerCase()) ||
-            (key === "tenant" && type.name?.toLowerCase()?.includes("tenant"))
-          );
+        let existingType = Object.values(allTypes)
+          .find(type => type.name?.toLowerCase()?.includes(name.toLowerCase()));
+
+        if(!existingType && key === "tenant") {
+          existingType = Object.values(allTypes)
+            .find(type => type.name?.toLowerCase()?.includes("tenant"));
+        }
 
         if(existingType) {
           typeIds[key] = existingType.id;

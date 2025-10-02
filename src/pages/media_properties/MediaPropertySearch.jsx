@@ -264,6 +264,7 @@ const MediaPropertySearch = observer(() => {
                       <Inputs.Text
                         {...props}
                         {...l10n.general.search.advanced.title}
+                        localizable
                         subcategory={l10n.categories.advanced_search}
                         field="title"
                       />

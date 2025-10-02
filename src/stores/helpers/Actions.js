@@ -66,8 +66,13 @@ export const ACTIONS = {
 // Metadata manipulation
 
 const LocalizePath = ({path, localizationKey}) => {
-  const relativePath = path.split("/public/asset_metadata/info")[1];
-  return UrlJoin("/public", "asset_metadata", "localizations", localizationKey, "info", relativePath);
+  if(path.startsWith("/public/asset_metadata/info")) {
+    const relativePath = path.split("/public/asset_metadata/info")[1];
+    return UrlJoin("/public", "asset_metadata", "localizations", localizationKey, "info", relativePath);
+  } else {
+    const relativePath = path.split("/public/asset_metadata")[1];
+    return UrlJoin("/public", "asset_metadata", "localizations", localizationKey, relativePath);
+  }
 };
 
 const GetMetadata = function({objectId, path, field, localizationKey, localizationOnly}) {
@@ -373,7 +378,7 @@ const SetLink = flow(function * ({
     const targetHash = yield this.client.LatestVersionHash({objectId: linkObjectId});
     const originalHash = ExtractHashFromLink(originalValue);
 
-    if(targetHash === originalHash) {
+    if(targetHash === originalHash && originalValue?.["/"].endsWith(linkPath)) {
       rootStore.DebugLog({message: "Set Link: Already at latest version | " + label});
       return;
     }
@@ -447,6 +452,7 @@ const ListAction = function({
   value,
   category,
   subcategory,
+  fieldName,
   label,
   useLabel=true,
   applyToLocalizations=true
@@ -537,6 +543,7 @@ const ListAction = function({
       listIndex: index || originalList.length,
       category,
       subcategory,
+      fieldName,
       label,
       useLabel,
       info: {
@@ -661,6 +668,7 @@ const ApplyAction = function ({
   basePath,
   category,
   subcategory,
+  fieldName,
   label,
   localizationKey,
   useLabel=true,
@@ -721,6 +729,7 @@ const ApplyAction = function ({
     path,
     category,
     subcategory,
+    fieldName,
     label,
     useLabel,
     info,

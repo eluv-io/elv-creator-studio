@@ -593,6 +593,7 @@ class MediaPropertyStore {
         sectionItemId: id,
         label: spec.label
       }),
+      fieldName: label,
       label: this.GetSectionItemLabel({sectionItem: spec})
     });
 
