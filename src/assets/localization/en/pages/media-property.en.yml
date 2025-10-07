@@ -375,6 +375,12 @@ form:
       video:
         label: Video
         description: Display a video at the top of your answer
+      images:
+        label: Images
+        description: Display images at the top of your answer
+        fieldLabel: Image
+      image:
+        label: Image
       title:
         label: Title
       description:

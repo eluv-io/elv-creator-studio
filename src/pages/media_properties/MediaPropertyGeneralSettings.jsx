@@ -97,6 +97,21 @@ const FAQForm = observer(({index}) => {
             previewable: true,
             ...l10n.general.faq.video
           },
+          {
+            field: "images",
+            InputComponent: Inputs.List,
+            ...l10n.general.faq.images,
+            fields: [
+              {
+                ...l10n.general.faq.image,
+                InputComponent: Inputs.ImageInput,
+                altTextField: "image_alt",
+                fields: [
+                  { field: "image", aspectRatio: 2 }
+                ]
+              },
+            ]
+          },
         ]}
       />
     </>
