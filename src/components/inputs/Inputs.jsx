@@ -805,7 +805,7 @@ const SingleImageInput = observer(({
 
   return (
     <>
-      <Paper maw={uiStore.inputWidth} shadow="sm" withBorder w="max-content" p={30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
+      <Paper maw={uiStore.inputWidth} shadow="sm" withBorder w="max-content" p={componentProps.p || 30} mb="md" style={{position: "relative", display: "flex"}} {...componentProps}>
         <HoverCard offset={50} shadow="xl" openDelay={imageUrl ? 500 : 100000}>
           <UnstyledButton
             onClick={() => setShowFileBrowser(true)}

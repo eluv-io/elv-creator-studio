@@ -57,8 +57,8 @@ const FAQForm = observer(({index}) => {
         }}
         altTextField="header_image_alt"
         fields={[
-          { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 3, size: 100},
-          { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 3}
+          { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 2, baseSize: 100},
+          { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 2, baseSize: 100}
         ]}
       />
       <Inputs.Color
@@ -103,15 +103,32 @@ const FAQForm = observer(({index}) => {
             ...l10n.general.faq.images,
             fields: [
               {
+                ...l10n.general.faq.image_position,
+                InputComponent: Inputs.Select,
+                field: "position",
+                defaultValue: "inside",
+                options: [
+                  { label: "Before", value: "before" },
+                  { label: "Inside", value: "inside" },
+                  { label: "After", value: "after" }
+                ]
+              },
+              {
+                ...l10n.general.faq.image_link,
+                InputComponent: Inputs.URL,
+                field: "link"
+              },
+              {
                 ...l10n.general.faq.image,
                 InputComponent: Inputs.ImageInput,
                 altTextField: "image_alt",
                 fields: [
-                  { field: "image", aspectRatio: 2 }
+                  { baseSize: 100, field: "image", aspectRatio: 2, ...l10n.general.faq.image_desktop },
+                  { baseSize: 100, field: "image_mobile", aspectRatio: 2, ...l10n.general.faq.image_mobile }
                 ]
-              },
+              }
             ]
-          },
+          }
         ]}
       />
     </>
@@ -475,7 +492,7 @@ const MediaPropertyGeneralSettings = observer(() => {
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.additional_settings}</Title>
 
-      <Accordion maw={uiStore.inputWidthWide + 50} variant="contained">
+      <Accordion maw={uiStore.inputWidthExtraWide} variant="contained">
         <Accordion.Item value="subproperties">
           <Accordion.Control>
             { l10n.categories.subproperties }

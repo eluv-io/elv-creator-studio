@@ -381,6 +381,14 @@ form:
         fieldLabel: Image
       image:
         label: Image
+      image_desktop:
+        label: Image (Desktop)
+      image_mobile:
+        label: Image (Mobile)
+      image_position:
+        label: Position
+      image_link:
+        label: Image Link
       title:
         label: Title
       description:
