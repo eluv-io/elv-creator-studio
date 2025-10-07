@@ -16,7 +16,9 @@ export const MediaPropertyFAQSpec = {
   slug: undefined,
   title: "",
   description: "",
-  questions: []
+  questions: [],
+  video: undefined,
+  images: []
 };
 
 const MediaPropertyPermissionSpec = {
