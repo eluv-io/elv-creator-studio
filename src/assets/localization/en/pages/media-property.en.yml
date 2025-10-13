@@ -13,6 +13,10 @@ form:
   action_labels:
     set_main_page: Set as Main Page
     set_main_page_confirm: Are you sure you want to set '{label}' as the main page for this property?
+    set_purchase_gate_page: Set as Purchase Page
+    set_purchase_gate_page_confirm: Are you sure you want to set '{label}' as the purchase page for this property?
+    clear_purchase_gate_page: Clear Purchase Page
+    clear_purchase_gate_page_confirm: Are you sure you want to remove '{label}' as the purchase page for this property?
   categories:
     media_properties: Media Properties
     media_property: Media Property

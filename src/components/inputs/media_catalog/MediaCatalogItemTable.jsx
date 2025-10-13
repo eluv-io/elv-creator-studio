@@ -339,6 +339,13 @@ const MediaCatalogItemTable = observer(({
             render: mediaItem => (
               <Group position="center">
                 <IconButton
+                  label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.label})}
+                  component={Link}
+                  to={UrlJoin(location.pathname, mediaItem.id)}
+                  color="purple.6"
+                  Icon={IconEdit}
+                />
+                <IconButton
                   label={LocalizeString(rootStore.l10n.components.inputs.copy, {item: mediaItem.label})}
                   color="blue.6"
                   Icon={IconCopy}
@@ -356,13 +363,6 @@ const MediaCatalogItemTable = observer(({
                       })
                     })
                   }
-                />
-                <IconButton
-                  label={LocalizeString(rootStore.l10n.components.inputs.edit, {item: mediaItem.label})}
-                  component={Link}
-                  to={UrlJoin(location.pathname, mediaItem.id)}
-                  color="purple.6"
-                  Icon={IconEdit}
                 />
                 <IconButton
                   label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: mediaItem.label})}

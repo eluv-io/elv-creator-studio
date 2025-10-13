@@ -76,6 +76,7 @@ const MediaPropertyPages = observer(() => {
   };
 
   const mainPageId = info.page_ids.main;
+  const purchasePageId = info.page_ids.purchase_gate;
 
   return (
     <PageContent
@@ -91,7 +92,7 @@ const MediaPropertyPages = observer(() => {
         nameField="label"
         filterable
         filterFields={["label", "description"]}
-        excludedKeys={["main"]}
+        excludedKeys={["main", "purchase_gate"]}
         protectedKeys={[mainPageId]}
         CopyItem={({item}) => mediaPropertyStore.CreatePage({mediaPropertyId, copyPageId: item.id})}
         AddItem={async () => {
@@ -128,6 +129,10 @@ const MediaPropertyPages = observer(() => {
                 {
                   item.id !== mainPageId ? null :
                     <Text fz="xs" fw={600} italic>(Main)</Text>
+                }
+                {
+                  item.id !== purchasePageId ? null :
+                    <Text fz="xs" fw={600} italic>(Purchase Page)</Text>
                 }
               </Group>
             )

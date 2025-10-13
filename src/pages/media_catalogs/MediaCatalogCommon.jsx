@@ -127,7 +127,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
             key="link-button"
             label={LocalizeString(rootStore.l10n.components.inputs.navigate_to, {item: info[subType][mediaItemId]?.label || mediaItemId })}
             component={Link}
-            to={UrlJoin("/media-catalogs/", mediaCatalogId, subType, mediaItemId)}
+            to={UrlJoin("/media-catalogs/", mediaCatalogId, subType.replace("_", "-"), mediaItemId)}
             color="purple.6"
             Icon={IconExternalLink}
           />
