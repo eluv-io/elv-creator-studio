@@ -13,10 +13,6 @@ form:
   action_labels:
     set_main_page: Set as Main Page
     set_main_page_confirm: Are you sure you want to set '{label}' as the main page for this property?
-    set_purchase_gate_page: Set as Purchase Page
-    set_purchase_gate_page_confirm: Are you sure you want to set '{label}' as the purchase page for this property?
-    clear_purchase_gate_page: Clear Purchase Page
-    clear_purchase_gate_page_confirm: Are you sure you want to remove '{label}' as the purchase page for this property?
   categories:
     media_properties: Media Properties
     media_property: Media Property
@@ -41,6 +37,8 @@ form:
     login_terms: Terms and Conditions
     additional_settings: Additional Settings
     subproperties: Subproperties
+    purchase_page: Purchase Page Settings
+    no_purchase_available_page: No Purchase Available Page Settings
     permissions: Permission Settings
     visibility: Visibility Settings
     user_profile: User Profile Settings
@@ -582,7 +580,7 @@ form:
       description: Set a custom background color for this page.
     header:
       position:
-        label: Header Content Position
+        label: Content Position
       title:
         label: Title
       description:
@@ -632,6 +630,17 @@ form:
         Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
 
         Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+    purchase_page:
+      enabled:
+        label: Enable Purchase Page
+        description: If checked, available purchase options will be shown on a full configurable page instead of in a pop-up modal when the user is purchase gated
+      button_text:
+        label: Purchase Card Button Text
+    no_purchase_available_page:
+      enabled:
+        label: Enable 'No Purchase Available' Purchase Page
+        description: If checked, a special page will be shown instead of disabling the item when the user is purchase gated but cannot purchase any items to give them access (due to e.g. geographical restrictions)
+
   actions:
     sections:
       general: General Settings

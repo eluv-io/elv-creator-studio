@@ -340,8 +340,7 @@ class MediaPropertyStore {
         };
 
         spec.page_ids = {
-          "main": mainPageId,
-          "purchase_gate": undefined
+          "main": mainPageId
         };
 
         await this.client.ReplaceMetadata({

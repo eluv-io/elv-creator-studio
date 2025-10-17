@@ -1,13 +1,133 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
-import {rootStore, mediaPropertyStore} from "@/stores";
+import {rootStore, mediaPropertyStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {modals} from "@mantine/modals";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import {useState} from "react";
 import {useForm} from "@mantine/form";
-import {Button, Container, Group, Text, TextInput} from "@mantine/core";
+import {Accordion, Button, Container, Group, Text, TextInput} from "@mantine/core";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib";
+
+const PurchasePageSettings = observer(({type}) => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const settings = mediaProperty?.metadata?.public?.asset_metadata?.info?.[type] || {};
+  console.log(settings)
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: l10n.categories.pages,
+    subcategory: l10n.categories[type],
+    path: `/public/asset_metadata/info/${type}`
+  };
+
+  return (
+    <>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.pages[type].enabled}
+        field="enabled"
+      />
+      {
+        !settings.enabled ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.pages.header.position}
+              defaultValue="Left"
+              field="position"
+              options={["Left", "Center", "Right"]}
+            />
+
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.pages.header.title}
+              field="title"
+            />
+
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.pages.header.description}
+              field="description"
+            />
+
+            <Inputs.RichText
+              {...inputProps}
+              {...l10n.pages.header.description_rich_text}
+              field="description_rich_text"
+            />
+
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.pages.header.logo}
+              fields={[
+                { field: "logo" }
+              ]}
+              altTextField="logo_alt"
+            />
+
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.pages.header.background_image}
+              fields={[
+                { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
+                { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
+              ]}
+            />
+
+            <Inputs.InputWrapper
+              {...l10n.pages.header.background_video}
+            >
+              <Inputs.FabricBrowser
+                mt="md"
+                {...inputProps}
+                {...l10n.pages.header.background_video_desktop}
+                field="background_video"
+                previewable
+                previewOptions={{
+                  muted: EluvioPlayerParameters.muted.ON,
+                  autoplay: EluvioPlayerParameters.autoplay.ON,
+                  controls: EluvioPlayerParameters.controls.OFF,
+                  loop: EluvioPlayerParameters.loop.OFF
+                }}
+              />
+
+              <Inputs.FabricBrowser
+                {...inputProps}
+                {...l10n.pages.header.background_video_mobile}
+                field="background_video_mobile"
+                previewable
+                previewOptions={{
+                  muted: EluvioPlayerParameters.muted.ON,
+                  autoplay: EluvioPlayerParameters.autoplay.ON,
+                  controls: EluvioPlayerParameters.controls.OFF,
+                  loop: EluvioPlayerParameters.loop.OFF
+                }}
+              />
+            </Inputs.InputWrapper>
+
+            {
+              type !== "purchase_page" ? null :
+                <Inputs.Text
+                  {...inputProps}
+                  {...l10n.pages[type].button_text}
+                  field="card_button_text"
+                  placeholder="Select"
+                />
+            }
+          </>
+      }
+    </>
+  );
+});
 
 const CreatePageForm = ({Create}) => {
   const [creating, setCreating] = useState(false);
@@ -143,6 +263,25 @@ const MediaPropertyPages = observer(() => {
           }
         ]}
       />
+
+      <Accordion maw={uiStore.inputWidthWide} variant="contained">
+        <Accordion.Item value="purchase_page">
+          <Accordion.Control>
+            { l10n.categories.purchase_page }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PurchasePageSettings type="purchase_page" />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="no_purchase_available_page">
+          <Accordion.Control>
+            { l10n.categories.no_purchase_available_page }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PurchasePageSettings type="no_purchase_available_page" />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
     </PageContent>
   );
 });
