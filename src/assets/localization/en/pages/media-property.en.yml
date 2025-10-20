@@ -636,10 +636,16 @@ form:
         description: If checked, available purchase options will be shown on a full configurable page instead of in a pop-up modal when the user is purchase gated
       button_text:
         label: Purchase Card Button Text
+      sections:
+        label: Additional Sections
+        description: Specify additional content sections to display below the available purchase items
     no_purchase_available_page:
       enabled:
         label: Enable 'No Purchase Available' Purchase Page
         description: If checked, a special page will be shown instead of disabling the item when the user is purchase gated but cannot purchase any items to give them access (due to e.g. geographical restrictions)
+      sections:
+        label: Additional Sections
+        description: Specify additional content sections to display on this page
 
   actions:
     sections:

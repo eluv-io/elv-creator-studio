@@ -17,8 +17,8 @@ const PurchasePageSettings = observer(({type}) => {
 
   if(!mediaProperty) { return null; }
 
-  const settings = mediaProperty?.metadata?.public?.asset_metadata?.info?.[type] || {};
-  console.log(settings)
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+  const settings = info?.[type] || {};
 
   const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
@@ -123,6 +123,22 @@ const PurchasePageSettings = observer(({type}) => {
                   placeholder="Select"
                 />
             }
+
+            <Inputs.MultiSelect
+              {...inputProps}
+              {...l10n.pages[type].sections}
+              field="sections"
+              options={
+                Object.keys(info.sections)
+                  .map(sectionId => ({
+                    label: info.sections[sectionId].label,
+                    value: sectionId
+                  }))
+                  .sort((a, b) =>
+                    a.label?.toLowerCase() < b.label?.toLowerCase() ? -1 : 1
+                  )
+              }
+            />
           </>
       }
     </>
