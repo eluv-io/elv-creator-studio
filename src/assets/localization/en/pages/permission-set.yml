@@ -70,8 +70,8 @@ form:
     dvr:
       label: Enable DVR
     priority:
-      label: Ordering Priority
-      description: Set the order priority for this permission item when displayed in dynamic cases, such as the purchase gate page. Items with *higher* priority will be listed *before* items with lower/no priority. Items with no specified priority will appear in the order they are listed in the content permissions.
+      label: Priority
+      description: Set the order priority for this permission item when displayed in dynamic cases, such as the purchase gate page. Items will be listed in priority order from lowest to highest, with items having no priority listed in the order they were specified in the content's permissions.
     display:
       title:
         label: Display Title

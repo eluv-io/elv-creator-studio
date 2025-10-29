@@ -166,7 +166,13 @@ const PermissionSetPermissionItems = observer(() => {
           {
             accessor: "description",
             title: l10n.permission_item.description.label
-          }
+          },
+          {
+            accessor: "priority",
+            sortable: true,
+            title: l10n.permission_item.priority.label,
+            centered: true
+          },
         ]}
       />
     </PageContent>
