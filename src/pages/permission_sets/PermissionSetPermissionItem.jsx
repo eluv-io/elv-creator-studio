@@ -81,6 +81,14 @@ const PermissionSetPermissionItem = observer(() => {
         field="dvr"
       />
 
+      <Inputs.Integer
+        {...inputProps}
+        {...l10n.permission_item.priority}
+        min={0}
+        defaultValue={false}
+        field="priority"
+      />
+
       <Title mt={50} order={3}>{ l10n.categories.permission_item_display }</Title>
 
       <Inputs.Text

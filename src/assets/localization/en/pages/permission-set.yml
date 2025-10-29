@@ -69,6 +69,9 @@ form:
       label: Marketplace Item
     dvr:
       label: Enable DVR
+    priority:
+      label: Ordering Priority
+      description: Set the order priority for this permission item when displayed in dynamic cases, such as the purchase gate page. Items with *higher* priority will be listed *before* items with lower/no priority. Items with no specified priority will appear in the order they are listed in the content permissions.
     display:
       title:
         label: Display Title
