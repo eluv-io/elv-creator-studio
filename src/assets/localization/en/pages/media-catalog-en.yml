@@ -270,6 +270,8 @@ form:
       description: Add additional videos that can be simultaneously viewed along with the main video
     additional_views_label:
       label: Additional Views Label
+    additional_view_image:
+      label: Image
     image_aspect_ratio:
       label: Image Orientation
     full_image:

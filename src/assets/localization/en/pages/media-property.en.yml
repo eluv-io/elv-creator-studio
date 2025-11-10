@@ -217,7 +217,7 @@ form:
       description: If the user doesn't at least one of the specified permissions, this page will be shown
     media_sidebar:
       show_media_sidebar:
-        label: Show Media Sidebar (Desktop Only)
+        label: Show Media Sidebar
         description: If specified, video media will be shown with a sidebar showing more content and allowing for viewing multiple simultaneous live videos.
       sidebar_content:
         label: Sidebar Content

@@ -325,6 +325,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
                   subcategory={l10n.categories.additional_views}
                   field="additional_views"
                   newItemSpec={MediaCatalogAdditionalViewSpec}
+                  showBottomAddButton={mediaItem.additional_views?.length > 0}
                   renderItem={props =>
                     <>
                       <Inputs.Text
@@ -343,6 +344,13 @@ const MediaConfiguration = observer(({mediaItem}) => {
                         autoUpdate={false}
                         field="media_link"
                         previewable
+                      />
+                      <Inputs.SingleImageInput
+                        {...props}
+                        {...l10n.media.additional_view_image}
+                        field="image"
+                        baseSize={100}
+                        aspectRatio={mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
                       />
                     </>
                   }
