@@ -326,6 +326,7 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDesc
       <Inputs.Text
         {...inputProps}
         {...l10n.media.title}
+        localizable
         field="title"
         placeholder={mediaItem?.title}
       />
@@ -333,6 +334,7 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDesc
       <Inputs.Text
         {...inputProps}
         {...l10n.media.subtitle}
+        localizable
         field="subtitle"
         placeholder={mediaItem?.subtitle}
       />
@@ -340,6 +342,7 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDesc
       <Inputs.List
         {...inputProps}
         {...l10n.media.headers}
+        localizable
         field="headers"
       />
 
@@ -359,12 +362,14 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDesc
             <Inputs.TextArea
               {...inputProps}
               {...l10n.media.description}
+              localizable
               field="description"
               placeholder={mediaItem?.description}
             />
             <Inputs.RichText
               {...inputProps}
               {...l10n.media.description_rich_text}
+              localizable
               field="description_rich_text"
             />
           </>
@@ -386,6 +391,7 @@ const SectionItemPresentation = observer(({mediaPropertyId, inputProps, showDesc
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.thumbnail_images}
+            localizable
             componentProps={{maw: uiStore.inputWidthWide}}
             fields={[
               { ...l10n.media.image_portrait, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Portrait"]?.ratio, field: "thumbnail_image_portrait" },
