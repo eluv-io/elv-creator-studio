@@ -595,6 +595,7 @@ const MediaPropertySectionItem = observer(() => {
                 <Inputs.Text
                   {...inputProps}
                   {...l10n.section_items.card_button_text}
+                  localizable
                   subcategory={l10n.categories.section_presentation}
                   placeholder={section.display.card_default_button_text}
                   field="card_button_text"

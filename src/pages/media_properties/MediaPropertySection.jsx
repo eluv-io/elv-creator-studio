@@ -1354,6 +1354,7 @@ const ContainerSectionSettings = observer(() => {
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.sections.display.title_icon}
+        localizable
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="title_icon"
@@ -1365,6 +1366,7 @@ const ContainerSectionSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.sections.display.title}
+        localizable
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="title"
@@ -1373,6 +1375,7 @@ const ContainerSectionSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.sections.display.subtitle}
+        localizable
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
         field="subtitle"
