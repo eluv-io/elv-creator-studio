@@ -271,6 +271,10 @@ form:
       description: Add additional videos that can be simultaneously viewed along with the main video
     additional_views_label:
       label: Additional Views Label
+      description: Specify what the additional views should be called, e.g. 'All Views'
+    primary_view_label:
+      label: Primary Content Label
+      description: Specify what the primary content should be called in the views list, e.g. 'Main Broadcast'
     additional_view_image:
       label: Image
     image_aspect_ratio:

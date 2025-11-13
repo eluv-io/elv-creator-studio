@@ -318,12 +318,20 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 }
                 {
                   (mediaItem.additional_views || []).length === 0 ? null :
-                    <Inputs.Text
-                      {...inputProps}
-                      {...l10n.media.additional_views_label}
-                      subcategory={l10n.categories.additional_views}
-                      field="additional_views_label"
-                    />
+                    <>
+                      <Inputs.Text
+                        {...inputProps}
+                        {...l10n.media.additional_views_label}
+                        subcategory={l10n.categories.additional_views}
+                        field="additional_views_label"
+                      />
+                      <Inputs.Text
+                        {...inputProps}
+                        {...l10n.media.primary_view_label}
+                        subcategory={l10n.categories.primary_view_label}
+                        field="primary_view_label"
+                      />
+                    </>
                 }
                 <Inputs.List
                   {...inputProps}
