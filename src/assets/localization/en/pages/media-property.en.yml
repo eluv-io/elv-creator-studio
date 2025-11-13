@@ -37,6 +37,8 @@ form:
     login_terms: Terms and Conditions
     additional_settings: Additional Settings
     subproperties: Subproperties
+    purchase_page: Purchase Page Settings
+    no_purchase_available_page: No Purchase Available Page Settings
     permissions: Permission Settings
     visibility: Visibility Settings
     user_profile: User Profile Settings
@@ -141,6 +143,9 @@ form:
     currency:
       label: Currency
       description: Select the currency used to purchase items in this property
+    language:
+      label: Primary Language
+      description: Specify the primary language that this property is defined in (i.e. the non-localized version)
     localizations:
       label: Localizations
       description: Select alternative languages that your content will be available in.
@@ -218,7 +223,7 @@ form:
       description: If the user doesn't at least one of the specified permissions, this page will be shown
     media_sidebar:
       show_media_sidebar:
-        label: Show Media Sidebar (Desktop Only)
+        label: Show Media Sidebar
         description: If specified, video media will be shown with a sidebar showing more content and allowing for viewing multiple simultaneous live videos.
       sidebar_content:
         label: Sidebar Content
@@ -355,11 +360,17 @@ form:
         label: Content (Rich Text)
       content_html:
         label: Content (HTML)
+      faq_slug:
+        label: FAQ Page Slug
+        description: If referring to an additional page of the FAQ, specify the slug
     footer_text:
       label: Footer Text
       description: Displayed below the footer items
     faq:
       faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      slug:
+        label: Page Slug
+        description: This page will be available at <your property url>/faq/<slug>
       header_image:
         label: Header Image
       header_image_mobile:
@@ -372,16 +383,33 @@ form:
       video:
         label: Video
         description: Display a video at the top of your answer
+      images:
+        label: Images
+        description: Display images at the top of your answer
+        fieldLabel: Image
+      image:
+        label: Image
+      image_desktop:
+        label: Image (Desktop)
+      image_mobile:
+        label: Image (Mobile)
+      image_position:
+        label: Position
+      image_link:
+        label: Image Link
       title:
         label: Title
       description:
         label: Description
       questions:
         label: Questions
+        fieldLabel: Question
       question:
         label: Question
       answer:
         label: Answer
+      additional_pages:
+        label: Additional Pages
 
   domain:
     custom_domain:
@@ -559,7 +587,7 @@ form:
       description: Set a custom background color for this page.
     header:
       position:
-        label: Header Content Position
+        label: Content Position
       title:
         label: Title
       description:
@@ -609,6 +637,23 @@ form:
         Show Disabled: Inaccessible content will be shown, but the user will not be able to navigate to it
 
         Show Purchase Options: When clicked, inaccessible content will show purchase options to gain access to the content
+    purchase_page:
+      enabled:
+        label: Enable Purchase Page
+        description: If checked, available purchase options will be shown on a full configurable page instead of in a pop-up modal when the user is purchase gated
+      button_text:
+        label: Purchase Card Button Text
+      sections:
+        label: Additional Sections
+        description: Specify additional content sections to display below the available purchase items
+    no_purchase_available_page:
+      enabled:
+        label: Enable 'No Purchase Available' Purchase Page
+        description: If checked, a special page will be shown instead of disabling the item when the user is purchase gated but cannot purchase any items to give them access (due to e.g. geographical restrictions)
+      sections:
+        label: Additional Sections
+        description: Specify additional content sections to display on this page
+
   actions:
     sections:
       general: General Settings

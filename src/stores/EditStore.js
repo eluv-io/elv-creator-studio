@@ -1,6 +1,8 @@
 import {flow, makeAutoObservable} from "mobx";
 import {StorageHandler} from "@/helpers/Misc.js";
 import {FormatChangeList} from "@/stores/helpers/Changelist.js";
+import isEqual from "lodash/isEqual";
+import UrlJoin from "url-join";
 
 // TODO: Move write token saving to database, load metadata from write token if present
 
@@ -150,6 +152,28 @@ class EditStore {
           });
         }
 
+        const localizationMetadata = yield this.client.ContentObjectMetadata({
+          libraryId,
+          objectId,
+          writeToken,
+          metadataSubtree: "/public/asset_metadata/localizations"
+        });
+
+        if(localizationMetadata) {
+          for(const localizationKey of Object.keys(localizationMetadata)) {
+            const formattedMetadata = this.FormatLocalization(localizationMetadata[localizationKey]);
+            if(!isEqual(localizationMetadata[localizationKey], formattedMetadata)) {
+              yield this.client.ReplaceMetadata({
+                libraryId,
+                objectId,
+                writeToken,
+                metadataSubtree: UrlJoin("/public/asset_metadata/localizations", localizationKey),
+                metadata: formattedMetadata
+              });
+            }
+          }
+        }
+
         yield this.Finalize({objectId, commitMessage: commitMessages[objectId]});
 
         yield store.ClearActions({objectId, commitMessage: commitMessages[objectId] || ""});
@@ -179,6 +203,41 @@ class EditStore {
 
     return errors;
   });
+
+  // Prune empty sections, ensure objects with integer keys are converted to arrays
+  FormatLocalization(metadata) {
+    if(typeof metadata !== "object") {
+      return metadata;
+    }
+
+    if(Array.isArray(metadata)) {
+      let updatedArray = metadata.map(item => this.FormatLocalization(item));
+
+      // Empty array
+      if(!updatedArray.find(item => item)) {
+        return undefined;
+      }
+
+      return updatedArray;
+    }
+
+    let updatedMetadata = {};
+    // All keys are integers, this should be an array
+    if(!Object.keys(metadata).find(key => key.toString() !== parseInt(key).toString())) {
+      updatedMetadata = [];
+    }
+
+    Object.keys(metadata).forEach(key =>
+      updatedMetadata[key] = this.FormatLocalization(metadata[key])
+    );
+
+    // Empty object
+    if(!Object.values(updatedMetadata).find(item => item)) {
+      return undefined;
+    }
+
+    return updatedMetadata;
+  }
 
   WriteToken({objectId}) {
     return this.writeInfo[objectId]?.writeToken;

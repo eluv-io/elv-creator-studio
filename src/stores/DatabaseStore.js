@@ -115,11 +115,13 @@ class DatabaseStore {
     yield Promise.all(
       Object.keys(typeNames).map(async key => {
         const name = typeNames[key];
-        const existingType = Object.values(allTypes)
-          .find(type =>
-            type.name?.toLowerCase()?.includes(name.toLowerCase()) ||
-            (key === "tenant" && type.name?.toLowerCase()?.includes("tenant"))
-          );
+        let existingType = Object.values(allTypes)
+          .find(type => type.name?.toLowerCase()?.includes(name.toLowerCase()));
+
+        if(!existingType && key === "tenant") {
+          existingType = Object.values(allTypes)
+            .find(type => type.name?.toLowerCase()?.includes("tenant"));
+        }
 
         if(existingType) {
           typeIds[key] = existingType.id;
@@ -798,7 +800,7 @@ class DatabaseStore {
       tenantSlug: this.rootStore.tenantInfo.tenantSlug,
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
       description: metadata.public?.asset_metadata?.info?.description || "",
-      id: metadata.public?.asset_metadata?.info?.id
+      id: mediaCatalogId
     };
 
     yield this.WriteDocument({
@@ -826,7 +828,6 @@ class DatabaseStore {
       mediaPropertySlug: metadata.public?.asset_metadata?.info?.slug || "",
       name: metadata.public?.asset_metadata?.info?.name || metadata.public?.name || "",
       description: metadata.public?.asset_metadata?.info?.description || "",
-      id: metadata.public?.asset_metadata?.info?.id
     };
 
     yield this.WriteDocument({

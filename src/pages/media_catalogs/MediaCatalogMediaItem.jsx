@@ -13,6 +13,7 @@ import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
 import {MediaCatalogAdditionalViewSpec, MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
 import {useEffect, useState} from "react";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib";
 
 const aspectRatioOptions = Object.keys(mediaCatalogStore.IMAGE_ASPECT_RATIOS)
   .map(value => ({label: mediaCatalogStore.IMAGE_ASPECT_RATIOS[value].label, value}));
@@ -112,6 +113,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.gallery_item.poster_image}
+            localizable
             fields={[
               { field: "poster_image", aspectRatio: 16/9 }
             ]}
@@ -234,6 +236,10 @@ const MediaConfiguration = observer(({mediaItem}) => {
             autoUpdate={false}
             field="media_link"
             previewable
+            previewOptions={{
+              autoplay: EluvioPlayerParameters.autoplay.ON,
+              offerings: [...(mediaItem.offerings || [])]
+            }}
           />
           {
             (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
@@ -312,12 +318,20 @@ const MediaConfiguration = observer(({mediaItem}) => {
                 }
                 {
                   (mediaItem.additional_views || []).length === 0 ? null :
-                    <Inputs.Text
-                      {...inputProps}
-                      {...l10n.media.additional_views_label}
-                      subcategory={l10n.categories.additional_views}
-                      field="additional_views_label"
-                    />
+                    <>
+                      <Inputs.Text
+                        {...inputProps}
+                        {...l10n.media.additional_views_label}
+                        subcategory={l10n.categories.additional_views}
+                        field="additional_views_label"
+                      />
+                      <Inputs.Text
+                        {...inputProps}
+                        {...l10n.media.primary_view_label}
+                        subcategory={l10n.categories.primary_view_label}
+                        field="primary_view_label"
+                      />
+                    </>
                 }
                 <Inputs.List
                   {...inputProps}
@@ -325,6 +339,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
                   subcategory={l10n.categories.additional_views}
                   field="additional_views"
                   newItemSpec={MediaCatalogAdditionalViewSpec}
+                  showBottomAddButton={mediaItem.additional_views?.length > 0}
                   renderItem={props =>
                     <>
                       <Inputs.Text
@@ -343,6 +358,13 @@ const MediaConfiguration = observer(({mediaItem}) => {
                         autoUpdate={false}
                         field="media_link"
                         previewable
+                      />
+                      <Inputs.SingleImageInput
+                        {...props}
+                        {...l10n.media.additional_view_image}
+                        field="image"
+                        baseSize={100}
+                        aspectRatio={mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
                       />
                     </>
                   }
@@ -394,6 +416,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.poster_image}
+            localizable
             subcategory={l10n.categories.player_settings}
             fields={[{field: "poster_image", aspectRatio: 16/9}]}
           />

@@ -311,6 +311,35 @@ const MediaPropertySectionHeroItem = observer(() => {
         field="description"
       />
 
+      <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.permission_behavior}
+        subcategory={l10n.categories.permissions}
+        defaultValue="hide"
+        path={UrlJoin(basePath, "permissions")}
+        field="behavior"
+        options={[
+          { label: mediaPropertyStore.PERMISSION_BEHAVIORS.hide, value: "hide" },
+          { label: "Show If Not Authorized", value: "show_if_unauthorized"}
+        ]}
+      />
+      {
+        (info.permission_sets || []).length === 0 ? null :
+          <>
+            <PermissionItemSelect
+              {...l10n.sections.permissions}
+              {...inputProps}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(basePath, "permissions")}
+              field="permission_item_ids"
+              multiple
+              permissionSetIds={info?.permission_sets}
+              defaultFirst
+            />
+          </>
+      }
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.section_hero_item_presentation}</Title>
 
@@ -325,24 +354,28 @@ const MediaPropertySectionHeroItem = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.pages.header.title}
+        localizable
         field="title"
       />
 
       <Inputs.TextArea
         {...inputProps}
         {...l10n.pages.header.description}
+        localizable
         field="description"
       />
 
       <Inputs.RichText
         {...inputProps}
         {...l10n.pages.header.description_rich_text}
+        localizable
         field="description_rich_text"
       />
 
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.pages.header.logo}
+        localizable
         fields={[
           { field: "logo" }
         ]}
@@ -352,6 +385,7 @@ const MediaPropertySectionHeroItem = observer(() => {
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.pages.header.background_image}
+        localizable
         fields={[
           { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
           { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },

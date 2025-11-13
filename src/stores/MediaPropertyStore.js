@@ -389,7 +389,7 @@ class MediaPropertyStore {
     return objectId;
   });
 
-  SetPropertyPageSlug({mediaPropertyId, slug, pageId}) {
+  SetPropertyPageSlug({mediaPropertyId, slug, pageId, label, clear}) {
     const pageLabel = this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.pages[pageId].label;
 
     this.SetMetadata({
@@ -397,9 +397,9 @@ class MediaPropertyStore {
       page: location.pathname,
       path: "/public/asset_metadata/info/page_ids",
       field: slug,
-      value: pageId,
+      value: !clear ? pageId : undefined,
       category: this.MediaPropertyCategory({category: "page_label", mediaPropertyId, type: "pages", id: pageId, label: pageLabel}),
-      label: this.rootStore.l10n.pages.media_property.form.action_labels.set_main_page
+      label
     });
   }
 
@@ -593,6 +593,7 @@ class MediaPropertyStore {
         sectionItemId: id,
         label: spec.label
       }),
+      fieldName: label,
       label: this.GetSectionItemLabel({sectionItem: spec})
     });
 

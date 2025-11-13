@@ -8,7 +8,7 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Accordion, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec} from "@/specs/MediaPropertySpecs.js";
+import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec, MediaPropertyFAQSpec} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
 import LanguageCodes from "@/assets/localization/LanguageCodes.js";
@@ -18,6 +18,125 @@ Object.keys(currencies).forEach(currencyCode => {
   if(!currencyCode || !currencies[currencyCode]) {
     delete currencies[currencyCode];
   }
+});
+
+const FAQForm = observer(({index}) => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: l10n.categories.general,
+    subcategory: l10n.categories.faq,
+    path: "/public/asset_metadata/info/faq"
+  };
+
+  if(typeof index !== "undefined") {
+    inputProps.path = UrlJoin(inputProps.path, "additional", index.toString());
+  }
+
+  return (
+    <>
+      {
+        typeof index === "undefined" ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.general.faq.slug}
+            field="slug"
+          />
+      }
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.faq.header_image}
+        localizable
+        componentProps={{
+          maw: "100%"
+        }}
+        altTextField="header_image_alt"
+        fields={[
+          { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 2, baseSize: 100},
+          { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 2, baseSize: 100}
+        ]}
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.general.faq.background_color}
+        field="background_color"
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.general.faq.header_text_color}
+        field="header_text_color"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.faq.title}
+        localizable
+        field="title"
+      />
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.general.faq.description}
+        localizable
+        field="description"
+      />
+      <Inputs.List
+        {...inputProps}
+        {...l10n.general.faq.questions}
+        localizable
+        maw="100%"
+        w="100%"
+        field="questions"
+        fields={[
+          { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
+          { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer },
+          {
+            field: "video",
+            InputComponent: Inputs.FabricBrowser,
+            previewable: true,
+            ...l10n.general.faq.video
+          },
+          {
+            field: "images",
+            InputComponent: Inputs.List,
+            ...l10n.general.faq.images,
+            fields: [
+              {
+                ...l10n.general.faq.image_position,
+                InputComponent: Inputs.Select,
+                field: "position",
+                defaultValue: "inside",
+                options: [
+                  { label: "Before", value: "before" },
+                  { label: "Inside", value: "inside" },
+                  { label: "After", value: "after" }
+                ]
+              },
+              {
+                ...l10n.general.faq.image_link,
+                InputComponent: Inputs.URL,
+                field: "link"
+              },
+              {
+                ...l10n.general.faq.image,
+                InputComponent: Inputs.ImageInput,
+                altTextField: "image_alt",
+                fields: [
+                  { baseSize: 100, field: "image", aspectRatio: 2, ...l10n.general.faq.image_desktop },
+                  { baseSize: 100, field: "image_mobile", aspectRatio: 2, ...l10n.general.faq.image_mobile }
+                ]
+              }
+            ]
+          }
+        ]}
+      />
+    </>
+  );
 });
 
 const MediaPropertyGeneralSettings = observer(() => {
@@ -63,6 +182,7 @@ const MediaPropertyGeneralSettings = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.general.title}
+        localizable
         subcategory={l10n.categories.info}
         field="title"
       />
@@ -107,6 +227,21 @@ const MediaPropertyGeneralSettings = observer(() => {
         }
       />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.language}
+        searchable
+        defaultValue="en"
+        subcategory={l10n.categories.info}
+        field="language"
+        options={
+          Object.keys(LanguageCodes).map(key => ({
+            label: `[${key}] - ${LanguageCodes[key]}`,
+            value: key
+          }))
+        }
+      />
+
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.localizations}
@@ -135,12 +270,14 @@ const MediaPropertyGeneralSettings = observer(() => {
         componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.info}
         aspectRatio={2/3}
+        localizable
         field="image"
       />
 
       <Inputs.ImageInput
         {...inputProps}
         label="Header Logo"
+        localizable
         componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.info}
         fields={[
@@ -154,6 +291,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         {...l10n.general.start_screen}
         componentProps={{maw: uiStore.inputWidthWide}}
         subcategory={l10n.categories.info}
+        localizable
         fields={[
           { field: "start_screen_background", aspectRatio: 16/9, ...l10n.general.start_screen_background },
           { field: "start_screen_logo", aspectRatio: 1, ...l10n.general.start_screen_logo },
@@ -391,7 +529,7 @@ const MediaPropertyGeneralSettings = observer(() => {
 
       <Title order={3} mt={50}  mb="md">{l10n.categories.additional_settings}</Title>
 
-      <Accordion maw={uiStore.inputWidthWide + 50} variant="contained">
+      <Accordion maw={uiStore.inputWidthExtraWide} variant="contained">
         <Accordion.Item value="subproperties">
           <Accordion.Control>
             { l10n.categories.subproperties }
@@ -486,6 +624,7 @@ const MediaPropertyGeneralSettings = observer(() => {
           <Accordion.Panel>
             <Inputs.ImageInput
               {...inputProps}
+              localizable
               componentProps={{maw: uiStore.inputWidthWide}}
               subcategory={l10n.categories.main_page_display}
               fields={[
@@ -535,6 +674,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                     {...l10n.general.main_page_url}
                     subcategory={l10n.categories.main_page_display}
                     field="main_page_url"
+                    localizable
                   />
                 </>
             }
@@ -554,6 +694,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.facebook}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="facebook"
               />
@@ -561,6 +702,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.instagram}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="instagram"
               />
@@ -568,6 +710,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.tiktok}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="tiktok"
               />
@@ -575,6 +718,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.x}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="x"
               />
@@ -582,6 +726,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.linkedin}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="linkedin"
               />
@@ -589,6 +734,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 {...inputProps}
                 {...l10n.general.social_links.options.bluesky}
                 subcategory={l10n.categories.social_links}
+                localizable
                 path="/public/asset_metadata/info/footer/social_links"
                 field="bluesky"
               />
@@ -619,6 +765,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                     <Inputs.Text
                       {...props}
                       {...l10n.general.footer_items.text}
+                      localizable
                       subcategory={subcategory}
                       field="text"
                     />
@@ -626,6 +773,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                     <Inputs.SingleImageInput
                       {...props}
                       {...l10n.general.footer_items.link_image}
+                      localizable
                       aspectRatio={2}
                       baseSize={80}
                       p="md"
@@ -653,6 +801,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                         <Inputs.URL
                           {...props}
                           {...l10n.general.footer_items.link_url}
+                          localizable
                           subcategory={subcategory}
                           field="url"
                         />
@@ -665,6 +814,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                           {...l10n.general.footer_items.image}
                           subcategory={subcategory}
                           altTextField="image_alt"
+                          localizable
                           fields={[
                             { field: "image" },
                           ]}
@@ -676,6 +826,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                         <Inputs.RichText
                           {...props}
                           {...l10n.general.footer_items.content_rich_text}
+                          localizable
                           subcategory={subcategory}
                           field="content_rich_text"
                           componentPropsVisible={{w: uiStore.inputWidth}}
@@ -687,9 +838,20 @@ const MediaPropertyGeneralSettings = observer(() => {
                         <Inputs.File
                           {...props}
                           {...l10n.general.footer_items.content_html}
+                          localizable
                           subcategory={subcategory}
                           field="content_html"
                           extensions={["html"]}
+                        />
+                    }
+                    {
+                      item.type !== "faq" ? null :
+                        <Inputs.Text
+                          {...props}
+                          {...l10n.general.footer_items.faq_slug}
+                          localizable
+                          subcategory={subcategory}
+                          field="faq_slug"
                         />
                     }
                   </>
@@ -699,6 +861,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.RichText
               {...inputProps}
               {...l10n.general.footer_text}
+              localizable
               path="/public/asset_metadata/info/footer"
               subcategory={l10n.categories.footer}
               field="rich_text"
@@ -706,6 +869,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.URL
               {...inputProps}
               {...l10n.general.support_url}
+              localizable
               path="/public/asset_metadata/info/footer"
               subcategory={l10n.categories.footer}
               field="support_url"
@@ -718,68 +882,18 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Title order={6} fw={500} maw={uiStore.inputWidth} color="dimmed">{l10n.general.faq.faq_description}</Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Inputs.ImageInput
-              {...inputProps}
-              {...l10n.general.faq.header_image}
-              componentProps={{
-                maw: uiStore.inputWidthWide
-              }}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              altTextField="header_image_alt"
-              fields={[
-                { ...l10n.general.faq.header_image, field: "header_image", aspectRatio: 3, size: 100},
-                { ...l10n.general.faq.header_image_mobile, field: "header_image_mobile", aspectRatio: 3}
-              ]}
-            />
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.general.faq.background_color}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="background_color"
-            />
-            <Inputs.Color
-              {...inputProps}
-              {...l10n.general.faq.header_text_color}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="header_text_color"
-            />
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.general.faq.title}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="title"
-            />
-            <Inputs.TextArea
-              {...inputProps}
-              {...l10n.general.faq.description}
-              path={UrlJoin(inputProps.path, "faq")}
-              subcategory={l10n.categories.faq}
-              field="description"
-            />
+            <FAQForm />
+
             <Inputs.List
               {...inputProps}
-              {...l10n.general.faq.questions}
-              maw={uiStore.inputWidthWide}
-              w={uiStore.inputWidthWide}
-              path={UrlJoin(inputProps.path, "faq")}
+              {...l10n.general.faq.additional_pages}
+              path="/public/asset_metadata/info/faq"
+              field="additional"
               subcategory={l10n.categories.faq}
-              field="questions"
-              fieldLabel="question"
-              fields={[
-                { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
-                { field: "answer", InputComponent: Inputs.RichText, ...l10n.general.faq.answer },
-                {
-                  field: "video",
-                  InputComponent: Inputs.FabricBrowser,
-                  previewable: true,
-                  ...l10n.general.faq.video
-                },
-              ]}
+              newItemSpec={MediaPropertyFAQSpec}
+              renderItem={({index}) => <FAQForm index={index} />}
             />
+
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="meta_tags">
@@ -792,6 +906,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.Text
               {...inputProps}
               {...l10n.general.meta_tags.site_name}
+              localizable
               path={UrlJoin(inputProps.path, "meta_tags")}
               subcategory={l10n.categories.meta_tags}
               placeholder="Eluvio Media wallet"
@@ -801,6 +916,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.Text
               {...inputProps}
               {...l10n.general.meta_tags.title}
+              localizable
               path={UrlJoin(inputProps.path, "meta_tags")}
               subcategory={l10n.categories.meta_tags}
               field="title"
@@ -809,6 +925,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.TextArea
               {...inputProps}
               {...l10n.general.meta_tags.description}
+              localizable
               path={UrlJoin(inputProps.path, "meta_tags")}
               subcategory={l10n.categories.meta_tags}
               field="description"
@@ -817,6 +934,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.ImageInput
               {...inputProps}
               {...l10n.general.meta_tags.image}
+              localizable
               path={UrlJoin(inputProps.path, "meta_tags")}
               subcategory={l10n.categories.meta_tags}
               altTextField="image_alt"
@@ -828,6 +946,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.SingleImageInput
               {...inputProps}
               {...l10n.general.meta_tags.favicon}
+              localizable
               path={UrlJoin(inputProps.path, "meta_tags")}
               subcategory={l10n.categories.meta_tags}
               field="favicon"

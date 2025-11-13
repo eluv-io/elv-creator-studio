@@ -148,12 +148,12 @@ actions:
   SET_LINK: Modify '{label}' link
   UPDATE_LINK: Update '{label}' link
   REMOVE_LINK: Remove '{label}' link
-  INSERT_LIST_ELEMENT: Add '{label}' to list
-  INSERT_LIST_ELEMENT_UNLABELLED: Add to list
-  REMOVE_LIST_ELEMENT: Remove '{label}' from list
-  REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list
-  MOVE_LIST_ELEMENT: Move '{label}' list position
-  MOVE_LIST_ELEMENT_UNLABELLED: Move list position
+  INSERT_LIST_ELEMENT: Add '{label}' to list '{fieldName}'
+  INSERT_LIST_ELEMENT_UNLABELLED: Add to list '{fieldName}'
+  REMOVE_LIST_ELEMENT: Remove '{label}' from list '{fieldName}'
+  REMOVE_LIST_ELEMENT_UNLABELLED: Remove from list '{fieldName}'
+  MOVE_LIST_ELEMENT: Move '{label}' list position in '{fieldName}'
+  MOVE_LIST_ELEMENT_UNLABELLED: Move list position in '{fieldName}'
   TRANSACTION: Modify `{label}`
   CUSTOM: <Custom Action>
   MIGRATION: "{label}"

@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Link, useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore} from "@/stores";
-import {Button, Text} from "@mantine/core";
+import {Button, Group, Text} from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs, {Confirm} from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
@@ -80,20 +80,31 @@ const MediaPropertyPage = observer(() => {
         field="background_color"
       />
 
+      <Group>
+        {
+          info.page_ids.main === pageId ? null :
+            <Button
+              onClick={async () => {
+                await Confirm({
+                  title: LocalizeString(l10n.action_labels.set_main_page, {label: page.label}),
+                  text: LocalizeString(l10n.action_labels.set_main_page_confirm, {label: page.label}),
+                  onConfirm: () => mediaPropertyStore.SetPropertyPageSlug({
+                    mediaPropertyId,
+                    pageId,
+                    slug: "main",
+                    label: l10n.action_labels.set_main_page
+                  })
+                });
+              }}
+            >
+              { l10n.action_labels.set_main_page }
+            </Button>
+        }
+      </Group>
+
       {
-        info.page_ids.main === pageId ?
-          <Text italic fz="xs">This is the main page for this property</Text> :
-          <Button
-            onClick={async () => {
-              await Confirm({
-                title: LocalizeString(l10n.action_labels.set_main_page, {label: page.label}),
-                text: LocalizeString(l10n.action_labels.set_main_page_confirm, {label: page.label}),
-                onConfirm: () => mediaPropertyStore.SetPropertyPageSlug({mediaPropertyId, pageId, slug: "main"})
-              });
-            }}
-          >
-            { l10n.action_labels.set_main_page }
-          </Button>
+        info.page_ids.main !== pageId ? null :
+          <Text italic mt="xs" fz="xs">This is the main page for this property</Text>
       }
 
       <Title order={3} mb="md" mt={50}>{l10n.categories.permissions}</Title>
@@ -286,6 +297,7 @@ const MediaPropertyPage = observer(() => {
                   subcategory: l10n.categories.sections,
                   page: location.pathname,
                   field: "sections",
+                  fieldName: l10n.pages.sections.label,
                   value: sectionId,
                   label: info.sections[sectionId]?.label || sectionId
                 });

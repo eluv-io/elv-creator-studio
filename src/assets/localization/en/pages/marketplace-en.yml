@@ -27,6 +27,7 @@ form:
     item_info: Item Info
     item_display_options: Display Options
     item_purchase_details: Purchase Details
+    discount_codes: Discount Codes
     item_availability: Availability
     item_permissions: Permissions
     item_analytics: Analytics
@@ -68,6 +69,8 @@ form:
       label: ID
     name:
       label: Name
+    label:
+      label: Label
     description:
       label: Description
   overview:
@@ -314,6 +317,18 @@ form:
       label: Viewable When Not For Sale
     free:
       label: Free
+    subscription:
+      label: Subscription
+      description: If specified, users will be charged the price of this item periodically. Otherwise, this item will be a one time purchase.
+    subscription_period:
+      label: Subscription Period (Months)
+      description: Specify how often users will be charged for this subscription
+    subscription_start_time:
+      label: Subscription Start Time
+      description: Specify when users will start being charged for this description.
+    subscription_end_time:
+      label: Subscription End Time
+      description: Specify when users will stop being charged for this description.
     price:
       label: Price (USD)
     price_currency:
@@ -327,6 +342,20 @@ form:
     min_secondary_price:
       label: Minimum Secondary Market Price (USD)
       description: Leave blank for no minimum
+    discount_codes:
+      label: Discount Codes
+      fieldLabel: Discount Code
+    discount_percent:
+      label: Discount (Percentage)
+      description: Use this field to take off a percentage from the original price
+    discount_price:
+      label: Discount (Price)
+      description: Use this field to specify a new discounted price
+    discount_periods:
+      label: Discount Periods
+      description: Specify how long this discount should apply to this subscription in terms of billing periods. Leave blank to apply it indefinitely.
+    discount_code:
+      label: Code
     available_at:
       label: Release Date
       description: If specified, the item will not be available for purchase until this date
