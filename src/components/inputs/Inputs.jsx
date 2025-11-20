@@ -248,6 +248,7 @@ const Input = observer(({
   localizable,
   hidden,
   required,
+  regex,
   Validate,
   validateOnLoad=true,
   componentProps={}
@@ -415,6 +416,10 @@ const Input = observer(({
       }}
       onChange={event => {
         let value = event?.target ? event.target.value : event;
+
+        if(regex) {
+          value = value.match(regex).filter(s => s).join("");
+        }
 
         if(type === "number" && typeof value !== "number" && !value) {
           // Set missing numbers to undefined instead of empty string

@@ -1,22 +1,15 @@
 import {flow, makeAutoObservable} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
-import {
-  PocketMediaItemSpec,
-  PocketSpec
-} from "@/specs/PocketSpecs.js";
+import { PocketSpec } from "@/specs/PocketSpecs.js";
 import Clone from "lodash/clone";
-import {GenerateUUID} from "@/helpers/Misc.js";
-import UrlJoin from "url-join";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {LocalizeString} from "@/components/common/Misc.jsx";
 
 class PocketStore {
   allPockets;
   pockets = {};
 
   ID_PREFIXES = {
-    "pocket": "pktv",
-    "media_item": "pkmd"
+    "pocket": "pktv"
   };
 
   constructor(rootStore) {
@@ -124,6 +117,69 @@ class PocketStore {
     return attributes;
   }
 
+  GetAutomaticGroupContent({pocketId, tabId, groupId}) {
+    const pocket = this.pockets[pocketId].metadata.public.asset_metadata.info;
+
+    if(!pocket) { return []; }
+
+    const tabIndex = pocket.sidebar_config?.tabs?.findIndex(tab => tab.id === tabId);
+    const tab = pocket.sidebar_config?.tabs?.[tabIndex];
+
+    if(!tab) { return []; }
+
+    const groupIndex = tab.groups.findIndex(group => group.id === groupId);
+    const group = tab.groups[groupIndex];
+
+    if(!group) { return []; }
+
+    let mediaCatalogs = group.select.media_catalog ? [group.select.media_catalog] : pocket.media_catalogs;
+    return (
+      mediaCatalogs.map(mediaCatalogId =>
+        this.rootStore.mediaCatalogStore.GetFilteredContent({
+          mediaCatalogId,
+          select: {
+            ...group.select,
+            content_type: "media"
+          },
+        })
+      )
+        .flat()
+        .sort((a, b) => {
+          let titleComparison = (a.catalog_title || a.title) < (b.catalog_title || b.title) ? -1 : 1;
+          let scheduleComparison = 0;
+          let timeComparison = 0;
+
+          // For live comparison, regardless of direction we want live content to show first, followed by vod content
+          if(a.live_video) {
+            if(b.live_video) {
+              timeComparison =
+                a.start_time === b.start_time ? titleComparison :
+                  a.start_time < b.start_time ? -1 : 1;
+            } else {
+              timeComparison = -1;
+              scheduleComparison = -1;
+            }
+          } else if(b.live_video) {
+            scheduleComparison = 1;
+            timeComparison = 1;
+          }
+
+          switch(group.select.sort_order) {
+            case "title_asc":
+              return titleComparison;
+            case "title_desc":
+              return -1 * titleComparison;
+            case "time_desc":
+              return scheduleComparison || (-1 * timeComparison) || titleComparison;
+            // "time_asc" is the default case
+            default:
+              return scheduleComparison || timeComparison || titleComparison;
+          }
+        })
+        .filter(result => result)
+    );
+  }
+
   CreatePocket = flow(function * ({name="New Pocket TV Property", slug}) {
     const libraryId = this.rootStore.tenantInfo.propertiesLibraryId;
     const response = yield this.client.CreateAndFinalizeContentObject({
@@ -179,7 +235,7 @@ class PocketStore {
       }
     });
 
-    yield this.client.SetPermission({objectId, permission: "listable"});
+    yield this.client.SetPermission({objectId, permission: "public"});
     yield this.rootStore.databaseStore.AddGroupPermissions({objectId});
 
     yield this.UpdateDatabaseRecord({objectId});
@@ -202,24 +258,6 @@ class PocketStore {
       metadataSubtree: "/public/asset_metadata/info"
     });
 
-    // Media slug map
-    let mediaSlugs = {};
-    Object.keys(pocket.media).forEach(pocketMediaItemId => {
-      const slug = pocket.media[pocketMediaItemId].slug;
-      if(slug) {
-        mediaSlugs[slug] = pocketMediaItemId;
-      }
-    });
-
-    yield this.client.ReplaceMetadata({
-      libraryId,
-      objectId,
-      writeToken,
-      metadataSubtree: "/public/asset_metadata/info/media_slug_map",
-      metadata: mediaSlugs
-    });
-
-    // Get permission sets
     // Get permission sets
     const permissionSetIds = (yield Promise.all(
       pocket.media_catalogs.map(async mediaCatalogId => {
@@ -362,71 +400,6 @@ class PocketStore {
   });
 
    */
-
-  CreatePocketMediaItem({
-    page,
-    pocketId,
-    mediaItemId
-  }) {
-    let id = `${this.ID_PREFIXES.media_item}${GenerateUUID()}`;
-
-    const mediaItem = this.GetMediaItem({mediaItemId});
-
-    if(!mediaItem) { return; }
-
-    let spec = Clone(PocketMediaItemSpec);
-    spec.media_id = mediaItemId;
-    spec.media_type = "Video";
-    spec.id = id;
-    spec.label = mediaItem.label || spec.label;
-
-    delete spec.display.id;
-    delete spec.display.label;
-
-    const path = "/public/asset_metadata/info/media";
-
-    this.AddField({
-      objectId: pocketId,
-      page,
-      path,
-      field: id,
-      value: spec,
-      category: this.PocketCategory({
-        category: "media_item_label",
-        pocketId,
-        path: UrlJoin("/public", "asset_metadata", "info", "media", id),
-        id,
-        label: this.pockets[pocketId].metadata.public.asset_metadata.info.media[id]?.label || "Media Item"
-      }),
-      label: mediaItem.label
-    });
-
-    return id;
-  }
-
-  PocketCategory({category, pocketId, path, label}) {
-    return () => {
-      label = this.GetMetadata({objectId: pocketId, path: path, field: "label"}) || label;
-
-      return LocalizeString(this.rootStore.l10n.pages.pocket.form.categories[category], { label: label });
-    };
-  }
-
-  GetResolvedPocketMediaItem({pocketId, pocketMediaItemId, pocketMediaItem}) {
-    const pocket = this.pockets[pocketId];
-    if(!pocketMediaItem) {
-      pocketMediaItem = pocket.metadata.public.asset_metadata.info.media[pocketMediaItemId];
-    }
-
-    const mediaItem = this.GetMediaItem({mediaItemId: pocketMediaItem?.media_id});
-    return {
-      ...pocketMediaItem,
-      mediaItem,
-      display: {
-        ...(mediaItem || pocketMediaItem.display)
-      }
-    };
-  }
 
   UpdateDatabaseRecord = flow(function * ({objectId}) {
     yield this.rootStore.databaseStore.SavePocket({pocketId: objectId});

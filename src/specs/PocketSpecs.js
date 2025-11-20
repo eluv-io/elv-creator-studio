@@ -1,19 +1,31 @@
-import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
-
-export const PocketMediaItemSpec = {
+export const PocketSidebarTabGroupSpec = {
   id: undefined,
-  label: "",
+  label: "<New Content Group>",
   description: "",
-  type: "media",
-  media_type: "Video",
-  media_id: undefined,
-  use_media_settings: true,
-  display: {
-    ...MediaCatalogBaseSpec
-  },
-  permissions: []
+  title: "",
+  type: "manual",
+  content: [],
+  select: {
+    media_catalog: "",
+    content_type: "",
+    media_types: [],
+    attributes: [],
+    attribute_values: {},
+    date: undefined,
+    schedule: "", // live, upcoming, past, time_range
+    start_time: undefined,
+    end_time: undefined,
+    sort: "start_time"
+  }
 };
 
+export const PocketSidebarTabSpec = {
+  id: undefined,
+  label: "<New Content Tab>",
+  description: "",
+  title: "",
+  groups: []
+};
 
 export const PocketSpec = {
   id: undefined,
@@ -30,13 +42,15 @@ export const PocketSpec = {
     link: ""
   },
   sidebar_config: {
-    hide: false,
     banners: [],
-    sort: "start_time",
-    content: "all",
-    manual_content: [],
+    tabs: [
+      {
+        ...PocketSidebarTabSpec,
+        id: "main",
+        label: "Main Content"
+      }
+    ]
   },
-  media: {},
   meta_tags: {
     site_name: "",
     title: "",

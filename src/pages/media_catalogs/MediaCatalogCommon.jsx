@@ -232,6 +232,34 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         field="label"
       />
 
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.media.slug}
+        field="slug"
+        regex={/[a-zA-Z0-9-]*/g}
+        Validate={slug => {
+          if(!slug) { return; }
+
+          let matchingMediaItem;
+          ["media", "media_lists", "media_collections"].forEach(type => {
+            if(matchingMediaItem) { return; }
+
+            Object.keys(info[type] || {}).forEach(itemId => {
+              if(matchingMediaItem) { return; }
+
+              const item = info[type][itemId];
+              if(item.slug === slug && item.id !== mediaId) {
+                matchingMediaItem = item;
+              }
+            });
+          });
+
+          if(matchingMediaItem) {
+            return `This slug is already in use in '${matchingMediaItem.label || matchingMediaItem.id}'`;
+          }
+        }}
+      />
+
       <Title order={3} mt={50} mb="md">{ l10n.categories.permissions }</Title>
       <MediaCatalogPermissionSettings type={type} mediaId={mediaId} />
 

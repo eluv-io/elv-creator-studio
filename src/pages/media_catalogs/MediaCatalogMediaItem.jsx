@@ -9,7 +9,6 @@ import {
   MediaCatalogCommonFields,
   MediaCatalogViewedSettings
 } from "@/pages/media_catalogs/MediaCatalogCommon.jsx";
-import {ListItemCategory} from "@/components/common/Misc.jsx";
 import {ScaleImage} from "@/helpers/Fabric.js";
 import {MediaCatalogAdditionalViewSpec, MediaCatalogGalleryItemSpec} from "@/specs/MediaCatalogSpecs.js";
 import {useEffect, useState} from "react";
@@ -39,14 +38,7 @@ const MediaCatalogMediaItemGalleryItem = observer(({pageTitle, mediaItem}) => {
     objectId: mediaCatalogId,
     path: UrlJoin(galleryPath, galleryItemIndex.toString()),
     category: mediaCatalogStore.MediaItemCategory({type: "media", mediaCatalogId, id: mediaItemId}),
-    subcategory: ListItemCategory({
-      store: mediaCatalogStore,
-      objectId: mediaCatalogId,
-      listPath: galleryPath,
-      id: galleryItemId,
-      labelField: "label",
-      l10n: l10n.categories.gallery_item_label
-    })
+
   };
 
   return (

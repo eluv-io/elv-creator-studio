@@ -79,9 +79,30 @@ const PocketGeneralSettings = observer(() => {
         }
       />
 
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.branding}</Title>
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.header_logo}
+        subcategory={l10n.categories.branding}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        fields={[
+          { field: "header_logo", aspectRatio: 3, baseSize: 100, ...l10n.general.header_logo_desktop },
+          { field: "header_logo_mobile", aspectRatio: 1, baseSize: 100, ...l10n.general.header_logo_mobile },
+        ]}
+      />
+
+      <Inputs.URL
+        {...inputProps}
+        {...l10n.general.header_logo_link}
+        subcategory={l10n.categories.branding}
+        field="header_logo_link"
+      />
+
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.general.splash_screen}
+        subcategory={l10n.categories.branding}
         componentProps={{maw: uiStore.inputWidthWide}}
         fields={[
           { field: "splash_screen_background", aspectRatio: 16/9, ...l10n.general.splash_screen_background },
