@@ -2125,7 +2125,8 @@ const ReferenceTable = observer(({
   width="Wide",
   AddItem,
   CopyItem,
-  Actions
+  Actions,
+  OnDelete
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -2255,14 +2256,26 @@ const ReferenceTable = observer(({
                           ConfirmDelete({
                             itemName: itemName,
                             onConfirm: () => {
-                              store.RemoveField({
+                              store.ApplyTransaction( {
                                 objectId,
                                 page,
                                 path: UrlJoin(path, field),
                                 field: item.id,
                                 category,
                                 subcategory,
-                                label: itemName
+                                label: itemName,
+                                Apply: () => {
+                                  store.RemoveField({
+                                    objectId,
+                                    page,
+                                    path: UrlJoin(path, field),
+                                    field: item.id,
+                                    category,
+                                    subcategory,
+                                    label: itemName
+                                  });
+                                  OnDelete?.(item);
+                                }
                               });
                             }
                           });

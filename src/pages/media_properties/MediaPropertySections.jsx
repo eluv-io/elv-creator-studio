@@ -137,6 +137,7 @@ export const MediaPropertySectionsTable = observer(({
           });
         });
       }}
+      OnDelete={(item) => mediaPropertyStore.RemoveSection(mediaPropertyId, item.id)}
       columns={[
         {
           accessor: "label",
