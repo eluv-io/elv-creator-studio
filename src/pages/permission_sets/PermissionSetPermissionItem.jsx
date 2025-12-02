@@ -94,6 +94,7 @@ const PermissionSetPermissionItem = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.display.title}
+        localizable
         subcategory={l10n.categories.permission_item_display}
         required
         field="title"
@@ -102,6 +103,7 @@ const PermissionSetPermissionItem = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.display.subtitle}
+        localizable
         subcategory={l10n.categories.permission_item_display}
         field="subtitle"
       />
@@ -109,6 +111,7 @@ const PermissionSetPermissionItem = observer(() => {
       <Inputs.TextArea
         {...inputProps}
         {...l10n.permission_item.display.description}
+        localizable
         subcategory={l10n.categories.permission_item_display}
         field="description"
       />

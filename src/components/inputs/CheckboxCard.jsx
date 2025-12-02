@@ -10,6 +10,7 @@ const CheckboxCard = observer(({
   hint,
   checked,
   onChange,
+  disabled,
   ...componentProps
 }) => {
   return (
@@ -19,6 +20,7 @@ const CheckboxCard = observer(({
       w="100%"
       maw={uiStore.inputWidth}
       mb="md"
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       {...componentProps}
     >
@@ -31,6 +33,7 @@ const CheckboxCard = observer(({
         wrapperProps={{
           pr: 50,
           style: {
+            opacity: disabled ? 0.5 : 1,
             cursor: "pointer"
           },
           labelProps: {
@@ -47,6 +50,7 @@ const CheckboxCard = observer(({
           tabIndex={-1}
           size="md"
           mr="xl"
+          disabled={disabled}
           styles={{ input: { cursor: "pointer" } }}
         />
       </InputWrapper>

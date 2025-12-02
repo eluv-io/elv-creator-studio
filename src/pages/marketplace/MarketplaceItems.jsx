@@ -67,12 +67,14 @@ export const MarketplaceItem = observer(() => {
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.item.image}
+        localizable
         subcategory={l10n.categories.item_info}
         field="image"
       />
       <Inputs.Text
         {...inputProps}
         {...l10n.item.name}
+        localizable
         subcategory={l10n.categories.item_info}
         field="name"
       />
@@ -107,24 +109,28 @@ export const MarketplaceItem = observer(() => {
       <Inputs.Text
         {...inputProps}
         {...l10n.item.subtitle}
+        localizable
         subcategory={l10n.categories.item_info}
         field="subtitle"
       />
       <Inputs.Text
         {...inputProps}
         {...l10n.item.subtitle_2}
+        localizable
         subcategory={l10n.categories.item_info}
         field="subtitle2"
       />
       <Inputs.TextArea
         {...inputProps}
         {...l10n.item.description}
+        localizable
         subcategory={l10n.categories.item_info}
         field="description"
       />
       <Inputs.RichText
         {...inputProps}
         {...l10n.item.description_rich_text}
+        localizable
         subcategory={l10n.categories.item_info}
         field="description_rich_text"
       />

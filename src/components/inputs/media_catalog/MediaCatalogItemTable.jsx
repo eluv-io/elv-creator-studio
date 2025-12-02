@@ -272,14 +272,14 @@ const MediaCatalogItemTable = observer(({
             }
         }
         onRowClick={
-        !setSelectedRecords ? undefined :
-          record => {
-            selectedRecords.includes(record) ?
-              setSelectedRecords(selectedRecords.filter(otherRecord => otherRecord !== record)) :
-              multiple ?
-                setSelectedRecords([...selectedRecords, record]) :
+          !setSelectedRecords ? undefined :
+            record => {
+              selectedRecords.includes(record) ?
+                setSelectedRecords(selectedRecords.filter(otherRecord => otherRecord !== record)) :
+                multiple ?
+                  setSelectedRecords([...selectedRecords, record]) :
                 setSelectedRecords([record]);
-          }
+            }
         }
         onSelectedRecordsChange={newSelectedRecords => {
           multiple ?
@@ -349,6 +349,7 @@ const MediaCatalogItemTable = observer(({
                   label={LocalizeString(rootStore.l10n.components.inputs.copy, {item: mediaItem.label})}
                   color="blue.6"
                   Icon={IconCopy}
+                  disabled={rootStore.localizing}
                   onClick={async () =>
                     await Confirm({
                       title: LocalizeString(rootStore.l10n.components.inputs.copy, {item: mediaItem.label}),
@@ -367,6 +368,7 @@ const MediaCatalogItemTable = observer(({
                 <IconButton
                   label={LocalizeString(rootStore.l10n.components.inputs.remove, {item: mediaItem.label})}
                   color="red.5"
+                  disabled={rootStore.localizing}
                   Icon={IconTrashX}
                   onClick={() => {
                     ConfirmDelete({

@@ -27,6 +27,7 @@ const ColorOptions = observer(({
             <Inputs.Text
               {...inputProps}
               {...rootStore.l10n.pages.media_property.form.theme.text}
+              localizable
               path={path}
               field="text"
               defaultValue={defaultValues["text"]}

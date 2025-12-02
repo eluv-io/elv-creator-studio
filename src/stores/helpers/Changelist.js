@@ -1,6 +1,7 @@
 import UrlJoin from "url-join";
 import {rootStore} from "@/stores/index.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
+import LanguageCodes from "@/assets/localization/LanguageCodes.js";
 
 // Update paths when list actions are performed to keep action paths in sync for pruning
 const ModifyPathIndex = ({path, basePath, originalIndex, newIndex}) => {
@@ -144,7 +145,11 @@ export const ActionToString = action => {
     string = rootStore.l10n.actions.CLEARED_FIELD;
   }
 
-  return LocalizeString(string, { label: action.label });
+  if(action.localizationKey) {
+    string = `[${action.localizationKey}] ${LanguageCodes[action.localizationKey]} - ${string}`;
+  }
+
+  return LocalizeString(string, { label: action.label, fieldName: action.fieldName || "" });
 };
 
 export const FormatChangeList = changeList => {

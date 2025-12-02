@@ -50,24 +50,28 @@ const PurchasePageSettings = observer(({type}) => {
             <Inputs.Text
               {...inputProps}
               {...l10n.pages.header.title}
+              localizable
               field="title"
             />
 
             <Inputs.TextArea
               {...inputProps}
               {...l10n.pages.header.description}
+              localizable
               field="description"
             />
 
             <Inputs.RichText
               {...inputProps}
               {...l10n.pages.header.description_rich_text}
+              localizable
               field="description_rich_text"
             />
 
             <Inputs.ImageInput
               {...inputProps}
               {...l10n.pages.header.logo}
+              localizable
               fields={[
                 { field: "logo" }
               ]}
@@ -77,6 +81,7 @@ const PurchasePageSettings = observer(({type}) => {
             <Inputs.ImageInput
               {...inputProps}
               {...l10n.pages.header.background_image}
+              localizable
               fields={[
                 { field: "background_image", ...l10n.pages.header.background_image_desktop, aspectRatio: 16/9, baseSize: 135 },
                 { field: "background_image_mobile", ...l10n.pages.header.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
@@ -119,6 +124,7 @@ const PurchasePageSettings = observer(({type}) => {
                 <Inputs.Text
                   {...inputProps}
                   {...l10n.pages[type].button_text}
+                  localizable
                   field="card_button_text"
                   placeholder="Select"
                 />

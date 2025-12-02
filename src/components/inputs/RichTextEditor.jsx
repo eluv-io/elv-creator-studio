@@ -12,8 +12,19 @@ import {
 } from "@tabler/icons-react";
 
 
-const RichTextEditor = observer(({store, objectId, page, path, field, category, subcategory, label, componentProps={}}) => {
-  const [value] = useState(store.GetMetadata({objectId, path, field}));
+const RichTextEditor = observer(({
+  store,
+  objectId,
+  page,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  localizable,
+  componentProps={}
+}) => {
+  const [value] = useState(store.GetMetadata({objectId, path, field, localizationKey: localizable && rootStore.localizationKey}));
   const editorRef = useRef(null);
 
   const editor = useEditor({
@@ -36,7 +47,8 @@ const RichTextEditor = observer(({store, objectId, page, path, field, category, 
         value: editor.getText().trim() === "" ? "" : editor.getHTML(),
         category,
         subcategory,
-        label
+        label,
+        localizationKey: localizable && rootStore.localizationKey
       });
       },
     content: value

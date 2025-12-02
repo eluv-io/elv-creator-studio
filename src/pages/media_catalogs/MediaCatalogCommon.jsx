@@ -168,6 +168,7 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
                   subcategory: l10n.categories[subType],
                   page: location.pathname,
                   field,
+                  fieldName: l10n.media[subType].label,
                   value: mediaId,
                   label: l10n.media[subType].fieldLabel,
                 });
@@ -246,6 +247,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
       <Inputs.Text
         {...inputProps}
         {...l10n.media.title}
+        localizable
         required
         field="title"
       />
@@ -254,24 +256,28 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         {...inputProps}
         {...l10n.media.subtitle}
         field="subtitle"
+        localizable
       />
 
       <Inputs.List
         {...inputProps}
         {...l10n.media.headers}
         field="headers"
+        localizable
       />
 
       <Inputs.TextArea
         {...inputProps}
         {...l10n.media.description}
         field="description"
+        localizable
       />
 
       <Inputs.RichText
         {...inputProps}
         {...l10n.media.description_rich_text}
         field="description_rich_text"
+        localizable
       />
 
       {
@@ -294,6 +300,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.media.thumbnail_images}
+        localizable
         componentProps={{maw: uiStore.inputWidthWide}}
         fields={[
           { ...l10n.media.image_portrait, baseSize: 125, aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS["Portrait"]?.ratio, field: "thumbnail_image_portrait" },
@@ -308,6 +315,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.background_image}
+            localizable
             fields={[
               { field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 135},
               { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
@@ -323,6 +331,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
               {...l10n.media.icons}
               shrink
               field="icons"
+              localizable
               renderItem={props =>
                 <Inputs.ImageInput
                   {...props}
@@ -339,6 +348,7 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
                 <Inputs.ImageInput
                   {...inputProps}
                   {...l10n.media.countdown_background}
+                  localizable
                   fields={[
                     { field: "countdown_background_desktop", aspectRatio: 16/9, baseSize: 135, ...l10n.media.countdown_background_desktop },
                     { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.media.countdown_background_mobile }

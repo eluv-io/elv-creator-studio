@@ -559,7 +559,17 @@ const FileBrowserTable = observer(({
   );
 });
 
-const FileBrowser = observer(({store, objectId, initialSelectedObjectId, multiple, title, extensions=[], opened=true, Close, Submit}) => {
+const FileBrowser = observer(({
+  store,
+  objectId,
+  initialSelectedObjectId,
+  multiple,
+  title,
+  extensions=[],
+  opened=true,
+  Close,
+  Submit
+}) => {
   const [path, setPath] = useState("/");
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
