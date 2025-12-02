@@ -2,6 +2,7 @@ nav:
   list: Media Properties
   overview: Overview
   general: General
+  sidebar: Sidebar Settings
   theme: Theme and Styling
   domain: Customization Settings
   search: Search
@@ -42,7 +43,13 @@ form:
     permissions: Permission Settings
     visibility: Visibility Settings
     user_profile: User Profile Settings
-    media_sidebar: Media Sidebar and Live Content Settings
+    sidebar: Sidebar Settings
+    sidebar_banners: Sidebar Banners
+    sidebar_content: Sidebar Content
+    sidebar_tab: Sidebar Tab
+    sidebar_tab_label: Sidebar Tab '{label}'
+    sidebar_tab_group: Sidebar Content Group
+    sidebar_tab_group_label: Sidebar Content Group '{label}'
     meta_tags: Search and Social Preview
     analytics: Analytics
     search: Search Settings
@@ -83,6 +90,8 @@ form:
   common:
     name:
       label: Name
+    label:
+      label: Label
     description:
       label: Description
     id:
@@ -1011,7 +1020,67 @@ form:
       description: If specified, a user must have access to at least one of the following permissions to access this item
       fieldLabel: Permission
 
-
+  sidebar_tabs:
+    label: Sidebar Tabs
+    description: Define tabbed content lists to display in the side bar
+    fieldLabel: Sidebar Tab
+  sidebar_tab:
+    title:
+      label: Title
+      description: Optional if this is the only tab
+    groups:
+      label: Content Groups
+  sidebar_tab_groups:
+    label: Content Groups
+    description: Define groups of content to display within this tab
+    fieldLabel: Content Group
+  sidebar_tab_group:
+    title:
+      label: Title
+      description: Optional
+    type:
+      label: Type
+      description: Choose whether to select content manually, or have content be selected automatically based on specified parameters
+    content:
+      label: Content
+      fieldLabel: Media Item
+      columns:
+        label: Label
+        permissions: Permissions
+    section:
+      label: Section
+      description: "Select a section to display in the sidebar. Note: Only media content will be displayed in the sidebar. Other types, such as purchase items, will not be displayed"
+    filters:
+      media_catalog:
+        label: Media Catalog
+        description: Limit the displayed content to a specific media catalog
+      sort_order:
+        label: Sort Order
+        description: Specify how the content should be ordered
+      content_type:
+        label: Content Type
+        description: Content of the specified type
+      media_types:
+        label: Media Types
+        description: Content with the specified media type(s)
+      tags:
+        label: Tags
+        description: Content matching all of the specified tags
+      attributes:
+        label: Attributes
+        description: Specify attributes to filter by
+      schedule:
+        label: Schedule
+        description: Live content matching the specified time period based on start/end times
+      date:
+        label: Date
+        description: Filter by a specific date
+      start_time:
+        label: Start Time
+        description: Live content starting after the specified time
+      end_time:
+        label: End Time
+        description: Live content starting before the specified time
 
   analytics:
     analytics_ids:

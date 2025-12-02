@@ -1,9 +1,8 @@
 import {observer} from "mobx-react-lite";
 import {Link, useParams} from "react-router-dom";
-import {rootStore, pocketStore, mediaCatalogStore, uiStore} from "@/stores";
+import {rootStore, mediaCatalogStore, uiStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {PocketSidebarTabGroupSpec} from "@/specs/PocketSpecs.js";
 import UrlJoin from "url-join";
 import {IconButton, ListItemCategory} from "@/components/common/Misc.jsx";
 import {useEffect, useState} from "react";
@@ -14,9 +13,10 @@ import {
 } from "@/components/common/MediaCatalog.jsx";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
+import {MediaPropertySidebarTabGroupSpec, MediaPropertySidebarTabSpec} from "@/specs/MediaPropertySpecs.js";
 
-const AutomaticSectionContentPreview = observer(({pocketId, tabId, groupId}) => {
-  let content = pocketStore.GetAutomaticGroupContent({pocketId, tabId, groupId});
+const AutomaticSectionContentPreview = observer(({mediaPropertyId, select}) => {
+  let content = mediaPropertyStore.GetAutomaticSectionContent({mediaPropertyId, select: {...select, content_type: "media"}});
 
   if(content.length === 0) {
     return (
@@ -49,17 +49,18 @@ const AutomaticSectionContentPreview = observer(({pocketId, tabId, groupId}) => 
 
 const AutomaticSectionFilters = observer(() => {
   const [showContentPreview, setShowContentPreview] = useState(false);
-  const { pocketId, tabId, groupId } = useParams();
-  const pocket = pocketStore.pockets[pocketId];
+  const { mediaPropertyId, tabId, groupId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
   useEffect(() => {
-    (pocket?.metadata?.public?.asset_metadata?.info?.media_catalogs || [])
+    (mediaProperty?.metadata?.public?.asset_metadata?.info?.media_catalogs || [])
       .forEach(mediaCatalogId => mediaCatalogStore.LoadMediaCatalog({mediaCatalogId}));
   }, []);
 
-  if(!pocket) { return null; }
+  if(!mediaProperty) { return null; }
 
-  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
   const tabIndex = info.sidebar_config?.tabs?.findIndex(tab => tab.id === tabId);
   const tab = info.sidebar_config?.tabs?.[tabIndex];
@@ -71,14 +72,14 @@ const AutomaticSectionFilters = observer(() => {
 
   if(!group) { return null; }
 
-  const l10n = rootStore.l10n.pages.pocket.form;
+  const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
-    store: pocketStore,
-    objectId: pocketId,
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
     path: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs/", tabIndex.toString(), "groups", groupIndex.toString(), "select"),
     category: ListItemCategory({
-      store: pocketStore,
-      objectId: pocketId,
+      store: mediaPropertyStore,
+      objectId: mediaPropertyId,
       listPath: "/public/asset_metadata/info/sidebar_config/tabs",
       id: tabId,
       labelField: "label",
@@ -87,7 +88,7 @@ const AutomaticSectionFilters = observer(() => {
     subcategory: l10n.categories.sidebar_tab_group
   };
 
-  const attributes = pocketStore.GetPocketAttributes({pocketId});
+  const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
 
   return (
     <>
@@ -122,7 +123,7 @@ const AutomaticSectionFilters = observer(() => {
           {...l10n.sidebar_tab_group.filters.tags}
           clearable
           searchable
-          options={pocketStore.GetPocketTags({pocketId})}
+          options={mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId})}
           field="tags"
         />
         <Inputs.MultiSelect
@@ -207,9 +208,8 @@ const AutomaticSectionFilters = observer(() => {
       {
         !showContentPreview ? null :
           <AutomaticSectionContentPreview
-            pocketId={pocketId}
-            tabId={tabId}
-            groupId={groupId}
+            mediaPropertyId={mediaPropertyId}
+            select={group.select}
           />
       }
     </>
@@ -217,7 +217,7 @@ const AutomaticSectionFilters = observer(() => {
 });
 
 export const MediaItemTitle = observer(({mediaItemId, aspectRatio}) => {
-  const mediaItem = pocketStore.GetMediaItem({mediaItemId});
+  const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId});
 
   return (
     <Group noWrap>
@@ -245,12 +245,13 @@ export const MediaItemTitle = observer(({mediaItemId, aspectRatio}) => {
 
 const GroupMediaTable = observer(() => {
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
-  const { pocketId, tabId, groupId } = useParams();
-  const pocket = pocketStore.pockets[pocketId];
+  const { mediaPropertyId, tabId, groupId } = useParams();
 
-  if(!pocket) { return null; }
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
-  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
   const tabIndex = info.sidebar_config?.tabs?.findIndex(tab => tab.id === tabId);
   const tab = info.sidebar_config?.tabs?.[tabIndex];
@@ -262,14 +263,14 @@ const GroupMediaTable = observer(() => {
 
   if(!group) { return null; }
 
-  const l10n = rootStore.l10n.pages.pocket.form;
+  const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
-    store: pocketStore,
-    objectId: pocketId,
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
     path: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs/", tabIndex.toString(), "groups", groupIndex.toString()),
     category: ListItemCategory({
-      store: pocketStore,
-      objectId: pocketId,
+      store: mediaPropertyStore,
+      objectId: mediaPropertyId,
       listPath: "/public/asset_metadata/info/sidebar_config/tabs",
       id: tabId,
       labelField: "label",
@@ -287,7 +288,7 @@ const GroupMediaTable = observer(() => {
         field="content"
         AddItem={() => setShowMediaSelectionModal(true)}
         Actions={mediaItemId => {
-          const mediaItem = pocketStore.GetMediaItem({mediaItemId});
+          const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId});
 
           if(!mediaItem) { return null; }
 
@@ -312,7 +313,7 @@ const GroupMediaTable = observer(() => {
             accessor: "permissions",
             label: l10n.sidebar_tab_group.content.columns.permissions,
             centered: true,
-            render: mediaItemId => <MediaItemPermissionIcon mediaItem={pocketStore.GetMediaItem({mediaItemId})} />,
+            render: mediaItemId => <MediaItemPermissionIcon mediaItem={mediaPropertyStore.GetMediaItem({mediaItemId})} />,
             width: 125
           }
         ]}
@@ -323,7 +324,7 @@ const GroupMediaTable = observer(() => {
             multiple
             mediaCatalogIds={info.media_catalogs || []}
             Submit={mediaItemIds =>
-              pocketStore.SetMetadata({
+              mediaPropertyStore.SetMetadata({
                 ...inputProps,
                 ...l10n.sidebar_tab_group.content,
                 page: location.pathname,
@@ -338,13 +339,14 @@ const GroupMediaTable = observer(() => {
   );
 });
 
-export const PocketSidebarContentTabGroup = observer(() => {
-  const { pocketId, tabId, groupId } = useParams();
-  const pocket = pocketStore.pockets[pocketId];
+export const MediaPropertyContentTabGroup = observer(() => {
+  const { mediaPropertyId, tabId, groupId } = useParams();
 
-  if(!pocket) { return null; }
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
-  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
   const tabIndex = info.sidebar_config?.tabs?.findIndex(tab => tab.id === tabId);
   const tab = info.sidebar_config?.tabs?.[tabIndex];
@@ -356,14 +358,14 @@ export const PocketSidebarContentTabGroup = observer(() => {
 
   if(!group) { return null; }
 
-  const l10n = rootStore.l10n.pages.pocket.form;
+  const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
-    store: pocketStore,
-    objectId: pocketId,
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
     path: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs/", tabIndex.toString(), "groups", groupIndex.toString()),
     category: ListItemCategory({
-      store: pocketStore,
-      objectId: pocketId,
+      store: mediaPropertyStore,
+      objectId: mediaPropertyId,
       listPath: "/public/asset_metadata/info/sidebar_config/tabs",
       id: tabId,
       labelField: "label",
@@ -374,9 +376,9 @@ export const PocketSidebarContentTabGroup = observer(() => {
 
   return (
     <PageContent
-      backLink={UrlJoin("/pocket", pocketId, "sidebar", tab.id)}
-      title={`${info.name || pocket.name || "Pocket TV Property"} - Sidebar Tab Group`}
-      section="pocket"
+      backLink={UrlJoin("/media-properties", mediaPropertyId, "sidebar", tab.id)}
+      title={`${info.name || mediaProperty.name || "Media Property"} - Sidebar Tab Group`}
+      section="mediaProperty"
       useHistory
     >
       <Inputs.Text
@@ -413,41 +415,54 @@ export const PocketSidebarContentTabGroup = observer(() => {
         options={[
           { label: "Manual", value: "manual" },
           { label: "Automatic", value: "automatic" },
+          { label: "Section", value: "section" },
         ]}
       />
 
       {
-        group.type === "automatic" ?
-          <AutomaticSectionFilters /> :
-          <GroupMediaTable />
+        group.type === "section" ?
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.sidebar_tab_group.section}
+            searchable
+            defaultValue="manual"
+            field="section_id"
+            options={Object.keys(info.sections).map(sectionId => ({
+              label: info.sections[sectionId].label,
+              value: sectionId
+            }))}
+          /> :
+          group.type === "automatic" ?
+            <AutomaticSectionFilters /> :
+            <GroupMediaTable />
       }
     </PageContent>
   );
 });
 
 
-const PocketSidebarContentTab = observer(() => {
-  const { pocketId, tabId } = useParams();
+export const MediaPropertySidebarContentTab = observer(() => {
+  const { mediaPropertyId, tabId } = useParams();
 
-  const pocket = pocketStore.pockets[pocketId];
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
-  if(!pocket) { return null; }
+  if(!mediaProperty) { return null; }
 
-  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
 
   const tabIndex = info.sidebar_config?.tabs?.findIndex(tab => tab.id === tabId);
   const tab = info.sidebar_config?.tabs?.[tabIndex];
 
   if(!tab) { return null; }
 
-  const l10n = rootStore.l10n.pages.pocket.form;
+  const l10n = rootStore.l10n.pages.media_property.form;
   const inputProps = {
-    store: pocketStore,
-    objectId: pocketId,
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
     path: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs/", tabIndex.toString()),
     category: ListItemCategory({
-      store: pocketStore,
-      objectId: pocketId,
+      store: mediaPropertyStore,
+      objectId: mediaPropertyId,
       listPath: "/public/asset_metadata/info/sidebar_config/tabs",
       id: tabId,
       labelField: "label",
@@ -457,9 +472,9 @@ const PocketSidebarContentTab = observer(() => {
 
   return (
     <PageContent
-      backLink={UrlJoin("/pocket", pocketId, "sidebar")}
-      title={`${info.name || pocket.name || "Pocket TV Property"} - Sidebar Tab`}
-      section="pocket"
+      backLink={UrlJoin("/media-properties", mediaPropertyId, "sidebar")}
+      title={`${info.name || mediaProperty.name || "Media Property"} - Sidebar Tab`}
+      section="mediaProperty"
       useHistory
     >
       <Inputs.Text
@@ -494,7 +509,7 @@ const PocketSidebarContentTab = observer(() => {
         subcategory={l10n.categories.sidebar_tab_group}
         field="groups"
         idField="id"
-        newItemSpec={PocketSidebarTabGroupSpec}
+        newItemSpec={MediaPropertySidebarTabGroupSpec}
         columns={[
           {
             ...l10n.common.label,
@@ -510,4 +525,50 @@ const PocketSidebarContentTab = observer(() => {
   );
 });
 
-export default PocketSidebarContentTab;
+export const MediaPropertySidebarSettings = observer(() => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: l10n.categories.sidebar,
+    path: "/public/asset_metadata/info/sidebar_config"
+  };
+
+  return (
+    <PageContent
+      title={`${info.name || mediaProperty.name || "Media Property"} - ${l10n.categories.sidebar}`}
+      section="mediaProperty"
+      useHistory
+    >
+      <Inputs.CollectionTable
+        {...inputProps}
+        {...l10n.sidebar_tabs}
+        categoryFnParams={{fields: ["label", "id"], l10n: l10n.categories.sidebar_tab_label}}
+        field="tabs"
+        idField="id"
+        newItemSpec={MediaPropertySidebarTabSpec}
+        columns={[
+          {
+            ...l10n.common.label,
+            field: "label"
+          },
+          {
+            ...l10n.common.description,
+            field: "description"
+          }
+        ]}
+      />
+    </PageContent>
+  );
+});
+
+export default MediaPropertySidebarSettings;
+
