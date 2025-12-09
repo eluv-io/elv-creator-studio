@@ -110,6 +110,14 @@ const PocketGeneralSettings = observer(() => {
         ]}
       />
 
+      <Inputs.SingleImageInput
+        {...inputProps}
+        {...l10n.general.qr_code_logo}
+        subcategory={l10n.categories.branding}
+        field="qr_code_logo"
+        aspectRatio={1}
+      />
+
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.post_content_screen}</Title>
 
       <Inputs.Checkbox
