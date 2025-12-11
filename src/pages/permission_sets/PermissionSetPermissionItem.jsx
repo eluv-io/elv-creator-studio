@@ -89,6 +89,20 @@ const PermissionSetPermissionItem = observer(() => {
         field="priority"
       />
 
+      <Inputs.MultiSelect
+        {...inputProps}
+        {...l10n.permission_item.subsumes}
+        field="subsumes"
+        options={
+          Object.keys(info.permission_items)
+            .filter(id => id !== permissionItemId)
+            .map(id => ({
+              label: info.permission_items[id].label || id,
+              value: id
+            }))
+        }
+      />
+
       <Title mt={50} order={3}>{ l10n.categories.permission_item_display }</Title>
 
       <Inputs.Text

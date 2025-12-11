@@ -72,6 +72,9 @@ form:
     priority:
       label: Priority
       description: Set the order priority for this permission item when displayed in dynamic cases, such as the purchase gate page. Items will be listed in priority order from lowest to highest, with items having no priority listed in the order they were specified in the content's permissions.
+    subsumes:
+      label: Subsumes
+      description: Select other permission items that this item subsumes, e.g. an all-access pass subsuming a single item pass. Subsumed items will not be offered if the user owns this item.
     display:
       title:
         label: Display Title
