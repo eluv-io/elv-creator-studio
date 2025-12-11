@@ -86,17 +86,21 @@ form:
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
+    preview_password:
+      label: Preview Password
+      description: Specify a password to protect access to your property in the staging environment
     post_content_screen_images:
       label: Content End Screen Images
     post_content_screen_toggle:
       label: Show Content End Screen
-      description: Specify an image and link to show after the content has ended
+      description: Specify an image and link to show after the content has ended. For best results, the aspect ratio should match the content.
     post_content_screen_background:
-      label: Desktop (3:2)
+      label: Desktop
     post_content_screen_background_mobile:
-      label: Mobile (1:1)
+      label: Mobile
     post_content_screen_video:
       label: Content End Screen Video
+      description: For best results, the aspect ratio should match the content
     post_content_screen_link:
       label: Link URL
     custom_domains:
