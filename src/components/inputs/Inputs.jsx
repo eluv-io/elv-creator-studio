@@ -544,6 +544,7 @@ const Password = observer(({
 // Checkbox
 const CheckboxInput = observer(({
   INVERTED=false,
+  value,
   store,
   objectId,
   path,
@@ -568,7 +569,7 @@ const CheckboxInput = observer(({
     }
   });
 
-  let value = !!store.GetMetadata({objectId, path, field});
+  value = typeof value !== "undefined" ? value : !!store.GetMetadata({objectId, path, field});
 
   return (
     <CheckboxCard

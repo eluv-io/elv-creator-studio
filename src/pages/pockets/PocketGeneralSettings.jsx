@@ -8,6 +8,7 @@ import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 
 import CountryCodesList from "country-codes-list";
+import {PocketPostContentScreenSettings} from "@/pages/pockets/PocketCommon.jsx";
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
 Object.keys(currencies).forEach(currencyCode => {
@@ -118,41 +119,10 @@ const PocketGeneralSettings = observer(() => {
         aspectRatio={1}
       />
 
-      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.post_content_screen}</Title>
-
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.general.post_content_screen_toggle}
-        path={UrlJoin(inputProps.path, "post_content_screen")}
-        subcategory={l10n.categories.post_content_screen_toggle}
-        field="enabled"
+      <PocketPostContentScreenSettings
+        info={info}
+        inputProps={inputProps}
       />
-
-      {
-        !info.post_content_screen?.enabled ? null :
-          <>
-            <Inputs.ImageInput
-              {...inputProps}
-              {...l10n.general.post_content_screen_images}
-              path={UrlJoin(inputProps.path, "post_content_screen")}
-              subcategory={l10n.categories.post_content_screen}
-              componentProps={{maw: uiStore.inputWidthWide}}
-              altTextField="background_alt"
-              fields={[
-                { field: "background", aspectRatio: 3/2, ...l10n.general.post_content_screen_background },
-                { field: "background_mobile", aspectRatio: 1, ...l10n.general.post_content_screen_background_mobile },
-              ]}
-            />
-
-            <Inputs.URL
-              {...inputProps}
-              {...l10n.general.post_content_screen_link}
-              path={UrlJoin(inputProps.path, "post_content_screen")}
-              subcategory={l10n.categories.post_content_screen}
-              field="link"
-            />
-          </>
-      }
 
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.meta_tags}</Title>
       <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>
@@ -206,6 +176,15 @@ const PocketGeneralSettings = observer(() => {
         fields={[
           { field: "favicon", url: true, aspectRatio: 1, baseSize: 25}
         ]}
+      />
+
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.custom_domains}</Title>
+      <Inputs.List
+        {...inputProps}
+        {...l10n.general.custom_domains}
+        subcategory={l10n.categories.custom_domains}
+        path="/public/asset_metadata/info"
+        field="custom_domains"
       />
 
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.analytics}</Title>

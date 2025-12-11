@@ -1,8 +1,9 @@
-import {flow, makeAutoObservable} from "mobx";
+import {flow, makeAutoObservable, toJS} from "mobx";
 import {AddActions} from "@/stores/helpers/Actions.js";
 import { PocketSpec } from "@/specs/PocketSpecs.js";
 import Clone from "lodash/clone";
 import {Slugify} from "@/components/common/Validation.jsx";
+import UrlJoin from "url-join";
 
 class PocketStore {
   allPockets;
@@ -308,12 +309,11 @@ class PocketStore {
     }
   });
 
-  /*
   BeforeDeploy = flow(function * ({objectId}) {
-    yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
+    yield this.LoadPocket({pocketId: objectId, force: true});
 
     let modified = false;
-    const catalogs = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalogs || [];
+    const catalogs = this.pockets[objectId].metadata.public.asset_metadata.info.media_catalogs || [];
 
     let catalogLinks = {};
     yield Promise.all(catalogs.map(async catalogId => {
@@ -325,7 +325,7 @@ class PocketStore {
     }));
 
     // Determine if any links changed
-    const oldCatalogLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
+    const oldCatalogLinks = this.pockets[objectId].metadata.public.asset_metadata.info.media_catalog_links || {};
 
     modified = JSON.stringify(Object.keys(catalogLinks).sort()) !== JSON.stringify(Object.keys(oldCatalogLinks).sort());
 
@@ -337,7 +337,7 @@ class PocketStore {
       });
     }
 
-    const permissionSets = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_sets || [];
+    const permissionSets = this.pockets[objectId].metadata.public.asset_metadata.info.permission_sets || [];
     let permissionSetLinks = {};
     yield Promise.all(permissionSets.map(async permissionSetId => {
       const permissionSetHash = await this.client.LatestVersionHash({objectId: permissionSetId});
@@ -348,7 +348,7 @@ class PocketStore {
     }));
 
     if(!modified) {
-      const oldPermissionSetLinks = this.mediaProperties[objectId].metadata.public.asset_metadata.info.permission_set_links || {};
+      const oldPermissionSetLinks = this.pockets[objectId].metadata.public.asset_metadata.info.permission_set_links || {};
 
       modified = JSON.stringify(Object.keys(permissionSetLinks).sort()) !== JSON.stringify(Object.keys(oldPermissionSetLinks).sort());
 
@@ -398,8 +398,6 @@ class PocketStore {
 
     return response.hash;
   });
-
-   */
 
   UpdateDatabaseRecord = flow(function * ({objectId}) {
     yield this.rootStore.databaseStore.SavePocket({pocketId: objectId});

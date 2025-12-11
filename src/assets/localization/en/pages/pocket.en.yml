@@ -12,6 +12,7 @@ form:
     branding: Branding
     post_content_screen: Content End Screen
     meta_tags: Search and Social Preview
+    custom_domains: Custom Domains
     analytics: Analytics
     media: Media
     media_item: Media Item
@@ -94,8 +95,14 @@ form:
       label: Desktop (3:2)
     post_content_screen_background_mobile:
       label: Mobile (1:1)
+    post_content_screen_video:
+      label: Content End Screen Video
     post_content_screen_link:
       label: Link URL
+    custom_domains:
+      label: Custom Domains
+      description: Specify any custom domains that this property will be available on
+      fieldLabel: Custom Domain
     meta_tags:
       meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
       site_name:
@@ -137,6 +144,9 @@ form:
     title:
       label: Title
       description: Optional if this is the only tab
+    sequential:
+      label: Sequential Content
+      description: If specified, content in this tab will automatically proceed to the next item when finished.
     groups:
       label: Content Groups
   sidebar_tab_groups:
@@ -147,6 +157,9 @@ form:
     title:
       label: Title
       description: Optional
+    sequential:
+      label: Sequential Content
+      description: If specified, content in this tab will automatically proceed to the next item when finished.
     type:
       label: Type
       description: Choose whether to select content manually, or have content be selected automatically based on specified parameters

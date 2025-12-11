@@ -14,6 +14,7 @@ import {
 } from "@/components/common/MediaCatalog.jsx";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
+import {PocketPostContentScreenSettings} from "@/pages/pockets/PocketCommon.jsx";
 
 const AutomaticSectionContentPreview = observer(({pocketId, tabId, groupId}) => {
   let content = pocketStore.GetAutomaticGroupContent({pocketId, tabId, groupId});
@@ -405,6 +406,14 @@ export const PocketSidebarContentTabGroup = observer(() => {
         field="title"
       />
 
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab_group.sequential}
+        value={tab.sequential}
+        disabled={tab.sequential}
+        field="sequential"
+      />
+
       <Inputs.Select
         {...inputProps}
         {...l10n.sidebar_tab_group.type}
@@ -488,6 +497,12 @@ const PocketSidebarContentTab = observer(() => {
         field="title"
       />
 
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab.sequential}
+        field="sequential"
+      />
+
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sidebar_tab_groups}
@@ -505,6 +520,12 @@ const PocketSidebarContentTab = observer(() => {
             field: "description"
           }
         ]}
+      />
+
+      <PocketPostContentScreenSettings
+        subtitle="Override settings for this tab"
+        info={tab}
+        inputProps={inputProps}
       />
     </PageContent>
   );

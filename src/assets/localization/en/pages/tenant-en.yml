@@ -57,6 +57,9 @@ form:
   mediaProperty:
     plural: Media Properties
     singular: Media Property
+  pocketProperty:
+    plural: Pocket TV Properties
+    singular: Pocket TV Property
   site:
     plural: Sites
     singular: Site
