@@ -231,6 +231,9 @@ form:
       fieldLabel: Offering
     date:
       label: Release Date
+    allow_download:
+      label: Allow Download
+      description: If specified, users will be able to download this content
     start_time:
       label: Start Time
       description: Scheduled start time of this live video
