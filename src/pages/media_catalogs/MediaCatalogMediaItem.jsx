@@ -259,6 +259,14 @@ const MediaConfiguration = observer(({mediaItem}) => {
                   field="live_video"
                 />
                 {
+                  mediaItem.live_video ? null :
+                    <Inputs.Checkbox
+                      {...inputProps}
+                      {...l10n.media.allow_download}
+                      field="allow_download"
+                    />
+                }
+                {
                   !mediaItem.live_video ? null :
                     <>
                       <Inputs.Date
