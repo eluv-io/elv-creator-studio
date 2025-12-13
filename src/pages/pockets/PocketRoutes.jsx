@@ -8,6 +8,7 @@ import PocketOverview from "@/pages/pockets/PocketOverview.jsx";
 import PocketGeneralSettings from "@/pages/pockets/PocketGeneralSettings.jsx";
 import PocketSidebarSettings from "@/pages/pockets/PocketSidebarSettings.jsx";
 import PocketSidebarContentTab, {PocketSidebarContentTabGroup} from "@/pages/pockets/PocketSidebarContentTab.jsx";
+import PocketThemeSettings from "@/pages/pockets/PocketThemeSettings.jsx";
 
 const PocketRoutes = observer(({rootPath}) => {
   const routes = [
@@ -16,6 +17,7 @@ const PocketRoutes = observer(({rootPath}) => {
     { navRoute: true, label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/pocket/:pocketId/sidebar", Component: <PocketSidebarSettings /> },
     { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/pocket/:pocketId/sidebar/:tabId/:groupId", Component: <PocketSidebarContentTabGroup /> },
     { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/pocket/:pocketId/sidebar/:tabId", Component: <PocketSidebarContentTab /> },
+    { navRoute: true, label: rootStore.l10n.pages.pocket.nav.theme, path: "/pocket/:pocketId/them", Component: <PocketThemeSettings /> },
   ]
     .map(route => ({
       ...route,

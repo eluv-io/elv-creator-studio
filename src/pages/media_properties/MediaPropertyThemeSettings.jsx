@@ -34,6 +34,7 @@ const MediaPropertyThemeSettings = observer(() => {
       <ColorOptions
         {...inputProps}
         {...l10n.theme.button_style}
+        info={info?.styling?.button_style || {}}
         subcategory={l10n.categories.theme}
         path="/public/asset_metadata/info/styling"
         field="button_style"

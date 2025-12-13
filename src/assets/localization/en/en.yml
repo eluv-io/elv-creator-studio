@@ -118,6 +118,28 @@ components:
       permission_set: Permission Set
   localization_modal:
     title: Select Localization
+  button_config:
+    background_color:
+      label: Background Color
+    background_color_2:
+      label: Background Color 2
+    background_type:
+      label: Background Type
+    background_gradient_angle:
+      label: Background Gradient Angle
+    text_color:
+      label: Text Color
+    border_color:
+      label: Border Color
+    border_width:
+      label: Border Width (px)
+    border_radius:
+      label: Border Radius (px)
+    text:
+      label: Button Text
+    icon:
+      label: Button Icon
+
 
 stores:
   initialization:

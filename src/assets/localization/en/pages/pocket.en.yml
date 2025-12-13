@@ -2,6 +2,7 @@ nav:
   list: Pocket TV Properties
   overview: Overview
   general: General Settings
+  theme: Theme and Styling
   media: Media
   sidebar: Sidebar Settings
 form:
@@ -9,6 +10,7 @@ form:
     pockets: Pocket TV Properties
     pocket: Pocket TV Property
     general: General Settings
+    theme: Theme Settings
     branding: Branding
     post_content_screen: Content End Screen
     meta_tags: Search and Social Preview
@@ -228,3 +230,16 @@ form:
       description: Select the media this banner will link to
     link:
       label: Link URL
+  theme:
+    font:
+      label: Font
+    custom_font_definition:
+      label: Custom Font Definition
+      description: "Specify the CSS @font-face definition for your custom font, if applicable. Font files may be uploaded to this property and referenced by selecting 'copy link' in the file browser"
+    custom_font_declaration:
+      label: Custom Font Declaration
+      description: CSS font-family declaration for your custom font
+    button_style:
+      label: Button Style
+      description: Customize the look of buttons in your property
+

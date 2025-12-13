@@ -462,19 +462,6 @@ form:
     filter_style:
       label: Filter Button Style
       description: Specify the border style of filter buttons for the 'box' filter variant
-    colors:
-      background_color:
-        label: Background Color
-      text_color:
-        label: Text Color
-      border_color:
-        label: Border Color
-    border_radius:
-      label: Border Radius (px)
-    text:
-      label: Button Text
-    icon:
-      label: Button Icon
   purchase_settings:
     purchase_background_tv:
       label: Purchase Page Background (TV)
