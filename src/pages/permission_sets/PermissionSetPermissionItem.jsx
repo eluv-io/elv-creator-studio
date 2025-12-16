@@ -115,25 +115,35 @@ const PermissionSetPermissionItem = observer(() => {
       />
       <Inputs.Text
         {...inputProps}
-        {...l10n.permission_item.display.access_title}
-        subcategory={l10n.categories.permission_item_display}
-        field="access_title"
-      />
-
-      <Inputs.Text
-        {...inputProps}
         {...l10n.permission_item.display.subtitle}
         localizable
         subcategory={l10n.categories.permission_item_display}
         field="subtitle"
       />
-
       <Inputs.TextArea
         {...inputProps}
         {...l10n.permission_item.display.description}
         localizable
         subcategory={l10n.categories.permission_item_display}
         field="description"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.permission_item.display.access_title}
+        subcategory={l10n.categories.permission_item_display}
+        field="access_title"
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.permission_item.display.access_title_background_color}
+        subcategory={l10n.categories.permission_item_display}
+        field="access_title_background_color"
+      />
+      <Inputs.Color
+        {...inputProps}
+        {...l10n.permission_item.display.access_title_text_color}
+        subcategory={l10n.categories.permission_item_display}
+        field="access_title_text_color"
       />
     </PageContent>
   );

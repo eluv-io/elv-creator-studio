@@ -91,6 +91,8 @@ form:
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
+    support_link:
+      label: Custom Support Link
     post_content_screen_images:
       label: Content End Screen Images
     post_content_screen_toggle:

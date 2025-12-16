@@ -89,3 +89,7 @@ form:
       access_title:
         label: Access Title
         description: A title for this access level
+      access_title_background_color:
+        label: Access Title Badge Background Color
+      access_title_text_color:
+        label: Access Title Badge Text Color

@@ -86,6 +86,12 @@ const PocketGeneralSettings = observer(() => {
         field="preview_password_digest"
       />
 
+      <Inputs.URL
+        {...inputProps}
+        {...l10n.general.support_link}
+        field="support_link"
+      />
+
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.branding}</Title>
 
       <Inputs.ImageInput
