@@ -8,7 +8,7 @@ import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 
 import CountryCodesList from "country-codes-list";
-import {PocketPostContentScreenSettings} from "@/pages/pockets/PocketCommon.jsx";
+import {PocketBumpers} from "@/pages/pockets/PocketCommon.jsx";
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
 Object.keys(currencies).forEach(currencyCode => {
@@ -94,6 +94,20 @@ const PocketGeneralSettings = observer(() => {
 
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.branding}</Title>
 
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.app_name}
+        placeholder="Pocket TV"
+        field="app_name"
+      />
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.general.receipt_name}
+        placeholder="Pocket TV"
+        field="receipt_name"
+      />
+
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.general.header_logo}
@@ -131,10 +145,8 @@ const PocketGeneralSettings = observer(() => {
         aspectRatio={1}
       />
 
-      <PocketPostContentScreenSettings
-        info={info}
-        inputProps={inputProps}
-      />
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.bumpers}</Title>
+      <PocketBumpers inputProps={inputProps} />
 
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.meta_tags}</Title>
       <Title order={6} fw={500} color="dimmed" maw={uiStore.inputWidth} mb="md">{l10n.general.meta_tags.meta_tags_description}</Title>

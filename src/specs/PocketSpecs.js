@@ -24,7 +24,21 @@ export const PocketSidebarTabSpec = {
   label: "<New Content Tab>",
   description: "",
   title: "",
-  groups: []
+  groups: [],
+  override_bumpers: false,
+  bumpers: []
+};
+
+export const PocketBumperSpec = {
+  id: undefined,
+  label: "<New Content Bumper>",
+  description: "",
+  position: "before",
+  duration: 8,
+  background: undefined,
+  background_mobile: undefined,
+  video: undefined,
+  link: ""
 };
 
 export const PocketSpec = {
@@ -35,12 +49,7 @@ export const PocketSpec = {
   image: undefined,
   media_catalogs: [],
   permission_sets: [],
-  post_content_screen: {
-    enabled: false,
-    background: undefined,
-    background_mobile: undefined,
-    link: ""
-  },
+  bumpers: [],
   sidebar_config: {
     banners: [],
     tabs: [

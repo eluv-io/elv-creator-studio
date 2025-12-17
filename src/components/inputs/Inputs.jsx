@@ -58,7 +58,9 @@ import {
   IconPlayerPlay,
   IconLink,
   IconUnlink,
-  IconCopy
+  IconCopy,
+  IconCaretDownFilled,
+  IconCaretUpFilled
 } from "@tabler/icons-react";
 import {DataTable} from "mantine-datatable";
 
@@ -1669,6 +1671,7 @@ const List = observer(({
 }) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+  const [hidden, setHidden] = useState(false);
 
   const disabled = rootStore.localizing;
 
@@ -1700,7 +1703,7 @@ const List = observer(({
     subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
   }
 
-  const items = values.map((value, index) => {
+  let items = values.map((value, index) => {
     const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
 
     if(
@@ -1791,7 +1794,7 @@ const List = observer(({
     );
   });
 
-  const addButton = (
+  let addButton = (
     <IconButton
       disabled={disabled}
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
@@ -1818,6 +1821,12 @@ const List = observer(({
   );
 
   showBottomAddButton = showBottomAddButton || items.length >= 5;
+
+  let numberOfItems = items.length;
+  if(hidden) {
+    items = [];
+    addButton = null;
+  }
 
   return (
     <>
@@ -1870,6 +1879,16 @@ const List = observer(({
             </Droppable>
           </DragDropContext>
           <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+            {
+              numberOfItems === 0 ? null :
+                <IconButton
+                  color={hidden ? "purple.6" : "gray.6"}
+                  disabled={disabled}
+                  label={hidden ? "Show" : "Hide"}
+                  Icon={hidden ? IconCaretDownFilled : IconCaretUpFilled}
+                  onClick={() => setHidden(!hidden)}
+                />
+            }
             {addButton}
           </Group>
           {
@@ -1877,6 +1896,10 @@ const List = observer(({
               <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
                 {addButton}
               </Group>
+          }
+          {
+            !hidden || numberOfItems === 0 ? null :
+            <Text fz={12} mt={20} color="gray.6">{numberOfItems} hidden</Text>
           }
         </Container>
       </InputWrapper>

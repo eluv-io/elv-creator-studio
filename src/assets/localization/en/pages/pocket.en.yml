@@ -12,7 +12,7 @@ form:
     general: General Settings
     theme: Theme Settings
     branding: Branding
-    post_content_screen: Content End Screen
+    bumpers: Bumpers
     meta_tags: Search and Social Preview
     custom_domains: Custom Domains
     analytics: Analytics
@@ -53,6 +53,12 @@ form:
       label: URL Slug
       description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
   general:
+    app_name:
+      label: App Name
+      description: Specify the name to refer to the app by within this property
+    receipt_name:
+      label: Receipt Title
+      description: Specify the item title to appear in the purchase receipt
     slug:
       label: Property Slug
       description: "Warning: This value should not be changed after deployment as it will invalidate existing URLs to this property"
@@ -93,20 +99,6 @@ form:
       description: Specify a password to protect access to your property in the staging environment
     support_link:
       label: Custom Support Link
-    post_content_screen_images:
-      label: Content End Screen Images
-    post_content_screen_toggle:
-      label: Show Content End Screen
-      description: Specify an image and link to show after the content has ended. For best results, the aspect ratio should match the content.
-    post_content_screen_background:
-      label: Desktop
-    post_content_screen_background_mobile:
-      label: Mobile
-    post_content_screen_video:
-      label: Content End Screen Video
-      description: For best results, the aspect ratio should match the content
-    post_content_screen_link:
-      label: Link URL
     custom_domains:
       label: Custom Domains
       description: Specify any custom domains that this property will be available on
@@ -144,6 +136,32 @@ form:
         label: Facebook Event Id
       twitter_event_id:
         label: X Pixel ID
+  bumpers:
+    bumpers:
+      label: Bumpers
+      fieldLabel: Bumper
+      description: Specify bumper videos or images to be shown before or after video content
+    position:
+      label: Position
+      description: Specify if this bumper should be displayed before or after the content
+    free_only:
+      label: Show on Free Content Only
+      description: If specified, this bumper will only be shown on content that is accessible without purchase
+    images:
+      label: Images
+    duration:
+      label: Display Duration (Seconds)
+      description: (For image bumpers only) - Specify how long this bumper should be displayed before moving on
+    background:
+      label: Desktop
+    background_mobile:
+      label: Mobile
+    video:
+      label: Video
+      description: For best results, the aspect ratio should match the content
+    link:
+      label: Link URL
+
   sidebar_tabs:
     label: Sidebar Tabs
     description: Define tabbed content lists to display in the side bar
@@ -157,6 +175,10 @@ form:
       description: If specified, content in this tab will automatically proceed to the next item when finished.
     groups:
       label: Content Groups
+    override_bumpers:
+      label: Override Bumper Configuration
+      description: If checked, you can change the bumper settings for content within this tab
+
   sidebar_tab_groups:
     label: Content Groups
     description: Define groups of content to display within this tab

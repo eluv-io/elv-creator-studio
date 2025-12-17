@@ -14,7 +14,7 @@ import {
 } from "@/components/common/MediaCatalog.jsx";
 import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {IconExternalLink} from "@tabler/icons-react";
-import {PocketPostContentScreenSettings} from "@/pages/pockets/PocketCommon.jsx";
+import {PocketBumpers} from "@/pages/pockets/PocketCommon.jsx";
 
 const AutomaticSectionContentPreview = observer(({pocketId, tabId, groupId}) => {
   let content = pocketStore.GetAutomaticGroupContent({pocketId, tabId, groupId});
@@ -522,11 +522,18 @@ const PocketSidebarContentTab = observer(() => {
         ]}
       />
 
-      <PocketPostContentScreenSettings
-        subtitle="Override settings for this tab"
-        info={tab}
-        inputProps={inputProps}
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.bumpers}</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab.override_bumpers}
+        field="override_bumpers"
       />
+
+      {
+        !tab.override_bumpers ? null :
+          <PocketBumpers inputProps={inputProps} />
+      }
     </PageContent>
   );
 });
