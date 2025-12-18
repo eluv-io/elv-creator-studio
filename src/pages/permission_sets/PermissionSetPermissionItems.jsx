@@ -60,35 +60,33 @@ const CreatePermissionSetItemForm = ({Create}) => {
           {...l10n.permission_items.create.label}
           {...form.getInputProps("label")}
         />
+        <Select
+          withinPortal
+          mb="md"
+          {...l10n.permission_items.create.marketplace}
+          {...form.getInputProps("marketplace_id")}
+          data={marketplaces.map(marketplace => ({label: marketplace.brandedName || marketplace.name, value: marketplace.objectId}))}
+        />
         {
           form.values.type !== "owned_item" ? null :
-            <>
-              <Select
-                withinPortal
-                mb="md"
-                {...l10n.permission_items.create.marketplace}
-                {...form.getInputProps("marketplace_id")}
-                data={marketplaces.map(marketplace => ({label: marketplace.brandedName || marketplace.name, value: marketplace.objectId}))}
-              />
-              <MarketplaceItemSelect
-                key={form.values.marketplaceId}
-                marketplaceId={form.values.marketplace_id}
-                useBasicInput
-                componentProps={{
-                  withBorder: false,
-                  p: 0,
-                  pt: 0,
-                  pb: 0,
-                  mb:0
-                }}
-                inputProps={{
-                  withinPortal: true,
-                  mb: form.values.marketplace_sku ? "xs" : 0,
-                  ...l10n.permission_items.create.marketplace_sku,
-                  ...form.getInputProps("marketplace_sku")
-                }}
-              />
-            </>
+            <MarketplaceItemSelect
+              key={form.values.marketplaceId}
+              marketplaceId={form.values.marketplace_id}
+              useBasicInput
+              componentProps={{
+                withBorder: false,
+                p: 0,
+                pt: 0,
+                pb: 0,
+                mb:0
+              }}
+              inputProps={{
+                withinPortal: true,
+                mb: form.values.marketplace_sku ? "xs" : 0,
+                ...l10n.permission_items.create.marketplace_sku,
+                ...form.getInputProps("marketplace_sku")
+              }}
+            />
         }
         <Group mt="md">
           <Button

@@ -14,20 +14,26 @@ const PermissionSetPermissionItem = observer(() => {
   const { permissionSetId, permissionItemId } = useParams();
 
   const permissionSet = permissionSetStore.permissionSets[permissionSetId];
+  const info = permissionSet?.metadata?.public?.asset_metadata?.info || {};
 
+  const permissionItem = info?.permission_items?.[permissionItemId];
   useEffect(() => {
     marketplaceStore.LoadMarketplaces();
   }, []);
 
-  if(!permissionSet) { return null; }
+  useEffect(() => {
+    if(!permissionItem?.marketplace_id) {
+      return;
+    }
 
-  const info = permissionSet?.metadata?.public?.asset_metadata?.info || {};
+    marketplaceStore.LoadMarketplace({marketplaceId: permissionItem.marketplace_id});
+  }, [permissionItem.marketplace_id]);
 
-  const permissionItem = info.permission_items[permissionItemId];
-
-  if(!permissionItem) {
+  if(!permissionItem || !permissionItem) {
     return "Permission Item Not Found";
   }
+
+  const marketplace = marketplaceStore.marketplaces[permissionItem?.marketplace_id];
 
   const l10n = rootStore.l10n.pages.permission_set.form;
   const inputProps = {
@@ -65,19 +71,19 @@ const PermissionSetPermissionItem = observer(() => {
         {...l10n.permission_item.label}
         field="label"
       />
-
+      <MarketplaceSelect
+        disabled={permissionItem.type !== "external"}
+        {...inputProps}
+        {...l10n.permission_item.marketplace}
+        subcategory={l10n.categories.purchase_item}
+        path={UrlJoin(inputProps.path, "marketplace")}
+        field="marketplace_slug"
+        defaultFirst
+      />
       {
         permissionItem.type !== "owned_item" ? null :
           <>
-            <MarketplaceSelect
-              disabled
-              {...inputProps}
-              {...l10n.permission_item.marketplace}
-              subcategory={l10n.categories.purchase_item}
-              path={UrlJoin(inputProps.path, "marketplace")}
-              field="marketplace_slug"
-              defaultFirst
-            />
+
             <MarketplaceItemSelect
               disabled
               {...inputProps}
@@ -113,14 +119,32 @@ const PermissionSetPermissionItem = observer(() => {
 
       {
         permissionItem.type !== "external" ? null :
-          <Inputs.URL
-            {...inputProps}
-            {...l10n.permission_item.link}
-            defaultValue={false}
-            field="link"
-          />
+          <>
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.permission_item.link}
+              defaultValue={false}
+              field="link"
+            />
+            <Inputs.Price
+              {...inputProps}
+              {...l10n.permission_item.price}
+              path={UrlJoin(inputProps.path, "price")}
+              field="USD"
+            />
+            {
+              (marketplace?.currencies || []).map(currencyCode =>
+                <Inputs.Price
+                  key={`price-${currencyCode}`}
+                  {...inputProps}
+                  label={LocalizeString(l10n.permission_item.price_currency.label, {currencyCode})}
+                  path={UrlJoin(inputProps.path, "price")}
+                  field={currencyCode}
+                />
+              )
+            }
+          </>
       }
-
 
       <Inputs.Integer
         {...inputProps}
