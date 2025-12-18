@@ -46,6 +46,11 @@ export const PocketBumpers = observer(({inputProps}) => {
               {...props}
               {...l10n.bumpers.video}
               field="video"
+              fabricBrowserProps={{
+                video: true,
+                allowCompositions: true,
+                allowClips: true
+              }}
               previewable
               previewOptions={{
                 controls: false,

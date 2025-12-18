@@ -75,6 +75,8 @@ form:
     subsumes:
       label: Subsumes
       description: Select other permission items that this item subsumes, e.g. an all-access pass subsuming a single item pass. Subsumed items will not be offered if the user owns this item.
+    link:
+      label: Link
     display:
       title:
         label: Display Title

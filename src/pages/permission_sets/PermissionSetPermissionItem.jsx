@@ -50,36 +50,77 @@ const PermissionSetPermissionItem = observer(() => {
         field="id"
         disabled
       />
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.permission_items.create.type}
+        field="type"
+        disabled
+        options={[
+          {label: "Owned Item", value: "owned_item"},
+          {label: "External Offer", value: "external"}
+        ]}
+      />
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.label}
         field="label"
       />
-      <MarketplaceSelect
-        disabled
-        {...inputProps}
-        {...l10n.permission_item.marketplace}
-        subcategory={l10n.categories.purchase_item}
-        path={UrlJoin(inputProps.path, "marketplace")}
-        field="marketplace_slug"
-        defaultFirst
-      />
-      <MarketplaceItemSelect
-        disabled
-        {...inputProps}
-        {...l10n.permission_item.marketplace_sku}
-        subcategory={l10n.categories.purchase_item}
-        marketplaceId={permissionItem.marketplace?.marketplace_id}
-        field="marketplace_sku"
-      />
 
-      { /* TODO: Remove when fabric policy supports this */ }
-      <Inputs.Checkbox
-        {...inputProps}
-        {...l10n.permission_item.dvr}
-        defaultValue={false}
-        field="dvr"
-      />
+      {
+        permissionItem.type !== "owned_item" ? null :
+          <>
+            <MarketplaceSelect
+              disabled
+              {...inputProps}
+              {...l10n.permission_item.marketplace}
+              subcategory={l10n.categories.purchase_item}
+              path={UrlJoin(inputProps.path, "marketplace")}
+              field="marketplace_slug"
+              defaultFirst
+            />
+            <MarketplaceItemSelect
+              disabled
+              {...inputProps}
+              {...l10n.permission_item.marketplace_sku}
+              subcategory={l10n.categories.purchase_item}
+              marketplaceId={permissionItem.marketplace?.marketplace_id}
+              field="marketplace_sku"
+            />
+
+            <Inputs.MultiSelect
+              {...inputProps}
+              {...l10n.permission_item.subsumes}
+              field="subsumes"
+              options={
+                Object.keys(info.permission_items)
+                  .filter(id => id !== permissionItemId)
+                  .map(id => ({
+                    label: info.permission_items[id].label || id,
+                    value: id
+                  }))
+              }
+            />
+
+            { /* TODO: Remove when fabric policy supports this */ }
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.permission_item.dvr}
+              defaultValue={false}
+              field="dvr"
+            />
+          </>
+      }
+
+      {
+        permissionItem.type !== "external" ? null :
+          <Inputs.URL
+            {...inputProps}
+            {...l10n.permission_item.link}
+            defaultValue={false}
+            field="link"
+          />
+      }
+
 
       <Inputs.Integer
         {...inputProps}
@@ -87,20 +128,6 @@ const PermissionSetPermissionItem = observer(() => {
         min={0}
         defaultValue={false}
         field="priority"
-      />
-
-      <Inputs.MultiSelect
-        {...inputProps}
-        {...l10n.permission_item.subsumes}
-        field="subsumes"
-        options={
-          Object.keys(info.permission_items)
-            .filter(id => id !== permissionItemId)
-            .map(id => ({
-              label: info.permission_items[id].label || id,
-              value: id
-            }))
-        }
       />
 
       <Title mt={50} order={3}>{ l10n.categories.permission_item_display }</Title>

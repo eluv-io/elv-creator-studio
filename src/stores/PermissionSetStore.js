@@ -11,7 +11,8 @@ class PermissionSetStore {
   permissionSets = {};
 
   ID_PREFIXES = {
-    "permission_item_owned": "prmo",
+    "permission_item_owned_item": "prmo",
+    "permission_item_external": "prme",
   };
 
   constructor(rootStore) {
@@ -110,21 +111,23 @@ class PermissionSetStore {
     return objectId;
   });
 
-  CreatePermissionItem({page, permissionSetId, label, marketplaceId, marketplaceSKU}) {
-    let id = `${this.ID_PREFIXES["permission_item_owned"]}${GenerateUUID()}`;
+  CreatePermissionItem({page, type, permissionSetId, label, marketplaceId, marketplaceSKU}) {
+    let id = `${this.ID_PREFIXES[`permission_item_${type}`]}${GenerateUUID()}`;
 
     const spec = Clone(PermissionItemOwnedSpec);
     spec.id = id;
     spec.label = label || spec.label;
+    spec.type = type;
 
-    const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
-    spec.marketplace = {
-      marketplace_id: marketplaceId,
-      tenant_slug: marketplace.tenantSlug,
-      marketplace_slug: marketplace.marketplaceSlug
-    };
-    spec.marketplace_sku = marketplaceSKU;
-
+    if(type === "owned_item") {
+      const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === marketplaceId);
+      spec.marketplace = {
+        marketplace_id: marketplaceId,
+        tenant_slug: marketplace.tenantSlug,
+        marketplace_slug: marketplace.marketplaceSlug
+      };
+      spec.marketplace_sku = marketplaceSKU;
+    }
     this.AddField({
       objectId: permissionSetId,
       page,

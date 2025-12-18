@@ -34,7 +34,7 @@ export const PocketBumperSpec = {
   label: "<New Content Bumper>",
   description: "",
   position: "before",
-  duration: 8,
+  duration: 5,
   background: undefined,
   background_mobile: undefined,
   video: undefined,
