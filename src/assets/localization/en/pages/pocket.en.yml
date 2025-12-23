@@ -10,6 +10,7 @@ form:
     pockets: Pocket TV Properties
     pocket: Pocket TV Property
     general: General Settings
+    faq: FAQ
     theme: Theme Settings
     branding: Branding
     bumpers: Bumpers
@@ -104,7 +105,7 @@ form:
       description: Specify any custom domains that this property will be available on
       fieldLabel: Custom Domain
     meta_tags:
-      meta_tags_description: "This information will be used to populate search results and social media link previews for your site. Note: Changes to these values may take up to one minute after deploying your property before they are available."
+      meta_tags_description: "This information will be used to populate search results and social media link previews for your site"
       site_name:
         label: Site Name
       title:
@@ -136,11 +137,55 @@ form:
         label: Facebook Event Id
       twitter_event_id:
         label: X Pixel ID
+    faq:
+      faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      slug:
+        label: Page Slug
+        description: This page will be available at <your property url>/faq/<slug>
+      header_image:
+        label: Header Image
+      header_image_mobile:
+        label: Header Image (Mobile)
+      background_color:
+        label: Page Background Color
+      header_text_color:
+        label: Header Text Color
+        description: Set the text color for question text and header fields within your FAQ
+      video:
+        label: Video
+        description: Display a video at the top of your answer
+      images:
+        label: Images
+        description: Display images at the top of your answer
+        fieldLabel: Image
+      image:
+        label: Image
+      image_desktop:
+        label: Image (Desktop)
+      image_mobile:
+        label: Image (Mobile)
+      image_position:
+        label: Position
+      image_link:
+        label: Image Link
+      title:
+        label: Title
+      description:
+        label: Description
+      questions:
+        label: Questions
+        fieldLabel: Question
+      question:
+        label: Question
+      answer:
+        label: Answer
+      additional_pages:
+        label: Additional Pages
   bumpers:
+    bumpers_description: Specify bumper videos or images to be shown before or after video content
     bumpers:
       label: Bumpers
       fieldLabel: Bumper
-      description: Specify bumper videos or images to be shown before or after video content
     position:
       label: Position
       description: Specify if this bumper should be displayed before or after the content
