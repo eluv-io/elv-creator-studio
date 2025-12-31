@@ -268,6 +268,13 @@ const PocketGeneralSettings = observer(() => {
               field="qr_code_logo"
               aspectRatio={1}
             />
+
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.general.payment_message}
+              subcategory={l10n.categories.branding}
+              field="payment_message"
+            />
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="bumpers">

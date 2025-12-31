@@ -92,6 +92,9 @@ form:
     qr_code_logo:
       label: QR Code Logo
       description: This logo will be displayed in the center of QR codes
+    payment_message:
+      label: Payment Message
+      description: This message will be displayed above the payment button
     media_catalogs:
       label: Media Catalogs
       description: Media from these catalogs will be available in this property
