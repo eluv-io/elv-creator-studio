@@ -603,26 +603,3 @@ form:
     items:
       label: Votable Items
 
-
-  analytics:
-    analytics_collections:
-      label: Analytics Collections
-      fieldLabel: Analytics Collection
-    collection_label:
-      label: Collection Label
-    analytics_ids:
-      label: Analytics IDs
-      fieldLabel: Analytics ID
-    analytics_type:
-      label: Analytics Type
-    id:
-      label: ID
-    google_conversion_label:
-      label: Google Conversion Label
-    google_conversion_id:
-      label: Google Conversion ID
-    facebook_event_id:
-      label: Facebook Event Id
-    twitter_event_id:
-      label: Twitter Event ID
-
