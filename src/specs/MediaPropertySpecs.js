@@ -308,6 +308,36 @@ export const MediaPropertyPageSpec = {
   }
 };
 
+export const MediaPropertySidebarTabGroupSpec = {
+  id: undefined,
+  label: "<New Content Group>",
+  description: "",
+  title: "",
+  type: "manual",
+  section_id: "",
+  content: [],
+  select: {
+    media_catalog: "",
+    content_type: "",
+    media_types: [],
+    attributes: [],
+    attribute_values: {},
+    date: undefined,
+    schedule: "", // live, upcoming, past, time_range
+    start_time: undefined,
+    end_time: undefined,
+    sort: "start_time"
+  }
+};
+
+export const MediaPropertySidebarTabSpec = {
+  id: undefined,
+  label: "<New Content Tab>",
+  description: "",
+  title: "",
+  groups: []
+};
+
 export const MediaPropertySubpropertySpec = {
   property_id: undefined,
   title: "",
@@ -334,10 +364,7 @@ export const MediaPropertySpec = {
   },
   sections: {},
   media_sidebar: {
-    show_media_sidebar: false,
-    sidebar_content: "current_section",
-    default_sidebar_content: "none",
-    default_sidebar_content_section_id: ""
+    tabs: []
   },
   meta_tags: {
     site_name: "",

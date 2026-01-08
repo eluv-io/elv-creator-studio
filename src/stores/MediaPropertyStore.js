@@ -206,22 +206,28 @@ class MediaPropertyStore {
     );
   }
 
-  GetAutomaticSectionContent({mediaPropertyId, sectionId}) {
+  GetAutomaticSectionContent({mediaPropertyId, sectionId, select={}}) {
     const mediaProperty = this.mediaProperties[mediaPropertyId]?.metadata.public.asset_metadata.info;
 
     if(!mediaProperty) { return []; }
 
-    const section = mediaProperty.sections[sectionId];
+    if(sectionId) {
+      const section = mediaProperty.sections[sectionId];
 
-    if(!section) { return []; }
+      if(section) {
+        select = section.select;
+      }
+    }
 
-    let catalogIds = section.select.media_catalog ?
-      [ section.select.media_catalog ] :
+    if(!select) { return []; }
+
+    let catalogIds = select.media_catalog ?
+      [ select.media_catalog ] :
       mediaProperty.media_catalogs || [];
-
+    
     return (
       catalogIds.map(mediaCatalogId =>
-        this.rootStore.mediaCatalogStore.GetFilteredContent({mediaCatalogId, select: section.select})
+        this.rootStore.mediaCatalogStore.GetFilteredContent({mediaCatalogId, select})
       )
         .flat()
         .sort((a, b) => {
@@ -244,7 +250,7 @@ class MediaPropertyStore {
             timeComparison = 1;
           }
 
-          switch(section.select.sort_order) {
+          switch(select.sort_order) {
             case "title_asc":
               return titleComparison;
             case "title_desc":

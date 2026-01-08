@@ -7,6 +7,7 @@ import ItemTemplateRoutes from "@/pages/item_templates/ItemTemplateRoutes.jsx";
 import MediaCatalogRoutes from "@/pages/media_catalogs/MediaCatalogRoutes.jsx";
 import MediaPropertyRoutes from "@/pages/media_properties/MediaPropertyRoutes.jsx";
 import PermissionSetRoutes from "@/pages/permission_sets/PermissionSetRoutes.jsx";
+import PocketRoutes from "@/pages/pockets/PocketRoutes.jsx";
 
 const AppRoutes = observer(() => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = observer(() => {
       <ItemTemplateRoutes rootPath="/item-templates/" />
       <MediaCatalogRoutes rootPath="/media-catalogs/" />
       <MediaPropertyRoutes rootPath="/media-properties/" />
+      <PocketRoutes rootPath="/pocket/" />
       <PermissionSetRoutes rootPath="/permission-sets/" />
       <Routes>
         <Route path="/" element={<Navigate to="/tenant" replace />} />

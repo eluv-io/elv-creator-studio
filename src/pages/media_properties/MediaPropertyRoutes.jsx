@@ -16,6 +16,10 @@ import MediaPropertySectionHeroItem, {
   MediaPropertySectionHeroItemAction
 } from "@/pages/media_properties/MediaPropertySectionHeroItem.jsx";
 import MediaPropertyThemeSettings from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
+import MediaPropertySidebarSettings, {
+  MediaPropertyContentTabGroup,
+  MediaPropertySidebarContentTab
+} from "@/pages/media_properties/MediaPropertySidebar.jsx";
 
 const MediaPropertyRoutes = observer(({rootPath}) => {
   const routes = [
@@ -29,6 +33,9 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId/hero_items/:heroItemId", Component: <MediaPropertySectionHeroItem /> },
     { label: rootStore.l10n.pages.media_property.nav.section, path: "/media-properties/:mediaPropertyId/sections/:sectionId/hero_items/:heroItemId/actions/:actionId", Component: <MediaPropertySectionHeroItemAction /> },
     { label: rootStore.l10n.pages.media_property.nav.section_item, path: "/media-properties/:mediaPropertyId/sections/:sectionId/content/:sectionItemId", Component: <MediaPropertySectionItem /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_property.nav.sidebar, path: "/media-properties/:mediaPropertyId/sidebar", Component: <MediaPropertySidebarSettings /> },
+    { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/media-properties/:mediaPropertyId/sidebar/:tabId/:groupId", Component: <MediaPropertyContentTabGroup /> },
+    { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/media-properties/:mediaPropertyId/sidebar/:tabId", Component: <MediaPropertySidebarContentTab /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.theme, path: "/media-properties/:mediaPropertyId/theme", Component: <MediaPropertyThemeSettings /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.domain, path: "/media-properties/:mediaPropertyId/domain", Component: <MediaPropertyDomainSettings /> },
   ]

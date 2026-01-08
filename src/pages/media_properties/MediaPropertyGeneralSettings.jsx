@@ -633,16 +633,6 @@ const MediaPropertyGeneralSettings = observer(() => {
               ]}
             />
 
-
-            <Inputs.FabricBrowser
-              {...inputProps}
-              {...l10n.general.video}
-              subcategory={l10n.categories.main_page_display}
-              field="video"
-              previewable
-              previewIsAnimation
-            />
-
             <Inputs.Checkbox
               {...inputProps}
               {...l10n.general.show_on_main_page}
@@ -912,7 +902,6 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Title mt={5} order={6} fw={500} color="dimmed" maw={uiStore.inputWidth}>{l10n.general.meta_tags.meta_tags_description}</Title>
           </Accordion.Control>
           <Accordion.Panel>
-            <Title mt={5} order={6} fw={500} color="dimmed" maw={uiStore.inputWidth}>{l10n.general.meta_tags.meta_tags_description}</Title>
             <Inputs.Text
               {...inputProps}
               {...l10n.general.meta_tags.site_name}

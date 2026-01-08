@@ -81,7 +81,7 @@ class MediaCatalogStore {
       // Only videos can be filtered by schedule
       if(
         select.content_type === "media" &&
-        (select.media_types.length === 0 || (select.media_types.length === 1 && select.media_types[0] === "Video")) &&
+        (select.media_types?.length === 0 || (select.media_types?.length === 1 && select.media_types?.[0] === "Video")) &&
         select.schedule
       ) {
         const now = new Date();
@@ -129,7 +129,7 @@ class MediaCatalogStore {
         );
       }
 
-      select.attributes.forEach(attributeId => {
+      select.attributes?.forEach(attributeId => {
         content = content.filter(mediaItem =>
           mediaItem.attributes?.[attributeId]?.includes(select.attribute_values[attributeId])
         );
@@ -569,6 +569,34 @@ class MediaCatalogStore {
             })
         );
       }
+    });
+  });
+
+  Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
+    let mediaCatalog = yield this.client.ContentObjectMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info"
+    });
+
+    let slugMap = {};
+    ["media", "media_lists", "media_collections"].forEach(type => {
+      Object.keys(mediaCatalog?.[type] || {}).forEach(itemId => {
+        const item = mediaCatalog[type][itemId];
+
+        if(item.slug) {
+          slugMap[item.slug] = itemId;
+        }
+      });
+    });
+
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/slug_map",
+      metadata: slugMap
     });
   });
 

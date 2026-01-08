@@ -1,0 +1,317 @@
+nav:
+  list: Pocket TV Properties
+  overview: Overview
+  general: General Settings
+  theme: Theme and Styling
+  media: Media
+  sidebar: Sidebar Settings
+form:
+  categories:
+    pockets: Pocket TV Properties
+    pocket: Pocket TV Property
+    general: General Settings
+    faq: FAQ
+    theme: Theme Settings
+    branding: Branding
+    bumpers: Bumpers
+    meta_tags: Search and Social Preview
+    custom_domains: Custom Domains
+    analytics: Analytics
+    media: Media
+    media_item: Media Item
+    media_item_label: Media Item `{label}`
+    display: Display Settings
+    tags: Tags
+    sidebar: Sidebar Settings
+    sidebar_banners: Sidebar Banners
+    sidebar_content: Sidebar Content
+    sidebar_tab: Sidebar Tab
+    sidebar_tab_label: Sidebar Tab '{label}'
+    sidebar_tab_group: Sidebar Content Group
+    sidebar_tab_group_label: Sidebar Content Group '{label}'
+  create:
+    create: Create New {type}
+    name:
+      label: Name
+    slug:
+      label: Slug
+    validation:
+      name: Name must be specified
+  common:
+    label:
+      label: Label
+      description: For internal reference, not displayed
+    description:
+      label: Description
+      description: For internal reference, not displayed
+    name:
+      label: Name
+    id:
+      label: ID
+    image:
+      label: Image
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across the property. NOTE: Once set, a URL slug should not be changed"
+  general:
+    app_name:
+      label: App Name
+      description: Specify the name to refer to the app by within this property
+    receipt_name:
+      label: Receipt Title
+      description: Specify the item title to appear in the purchase receipt
+    slug:
+      label: Property Slug
+      description: "Warning: This value should not be changed after deployment as it will invalidate existing URLs to this property"
+    page_title:
+      label: Page Title
+      description: The title of the page in the browser
+    image:
+      label: Image
+      description: Square
+    permission_sets:
+      label: Permission Sets
+      description: Select permission sets to associate with this property
+    header_logo:
+      label: Header Logo
+      description: Displayed in the top left corner of the screen
+    header_logo_desktop:
+      label: Header Logo (Desktop)
+    header_logo_mobile:
+      label: Header Logo (Mobile)
+    header_logo_link:
+      label: Header Logo Link
+      description: Specify a link to open when the header logo is clicked
+    splash_screen:
+      label: Splash Screen
+      description: Displayed on initial load of app
+    splash_screen_background:
+      label: Splash Screen Background (Desktop)
+    splash_screen_background_mobile:
+      label: Splash Screen Background (Mobile)
+    qr_code_logo:
+      label: QR Code Logo
+      description: This logo will be displayed in the center of QR codes
+    payment_message:
+      label: Payment Message
+      description: This message will be displayed above the payment button
+    media_catalogs:
+      label: Media Catalogs
+      description: Media from these catalogs will be available in this property
+    preview_password:
+      label: Preview Password
+      description: Specify a password to protect access to your property in the staging environment
+    support_link:
+      label: Custom Support Link
+    custom_domains:
+      label: Custom Domains
+      description: Specify any custom domains that this property will be available on
+      fieldLabel: Custom Domain
+    meta_tags:
+      meta_tags_description: "This information will be used to populate search results and social media link previews for your site"
+      site_name:
+        label: Site Name
+      title:
+        label: Title
+      description:
+        label: Description
+      image:
+        label: Image
+        description: 1.91:1 Aspect Ratio (1200px x 630px)
+      favicon:
+        label: Favicon
+        description: Icon appearing next to page title in browser tab. 16x16 Square
+    analytics:
+      analytics_ids:
+        label: Analytics IDs
+        description: Add your analytics IDs to track page views for this property
+        fieldLabel: Analytics ID
+      label:
+        label: Label
+      analytics_type:
+        label: Analytics Type
+      id:
+        label: ID
+      google_conversion_label:
+        label: Google Conversion Label
+      google_conversion_id:
+        label: Google Conversion ID
+      facebook_event_id:
+        label: Facebook Event Id
+      twitter_event_id:
+        label: X Pixel ID
+    faq:
+      faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
+      slug:
+        label: Page Slug
+        description: This page will be available at <your property url>/faq/<slug>
+      header_image:
+        label: Header Image
+      header_image_mobile:
+        label: Header Image (Mobile)
+      background_color:
+        label: Page Background Color
+      header_text_color:
+        label: Header Text Color
+        description: Set the text color for question text and header fields within your FAQ
+      video:
+        label: Video
+        description: Display a video at the top of your answer
+      images:
+        label: Images
+        description: Display images at the top of your answer
+        fieldLabel: Image
+      image:
+        label: Image
+      image_desktop:
+        label: Image (Desktop)
+      image_mobile:
+        label: Image (Mobile)
+      image_position:
+        label: Position
+      image_link:
+        label: Image Link
+      title:
+        label: Title
+      description:
+        label: Description
+      questions:
+        label: Questions
+        fieldLabel: Question
+      question:
+        label: Question
+      answer:
+        label: Answer
+      additional_pages:
+        label: Additional Pages
+  bumpers:
+    bumpers_description: Specify bumper videos or images to be shown before or after video content
+    bumpers:
+      label: Bumpers
+      fieldLabel: Bumper
+    position:
+      label: Position
+      description: Specify if this bumper should be displayed before or after the content
+    free_only:
+      label: Show on Free Content Only
+      description: If specified, this bumper will only be shown on content that is accessible without purchase
+    images:
+      label: Images
+    duration:
+      label: Display Duration (Seconds)
+      description: (For image bumpers only) - Specify how long this bumper should be displayed before moving on
+    background:
+      label: Desktop
+    background_mobile:
+      label: Mobile
+    video:
+      label: Video
+      description: For best results, the aspect ratio should match the content
+    link:
+      label: Link URL
+
+  sidebar_tabs:
+    label: Sidebar Tabs
+    description: Define tabbed content lists to display in the side bar
+    fieldLabel: Sidebar Tab
+  sidebar_tab:
+    title:
+      label: Title
+      description: Optional if this is the only tab
+    sequential:
+      label: Sequential Content
+      description: If specified, content in this tab will automatically proceed to the next item when finished.
+    groups:
+      label: Content Groups
+    override_bumpers:
+      label: Override Bumper Configuration
+      description: If checked, you can change the bumper settings for content within this tab
+
+  sidebar_tab_groups:
+    label: Content Groups
+    description: Define groups of content to display within this tab
+    fieldLabel: Content Group
+  sidebar_tab_group:
+    title:
+      label: Title
+      description: Optional
+    sequential:
+      label: Sequential Content
+      description: If specified, content in this tab will automatically proceed to the next item when finished.
+    type:
+      label: Type
+      description: Choose whether to select content manually, or have content be selected automatically based on specified parameters
+    content:
+      label: Content
+      fieldLabel: Media Item
+      columns:
+        label: Label
+        permissions: Permissions
+    filters:
+      media_catalog:
+        label: Media Catalog
+        description: Limit the displayed content to a specific media catalog
+      sort_order:
+        label: Sort Order
+        description: Specify how the content should be ordered
+      content_type:
+        label: Content Type
+        description: Content of the specified type
+      media_types:
+        label: Media Types
+        description: Content with the specified media type(s)
+      tags:
+        label: Tags
+        description: Content matching all of the specified tags
+      attributes:
+        label: Attributes
+        description: Specify attributes to filter by
+      schedule:
+        label: Schedule
+        description: Live content matching the specified time period based on start/end times
+      date:
+        label: Date
+        description: Filter by a specific date
+      start_time:
+        label: Start Time
+        description: Live content starting after the specified time
+      end_time:
+        label: End Time
+        description: Live content starting before the specified time
+  sidebar:
+    hide_sidebar:
+      label: Hide Sidebar
+      description: If specified, the sidebar will be hidden and only the active content will be visible.
+    banners:
+      label: Banner Links
+      description: Specify banner links to be displayed at the top of the sidebar that can link to specific content or external URLs
+      fieldLabel: Banner
+    banner_image:
+      label: Banner Image
+    banner_image_desktop:
+      label: Desktop
+    banner_image_mobile:
+      label: Mobile
+    link_type:
+      label: Link Type
+    mobile_position:
+      label: Mobile Position
+      description: Select whether this banner should be displayed at the top or the bottom of the screen on mobile devices
+    media:
+      label: Media
+      description: Select the media this banner will link to
+    link:
+      label: Link URL
+  theme:
+    font:
+      label: Font
+    custom_font_definition:
+      label: Custom Font Definition
+      description: "Specify the CSS @font-face definition for your custom font, if applicable. Font files may be uploaded to this property and referenced by selecting 'copy link' in the file browser"
+    custom_font_declaration:
+      label: Custom Font Declaration
+      description: CSS font-family declaration for your custom font
+    button_style:
+      label: Button Style
+      description: Customize the look of buttons in your property
+

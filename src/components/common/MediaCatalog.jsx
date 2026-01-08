@@ -7,6 +7,7 @@ import {Link} from "react-router-dom";
 import {IconExternalLink, IconLock, IconLockOpen, IconWorld, IconWorldOff} from "@tabler/icons-react";
 import {observer} from "mobx-react-lite";
 import {ParseDate} from "@/helpers/Misc";
+import {useState} from "react";
 
 export const MediaItemImageUrl = ({mediaItem, aspectRatio}) => {
   switch(aspectRatio) {
@@ -37,12 +38,15 @@ export const MediaItemImageUrl = ({mediaItem, aspectRatio}) => {
 };
 
 export const MediaItemImage = ({imageUrl, mediaItem, aspectRatio, scale, ...componentProps}) => {
+  const [error, setError] = useState(false);
   imageUrl = imageUrl || MediaItemImageUrl({mediaItem, aspectRatio});
 
   return (
     <Image
       {...componentProps}
-      src={!scale ? imageUrl : ScaleImage(imageUrl, scale)}
+      imageProps={{onError: setError}}
+      // If an error occurred, try without scaling (svgs don't support scaling)
+      src={!scale || error ? imageUrl : ScaleImage(imageUrl, scale)}
       withPlaceholder
     />
   );
@@ -105,7 +109,7 @@ export const MediaItemPermissionIcon = observer(({mediaItem}) => {
   );
 });
 
-export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, showPermissions, ...componentProps}) => {
+export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, showPermissions, showType=true, link, ...componentProps}) => {
   const sizes = {
     sm: { p: 5, fz1: "sm", fz2: "xs", img: 50 },
     md: { p: "sm", fz1: "md", fz2: "sm", img: 75 },
@@ -114,7 +118,7 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, show
   mediaItem = mediaItem || {};
 
   const page = mediaItem.type === "collection" ? "media-collections" : mediaItem.type === "list" ? "media-lists" : "media";
-  const link = UrlJoin("/media-catalogs", mediaItem.media_catalog_id || "", page, mediaItem.id || "");
+  link = link || UrlJoin("/media-catalogs", mediaItem.media_catalog_id || "", page, mediaItem.id || "");
 
   return (
     <Paper withBorder p={sizes[size].p} key={`media-item-${mediaItem.id}`} maw={uiStore.inputWidth} {...componentProps}>
@@ -140,15 +144,18 @@ export const MediaItemCard = ({mediaItem, aspectRatio, size="sm", withLink, show
                 { ParseDate(mediaItem.start_time).toLocaleString() }
               </Text>
           }
-          <Text color="dimmed" fz={sizes[size].fz2}>
-            {
-              mediaItem.type === "collection" ?
-                "Media Collection" :
-                mediaItem.type === "list" ?
-                  "Media List" :
-                  `Media - ${mediaItem.media_type}`
-            }
-          </Text>
+          {
+            !showType ? null :
+              <Text color="dimmed" fz={sizes[size].fz2}>
+                {
+                  mediaItem.type === "collection" ?
+                    "Media Collection" :
+                    mediaItem.type === "list" ?
+                      "Media List" :
+                      `Media - ${mediaItem.media_type}`
+                }
+              </Text>
+          }
         </Stack>
         {
           !withLink && !showPermissions ? null :

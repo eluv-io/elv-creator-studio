@@ -84,6 +84,7 @@ const MediaCatalogItemTable = observer(({
   initialFilter,
   initialTagFilter,
   initialMediaTypeFilter,
+  mediaType,
   selectedRecords,
   setSelectedRecords,
   multiple=true,
@@ -99,7 +100,7 @@ const MediaCatalogItemTable = observer(({
   const urlParams = new URLSearchParams(location.search);
   initialFilter = decodeURIComponent(urlParams.get("filter") || "");
   initialTagFilter = decodeURIComponent(initialTagFilter || urlParams.get("tags") || "")?.split(",").filter(tag => tag);
-  initialMediaTypeFilter = decodeURIComponent(initialMediaTypeFilter || urlParams.get("media_type") || "");
+  initialMediaTypeFilter = decodeURIComponent(mediaType || initialMediaTypeFilter || urlParams.get("media_type") || "");
 
   const [selectedMediaCatalogId, setSelectedMediaCatalogId] = useState(mediaCatalogId || settingsCache?.mediaCatalogId || mediaCatalogIds[0]);
   const [selectedContentType, setSelectedContentType] = useState(type || settingsCache?.type || "media");
@@ -185,6 +186,7 @@ const MediaCatalogItemTable = observer(({
                   label={rootStore.l10n.pages.media_catalog.form.categories.media_catalog}
                   onChange={value => setSelectedMediaCatalogId(value)}
                   value={selectedMediaCatalogId}
+                  w={500}
                   data={
                     mediaCatalogStore.allMediaCatalogs
                       .map(mediaCatalog => ({
@@ -220,7 +222,7 @@ const MediaCatalogItemTable = observer(({
           }}
         />
         {
-          selectedContentType !== "media" ? null :
+          selectedContentType !== "media" || mediaType ? null :
             <Select
               label={l10n.media.list.filters.media_type}
               value={mediaTypeFilter}

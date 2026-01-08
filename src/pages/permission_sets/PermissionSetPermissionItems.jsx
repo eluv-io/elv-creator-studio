@@ -25,8 +25,8 @@ const CreatePermissionSetItemForm = ({Create}) => {
     },
     validate: {
       label: value => value ? null : l10n.permission_items.create.validation.label,
-      marketplace_id: value => value ? null : l10n.permission_items.create.validation.marketplace_id,
-      marketplace_sku: value => value ? null : l10n.permission_items.create.validation.marketplace_sku,
+      marketplace_id: value => value || form.values.type === "external" ? null : l10n.permission_items.create.validation.marketplace_id,
+      marketplace_sku: value => value || form.values.type === "external" ? null : l10n.permission_items.create.validation.marketplace_sku,
     }
   });
 
@@ -48,9 +48,11 @@ const CreatePermissionSetItemForm = ({Create}) => {
         <Select
           {...l10n.permission_items.create.type}
           {...form.getInputProps("type")}
-          disabled
           mb="md"
-          data={[{label: "Owned Item", value: "owned_item"}]}
+          data={[
+            {label: "Owned Item", value: "owned_item"},
+            {label: "External Offer", value: "external"},
+          ]}
         />
         <TextInput
           data-autofocus
@@ -65,24 +67,27 @@ const CreatePermissionSetItemForm = ({Create}) => {
           {...form.getInputProps("marketplace_id")}
           data={marketplaces.map(marketplace => ({label: marketplace.brandedName || marketplace.name, value: marketplace.objectId}))}
         />
-        <MarketplaceItemSelect
-          key={form.values.marketplaceId}
-          marketplaceId={form.values.marketplace_id}
-          useBasicInput
-          componentProps={{
-            withBorder: false,
-            p: 0,
-            pt: 0,
-            pb: 0,
-            mb:0
-          }}
-          inputProps={{
-            withinPortal: true,
-            mb: form.values.marketplace_sku ? "xs" : 0,
-            ...l10n.permission_items.create.marketplace_sku,
-            ...form.getInputProps("marketplace_sku")
-          }}
-        />
+        {
+          form.values.type !== "owned_item" ? null :
+            <MarketplaceItemSelect
+              key={form.values.marketplaceId}
+              marketplaceId={form.values.marketplace_id}
+              useBasicInput
+              componentProps={{
+                withBorder: false,
+                p: 0,
+                pt: 0,
+                pb: 0,
+                mb:0
+              }}
+              inputProps={{
+                withinPortal: true,
+                mb: form.values.marketplace_sku ? "xs" : 0,
+                ...l10n.permission_items.create.marketplace_sku,
+                ...form.getInputProps("marketplace_sku")
+              }}
+            />
+        }
         <Group mt="md">
           <Button
             w="100%"
@@ -140,9 +145,10 @@ const PermissionSetPermissionItems = observer(() => {
               onCancel: () => resolve(),
               children:
                 <CreatePermissionSetItemForm
-                  Create={async ({label, marketplaceId, marketplaceSKU}) => {
+                  Create={async ({label, type, marketplaceId, marketplaceSKU}) => {
                     const id = permissionSetStore.CreatePermissionItem({
                       label,
+                      type,
                       page: location.pathname,
                       permissionSetId,
                       marketplaceId,

@@ -486,6 +486,9 @@ const TenantOverview = observer(() => {
       <Title fw={500} order={3} mt={50} mb="md">{ l10n.mediaProperty.plural }</Title>
       <StatusTable type="mediaProperty" path="/media-properties" Load={async () => await tenantStore.MediaPropertyStatus()} />
 
+      <Title fw={500} order={3} mt={50} mb="md">{ l10n.pocketProperty.plural }</Title>
+      <StatusTable type="pocketProperty" path="/pocket" Load={async () => await tenantStore.PocketPropertyStatus()} />
+
       <Title fw={500} order={3} mt={50} mb="md">{ l10n.marketplace.plural }</Title>
       <StatusTable type="marketplace" path="/marketplaces" Load={async () => await tenantStore.MarketplaceStatus()} />
 

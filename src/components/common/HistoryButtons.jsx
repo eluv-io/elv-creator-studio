@@ -11,7 +11,9 @@ import {
   tenantStore,
   itemTemplateStore,
   mediaCatalogStore,
-  mediaPropertyStore, permissionSetStore
+  mediaPropertyStore,
+  permissionSetStore,
+  pocketStore
 } from "@/stores";
 import {IconButton, LocalizeString} from "@/components/common/Misc";
 import {ActionToString} from "@/stores/helpers/Changelist.js";
@@ -42,6 +44,10 @@ const HistoryButtons = observer(({section}) => {
     case "mediaProperty":
       store = mediaPropertyStore;
       objectId = params.mediaPropertyId;
+      break;
+    case "pocket":
+      store = pocketStore;
+      objectId = params.pocketId;
       break;
     case "permissionSet":
       store = permissionSetStore;

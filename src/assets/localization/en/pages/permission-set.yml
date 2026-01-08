@@ -72,6 +72,15 @@ form:
     priority:
       label: Priority
       description: Set the order priority for this permission item when displayed in dynamic cases, such as the purchase gate page. Items will be listed in priority order from lowest to highest, with items having no priority listed in the order they were specified in the content's permissions.
+    subsumes:
+      label: Subsumes
+      description: Select other permission items that this item subsumes, e.g. an all-access pass subsuming a single item pass. Subsumed items will not be offered if the user owns this item.
+    link:
+      label: Link
+    price:
+      label: Price (USD)
+    price_currency:
+      label: "Price ({currencyCode})"
     display:
       title:
         label: Display Title
@@ -83,3 +92,10 @@ form:
         label: Subtitle
       description:
         label: Description
+      access_title:
+        label: Access Title
+        description: A title for this access level
+      access_title_background_color:
+        label: Access Title Badge Background Color
+      access_title_text_color:
+        label: Access Title Badge Text Color

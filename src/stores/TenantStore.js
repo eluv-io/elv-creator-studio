@@ -55,7 +55,7 @@ class TenantStore {
         const mediaPropertyHash = await this.client.LatestVersionHash({objectId: mediaProperty.objectId});
 
         // Prefer name from modified metadata, otherwise load directly
-        let name = this.rootStore.mediaPropertyStore.mediaProperties?.[mediaProperty.objectId]?.metadata?.public?.asset_metadata?.info?.branding?.name;
+        let name = this.rootStore.mediaPropertyStore.mediaProperties?.[mediaProperty.objectId]?.metadata?.public?.asset_metadata?.info?.name;
         if(!name) {
           name = (await this.client.ContentObjectMetadata({
             versionHash: mediaPropertyHash,
@@ -123,6 +123,90 @@ class TenantStore {
           productionSlug: productionLink.slug,
           stagingHash: stagingLink.versionHash,
           stagingDeployed: stagingLink.versionHash === mediaPropertyHash,
+          stagingSlug: stagingLink.slug,
+          mediaCatalogsBehind,
+          permissionSetsBehind
+        };
+      })
+    );
+  }
+
+  async PocketPropertyStatus() {
+    await this.rootStore.pocketStore.LoadPockets();
+
+    return await Promise.all(
+      this.rootStore.pocketStore.allPockets.map(async pocket => {
+        const pocketHash = await this.client.LatestVersionHash({objectId: pocket.objectId});
+
+        // Prefer name from modified metadata, otherwise load directly
+        let name = this.rootStore.pocketStore.pockets?.[pocket.objectId]?.metadata?.public?.asset_metadata?.info?.name;
+        if(!name) {
+          name = (await this.client.ContentObjectMetadata({
+            versionHash: pocketHash,
+            metadataSubtree: "public/asset_metadata/info/name",
+          })) || pocket.name;
+        }
+
+        const info = (await this.client.ContentObjectMetadata({
+          versionHash: pocketHash,
+          metadataSubtree: "public/asset_metadata/info",
+          select: [
+            "slug",
+            "media_catalog_links",
+            "permission_set_links"
+          ]
+        })) || {};
+
+        const slug = info.slug;
+
+        const latestLink = this.TenantLinkSlugAndHash({objectId: pocket.objectId, links: tenantStore.latestTenant.metadata.public.asset_metadata.pocket_properties});
+        const productionLink = this.TenantLinkSlugAndHash({objectId: pocket.objectId, links: tenantStore.productionTenant?.metadata.public.asset_metadata.pocket_properties});
+        const stagingLink = this.TenantLinkSlugAndHash({objectId: pocket.objectId, links: tenantStore.stagingTenant?.metadata.public.asset_metadata.pocket_properties});
+
+        let mediaCatalogsBehind = (
+          await Promise.all(
+            Object.keys(info.media_catalog_links || {}).map(async mediaCatalogId => {
+              const deployedHash = ExtractHashFromLink(info.media_catalog_links[mediaCatalogId]);
+              const latestHash = await this.client.LatestVersionHash({objectId: mediaCatalogId});
+
+              return deployedHash !== latestHash;
+            })
+          )
+        ).find(result => result);
+
+        let permissionSetsBehind = (
+          await Promise.all(
+            Object.keys(info.permission_set_links || {}).map(async permissionSetId => {
+              const deployedHash = ExtractHashFromLink(info.permission_set_links[permissionSetId]);
+              const latestHash = await this.client.LatestVersionHash({objectId: permissionSetId});
+
+              return deployedHash !== latestHash;
+            })
+          )
+        ).find(result => result);
+
+        return {
+          name,
+          slug,
+          imageUrl: FabricUrl({
+            libraryId: pocket.libraryId,
+            objectId: pocket.objectId,
+            path: "/meta/public/asset_metadata/info/image",
+            width: 400
+          }),
+          libraryId: pocket.libraryId,
+          objectId: pocket.objectId,
+          mediaPropertyId: pocket.objectId,
+          versionHash: pocketHash,
+          pocketHash,
+          linkedHash: latestLink.versionHash,
+          latestDeployed: latestLink.versionHash === pocketHash,
+          linkedSlug: latestLink.slug,
+          productionHash: productionLink.versionHash,
+          productionDeployed: productionLink.versionHash === pocketHash,
+          productionSlug: productionLink.slug,
+          stagingHash: stagingLink.versionHash,
+          stagingDeployed: stagingLink.versionHash === pocketHash,
           stagingSlug: stagingLink.slug,
           mediaCatalogsBehind,
           permissionSetsBehind
@@ -267,6 +351,10 @@ class TenantStore {
       path = "/public/asset_metadata/media_properties";
       metadataPath = "/meta/public/asset_metadata/info";
       store = this.rootStore.mediaPropertyStore;
+    } else if(type === "pocketProperty") {
+      path = "/public/asset_metadata/pocket_properties";
+      metadataPath = "/meta/public/asset_metadata/info";
+      store = this.rootStore.pocketStore;
     }
 
     // Some things may need updating before deploying
@@ -326,6 +414,8 @@ class TenantStore {
       path = "/public/asset_metadata/marketplaces";
     } else if(type === "mediaProperty") {
       path = "/public/asset_metadata/media_properties";
+    } else if(type === "pocketProperty") {
+      path = "/public/asset_metadata/pocket_properties";
     }
 
     const writeParams = {
@@ -380,25 +470,47 @@ class TenantStore {
       )
     );
 
+    yield this.rootStore.pocketStore.LoadPockets(true);
+
+    const pocketInfo = yield Promise.all(
+      this.rootStore.pocketStore.allPockets.map(async pocket =>
+        (this.rootStore.pocketStore.pockets?.[pocket.objectId]
+          ?.metadata?.public?.asset_metadata?.info) ||
+          await this.client.ContentObjectMetadata({
+            libraryId: pocket.libraryId,
+            objectId: pocket.objectId,
+            metadataSubtree: "public/asset_metadata/info",
+            select: [
+              "slug",
+              "custom_domains"
+            ]
+          })
+      )
+    );
+
     let urls = [];
     if(this.rootStore.network === "main") {
       if(mode === "staging") {
         urls = [
           "https://wallet.preview.contentfabric.io",
+          "https://eluvio-pocket-tv-v3-dev.web.app/",
           // Secondary custom domains
           ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
         ];
       } else {
         urls = [
           "https://wallet.contentfabric.io",
+          "https://eluvio-pocket-tv.web.app/",
           // All custom domains
           ...(propertyInfo.map(info => info?.domain?.custom_domain)),
-          ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
+          ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat()),
+          ...(pocketInfo.map(info => info?.custom_domains || [])).flat(),
         ];
       }
     } else {
       urls = [
         "https://wallet.demov3.contentfabric.io",
+        "https://eluvio-pocket-tv-demov3.web.app/",
         // All custom domains
         ...(propertyInfo.map(info => info?.domain?.custom_domain)),
         ...(propertyInfo.map(info => (info?.domain?.secondary_custom_domains || [])).flat())
@@ -416,7 +528,12 @@ class TenantStore {
         .map(property => property.slug)
         .filter(s => s)
       ),
-      ...this.rootStore.mediaPropertyStore.allMediaProperties.map(property => property.mediaPropertySlug)
+      ...this.rootStore.mediaPropertyStore.allMediaProperties.map(property => property.mediaPropertySlug),
+      ...(pocketInfo
+        .map(pocket => pocket.slug)
+        .filter(s => s)
+      ),
+      ...this.rootStore.pocketStore.allPockets.map(pocket => pocket.pocketSlug),
     ]
       .filter((x, i, a) => a.indexOf(x) == i);
 

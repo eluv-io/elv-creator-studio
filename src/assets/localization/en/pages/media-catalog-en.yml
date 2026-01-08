@@ -143,6 +143,9 @@ form:
       label: Media ID
     type:
       label: Type
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across this catalog and all other catalogs that may be used in conjunction with this catalog.\n NOTE: Once set, a URL slug should not be changed"
     media_lists:
       label: Media Lists
       fieldLabel: Media List

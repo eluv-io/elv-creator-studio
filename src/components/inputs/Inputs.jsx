@@ -58,7 +58,9 @@ import {
   IconPlayerPlay,
   IconLink,
   IconUnlink,
-  IconCopy
+  IconCopy,
+  IconCaretDownFilled,
+  IconCaretUpFilled
 } from "@tabler/icons-react";
 import {DataTable} from "mantine-datatable";
 
@@ -248,6 +250,7 @@ const Input = observer(({
   localizable,
   hidden,
   required,
+  regex,
   Validate,
   validateOnLoad=true,
   componentProps={}
@@ -416,6 +419,10 @@ const Input = observer(({
       onChange={event => {
         let value = event?.target ? event.target.value : event;
 
+        if(regex) {
+          value = value.match(regex).filter(s => s).join("");
+        }
+
         if(type === "number" && typeof value !== "number" && !value) {
           // Set missing numbers to undefined instead of empty string
           value = undefined;
@@ -539,6 +546,7 @@ const Password = observer(({
 // Checkbox
 const CheckboxInput = observer(({
   INVERTED=false,
+  value,
   store,
   objectId,
   path,
@@ -563,7 +571,7 @@ const CheckboxInput = observer(({
     }
   });
 
-  let value = !!store.GetMetadata({objectId, path, field});
+  value = typeof value !== "undefined" ? value : !!store.GetMetadata({objectId, path, field});
 
   return (
     <CheckboxCard
@@ -825,7 +833,7 @@ const SingleImageInput = observer(({
   if(url) {
     imageUrl = typeof imageMetadata === "string" ? imageMetadata : undefined;
   } else if(imageMetadata) {
-    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? 200 : undefined});
+    imageUrl = FabricUrl({objectId, path: imageMetadata["/"], width: !noResizePreview ? Math.ceil(aspectRatio || 1) * 200 : undefined});
   }
 
   let width, height;
@@ -1663,6 +1671,7 @@ const List = observer(({
 }) => {
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
+  const [hidden, setHidden] = useState(false);
 
   const disabled = rootStore.localizing;
 
@@ -1694,7 +1703,7 @@ const List = observer(({
     subcategory = CategoryFn({store, objectId, path, field, params: subcategoryFnParams});
   }
 
-  const items = values.map((value, index) => {
+  let items = values.map((value, index) => {
     const id = idField === "." ? value : (idField === "index" ? index.toString() : value[idField]) || "";
 
     if(
@@ -1785,7 +1794,7 @@ const List = observer(({
     );
   });
 
-  const addButton = (
+  let addButton = (
     <IconButton
       disabled={disabled}
       label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
@@ -1813,6 +1822,12 @@ const List = observer(({
 
   showBottomAddButton = showBottomAddButton || items.length >= 5;
 
+  let numberOfItems = items.length;
+  if(hidden) {
+    items = [];
+    addButton = null;
+  }
+
   return (
     <>
       {
@@ -1833,6 +1848,7 @@ const List = observer(({
         maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
         w="min-content"
         miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
+        wrapperProps={{style: disabled ? { opacity: 0.5 } : {}}}
         {...componentProps}
       >
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
@@ -1863,6 +1879,16 @@ const List = observer(({
             </Droppable>
           </DragDropContext>
           <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
+            {
+              numberOfItems === 0 ? null :
+                <IconButton
+                  color={hidden ? "purple.6" : "gray.6"}
+                  disabled={disabled}
+                  label={hidden ? "Show" : "Hide"}
+                  Icon={hidden ? IconCaretDownFilled : IconCaretUpFilled}
+                  onClick={() => setHidden(!hidden)}
+                />
+            }
             {addButton}
           </Group>
           {
@@ -1870,6 +1896,10 @@ const List = observer(({
               <Group position="right" style={{position: "absolute", bottom: 0, right: 0}}>
                 {addButton}
               </Group>
+          }
+          {
+            !hidden || numberOfItems === 0 ? null :
+            <Text fz={12} mt={20} color="gray.6">{numberOfItems} hidden</Text>
           }
         </Container>
       </InputWrapper>
