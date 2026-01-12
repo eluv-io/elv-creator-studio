@@ -5,6 +5,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import ColorOptions from "@/components/inputs/media_property/Components.jsx";
+import UrlJoin from "url-join";
 
 const MediaPropertyThemeSettings = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -128,6 +129,84 @@ const MediaPropertyThemeSettings = observer(() => {
           { field: "background_image_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.profile_background_mobile }
         ]}
       />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.countdown_background}
+        subcategory={l10n.categories.media_sidebar}
+        fields={[
+          { field: "countdown_background_desktop", aspectRatio: 16/9, baseSize: 135, ...l10n.general.countdown_background_desktop },
+          { field: "countdown_background_mobile", aspectRatio: 1/2, baseSize: 135, ...l10n.general.countdown_background_mobile }
+        ]}
+      />
+
+      { /* TODO: Remove when new sidebar settings are in */ }
+      <Title order={3} mt={50} mb="md">{l10n.categories.media_sidebar}</Title>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.media_sidebar.show_media_sidebar}
+        path={UrlJoin(inputProps.path, "media_sidebar")}
+        subcategory={l10n.categories.media_sidebar}
+        defaultValue={false}
+        field="show_media_sidebar"
+      />
+
+      {
+        !info?.media_sidebar?.show_media_sidebar ? null :
+          <>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.media_sidebar.sidebar_content}
+              path={UrlJoin(inputProps.path, "media_sidebar")}
+              subcategory={l10n.categories.media_sidebar}
+              field="sidebar_content"
+              defaultValue="current_section"
+              options={[
+                { label: "Current Section", value: "current_section" },
+                { label: "Specific Section", value: "specific_section" },
+                { label: "All Live Content", value: "live" }
+              ]}
+            />
+            {
+              info?.media_sidebar?.sidebar_content !== "current_section" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.media_sidebar.default_sidebar_content}
+                  path={UrlJoin(inputProps.path, "media_sidebar")}
+                  subcategory={l10n.categories.media_sidebar}
+                  field="default_sidebar_content"
+                  defaultValue="none"
+                  options={[
+                    { label: "None", value: "none" },
+                    { label: "Specific Section", value: "specific_section" },
+                    { label: "All Live Content", value: "live" }
+                  ]}
+                />
+            }
+            {
+              !(
+                info?.media_sidebar?.sidebar_content === "specific_section" ||
+                (
+                  info?.media_sidebar?.sidebar_content === "current_section" &&
+                  info?.media_sidebar?.default_sidebar_content === "specific_section"
+                )
+              ) ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.media_sidebar.sidebar_content_section_id}
+                  path={UrlJoin(inputProps.path, "media_sidebar")}
+                  subcategory={l10n.categories.media_sidebar}
+                  field="sidebar_content_section_id"
+                  defaultValue={Object.keys(info.sections || {})[0]}
+                  options={
+                    Object.keys(info.sections || {}).map(sectionId =>
+                      ({label: info.sections[sectionId].label, value: sectionId})
+                    )
+                  }
+                />
+            }
+          </>
+      }
     </PageContent>
   );
 });
