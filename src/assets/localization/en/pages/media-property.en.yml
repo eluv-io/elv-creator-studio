@@ -1017,6 +1017,9 @@ form:
       description: Optional if this is the only tab
     groups:
       label: Content Groups
+    hide_on_tv:
+      label: Hide on TV
+      description: If checked, this tab and its contents will not be shown on TV apps
   sidebar_tab_groups:
     label: Content Groups
     description: Define groups of content to display within this tab
@@ -1028,6 +1031,9 @@ form:
     type:
       label: Type
       description: Choose whether to select content manually, or have content be selected automatically based on specified parameters
+    hide_on_tv:
+      label: Hide on TV
+      description: If checked, this group and its contents will not be shown on TV apps
     content:
       label: Content
       fieldLabel: Media Item

@@ -407,6 +407,12 @@ export const MediaPropertyContentTabGroup = observer(() => {
         field="title"
       />
 
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab_group.hide_on_tv}
+        field="hide_on_tv"
+      />
+
       <Inputs.Select
         {...inputProps}
         {...l10n.sidebar_tab_group.type}
@@ -501,6 +507,12 @@ export const MediaPropertySidebarContentTab = observer(() => {
         {...inputProps}
         {...l10n.sidebar_tab.title}
         field="title"
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab_group.hide_on_tv}
+        field="hide_on_tv"
       />
 
       <Inputs.CollectionTable
