@@ -513,6 +513,32 @@ const Password = observer(({
         setHashed(false);
       }}
       disabled={disabled}
+      rightSection={
+        <IconButton
+          Icon={IconX}
+          onClick={() => {
+            ConfirmDelete({
+              title: "Remove Password",
+              itemName: "this password",
+              onConfirm: () => {
+                setPassword("");
+                setHashed(false);
+                setChanged(true);
+                store.SetMetadata({
+                  objectId,
+                  page: location.pathname,
+                  path,
+                  field,
+                  value: "",
+                  category,
+                  subcategory,
+                  label
+                });
+              }
+            });
+          }}
+        />
+      }
       onBlur={async () => {
         if(!changed) {
           setPassword(value);

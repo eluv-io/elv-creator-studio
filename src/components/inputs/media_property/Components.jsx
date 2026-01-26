@@ -25,13 +25,14 @@ const ColorOptions = observer(({
   const info = wrapperProps.store.GetMetadata({...inputProps});
 
   let exampleStyle = {
-    marginTop: 20,
     width: "100%",
     height: 60,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: 600,
+    cursor: "pointer",
+    userSelect: "none",
     fontSize: 18,
     color: info?.text_color || placeholders.text_color,
     backgroundColor: info?.background_color || placeholders.background_color,
@@ -160,8 +161,10 @@ const ColorOptions = observer(({
             />
         }
       </Stack>
-      <div key={info?.background_type} style={exampleStyle}>
-        Example
+      <div style={{marginTop: 10, padding: 20, borderRadius: 5, backgroundColor: "#ddd"}}>
+        <div key={info?.background_type} style={exampleStyle}>
+          Example
+        </div>
       </div>
     </Inputs.InputWrapper>
   );

@@ -5,7 +5,6 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import ColorOptions from "@/components/inputs/media_property/Components.jsx";
-import UrlJoin from "url-join";
 
 const MediaPropertyThemeSettings = observer(() => {
   const { mediaPropertyId } = useParams();

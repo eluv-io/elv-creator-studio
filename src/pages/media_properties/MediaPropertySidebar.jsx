@@ -511,7 +511,7 @@ export const MediaPropertySidebarContentTab = observer(() => {
 
       <Inputs.Checkbox
         {...inputProps}
-        {...l10n.sidebar_tab_group.hide_on_tv}
+        {...l10n.sidebar_tab.hide_on_tv}
         field="hide_on_tv"
       />
 

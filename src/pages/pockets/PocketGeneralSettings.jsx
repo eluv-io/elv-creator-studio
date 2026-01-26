@@ -198,6 +198,15 @@ const PocketGeneralSettings = observer(() => {
         field="preview_password_digest"
       />
 
+      {
+        !info.preview_password_digest ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.general.require_preview_password_production}
+            field="require_preview_password_production"
+          />
+      }
+
       <Inputs.URL
         {...inputProps}
         {...l10n.general.support_link}

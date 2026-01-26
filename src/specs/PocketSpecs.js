@@ -67,4 +67,14 @@ export const PocketSpec = {
     image: undefined,
     favicon: undefined
   },
+  login: {
+    settings: {
+      use_oauth_login: false,
+    },
+    styling: {
+      logo: undefined,
+      background_image_desktop: undefined,
+      background_image_mobile: undefined
+    }
+  }
 };

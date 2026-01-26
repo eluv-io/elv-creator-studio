@@ -29,6 +29,7 @@ form:
     sidebar_tab_label: Sidebar Tab '{label}'
     sidebar_tab_group: Sidebar Content Group
     sidebar_tab_group_label: Sidebar Content Group '{label}'
+    login_settings: Login Settings
   create:
     create: Create New {type}
     name:
@@ -101,6 +102,9 @@ form:
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
+    require_preview_password_production:
+      label: Require Preview Password in Production
+      description: If checked, users will be prompted for the preview password to access this property even on production URLs
     support_link:
       label: Custom Support Link
     custom_domains:
@@ -311,7 +315,34 @@ form:
     custom_font_declaration:
       label: Custom Font Declaration
       description: CSS font-family declaration for your custom font
+    custom_title_font_declaration:
+      label: Custom Title Font Declaration (Optional)
+      description: CSS font-family declaration for your custom font to be used for title fields
     button_style:
       label: Button Style
       description: Customize the look of buttons in your property
-
+  login:
+    use_oauth_login:
+      label: Use OAuth Login
+      description: Require users to sign in with an email address and password
+    disable_registration:
+      label: Disable Registration
+      description: If checked, users will not be able to create new accounts
+    disable_third_party_login:
+      label: Disable Third Party Login
+      description: If checked, users will not be allowed to log in with their Google or Apple accounts
+    styling:
+      logo:
+        label: Logo
+      images:
+        label: Images
+      background_image_desktop:
+        label: Background Image (Desktop)
+      background_image_mobile:
+        label: Background Image (Mobile)
+      sign_in_button:
+        label: Sign In Button / Primary Action
+      sign_up_button:
+        label: Sign Up button / Secondary Action
+      link_color:
+        label: Link Color
