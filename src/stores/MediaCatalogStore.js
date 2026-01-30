@@ -572,6 +572,62 @@ class MediaCatalogStore {
     });
   });
 
+  async VideoResolutionOptions({objectId, versionHash, offering}) {
+    const metadata = (await this.client.ContentObjectMetadata({
+      versionHash: await this.client.LatestVersionHash({objectId, versionHash}),
+      metadataSubtree: "offerings",
+      select: [
+        "*/playout/playout_formats",
+        "*/playout/streams/video/representations"
+      ]
+    }));
+
+    const offeringKey = offering && metadata[offering] ? offering :
+      metadata.default ? "default" :
+      Object.keys(metadata)[0];
+
+    if(!offeringKey) {
+      return;
+    }
+
+    const repMetadata = metadata[offeringKey].playout.streams.video.representations;
+
+    const repInfo = (
+      Object.keys(repMetadata)
+        .map(repKey => {
+          try {
+            const { bit_rate, codec, height, width } = repMetadata[repKey];
+
+            return {
+              key: repKey,
+              resolution: `${width}x${height}`,
+              width,
+              height,
+              codec,
+              bitrate: bit_rate,
+              string: `${width}x${height} (${(parseInt(bit_rate) / 1000 / 1000).toFixed(1)}Mbps)`
+            };
+          } catch(error) {
+            this.DebugLog({
+              message: `Error retrieving video representations for ${versionHash || objectId}`,
+              error
+            });
+          }
+        })
+        .filter(rep => rep)
+        .sort((a, b) => a.bitrate > b.bitrate ? -1 : 1)
+    );
+
+    if(repInfo[0]) {
+      repInfo[0].isTopResolution = true;
+    }
+
+    return {
+      downloadable: !!Object.keys(metadata[offeringKey].playout.playout_formats).find(key => key.includes("clear")),
+      resolutionInfo: repInfo
+    };
+  }
+
   Postprocess = flow(function * ({libraryId, objectId, writeToken}) {
     let mediaCatalog = yield this.client.ContentObjectMetadata({
       libraryId,
@@ -609,7 +665,8 @@ class MediaCatalogStore {
   });
 
   DeployedHash({environment, mediaCatalogId}) {
-    return this.rootStore.tenantStore[`tenant${environment.capitalize()}`]?.mediaCatalogs?.[mediaCatalogId]?.versionHash;
+    return this.rootStore.tenantStore[`
+            }tenant${environment.capitalize()}`]?.mediaCatalogs?.[mediaCatalogId]?.versionHash;
   }
 
   get client() {

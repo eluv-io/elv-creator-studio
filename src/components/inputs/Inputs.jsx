@@ -1293,6 +1293,18 @@ export const FabricBrowserInput = observer(({
             label: "Remove link info"
           });
         } else {
+          let resolutionInfo, downloadable = false;
+          try {
+            const info = await store.rootStore.mediaCatalogStore.VideoResolutionOptions({
+              objectId: target.objectId
+            });
+
+            downloadable = info.downloadable;
+            resolutionInfo = info.resolutionInfo;
+          } catch(error) {
+            store.DebugLog({message: "Error retrieving resolution options", error});
+          }
+
           store.SetMetadata({
             objectId,
             page: location.pathname,
@@ -1303,7 +1315,9 @@ export const FabricBrowserInput = observer(({
               type: target.type,
               composition_key: target.compositionKey,
               clip_start_time: target.startTime,
-              clip_end_time: target.endTime
+              clip_end_time: target.endTime,
+              representations: resolutionInfo,
+              downloadable
             },
             label: "Add link info"
           });

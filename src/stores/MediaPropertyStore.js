@@ -224,7 +224,7 @@ class MediaPropertyStore {
     let catalogIds = select.media_catalog ?
       [ select.media_catalog ] :
       mediaProperty.media_catalogs || [];
-    
+
     return (
       catalogIds.map(mediaCatalogId =>
         this.rootStore.mediaCatalogStore.GetFilteredContent({mediaCatalogId, select})
