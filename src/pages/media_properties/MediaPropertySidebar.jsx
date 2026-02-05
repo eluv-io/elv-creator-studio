@@ -431,12 +431,15 @@ export const MediaPropertyContentTabGroup = observer(() => {
             {...inputProps}
             {...l10n.sidebar_tab_group.section}
             searchable
-            defaultValue="manual"
+            defaultValue=""
             field="section_id"
-            options={Object.keys(info.sections).map(sectionId => ({
-              label: info.sections[sectionId].label,
-              value: sectionId
-            }))}
+            options={[
+              {label: "<Current Section>", value: ""},
+              ...Object.keys(info.sections).map(sectionId => ({
+                label: info.sections[sectionId].label,
+                value: sectionId
+              }))
+            ]}
           /> :
           group.type === "automatic" ?
             <AutomaticSectionFilters /> :
