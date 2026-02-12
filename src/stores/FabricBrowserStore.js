@@ -72,7 +72,7 @@ class FabricBrowserStore {
   LoadObjectDetails = flow(function * ({libraryId, objectId}) {
     if(!objectId) { return; }
 
-    if(!this.objectDetails[objectId]) {
+    if(!this.objectDetails[objectId] || Date.now() - this.objectDetails[objectId].retrievedAt > 30000) {
       try {
         libraryId = libraryId || (yield this.client.ContentObjectLibraryId({objectId}));
         const metadata = yield this.client.ContentObjectMetadata({
@@ -191,7 +191,8 @@ class FabricBrowserStore {
           hasClips: clips.length > 0,
           clips,
           type: "main",
-          source: "Main Content"
+          source: "Main Content",
+          retrievedAt: Date.now()
         };
       } catch(error) {
         this.DebugLog({error});
