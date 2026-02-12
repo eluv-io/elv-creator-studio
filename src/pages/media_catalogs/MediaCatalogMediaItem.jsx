@@ -359,12 +359,13 @@ const MediaConfiguration = observer(({mediaItem}) => {
                         field="media_link"
                         previewable
                       />
-                      <Inputs.SingleImageInput
+                      <Inputs.ImageInput
                         {...props}
-                        {...l10n.media.additional_view_image}
-                        field="image"
-                        baseSize={100}
-                        aspectRatio={mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
+                        {...l10n.media.additional_view_images}
+                        fields={[
+                          { ...l10n.media.additional_view_image, baseSize: 100, field: "image", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio},
+                          { ...l10n.media.additional_view_image_tv, baseSize: 100, field: "image_tv", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
+                        ]}
                       />
                     </>
                   }

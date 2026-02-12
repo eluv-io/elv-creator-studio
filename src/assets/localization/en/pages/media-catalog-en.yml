@@ -280,8 +280,12 @@ form:
     primary_view_label:
       label: Primary Content Label
       description: Specify what the primary content should be called in the views list, e.g. 'Main Broadcast'
+    additional_view_images:
+      label: Images
     additional_view_image:
       label: Image
+    additional_view_image_tv:
+      label: Image (TV)
     image_aspect_ratio:
       label: Image Orientation
     full_image:
