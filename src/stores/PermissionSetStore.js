@@ -148,6 +148,27 @@ class PermissionSetStore {
     };
   }
 
+  ValidatePermissionItemLinks = flow(function * (permissionSetId) {
+    // Detect missing marketplaces that are linked from permission items
+    const missingMarketplaces = [];
+    yield this.LoadPermissionSet({permissionSetId});
+    const permissionSet = this.permissionSets[permissionSetId];
+    const info = permissionSet?.metadata?.public?.asset_metadata?.info || {};
+
+    for (const permissionItemId in info.permission_items) {
+      const permissionItem = info.permission_items[permissionItemId];
+      const marketplace = this.rootStore.marketplaceStore.allMarketplaces.find(marketplace => marketplace.objectId === permissionItem.marketplace.marketplace_id);
+      if (!marketplace) {
+        missingMarketplaces.push({
+          type: "Error",
+          message: "Missing marketplace linked: " + permissionItem.marketplace.marketplace_id,
+          link: UrlJoin("permission-sets", permissionSetId, "permission-items", permissionItemId)
+        });
+      }
+    }
+    return missingMarketplaces;
+  });
+
   Reload = flow(function * ({objectId}) {
     yield this.LoadPermissionSet({permissionSetId: objectId, force: true});
   });

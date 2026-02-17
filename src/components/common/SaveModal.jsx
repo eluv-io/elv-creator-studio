@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {rootStore, editStore, uiStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {
@@ -15,7 +15,8 @@ import {
 } from "@mantine/core";
 import InputWrapper from "@/components/inputs/InputWrapper";
 import CheckboxCard from "@/components/inputs/CheckboxCard.jsx";
-import {IconEdit} from "@tabler/icons-react";
+import {IconEdit, IconAlertTriangle} from "@tabler/icons-react";
+import UrlJoin from "url-join";
 
 const ModifiedItem = observer(({
   item,
@@ -26,6 +27,35 @@ const ModifiedItem = observer(({
   error
 }) => {
   const indentWidth = 25;
+  const [validation, setValidation] = useState([]);
+
+  // Call appropriate validation function(s) based on item type
+  useEffect(() => {
+    const runValidation = async () => {
+      let results = [];
+      if (item.type === "media_property") {
+        results = [
+          ...rootStore.mediaPropertyStore.ValidateSections(item.objectId),
+          ...rootStore.mediaPropertyStore.ValidateSectionContent(item.objectId),
+          ...(await rootStore.mediaPropertyStore.ValidateGeneral(item.objectId))
+        ];
+      } else if (item.type === "item_template") {
+        results = [
+          ...(await rootStore.itemTemplateStore.ValidateTemplateAddresses(item.objectId))
+        ];
+      } else if (item.type === "permission_set") {
+        results = [
+          ...(await rootStore.permissionSetStore.ValidatePermissionItemLinks(item.objectId))
+        ];
+      }
+      setValidation(results);
+    };
+
+    runValidation();
+  }, [item]);
+
+  let warningCount = 0, errorCount = 0;
+  validation.forEach(({type}) => {type === "Warning" ? warningCount++ : errorCount++;});
 
   return (
     <InputWrapper
@@ -67,36 +97,72 @@ const ModifiedItem = observer(({
       />
 
       <Accordion variant="contained">
-        <Accordion.Item value="default">
-          <Accordion.Control icon={<IconEdit />}>
-            { rootStore.l10n.components.save_modal.changelist }
-          </Accordion.Control>
-          <Accordion.Panel mx="md">
-            { item.changeList.elements.map(({level=0, value}, index) => {
-              const key = `changelist-${item.objectId}-${index}`;
-              if(level === 0) {
-                return (
-                  <Box
-                    key={key}
-                    mt="sm"
-                    pt="sm"
-                    sx={theme => ({
-                      borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]}`,
-                    })}
-                  >
-                    <Title order={5}>
-                      { value }
-                    </Title>
-                  </Box>
-                );
-              } else if(level === 1) {
-                return <Title mt={5} ml={indentWidth} order={6} key={key}>{ value }</Title>;
-              } else {
-                return <Text ml={2 * indentWidth} fz="sm" key={key}>{ value }</Text>;
-              }
-            })}
-          </Accordion.Panel>
-        </Accordion.Item>
+        {(errorCount > 0 || warningCount > 0) && (
+          <Accordion.Item value="problems">
+            <Accordion.Control icon={<IconAlertTriangle />}>
+              {errorCount > 0 && warningCount > 0
+                ? `${errorCount} Error${errorCount > 1 ? "s" : ""}, ${warningCount} Warning${warningCount > 1 ? "s" : ""}`
+                : errorCount > 0
+                  ? `${errorCount} Error${errorCount > 1 ? "s" : ""}`
+                  : `${warningCount} Warning${warningCount > 1 ? "s" : ""}`}
+            </Accordion.Control>
+            <Accordion.Panel mx="md">
+              {validation.map(({ type, message, link }, index) => (
+                <Box
+                  key={index}
+                  mt="sm"
+                  pt="sm"
+                  sx={(theme) => ({
+                    borderTop: `1px solid ${
+                      theme.colorScheme === "dark"
+                        ? theme.colors.gray[7]
+                        : theme.colors.gray[3]
+                    }`,
+                  })}
+                >
+                  <Title order={5} >{ type }</Title>
+                  <Title mt={5}
+                         ml={indentWidth}
+                         order={6}
+                         component="a"
+                         href={UrlJoin(window.location.origin, link)}
+                         underline
+                  >{ message }</Title>
+                </Box>
+              ))}
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
+        <Accordion.Item value="changes">
+            <Accordion.Control icon={<IconEdit />}>
+                { rootStore.l10n.components.save_modal.changelist }
+              </Accordion.Control>
+              <Accordion.Panel mx="md">
+                { item.changeList.elements.map(({level=0, value}, index) => {
+                  const key = `changelist-${item.objectId}-${index}`;
+                  if(level === 0) {
+                    return (
+                      <Box
+                        key={key}
+                        mt="sm"
+                        pt="sm"
+                        sx={theme => ({
+                          borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[3]}`,
+                        })}
+                      >
+                        <Title order={5}>
+                          { value }
+                        </Title>
+                      </Box>
+                    );
+                  } else if(level === 1) {
+                    return <Title mt={5} ml={indentWidth} order={6} key={key}>{ value }</Title>;
+                  } else {
+                    return <Text ml={2 * indentWidth} fz="sm" key={key}>{ value }</Text>;
+                  }
+                })}
+              </Accordion.Panel>
+            </Accordion.Item>
       </Accordion>
 
       {
