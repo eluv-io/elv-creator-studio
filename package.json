@@ -39,6 +39,7 @@
     "csstree-validator": "^3.0.0",
     "dayjs": "^1.11.9",
     "firebase": "^12.1.0",
+    "fraction.js": "^5.3.4",
     "lodash": "^4.17.21",
     "mantine-datatable": "^6.0.8",
     "markdown-it": "^13.0.1",

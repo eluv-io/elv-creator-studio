@@ -264,6 +264,9 @@ form:
     player_muted:
       label: Mute
       description: Specify whether the content should start muted
+    default_start_time:
+      label: Default Start Time
+      description: You can specify a time in the video to start at the first time the video is viewed
     poster_image:
       label: Video Poster Image
       description: Displayed in the video player before playback is started

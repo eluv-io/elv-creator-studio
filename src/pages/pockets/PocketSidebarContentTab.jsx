@@ -80,12 +80,12 @@ const AutomaticSectionFilters = observer(() => {
     category: ListItemCategory({
       store: pocketStore,
       objectId: pocketId,
-      listPath: "/public/asset_metadata/info/sidebar_config/tabs",
-      id: tabId,
+      listPath: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs", tabIndex.toString(), "groups"),
+      id: groupId,
       labelField: "label",
-      l10n: l10n.categories.sidebar_tab_label
+      l10n: l10n.categories.sidebar_tab_group_label
     }),
-    subcategory: l10n.categories.sidebar_tab_group
+    subcategory: l10n.categories.sidebar_tab_group_content
   };
 
   const attributes = pocketStore.GetPocketAttributes({pocketId});
@@ -271,12 +271,12 @@ const GroupMediaTable = observer(() => {
     category: ListItemCategory({
       store: pocketStore,
       objectId: pocketId,
-      listPath: "/public/asset_metadata/info/sidebar_config/tabs",
-      id: tabId,
+      listPath: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs", tabIndex.toString(), "groups"),
+      id: groupId,
       labelField: "label",
-      l10n: l10n.categories.sidebar_tab_label
+      l10n: l10n.categories.sidebar_tab_group_label
     }),
-    subcategory: l10n.categories.sidebar_tab_group
+    subcategory: l10n.categories.sidebar_tab_group_content
   };
 
   return (
@@ -365,12 +365,11 @@ export const PocketSidebarContentTabGroup = observer(() => {
     category: ListItemCategory({
       store: pocketStore,
       objectId: pocketId,
-      listPath: "/public/asset_metadata/info/sidebar_config/tabs",
-      id: tabId,
+      listPath: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs", tabIndex.toString(), "groups"),
+      id: groupId,
       labelField: "label",
-      l10n: l10n.categories.sidebar_tab_label
-    }),
-    subcategory: l10n.categories.sidebar_tab_group
+      l10n: l10n.categories.sidebar_tab_group_label
+    })
   };
 
   return (
@@ -429,6 +428,20 @@ export const PocketSidebarContentTabGroup = observer(() => {
         group.type === "automatic" ?
           <AutomaticSectionFilters /> :
           <GroupMediaTable />
+      }
+
+
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.bumpers}</Title>
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab_group.override_bumpers}
+        field="override_bumpers"
+      />
+
+      {
+        !group.override_bumpers ? null :
+          <PocketBumpers inputProps={inputProps} />
       }
     </PageContent>
   );

@@ -272,6 +272,7 @@ class MediaCatalogStore {
     if(copyItem) {
       spec = Clone(toJS(copyItem));
       spec.label = `${spec.label} (Copy)`;
+      spec.slug = "";
     } else {
       spec.label = title;
       spec.title = title;
@@ -578,7 +579,8 @@ class MediaCatalogStore {
       metadataSubtree: "offerings",
       select: [
         "*/playout/playout_formats",
-        "*/playout/streams/video/representations"
+        "*/playout/streams/video/representations",
+        "*/media_struct/streams/video/rate",
       ]
     }));
 
@@ -624,6 +626,7 @@ class MediaCatalogStore {
 
     return {
       downloadable: !!Object.keys(metadata[offeringKey].playout.playout_formats).find(key => key.includes("clear")),
+      frameRateRat: metadata?.[offeringKey]?.media_struct?.streams?.video?.rate,
       resolutionInfo: repInfo
     };
   }

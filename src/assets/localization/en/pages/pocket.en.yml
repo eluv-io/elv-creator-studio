@@ -29,6 +29,7 @@ form:
     sidebar_tab_label: Sidebar Tab '{label}'
     sidebar_tab_group: Sidebar Content Group
     sidebar_tab_group_label: Sidebar Content Group '{label}'
+    sidebar_tab_group_content: Content
     login_settings: Login Settings
   create:
     create: Create New {type}
@@ -199,6 +200,9 @@ form:
     free_only:
       label: Show on Free Content Only
       description: If specified, this bumper will only be shown on content that is accessible without purchase
+    unauthorized_only:
+      label: Show on Unauthorized Content Only
+      description: If specified, this bumper will only be shown on content that is not accessible to the user
     images:
       label: Images
     duration:
@@ -211,9 +215,14 @@ form:
     video:
       label: Video
       description: For best results, the aspect ratio should match the content
+    show_video_controls:
+      label: Show Video Controls
+      description: Unless specified, the video will not have any controls other than a volume toggle
+    video_title:
+      label: Video Title
+      description: You can specify a video title to appear in the player for this bumper
     link:
       label: Link URL
-
   sidebar_tabs:
     label: Sidebar Tabs
     description: Define tabbed content lists to display in the side bar
@@ -251,6 +260,9 @@ form:
       columns:
         label: Label
         permissions: Permissions
+    override_bumpers:
+      label: Override Bumper Configuration
+      description: If checked, you can change the bumper settings for content within this group
     filters:
       media_catalog:
         label: Media Catalog
@@ -283,6 +295,9 @@ form:
         label: End Time
         description: Live content starting before the specified time
   sidebar:
+    multiview_content:
+      label: Multiview Content
+      description: Specify what content is available for multiview
     hide_sidebar:
       label: Hide Sidebar
       description: If specified, the sidebar will be hidden and only the active content will be visible.

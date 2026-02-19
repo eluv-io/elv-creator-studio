@@ -1,10 +1,11 @@
 import {observer} from "mobx-react-lite";
-import {rootStore, uiStore} from "@/stores/index.js";
+import { rootStore, uiStore} from "@/stores/index.js";
 import Inputs from "@/components/inputs/Inputs.jsx";
 import {PocketBumperSpec} from "@/specs/PocketSpecs.js";
 
 export const PocketBumpers = observer(({inputProps}) => {
   const l10n = rootStore.l10n.pages.pocket.form;
+
   return (
     <>
       <Inputs.List
@@ -36,12 +37,24 @@ export const PocketBumpers = observer(({inputProps}) => {
                 { label: "After", value: "after" }
               ]}
             />
-            <Inputs.Checkbox
-              {...props}
-              {...l10n.bumpers.free_only}
-              defaultValue={false}
-              field="free_only"
-            />
+            {
+              props.item?.unauthorized_only ? null :
+                <Inputs.Checkbox
+                  {...props}
+                  {...l10n.bumpers.free_only}
+                  defaultValue={false}
+                  field="free_only"
+                />
+            }
+            {
+              props.item?.free_only || props.item?.position !== "before" ? null :
+                <Inputs.Checkbox
+                  {...props}
+                  {...l10n.bumpers.unauthorized_only}
+                  defaultValue={false}
+                  field="unauthorized_only"
+                />
+            }
             <Inputs.FabricBrowser
               {...props}
               {...l10n.bumpers.video}
@@ -53,10 +66,27 @@ export const PocketBumpers = observer(({inputProps}) => {
               }}
               previewable
               previewOptions={{
-                controls: false,
+                controls: props.item.show_video_controls,
                 autoplay: true
               }}
             />
+            {
+              !props.item?.video ? null :
+                <Inputs.Checkbox
+                  {...props}
+                  {...l10n.bumpers.show_video_controls}
+                  defaultValue={false}
+                  field="show_video_controls"
+                />
+            }
+            {
+              !props.item?.video || !props.item?.show_video_controls ? null :
+                <Inputs.Text
+                  {...props}
+                  {...l10n.bumpers.video_title}
+                  field="video_title"
+                />
+            }
             <Inputs.ImageInput
               {...props}
               {...l10n.bumpers.images}
@@ -67,6 +97,7 @@ export const PocketBumpers = observer(({inputProps}) => {
                 { field: "background_mobile", aspectRatio: 1, ...l10n.bumpers.background_mobile },
               ]}
             />
+
             {
               props.item.video ? null :
                 <Inputs.Integer

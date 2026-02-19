@@ -414,6 +414,18 @@ const MediaConfiguration = observer(({mediaItem}) => {
             defaultValue={false}
             field="player_loop"
           />
+          {
+            mediaItem.live_video || !mediaItem.media_link_info?.frame_rate_rat ? null :
+              <Inputs.SMPTEInput
+                {...inputProps}
+                {...l10n.media.default_start_time}
+                frameRateRat={mediaItem.media_link_info.frame_rate_rat}
+                min={0}
+                subcategory={l10n.categories.player_settings}
+                defaultValue={0}
+                field="default_start_time"
+              />
+          }
           <Inputs.ImageInput
             {...inputProps}
             {...l10n.media.poster_image}

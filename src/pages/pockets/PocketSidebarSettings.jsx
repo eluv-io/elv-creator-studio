@@ -51,6 +51,19 @@ const PocketSidebarSettings = observer(() => {
     >
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_content}</Title>
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sidebar.multiview_content}
+        defaultValue=""
+        field="multiview_content"
+        options={[
+          {label: "Live, Upcoming and VOD", value: ""},
+          {label: "Live and VOD", value: "live_and_vod"},
+          {label: "Live Only", value: "live"},
+          {label: "None", value: "none"}
+        ]}
+      />
+
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sidebar_tabs}
@@ -71,76 +84,76 @@ const PocketSidebarSettings = observer(() => {
       />
 
 
-        <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_banners}</Title>
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_banners}</Title>
 
-        <Inputs.List
-          {...inputProps}
-          {...l10n.sidebar.banners}
-          subcategory={l10n.categories.sidebar_banners}
-          field="banners"
-          renderItem={props =>
-            <>
-              <Inputs.ImageInput
-                {...props}
-                {...l10n.sidebar.banner_image}
-                altTextField="image_alt"
-                fields={[
-                  { ...l10n.sidebar.banner_image_desktop, field: "image", aspectRatio: 3 },
-                  { ...l10n.sidebar.banner_image_mobile, field: "image_mobile", aspectRatio: 3 }
-                ]}
-              />
-              <Inputs.Select
-                {...props}
-                {...l10n.sidebar.mobile_position}
-                field="mobile_position"
-                defaultValue=""
-                options={[
-                  { label: "Bottom", value: "" },
-                  { label: "Top", value: "above" }
-                ]}
-              />
-              <Inputs.Select
-                {...props}
-                {...l10n.sidebar.link_type}
-                field="link_type"
-                defaultValue=""
-                options={[
-                  { label: "Visual Only", value: "" },
-                  { label: "Media", value: "media" },
-                  { label: "External Link", value: "external" },
-                  { label: "Reset Account", value: "reset" }
-                ]}
-              />
-              {
-                props.item?.link_type !== "media" ? null :
-                  <>
-                    <Inputs.Select
-                      {...props}
-                      {...l10n.sidebar.media}
-                      searchable
-                      componentProps={{itemComponent: MediaSelectComponent}}
-                      field="media_id"
-                      options={media.map(item => ({label: item.label, value: item.id}))}
-                    />
-                    {
-                      !props.item.media_id ? null :
-                        <MediaItemCard
-                          mediaItem={media.find(item => item.id === props.item.media_id)}
-                        />
-                    }
-                  </>
-              }
-              {
-                props.item?.link_type !== "external" ? null :
-                  <Inputs.URL
+      <Inputs.List
+        {...inputProps}
+        {...l10n.sidebar.banners}
+        subcategory={l10n.categories.sidebar_banners}
+        field="banners"
+        renderItem={props =>
+          <>
+            <Inputs.ImageInput
+              {...props}
+              {...l10n.sidebar.banner_image}
+              altTextField="image_alt"
+              fields={[
+                { ...l10n.sidebar.banner_image_desktop, field: "image", aspectRatio: 3 },
+                { ...l10n.sidebar.banner_image_mobile, field: "image_mobile", aspectRatio: 3 }
+              ]}
+            />
+            <Inputs.Select
+              {...props}
+              {...l10n.sidebar.mobile_position}
+              field="mobile_position"
+              defaultValue=""
+              options={[
+                { label: "Bottom", value: "" },
+                { label: "Top", value: "above" }
+              ]}
+            />
+            <Inputs.Select
+              {...props}
+              {...l10n.sidebar.link_type}
+              field="link_type"
+              defaultValue=""
+              options={[
+                { label: "Visual Only", value: "" },
+                { label: "Media", value: "media" },
+                { label: "External Link", value: "external" },
+                { label: "Reset Account", value: "reset" }
+              ]}
+            />
+            {
+              props.item?.link_type !== "media" ? null :
+                <>
+                  <Inputs.Select
                     {...props}
-                    {...l10n.sidebar.link}
-                    field="url"
+                    {...l10n.sidebar.media}
+                    searchable
+                    componentProps={{itemComponent: MediaSelectComponent}}
+                    field="media_id"
+                    options={media.map(item => ({label: item.label, value: item.id}))}
                   />
-              }
-            </>
-          }
-        />
+                  {
+                    !props.item.media_id ? null :
+                      <MediaItemCard
+                        mediaItem={media.find(item => item.id === props.item.media_id)}
+                      />
+                  }
+                </>
+            }
+            {
+              props.item?.link_type !== "external" ? null :
+                <Inputs.URL
+                  {...props}
+                  {...l10n.sidebar.link}
+                  field="url"
+                />
+            }
+          </>
+        }
+      />
     </PageContent>
   );
 });

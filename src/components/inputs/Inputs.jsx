@@ -42,6 +42,8 @@ import CheckboxCard from "./CheckboxCard.jsx";
 import InputWrapper, {InputLabel} from "./InputWrapper.jsx";
 import Video from "@/components/common/Video.jsx";
 import * as ThumbHash from "thumbhash";
+import FrameAccurateHandler from "@/helpers/FrameAccurateHandler.js";
+import {DataTable} from "mantine-datatable";
 
 import {
   IconX,
@@ -62,7 +64,6 @@ import {
   IconCaretDownFilled,
   IconCaretUpFilled
 } from "@tabler/icons-react";
-import {DataTable} from "mantine-datatable";
 
 import VideoIcon from "@/assets/icons/video.svg";
 import CompositionIcon from "@/assets/icons/composition.svg";
@@ -619,6 +620,99 @@ const CheckboxInput = observer(({
         label,
         inverted: INVERTED
       })}
+      {...componentProps}
+    />
+  );
+});
+
+const SMPTEInput = observer(({
+  store,
+  objectId,
+  path,
+  field,
+  category,
+  subcategory,
+  label,
+  description,
+  hint,
+  disabled,
+  minFrame=0,
+  maxFrame=99999999,
+  frameRateRat,
+  componentProps={}
+}) => {
+  const [frameAccurateHandler] = useState(new FrameAccurateHandler({frameRateRat}));
+  const timeValue = store.GetMetadata({objectId, path, field}) || 0;
+  const [smpteInput, setSMPTEInput] = useState(frameAccurateHandler.TimeToSMPTE(timeValue));
+
+  useEffect(() => {
+    setSMPTEInput(frameAccurateHandler.TimeToSMPTE(timeValue));
+  }, [timeValue]);
+
+  const FormatSMPTE = ({originalValue, smpte}) => {
+    try {
+      const frame = Math.max(minFrame || 0, Math.min(maxFrame, frameAccurateHandler.SMPTEToFrame(smpte)));
+      smpte = frameAccurateHandler.FrameToSMPTE(frame);
+
+      setSMPTEInput(frameAccurateHandler.FrameToSMPTE(frame));
+
+      return { frame, smpte };
+    } catch(error) {
+      setSMPTEInput(originalValue);
+      return { frame: frameAccurateHandler.SMPTEToFrame(originalValue) , smpte: originalValue };
+    }
+  };
+
+  const onChange = ({frame}) => {
+    if(timeValue === frameAccurateHandler.FrameToTime(frame)) {
+      return;
+    }
+
+    store.SetMetadata({
+      actionType: "MODIFY_FIELD",
+      objectId,
+      page: location.pathname,
+      path,
+      field,
+      value: frameAccurateHandler.FrameToTime(frame),
+      category,
+      subcategory,
+      label
+    });
+  };
+
+  componentProps.maw = componentProps.maw || uiStore.inputWidth;
+
+  return (
+    <TextInput
+      mb="md"
+      disabled={disabled}
+      label={<InputLabel label={label} hint={hint} />}
+      description={description}
+      value={smpteInput}
+      monospace
+      onChange={event => setSMPTEInput(event.target.value)}
+      onKeyDown={event => {
+        const originalValue = frameAccurateHandler.TimeToSMPTE(timeValue);
+        if(event.key === "Enter") {
+          onChange?.(FormatSMPTE({originalValue, smpte: smpteInput, setSMPTEInput}));
+        } else if(event.key === "ArrowUp") {
+          const { frame } = FormatSMPTE({originalValue, smpte: smpteInput, setSMPTEInput});
+          const newSMPTE = frameAccurateHandler.FrameToSMPTE(Math.min(frame + 1));
+          onChange?.(FormatSMPTE({originalValue, smpte: newSMPTE, setSMPTEInput}));
+        } else if(event.key === "ArrowDown") {
+          const { frame } = FormatSMPTE({originalValue, smpte: smpteInput, setSMPTEInput});
+          const newSMPTE = frameAccurateHandler.FrameToSMPTE(Math.max(frame - 1, 0));
+          onChange?.(FormatSMPTE({originalValue, smpte: newSMPTE, setSMPTEInput}));
+        }
+      }}
+      onBlur={() => onChange?.(
+        FormatSMPTE({
+          originalValue: frameAccurateHandler.TimeToSMPTE(timeValue),
+          smpte: smpteInput,
+          setSMPTEInput
+        }))
+      }
       {...componentProps}
     />
   );
@@ -1294,6 +1388,7 @@ export const FabricBrowserInput = observer(({
           });
         } else {
           let resolutionInfo, downloadable = false;
+          let frameRateRat = undefined;
           try {
             const info = await store.rootStore.mediaCatalogStore.VideoResolutionOptions({
               objectId: target.objectId
@@ -1301,6 +1396,7 @@ export const FabricBrowserInput = observer(({
 
             downloadable = info.downloadable;
             resolutionInfo = info.resolutionInfo;
+            frameRateRat = info.frameRateRat;
           } catch(error) {
             store.DebugLog({message: "Error retrieving resolution options", error});
           }
@@ -1317,7 +1413,8 @@ export const FabricBrowserInput = observer(({
               clip_start_time: target.startTime,
               clip_end_time: target.endTime,
               representations: resolutionInfo,
-              downloadable
+              downloadable,
+              frame_rate_rat: frameRateRat
             },
             label: "Add link info"
           });
@@ -1860,7 +1957,7 @@ const List = observer(({
     />
   );
 
-  showBottomAddButton = showBottomAddButton || items.length >= 5;
+  showBottomAddButton = showBottomAddButton || items.length >= 1;
 
   let numberOfItems = items.length;
   if(hidden) {
@@ -2488,6 +2585,7 @@ export default {
   MultiSelect,
   RichText: RichTextInput,
   Password,
+  SMPTEInput,
   Checkbox: CheckboxInput,
   SingleImageInput,
   ImageInput,
