@@ -197,6 +197,9 @@ form:
     position:
       label: Position
       description: Specify if this bumper should be displayed before or after the content
+    display:
+      label: Display
+      description: Select when this bumper should be displayed based on the selected content
     free_only:
       label: Show on Free Content Only
       description: If specified, this bumper will only be shown on content that is accessible without purchase

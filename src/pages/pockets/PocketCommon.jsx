@@ -37,24 +37,18 @@ export const PocketBumpers = observer(({inputProps}) => {
                 { label: "After", value: "after" }
               ]}
             />
-            {
-              props.item?.unauthorized_only ? null :
-                <Inputs.Checkbox
-                  {...props}
-                  {...l10n.bumpers.free_only}
-                  defaultValue={false}
-                  field="free_only"
-                />
-            }
-            {
-              props.item?.free_only || props.item?.position !== "before" ? null :
-                <Inputs.Checkbox
-                  {...props}
-                  {...l10n.bumpers.unauthorized_only}
-                  defaultValue={false}
-                  field="unauthorized_only"
-                />
-            }
+            <Inputs.Select
+              {...props}
+              {...l10n.bumpers.display}
+              defaultValue=""
+              field="display"
+              options={[
+                {label: "All Content", value: ""},
+                {label: "Free Only", value: "free"},
+                {label: "Unauthorized Only", value: "unauthorized"},
+                {label: "Authorized Only", value: "authorized"}
+              ]}
+            />
             <Inputs.FabricBrowser
               {...props}
               {...l10n.bumpers.video}
