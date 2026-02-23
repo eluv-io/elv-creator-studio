@@ -1,5 +1,14 @@
 // NOTE: Default value only applies when field is undefined, not ""
 
+export const MarketplaceItemDiscountSpec = {
+  label: "",
+  code: "",
+  sku: "",
+  percent: 0,
+  price: {},
+  periods: 0,
+};
+
 export const MarketplaceItemSpec = {
   sku: "",
   type: "nft",

@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {useEffect} from "react";
 import {Link, useParams} from "react-router-dom";
-import {rootStore, marketplaceStore} from "@/stores";
+import {rootStore, marketplaceStore, itemTemplateStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs, {Confirm} from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
@@ -9,10 +9,11 @@ import {Button, Group, Title, Text} from "@mantine/core";
 import {IconButton, ItemImage, ListItemCategory, LocalizeString, TooltipIcon} from "@/components/common/Misc";
 import {FormatDate, FormatPriceString, ParseDate} from "@/helpers/Misc.js";
 
-import {MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
+import {MarketplaceItemDiscountSpec, MarketplaceItemSpec} from "@/specs/MarketplaceSpecs.js";
 
 import {IconCircleCheck, IconX, IconClock, IconTemplate, IconLink} from "@tabler/icons-react";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
+import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 
 export const MarketplaceItem = observer(() => {
   const { marketplaceId, sku } = useParams();
@@ -30,6 +31,8 @@ export const MarketplaceItem = observer(() => {
     if(itemTemplateHash && !itemTemplateMetadata) {
       marketplaceStore.LoadItemTemplateMetadata({itemTemplateHash});
     }
+
+    itemTemplateStore.LoadItemTemplates();
   }, []);
 
   if(!item) {
@@ -285,8 +288,15 @@ export const MarketplaceItem = observer(() => {
         {...l10n.item.discount_codes}
         subcategory={l10n.categories.discount_codes}
         field="discount_codes"
+        newItemSpec={MarketplaceItemDiscountSpec}
         renderItem={props =>
           <>
+            <Inputs.UUID
+              {...props}
+              {...l10n.common.label}
+              field="id"
+              hidden
+            />
             <Inputs.Text
               {...props}
               {...l10n.common.label}
@@ -329,18 +339,71 @@ export const MarketplaceItem = observer(() => {
                   {...l10n.item.discount_periods}
                   field="periods"
                 />
-
             }
           </>
         }
-        fields={[
-          { field: "code", InputComponent: Inputs.Text, ...l10n.item.discount_code },
-          { field: "percent", InputComponent: Inputs.Number, min: 1, max: 99, ...l10n.item.discount_code_percentage, defaultValue: 10 },
-
-        ]}
       />
 
-
+      <Inputs.List
+        {...inputProps}
+        {...l10n.item.owned_item_discounts}
+        subcategory={l10n.categories.owned_item_discounts}
+        field="owned_item_discounts"
+        newItemSpec={MarketplaceItemDiscountSpec}
+        renderItem={props =>
+          <>
+            <Inputs.UUID
+              {...props}
+              {...l10n.common.label}
+              field="id"
+              hidden
+            />
+            <Inputs.Text
+              {...props}
+              {...l10n.common.label}
+              field="label"
+            />
+            <MarketplaceItemSelect
+              {...props}
+              {...l10n.item.owned_item}
+              field="sku"
+            />
+            <Inputs.Number
+              {...props}
+              {...l10n.item.discount_percent}
+              field="percent"
+            />
+            {
+              props.item.percent ? null :
+                <Inputs.InputWrapper
+                  {...l10n.item.discount_price}
+                >
+                  {["USD", ...(info.currencies || [])].map(currencyCode =>
+                    <Inputs.Price
+                      key={`price-${currencyCode}`}
+                      {...inputProps}
+                      componentProps={{
+                        mt: "sm",
+                        max: item.price?.[currencyCode]
+                      }}
+                      label={LocalizeString(l10n.item.price_currency.label, {currencyCode})}
+                      path={UrlJoin(props.path, "price")}
+                      field={currencyCode}
+                    />
+                  )}
+                </Inputs.InputWrapper>
+            }
+            {
+              !item.is_subscription ? null :
+                <Inputs.Number
+                  {...props}
+                  {...l10n.item.discount_periods}
+                  field="periods"
+                />
+            }
+          </>
+        }
+      />
 
       <Title order={3} mt={50} mb="md">{l10n.categories.item_availability}</Title>
 

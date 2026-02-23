@@ -28,6 +28,7 @@ form:
     item_display_options: Display Options
     item_purchase_details: Purchase Details
     discount_codes: Discount Codes
+    owned_item_discounts: Owned Item Discounts
     item_availability: Availability
     item_permissions: Permissions
     item_analytics: Analytics
@@ -344,6 +345,7 @@ form:
       description: Leave blank for no minimum
     discount_codes:
       label: Discount Codes
+      description: Specify codes that can be redeemed for a discount on this item
       fieldLabel: Discount Code
     discount_percent:
       label: Discount (Percentage)
@@ -356,6 +358,13 @@ form:
       description: Specify how long this discount should apply to this subscription in terms of billing periods. Leave blank to apply it indefinitely.
     discount_code:
       label: Code
+    owned_item_discounts:
+      label: Owned Item Discounts
+      description: "Apply discounts to this item based on other items the user already owns. Note: Only the highest discount will apply"
+      fieldLabel: Owned Item Discount
+    owned_item:
+      label: Owned Item
+      description: Select the item the user must own for this discount
     available_at:
       label: Release Date
       description: If specified, the item will not be available for purchase until this date
