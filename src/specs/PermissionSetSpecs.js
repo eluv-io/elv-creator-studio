@@ -1,17 +1,14 @@
+const PermissionItemDisplaySpec = {
+  title: "",
+  subtitle: "",
+  description: ""
+};
+
 const PermissionItemBaseSpec = {
   id: undefined,
   label: "",
-  title: "",
-  subtitle: "",
-  description: "",
-  permissions: {},
-  display: {
-    title: "",
-    subtitle: "",
-    headers: [],
-    description: "",
-    thumbnail_image_portrait: undefined
-  }
+  alternate_displays: [],
+  ...PermissionItemDisplaySpec
 };
 
 export const PermissionItemOwnedSpec = {
@@ -19,6 +16,19 @@ export const PermissionItemOwnedSpec = {
   type: "owned_item",
   marketplace_id: undefined,
   marketplace_sku: undefined
+};
+
+export const PermissionItemLinkSpec = {
+  ...PermissionItemBaseSpec,
+  type: "external",
+  link: "",
+  price: {}
+};
+
+export const PermissionItemAlternateDisplaySpec = {
+  id: undefined,
+  permission_item_id: "",
+  ...PermissionItemDisplaySpec
 };
 
 export const PermissionSetSpec = {

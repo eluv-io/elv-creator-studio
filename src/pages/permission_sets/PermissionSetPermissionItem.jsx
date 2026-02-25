@@ -9,6 +9,87 @@ import UrlJoin from "url-join";
 import {MarketplaceSelect} from "@/components/inputs/ResourceSelection.jsx";
 import {MarketplaceItemSelect} from "@/components/inputs/marketplace/MarketplaceItemInput.jsx";
 import {Title} from "@mantine/core";
+import {PermissionItemAlternateDisplaySpec} from "@/specs/PermissionSetSpecs.js";
+
+const PermissionItemDisplay = observer(({inputProps, permissionItem, marketplace}) => {
+  const l10n = rootStore.l10n.pages.permission_set.form;
+  return (
+    <>
+
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.permission_item.display.title}
+        localizable
+        subcategory={l10n.categories.permission_item_display}
+        required
+        field="title"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.permission_item.display.subtitle}
+        localizable
+        subcategory={l10n.categories.permission_item_display}
+        field="subtitle"
+      />
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.permission_item.display.description}
+        localizable
+        subcategory={l10n.categories.permission_item_display}
+        field="description"
+      />
+
+      {
+        permissionItem.type === "external" ?
+          <>
+            <Inputs.URL
+              {...inputProps}
+              {...l10n.permission_item.link}
+              defaultValue={false}
+              field="link"
+            />
+            <Inputs.Price
+              {...inputProps}
+              {...l10n.permission_item.price}
+              path={UrlJoin(inputProps.path, "price")}
+              field="USD"
+            />
+            {
+              (marketplace?.currencies || []).map(currencyCode =>
+                <Inputs.Price
+                  key={`price-${currencyCode}`}
+                  {...inputProps}
+                  label={LocalizeString(l10n.permission_item.price_currency.label, {currencyCode})}
+                  path={UrlJoin(inputProps.path, "price")}
+                  field={currencyCode}
+                />
+              )
+            }
+          </> :
+          <>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.permission_item.display.access_title}
+              subcategory={l10n.categories.permission_item_display}
+              field="access_title"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.permission_item.display.access_title_background_color}
+              subcategory={l10n.categories.permission_item_display}
+              field="access_title_background_color"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.permission_item.display.access_title_text_color}
+              subcategory={l10n.categories.permission_item_display}
+              field="access_title_text_color"
+            />
+          </>
+      }
+    </>
+  );
+});
 
 const PermissionSetPermissionItem = observer(() => {
   const { permissionSetId, permissionItemId } = useParams();
@@ -19,6 +100,7 @@ const PermissionSetPermissionItem = observer(() => {
   const permissionItem = info?.permission_items?.[permissionItemId];
   useEffect(() => {
     marketplaceStore.LoadMarketplaces();
+    permissionSetStore.LoadPermissionSets();
   }, []);
 
   useEffect(() => {
@@ -117,35 +199,6 @@ const PermissionSetPermissionItem = observer(() => {
           </>
       }
 
-      {
-        permissionItem.type !== "external" ? null :
-          <>
-            <Inputs.URL
-              {...inputProps}
-              {...l10n.permission_item.link}
-              defaultValue={false}
-              field="link"
-            />
-            <Inputs.Price
-              {...inputProps}
-              {...l10n.permission_item.price}
-              path={UrlJoin(inputProps.path, "price")}
-              field="USD"
-            />
-            {
-              (marketplace?.currencies || []).map(currencyCode =>
-                <Inputs.Price
-                  key={`price-${currencyCode}`}
-                  {...inputProps}
-                  label={LocalizeString(l10n.permission_item.price_currency.label, {currencyCode})}
-                  path={UrlJoin(inputProps.path, "price")}
-                  field={currencyCode}
-                />
-              )
-            }
-          </>
-      }
-
       <Inputs.Integer
         {...inputProps}
         {...l10n.permission_item.priority}
@@ -154,47 +207,51 @@ const PermissionSetPermissionItem = observer(() => {
         field="priority"
       />
 
-      <Title mt={50} order={3}>{ l10n.categories.permission_item_display }</Title>
+      <Title mt={50} mb="md" order={3}>{ l10n.categories.permission_item_display }</Title>
+      <PermissionItemDisplay
+        inputProps={inputProps}
+        permissionItem={permissionItem}
+        marketplace={marketplace}
+      />
 
-      <Inputs.Text
+      <Title mt={50} mb="md" order={3}>{ l10n.categories.permission_item_alternate_displays }</Title>
+
+      <Inputs.List
         {...inputProps}
-        {...l10n.permission_item.display.title}
-        localizable
-        subcategory={l10n.categories.permission_item_display}
-        required
-        field="title"
-      />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.permission_item.display.subtitle}
-        localizable
-        subcategory={l10n.categories.permission_item_display}
-        field="subtitle"
-      />
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.permission_item.display.description}
-        localizable
-        subcategory={l10n.categories.permission_item_display}
-        field="description"
-      />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.permission_item.display.access_title}
-        subcategory={l10n.categories.permission_item_display}
-        field="access_title"
-      />
-      <Inputs.Color
-        {...inputProps}
-        {...l10n.permission_item.display.access_title_background_color}
-        subcategory={l10n.categories.permission_item_display}
-        field="access_title_background_color"
-      />
-      <Inputs.Color
-        {...inputProps}
-        {...l10n.permission_item.display.access_title_text_color}
-        subcategory={l10n.categories.permission_item_display}
-        field="access_title_text_color"
+        {...l10n.permission_item.alternate_displays}
+        field="alternate_displays"
+        newItemSpec={PermissionItemAlternateDisplaySpec}
+        renderItem={props =>
+          <>
+            <Inputs.UUID
+              {...props}
+              {...l10n.common.id}
+              hidden
+              field="id"
+            />
+            <Inputs.Select
+              {...props}
+              {...l10n.permission_item.permission_item_id}
+              field="permission_item_id"
+              options={
+                Object.keys(info.permission_items)
+                  ?.filter(id =>
+                    id !== permissionItemId &&
+                    info.permission_items[id]?.type === "owned_item"
+                  )
+                  ?.map(id => ({
+                    label: info.permission_items[id].label || id,
+                    value: id,
+                  }))
+              }
+            />
+            <PermissionItemDisplay
+              inputProps={props}
+              permissionItem={permissionItem}
+              marketplace={marketplace}
+            />
+          </>
+        }
       />
     </PageContent>
   );

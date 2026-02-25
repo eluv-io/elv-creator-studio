@@ -13,6 +13,7 @@ form:
     permission_item: Permission Item
     permission_item_label: Permission Item '{label}'
     permission_item_display: Display
+    permission_item_alternate_displays: Alternate Displays
   create:
     create: Create New Permission Set
     name:
@@ -99,3 +100,11 @@ form:
         label: Access Title Badge Background Color
       access_title_text_color:
         label: Access Title Badge Text Color
+    alternate_displays:
+      label: Alternate Displays
+      description: Change how this item is displayed based on what item the user already owns.
+      fieldLabel: Alternate Display
+    permission_item_id:
+      label: Permission Item
+      description: If the user owns this item, this display will be shown
+

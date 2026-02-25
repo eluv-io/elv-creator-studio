@@ -4,7 +4,7 @@ import Clone from "lodash/clone";
 import {GenerateUUID} from "@/helpers/Misc.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
-import {PermissionItemOwnedSpec, PermissionSetSpec} from "@/specs/PermissionSetSpecs.js";
+import {PermissionItemOwnedSpec, PermissionItemLinkSpec, PermissionSetSpec} from "@/specs/PermissionSetSpecs.js";
 
 class PermissionSetStore {
   allPermissionSets;
@@ -114,7 +114,11 @@ class PermissionSetStore {
   CreatePermissionItem({page, type, permissionSetId, label, marketplaceId, marketplaceSKU}) {
     let id = `${this.ID_PREFIXES[`permission_item_${type}`]}${GenerateUUID()}`;
 
-    const spec = Clone(PermissionItemOwnedSpec);
+    const spec = Clone(
+      type === "owned_item" ?
+        PermissionItemOwnedSpec :
+        PermissionItemLinkSpec
+    );
     spec.id = id;
     spec.label = label || spec.label;
     spec.type = type;
