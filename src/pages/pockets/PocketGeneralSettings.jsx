@@ -232,28 +232,6 @@ const PocketGeneralSettings = observer(() => {
             { l10n.categories.branding }
           </Accordion.Control>
           <Accordion.Panel>
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.general.app_name}
-              placeholder="Pocket TV"
-              field="app_name"
-            />
-
-            <Inputs.Text
-              {...inputProps}
-              {...l10n.general.receipt_name}
-              placeholder="Pocket TV"
-              field="receipt_name"
-            />
-
-            <Inputs.List
-              {...inputProps}
-              {...l10n.general.custom_domains}
-              subcategory={l10n.categories.custom_domains}
-              path="/public/asset_metadata/info"
-              field="custom_domains"
-            />
-
             <Inputs.ImageInput
               {...inputProps}
               {...l10n.general.header_logo}
@@ -290,7 +268,26 @@ const PocketGeneralSettings = observer(() => {
               field="qr_code_logo"
               aspectRatio={1}
             />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.app_name}
+              placeholder="Pocket TV"
+              field="app_name"
+            />
 
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.receipt_name}
+              placeholder="Pocket TV"
+              field="receipt_name"
+            />
+
+            <Inputs.RichText
+              {...inputProps}
+              {...l10n.general.payment_terms}
+              subcategory={l10n.categories.branding}
+              field="payment_terms"
+            />
             <Inputs.TextArea
               {...inputProps}
               {...l10n.general.payment_message}

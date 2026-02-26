@@ -93,6 +93,8 @@ form:
         label: Subtitle
       description:
         label: Description
+      disclaimer:
+        label: Disclaimer
       access_title:
         label: Access Title
         description: A title for this access level

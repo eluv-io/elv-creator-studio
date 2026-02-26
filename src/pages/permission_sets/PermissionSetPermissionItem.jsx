@@ -15,7 +15,6 @@ const PermissionItemDisplay = observer(({inputProps, permissionItem, marketplace
   const l10n = rootStore.l10n.pages.permission_set.form;
   return (
     <>
-
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.display.title}
@@ -37,6 +36,13 @@ const PermissionItemDisplay = observer(({inputProps, permissionItem, marketplace
         localizable
         subcategory={l10n.categories.permission_item_display}
         field="description"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.permission_item.display.disclaimer}
+        localizable
+        subcategory={l10n.categories.permission_item_display}
+        field="disclaimer"
       />
 
       {
