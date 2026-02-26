@@ -119,6 +119,12 @@ form:
     use_mint_ordinal:
       label: Use Mint Ordinal in Token ID
       description: Generate numeric token IDs
+    expiration_date:
+      label: Expiration Date
+      description: If specified, access granted by this item will be revoked on the date specified;
+    expiration_period:
+      label: Expiration Period (Days)
+      description: If specified, access granted by this item will be revoked this many days after purchase
     shuffle_token_id:
       label: Shuffle Token ID
       description: Randomize order of ordinal token ID

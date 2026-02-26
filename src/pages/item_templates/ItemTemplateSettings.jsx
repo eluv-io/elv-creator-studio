@@ -52,6 +52,22 @@ const ItemTemplateSettings = observer(() => {
         subcategory={l10n.categories.contract}
         field="total_supply"
       />
+      <Inputs.DateTime
+        {...inputProps}
+        {...l10n.settings.expiration_date}
+        subcategory={l10n.categories.contract}
+        path="/public/asset_metadata/mint"
+        field="expiration_date"
+      />
+
+      <Inputs.Integer
+        {...inputProps}
+        {...l10n.settings.expiration_period}
+        min={0}
+        subcategory={l10n.categories.contract}
+        path="/public/asset_metadata/mint"
+        field="expiration_period"
+      />
 
       <Inputs.Checkbox
         {...inputProps}
