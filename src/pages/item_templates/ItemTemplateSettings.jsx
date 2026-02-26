@@ -56,7 +56,6 @@ const ItemTemplateSettings = observer(() => {
         {...inputProps}
         {...l10n.settings.expiration_date}
         subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
         field="expiration_date"
       />
 
@@ -65,7 +64,6 @@ const ItemTemplateSettings = observer(() => {
         {...l10n.settings.expiration_period}
         min={0}
         subcategory={l10n.categories.contract}
-        path="/public/asset_metadata/mint"
         field="expiration_period"
       />
 
