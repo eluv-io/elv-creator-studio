@@ -542,7 +542,7 @@ export const MediaPropertySidebarContentTab = observer(() => {
 
 export const MediaPropertySidebarSettings = observer(() => {
   const { mediaPropertyId } = useParams();
-
+  const [showMediaSelectionModalIndex, setShowMediaSelectionModalIndex] = useState(undefined);
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
   if(!mediaProperty) { return null; }
@@ -581,6 +581,102 @@ export const MediaPropertySidebarSettings = observer(() => {
           }
         ]}
       />
+            <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_banners}</Title>
+
+      <Inputs.List
+        {...inputProps}
+        {...l10n.sidebar.banners}
+        subcategory={l10n.categories.sidebar_banners}
+        field="banners"
+        renderItem={props =>
+          <>
+            <Inputs.ImageInput
+              {...props}
+              {...l10n.sidebar.banner_image}
+              altTextField="image_alt"
+              fields={[
+                { ...l10n.sidebar.banner_image_desktop, field: "image", aspectRatio: 3 },
+                { ...l10n.sidebar.banner_image_mobile, field: "image_mobile", aspectRatio: 3 }
+              ]}
+            />
+            <Inputs.Select
+              {...props}
+              {...l10n.sidebar.link_type}
+              field="link_type"
+              defaultValue=""
+              options={[
+                { label: "Visual Only", value: "" },
+                { label: "Page", value: "page" },
+                { label: "Media", value: "media" },
+                { label: "External Link", value: "external" }
+              ]}
+            />
+
+            {
+              props.item?.link_type !== "page" ? null :
+                <Inputs.Select
+                  {...props}
+                  {...l10n.sidebar.page}
+                  field="page"
+                  defaultValue="main"
+                  options={[
+                    { label: "(Property Main Page)", value: "main" },
+                    ...Object.keys(info.pages || {})
+                      .filter(pageId => pageId !== "main")
+                      .map(pageId => ({
+                        label: info.pages[pageId].label,
+                        value: pageId
+                      }))
+                  ]}
+                />
+            }
+            {
+              props.item?.link_type !== "media" ? null :
+                <>
+                  <Button
+                    onClick={() => setShowMediaSelectionModalIndex(props.index)}
+                    mb="sm"
+                  >
+                    Select Media Item
+                  </Button>
+                  {
+                    !props.item.media_id ? null :
+                      <MediaItemCard
+                        mediaItem={mediaPropertyStore.GetMediaItem({mediaItemId: props.item.media_id})}
+                      />
+                  }
+                </>
+            }
+            {
+              props.item?.link_type !== "external" ? null :
+                <Inputs.URL
+                  {...props}
+                  {...l10n.sidebar.link}
+                  field="url"
+                />
+            }
+          </>
+        }
+      />
+      {
+        typeof showMediaSelectionModalIndex === "undefined" ? null :
+          <MediaCatalogItemSelectionModal
+            multiple={false}
+            allowTypeSelection
+            mediaCatalogIds={info.media_catalogs || []}
+            Close={() => setShowMediaSelectionModalIndex(undefined)}
+            Submit={(mediaItemIds) => {
+              mediaPropertyStore.SetMetadata({
+                ...inputProps,
+                ...l10n.sidebar.media,
+                path: UrlJoin(inputProps.path, "banners", showMediaSelectionModalIndex.toString()),
+                page: location.pathname,
+                field: "media_id",
+                value: mediaItemIds?.[0] || "",
+              });
+            }}
+          />
+      }
     </PageContent>
   );
 });

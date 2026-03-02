@@ -1007,6 +1007,27 @@ form:
       description: If specified, a user must have access to at least one of the following permissions to access this item
       fieldLabel: Permission
 
+  sidebar:
+    banners:
+      label: Banner Links
+      description: Specify banner links to be displayed at the top of the sidebar that can link to specific content or external URLs
+      fieldLabel: Banner
+    banner_image:
+      label: Banner Image
+    banner_image_desktop:
+      label: Desktop
+    banner_image_mobile:
+      label: Mobile
+    link_type:
+      label: Link Type
+    media:
+      label: Media
+      description: Select the media this banner will link to
+    page:
+      label: Page
+      description: Select the property page this banner will link to
+    link:
+      label: Link URL
   sidebar_tabs:
     label: Sidebar Tabs
     description: Define tabbed content lists to display in the side bar
