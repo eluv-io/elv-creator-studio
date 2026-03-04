@@ -316,62 +316,48 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       />
                     </>
                 }
-                {
-                  (mediaItem.additional_views || []).length === 0 ? null :
-                    <>
-                      <Inputs.Text
-                        {...inputProps}
-                        {...l10n.media.additional_views_label}
-                        subcategory={l10n.categories.additional_views}
-                        field="additional_views_label"
-                      />
-                      <Inputs.Text
-                        {...inputProps}
-                        {...l10n.media.primary_view_label}
-                        subcategory={l10n.categories.primary_view_label}
-                        field="primary_view_label"
-                      />
-                    </>
-                }
-                <Inputs.List
-                  {...inputProps}
-                  {...l10n.media.additional_views}
-                  subcategory={l10n.categories.additional_views}
-                  field="additional_views"
-                  newItemSpec={MediaCatalogAdditionalViewSpec}
-                  showBottomAddButton={mediaItem.additional_views?.length > 0}
-                  renderItem={props =>
-                    <>
-                      <Inputs.Text
-                        {...props}
-                        {...l10n.common.label}
-                        subcategory={l10n.categories.additional_views}
-                        field="label"
-                      />
-                      <Inputs.FabricBrowser
-                        {...props}
-                        {...l10n.media.media_link}
-                        subcategory={l10n.categories.additional_views}
-                        fabricBrowserProps={{
-                          video: true,
-                        }}
-                        autoUpdate={false}
-                        field="media_link"
-                        previewable
-                      />
-                      <Inputs.ImageInput
-                        {...props}
-                        {...l10n.media.additional_view_images}
-                        fields={[
-                          { ...l10n.media.additional_view_image, baseSize: 100, field: "image", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio},
-                          { ...l10n.media.additional_view_image_tv, baseSize: 100, field: "image_tv", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
-                        ]}
-                      />
-                    </>
-                  }
-                />
               </>
           }
+
+          <Inputs.List
+            {...inputProps}
+            {...l10n.media.additional_views}
+            subcategory={l10n.categories.additional_views}
+            field="additional_views"
+            newItemSpec={MediaCatalogAdditionalViewSpec}
+            showBottomAddButton={mediaItem.additional_views?.length > 0}
+            renderItem={props =>
+              <>
+                <Inputs.Text
+                  {...props}
+                  {...l10n.common.label}
+                  subcategory={l10n.categories.additional_views}
+                  field="label"
+                />
+                <Inputs.FabricBrowser
+                  {...props}
+                  {...l10n.media.media_link}
+                  subcategory={l10n.categories.additional_views}
+                  fabricBrowserProps={{
+                    video: true,
+                    allowCompositions: true,
+                    allowClips: true
+                  }}
+                  autoUpdate={false}
+                  field="media_link"
+                  previewable
+                />
+                <Inputs.ImageInput
+                  {...props}
+                  {...l10n.media.additional_view_images}
+                  fields={[
+                    { ...l10n.media.additional_view_image, baseSize: 100, field: "image", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio},
+                    { ...l10n.media.additional_view_image_tv, baseSize: 100, field: "image_tv", aspectRatio: mediaCatalogStore.IMAGE_ASPECT_RATIOS.Landscape?.ratio}
+                  ]}
+                />
+              </>
+            }
+          />
 
           <Title order={3} mt={50} mb="md">{ l10n.categories.player_settings }</Title>
 
