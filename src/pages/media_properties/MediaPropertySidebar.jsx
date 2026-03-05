@@ -219,6 +219,21 @@ const AutomaticSectionFilters = observer(() => {
 export const MediaItemTitle = observer(({mediaItemId, aspectRatio}) => {
   const mediaItem = mediaPropertyStore.GetMediaItem({mediaItemId});
 
+  if(!mediaItem) {
+    return (
+      <Group noWrap>
+        <Stack spacing={2}>
+          <Text fw={600}>
+            Missing Media Item!
+          </Text>
+          <Text italic fz={10}>
+            { mediaItemId }
+          </Text>
+        </Stack>
+      </Group>
+  );
+  }
+
   return (
     <Group noWrap>
       <MediaItemImage

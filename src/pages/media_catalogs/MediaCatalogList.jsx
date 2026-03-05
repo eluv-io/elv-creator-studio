@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
-import {rootStore, mediaCatalogStore} from "@/stores";
+import {rootStore, mediaCatalogStore, databaseStore} from "@/stores";
 import {FabricUrl, ScaleImage} from "@/helpers/Fabric.js";
 import UrlJoin from "url-join";
 import {LinkButton, LocalizeString} from "@/components/common/Misc";
@@ -113,6 +113,7 @@ const MediaCatalogList = observer(() => {
         action={
           <Button
             variant="light"
+            disabled={databaseStore.missingAccess}
             onClick={() =>
               modals.open({
                 title: LocalizeString(l10n.create.create, {type: l10n.categories.media_catalog}),

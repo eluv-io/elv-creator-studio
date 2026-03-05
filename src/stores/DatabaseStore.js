@@ -12,6 +12,7 @@ class DatabaseStore {
   firestore;
   // eslint-disable-next-line no-undef
   appName = EluvioConfiguration.dev ? "creatorStudio-dev" : "creatorStudio";
+  missingAccess = false;
 
   get client() {
     return this.rootStore.client;
@@ -112,52 +113,56 @@ class DatabaseStore {
 
     const allTypes = yield this.client.ContentTypes();
 
-    yield Promise.all(
-      Object.keys(typeNames).map(async key => {
-        const name = typeNames[key];
-        let existingType = Object.values(allTypes)
-          .find(type => type.name?.toLowerCase()?.includes(name.toLowerCase()));
+    for(const key of Object.keys(typeNames).sort().reverse()) {
+      const name = typeNames[key];
+      let existingType = Object.values(allTypes)
+        .find(type => type.name?.toLowerCase()?.includes(name.toLowerCase()));
 
-        if(!existingType && key === "tenant") {
-          existingType = Object.values(allTypes)
-            .find(type => type.name?.toLowerCase()?.includes("tenant"));
-        }
+      if(!existingType && key === "tenant") {
+        existingType = Object.values(allTypes)
+          .find(type => type.name?.toLowerCase()?.includes("tenant"));
+      }
 
-        if(existingType) {
-          typeIds[key] = existingType.id;
-        } else {
-          // Create type
-          this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
-          this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
-          this.rootStore.DebugLog({message: allTypes, level: this.logLevels.DEBUG_LEVEL_ERROR});
-          const tenantInfo = await this.GetDocument({collection: "tenant", document: "info"});
+      if(existingType) {
+        typeIds[key] = existingType.id;
+      } else if(["tenant", "marketplace"].includes(key)) {
+        window.alert(`Missing access to required content type ${name}. Please consult your administrator.`);
+        this.rootStore.uiStore.SetLoadingMessage(`Missing access to required content type ${name}. You will not be able to save any changes. Please consult your administrator.`);
+        this.missingAccess = true;
+        yield new Promise(resolve => setTimeout(resolve, 5000));
+        return;
+      } else {
+        // Create type
+        this.rootStore.uiStore.SetLoadingMessage(this.l10n.stores.initialization.loading.types);
+        this.rootStore.DebugLog({message: `Creating Type ${name}`, level: this.logLevels.DEBUG_LEVEL_MEDIUM});
+        this.rootStore.DebugLog({message: allTypes, level: this.logLevels.DEBUG_LEVEL_ERROR});
+        const tenantInfo = yield this.GetDocument({collection: "tenant", document: "info"});
 
-          if(await window.confirm(`Should content type ${name} be created?`)) {
-            typeIds[key] = await this.client.CreateContentType({
-              metadata: {
-                "bitcode_flags": "abrmaster",
-                "bitcode_format": "builtin",
+        if(yield window.confirm(`Should content type ${name} be created?`)) {
+          typeIds[key] = yield this.client.CreateContentType({
+            metadata: {
+              "bitcode_flags": "abrmaster",
+              "bitcode_format": "builtin",
+              "description": "",
+              "name": tenantInfo ? `${tenantInfo.slug} - ${name}` : name,
+              "public": {
                 "description": "",
-                "name": tenantInfo ? `${tenantInfo.slug} - ${name}` : name,
-                "public": {
-                  "description": "",
-                  "eluv.manageApp": "default",
-                  "name": name,
-                  "title_configuration": {
-                    "profile": {
-                      "name": `Eluvio ${name}`,
-                      "version": "1.0"
-                    }
+                "eluv.manageApp": "default",
+                "name": name,
+                "title_configuration": {
+                  "profile": {
+                    "name": `Eluvio ${name}`,
+                    "version": "1.0"
                   }
                 }
               }
-            });
+            }
+          });
 
-            await this.AddGroupPermissions({objectId: typeIds[key]});
-          }
+          yield this.AddGroupPermissions({objectId: typeIds[key]});
         }
-      })
-    );
+      }
+    }
 
     return typeIds;
   });

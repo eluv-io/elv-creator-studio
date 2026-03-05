@@ -2,7 +2,7 @@ import NavStyles from "@/assets/stylesheets/modules/nav.module.scss";
 
 import {Modal, Button, Group, Select} from "@mantine/core";
 import {observer} from "mobx-react-lite";
-import {editStore, rootStore, uiStore} from "@/stores";
+import {editStore, rootStore, uiStore, databaseStore} from "@/stores";
 import {useEffect, useState} from "react";
 import LanguageCodes from "@/assets/localization/LanguageCodes.js";
 import {StorageHandler} from "@/helpers/Misc.js";
@@ -111,7 +111,7 @@ const AppHeader = observer(() => {
         </Button>
         <Button
           w={100}
-          disabled={!editStore.hasUnsavedChanges}
+          disabled={!editStore.hasUnsavedChanges || databaseStore.missingAccess}
           onClick={() => editStore.ToggleSaveModal(true)}
         >
           Save
