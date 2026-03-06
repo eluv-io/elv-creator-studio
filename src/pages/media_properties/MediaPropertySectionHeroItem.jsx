@@ -400,6 +400,11 @@ const MediaPropertySectionHeroItem = observer(() => {
           {...inputProps}
           {...l10n.pages.header.background_video_desktop}
           field="background_video"
+          fabricBrowserProps={{
+            video: true,
+            allowCompositions: true,
+            allowClips: true
+          }}
           previewable
           previewOptions={{
             muted: EluvioPlayerParameters.muted.ON,
@@ -413,6 +418,11 @@ const MediaPropertySectionHeroItem = observer(() => {
           {...inputProps}
           {...l10n.pages.header.background_video_mobile}
           field="background_video_mobile"
+          fabricBrowserProps={{
+            video: true,
+            allowCompositions: true,
+            allowClips: true
+          }}
           previewable
           previewOptions={{
             muted: EluvioPlayerParameters.muted.ON,
