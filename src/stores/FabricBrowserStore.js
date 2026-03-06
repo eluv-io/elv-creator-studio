@@ -79,6 +79,7 @@ class FabricBrowserStore {
           libraryId,
           objectId,
           select: [
+            "commit/timestamp",
             "public/name",
             "channel",
             "clips",
@@ -192,7 +193,9 @@ class FabricBrowserStore {
           clips,
           type: "main",
           source: "Main Content",
-          retrievedAt: Date.now()
+          retrievedAt: Date.now(),
+          lastModified: !metadata?.commit?.timestamp ? undefined :
+            this.FormatDate(metadata?.commit?.timestamp)
         };
       } catch(error) {
         this.DebugLog({error});
@@ -212,6 +215,17 @@ class FabricBrowserStore {
 
     return this.objectDetails[objectId];
   });
+
+  FormatDate(date) {
+    if(!date) { return; }
+
+    try {
+      return new Date(date)
+        .toLocaleDateString(navigator.language, {month: "short", day: "numeric", year: "numeric"});
+    } catch(error) {
+      return undefined;
+    }
+  }
 
   LoadObjects = flow(function * ({libraryId, sortStatus, filter, page, perPage}) {
     this.objects[libraryId] = [];

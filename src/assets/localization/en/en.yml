@@ -101,6 +101,7 @@ components:
       name: Name
       library_id: Library ID
       object_id: Object ID
+      last_modified: Last Modified
       duration: Duration
       source: Source
     validation:

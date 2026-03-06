@@ -181,6 +181,10 @@ const ObjectBrowser = observer(({libraryId, video, allowCompositions, allowClips
       .finally(() => setLoading(false));
   }, [libraryId, page, sortStatus, filter]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
   const library = fabricBrowserStore.libraries[libraryId];
 
   return (
@@ -250,7 +254,8 @@ const ObjectBrowser = observer(({libraryId, video, allowCompositions, allowClips
           },
           !video ? null :
             { accessor: "duration", width: 120, title: rootStore.l10n.components.fabric_browser.columns.duration, render: ({duration}) => <Text fz={12}>{duration}</Text> },
-          { accessor: "objectId", title: rootStore.l10n.components.fabric_browser.columns.object_id, render: ({objectId}) => <Text fz={12}>{objectId}</Text> },
+          { accessor: "lastModified", width: 120, title: rootStore.l10n.components.fabric_browser.columns.last_modified, render: ({lastModified}) => <Text fz={12}>{lastModified}</Text> },
+          { accessor: "objectId", title: rootStore.l10n.components.fabric_browser.columns.object_id, render: ({objectId}) => <Text fz={12}>{objectId}</Text> }
         ].filter(c => c)}
       />
     </Container>
