@@ -280,6 +280,17 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         field="title"
       />
 
+      {
+        type !== "media" ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.media.sidebar_title}
+            localizable
+            required
+            field="sidebar_title"
+          />
+      }
+
       <Inputs.Text
         {...inputProps}
         {...l10n.media.subtitle}

@@ -162,6 +162,9 @@ form:
     catalog_title:
       label: Catalog Title
       description: For alphabetical sorting (e.g. The Best Movie -> Best Movie, The)
+    sidebar_title:
+      label: Sidebar Title
+      description: If specified, this title will be shown when this item is displayed in the sidebar
     image:
       label: Image
       description: 16/9 Aspect Ratio
