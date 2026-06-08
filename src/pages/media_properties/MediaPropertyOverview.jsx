@@ -20,6 +20,7 @@ const MediaPropertyOverview = observer(() => {
               width={250}
               height={250 * 3 / 2}
               withPlaceholder
+              bg="#eee"
               fit="contain"
               src={ScaleImage(metadata?.info?.image?.url, 250)}
               alt={metadata?.info?.name || mediaProperty?.name}

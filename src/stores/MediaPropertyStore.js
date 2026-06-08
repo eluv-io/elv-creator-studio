@@ -395,6 +395,53 @@ class MediaPropertyStore {
     return objectId;
   });
 
+  CopyMediaProperty = flow(function * ({mediaPropertyId, name, slug}) {
+    const versionHash = yield this.client.LatestVersionHash({objectId: mediaPropertyId});
+    const libraryId = yield this.client.ContentObjectLibraryId({objectId: mediaPropertyId});
+    const response = yield this.client.CopyContentObject({
+      libraryId,
+      originalVersionHash: versionHash
+    });
+
+    const objectId = response.id;
+
+    yield this.client.EditAndFinalizeContentObject({
+      libraryId,
+      objectId,
+      callback: async ({writeToken}) => {
+        await Promise.all(
+          [
+            {field: "public/name", value: name},
+            {field: "public/asset_metadata/info/name", value: name},
+            {field: "public/asset_metadata/display_title", value: name},
+            {field: "public/asset_metadata/title", value: name},
+            {field: "public/asset_metadata/slug", value: slug},
+            {field: "public/asset_metadata/info/slug", value: slug},
+            {field: "public/asset_metadata/info/id", value: objectId}
+          ]
+            .map(async ({field, value}) =>
+              await this.client.ReplaceMetadata({
+                libraryId,
+                objectId,
+                writeToken,
+                metadataSubtree: field,
+                metadata: value
+              })
+            )
+        );
+      }
+    });
+
+    yield this.client.SetPermission({objectId, permission: "listable"});
+    yield this.rootStore.databaseStore.AddGroupPermissions({objectId});
+
+    yield this.UpdateDatabaseRecord({objectId});
+    yield this.LoadMediaProperties(true);
+    yield this.LoadMediaProperty({mediaPropertyId: objectId, force: true});
+
+    return objectId;
+  });
+
   SetPropertyPageSlug({mediaPropertyId, slug, pageId, label, clear}) {
     const pageLabel = this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.pages[pageId].label;
 

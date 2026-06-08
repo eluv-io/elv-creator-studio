@@ -9,7 +9,8 @@ import {
   Code,
   Button,
   Container,
-  TextInput
+  TextInput,
+  Select
 } from "@mantine/core";
 import {observer} from "mobx-react-lite";
 import AsyncWrapper from "@/components/common/AsyncWrapper.jsx";
@@ -41,7 +42,7 @@ const CreateMediaPropertyForm = ({Create}) => {
       <form
         onSubmit={form.onSubmit(values => {
           setCreating(true);
-          Create({name: values.name})
+          Create({name: values.name, slug: values.slug})
             .catch(error => {
               rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
               setCreating(false);
@@ -61,6 +62,86 @@ const CreateMediaPropertyForm = ({Create}) => {
           {...rootStore.l10n.pages.media_property.form.create.slug}
           {...form.getInputProps("slug")}
           placeholder={Slugify(form.values.name)}
+        />
+        <Group mt="md">
+          <Button
+            w="100%"
+            loading={creating}
+            type="submit"
+          >
+            { rootStore.l10n.components.actions.submit }
+          </Button>
+        </Group>
+      </form>
+    </Container>
+  );
+};
+
+const CopyMediaPropertyForm = ({Submit}) => {
+  const [creating, setCreating] = useState(false);
+
+  const form = useForm({
+    initialValues: {
+      name: "",
+      slug: "",
+      mediaPropertyId: ""
+    },
+    validate: {
+      mediaPropertyId: value => value ? null : rootStore.l10n.pages.media_property.form.create.validation.media_property_id
+    }
+  });
+
+  const options = mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+    label: (
+      mediaPropertyStore.mediaProperties[mediaProperty.objectId]?.metadata?.public?.asset_metadata?.info?.name ||
+      mediaProperty.name || ""
+    ),
+    value: mediaProperty.objectId
+  }))
+    .sort((a, b) => a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1);
+
+  const selectedOption = options.find(option => option.value === form.values.mediaPropertyId);
+  const selectedOptionSlug = mediaPropertyStore.allMediaProperties.find(p => p.objectId === selectedOption?.value)?.mediaPropertySlug;
+
+  return (
+    <Container p={0}>
+      <form
+        onSubmit={form.onSubmit(values => {
+          setCreating(true);
+          Submit({
+            mediaPropertyId: values.mediaPropertyId,
+            name: values.name || `${selectedOption.label} (Copy)`,
+            slug: values.slug || `${selectedOptionSlug}-copy`
+          })
+            .catch(error => {
+              rootStore.DebugLog({message: error, level: rootStore.logLevels.DEBUG_LEVEL_ERROR});
+              setCreating(false);
+            })
+            .then(() => {
+              modals.closeAll();
+            });
+        })}
+      >
+        <Select
+          mb="md"
+          label
+          data={options}
+          data-autofocus
+          placeholder="Select a Property"
+          {...rootStore.l10n.pages.media_property.form.create.media_property}
+          {...form.getInputProps("mediaPropertyId")}
+        />
+        <TextInput
+          mb="md"
+          {...rootStore.l10n.pages.media_property.form.create.name}
+          {...form.getInputProps("name")}
+          placeholder={selectedOption?.label ? `${selectedOption.label} (Copy)` : ""}
+        />
+        <TextInput
+          mb="md"
+          {...rootStore.l10n.pages.media_property.form.create.slug}
+          {...form.getInputProps("slug")}
+          placeholder={Slugify(form.values.name || Slugify(selectedOptionSlug ? `${selectedOptionSlug}-copy` : ""))}
         />
         <Group mt="md">
           <Button
@@ -123,22 +204,43 @@ const MediaPropertyList = observer(() => {
       <PageContent
         title={rootStore.l10n.pages.media_property.form.categories.media_properties}
         action={
-          <Button
-            variant="light"
-            disabled={databaseStore.missingAccess}
-            onClick={() =>
-              modals.open({
-                title: LocalizeString(l10n.create.create, {type: l10n.categories.media_property}),
-                centered: true,
-                children:
-                  <CreateMediaPropertyForm
-                    Create={async ({name, slug}) => await mediaPropertyStore.CreateMediaProperty({name, slug})}
-                  />
-              })
-            }
-          >
-            { LocalizeString(l10n.create.create, {type: l10n.categories.media_property}) }
-          </Button>
+          <>
+            <Button
+              variant="outline"
+              color="gray"
+              disabled={databaseStore.missingAccess}
+              onClick={() =>
+                modals.open({
+                  title: LocalizeString(l10n.create.copy, {type: l10n.categories.media_property}),
+                  centered: true,
+                  children:
+                    <CopyMediaPropertyForm
+                      Submit={async ({mediaPropertyId, name, slug}) =>
+                        await mediaPropertyStore.CopyMediaProperty({mediaPropertyId, name, slug})
+                      }
+                    />
+                })
+              }
+            >
+              { LocalizeString(l10n.create.copy, {type: l10n.categories.media_property}) }
+            </Button>
+            <Button
+              variant="light"
+              disabled={databaseStore.missingAccess}
+              onClick={() =>
+                modals.open({
+                  title: LocalizeString(l10n.create.create, {type: l10n.categories.media_property}),
+                  centered: true,
+                  children:
+                    <CreateMediaPropertyForm
+                      Create={async ({name, slug}) => await mediaPropertyStore.CreateMediaProperty({name, slug})}
+                    />
+                })
+              }
+            >
+              { LocalizeString(l10n.create.create, {type: l10n.categories.media_property}) }
+            </Button>
+          </>
         }
       >
         <SimpleGrid
@@ -153,7 +255,11 @@ const MediaPropertyList = observer(() => {
         >
           {
             (mediaPropertyStore.allMediaProperties || []).map(mediaProperty =>
-              <MediaPropertyCard key={`mediaProperty-${mediaProperty.objectId}`} mediaProperty={mediaProperty} fullMediaProperty={mediaPropertyStore.mediaProperties[mediaProperty.objectId]} />
+              <MediaPropertyCard
+                key={`mediaProperty-${mediaProperty.objectId}`}
+                mediaProperty={mediaProperty}
+                fullMediaProperty={mediaPropertyStore.mediaProperties[mediaProperty.objectId]}
+              />
             )
           }
         </SimpleGrid>

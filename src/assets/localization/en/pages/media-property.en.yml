@@ -81,12 +81,16 @@ form:
     purchase_item: Purchase Item
   create:
     create: Create New {type}
+    copy: Copy Existing {type}
+    media_property:
+      label: Media Property
     name:
       label: Name
     slug:
       label: Slug
     validation:
       name: Name must be specified
+      media_property_id: Media Property must be specified
   common:
     name:
       label: Name
