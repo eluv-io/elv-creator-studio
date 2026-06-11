@@ -738,6 +738,9 @@ form:
       title_icon:
         label: Title Icon
         description: Displayed to the left of the title
+      hide_title:
+        label: Hide Title on Desktop and TV
+        description: If specified, the title text will be hidden on the desktop and TV version of the app and will only be displayed on mobile.
       subtitle:
         label: Subtitle
       description:

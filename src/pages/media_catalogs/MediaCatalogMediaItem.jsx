@@ -291,6 +291,7 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       <Inputs.Checkbox
                         {...inputProps}
                         {...l10n.media.enable_dvr}
+                        defaultValue={true}
                         subcategory={l10n.categories.media}
                         field="enable_dvr"
                       />

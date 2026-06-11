@@ -1018,6 +1018,14 @@ const ContentSectionDisplaySettings = observer(() => {
         field="description_rich_text"
       />
 
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sections.display.hide_title_desktop}
+        subcategory={l10n.categories.section_presentation}
+        defaultValue={false}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="hide_title"
+      />
       {
         !["carousel", "grid"].includes(section.display?.display_format) ? null :
           <>
