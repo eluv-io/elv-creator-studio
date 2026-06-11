@@ -1020,7 +1020,7 @@ const ContentSectionDisplaySettings = observer(() => {
 
       <Inputs.Checkbox
         {...inputProps}
-        {...l10n.sections.display.hide_title_desktop}
+        {...l10n.sections.display.hide_title}
         subcategory={l10n.categories.section_presentation}
         defaultValue={false}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}

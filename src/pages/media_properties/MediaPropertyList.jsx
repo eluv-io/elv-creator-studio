@@ -6,7 +6,6 @@ import {
   Image,
   SimpleGrid,
   AspectRatio,
-  Code,
   Button,
   Container,
   TextInput,
