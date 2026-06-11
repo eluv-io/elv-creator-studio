@@ -1046,6 +1046,21 @@ const ContentSectionDisplaySettings = observer(() => {
                   field="card_default_button_text"
                 />
             }
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.sections.display.card_size}
+              defaultValue=""
+              subcategory={l10n.categories.section_presentation}
+              path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+              field="card_size"
+              options={
+                [
+                  {label: "Small", value: "small"},
+                  {label: "Normal", value: ""},
+                  {label: "Large", value: "large"},
+                ]
+              }
+            />
 
             <Inputs.Select
               {...inputProps}

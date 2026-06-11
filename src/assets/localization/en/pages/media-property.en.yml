@@ -752,6 +752,9 @@ form:
       card_default_button_text:
         label: Card Default Button Text
         description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.
+      card_size:
+        label: Card Size
+        description: Change how large or small the cards are displayed.
       display_limit_type:
         label: Display Limit Type
         description: For display limit setting, choose whether to limit by number of items or by number of rows

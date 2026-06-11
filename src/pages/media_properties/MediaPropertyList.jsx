@@ -160,6 +160,7 @@ const CopyMediaPropertyForm = ({Submit}) => {
 const MediaPropertyCard = observer(({mediaProperty, fullMediaProperty}) => {
   const fullMediaPropertyMetadata = fullMediaProperty?.metadata?.public?.asset_metadata || {};
   const name = fullMediaPropertyMetadata?.info?.name || mediaProperty.name;
+  const slug = fullMediaPropertyMetadata?.info?.slug || mediaProperty.mediaPropertySlug;
   const image =
     fullMediaPropertyMetadata?.info?.image?.["/"] ?
       FabricUrl({...mediaProperty, path: fullMediaPropertyMetadata.info.image["/"], width: 400}) :
@@ -177,9 +178,12 @@ const MediaPropertyCard = observer(({mediaProperty, fullMediaProperty}) => {
         <Text fz="lg" fw={600}>
           { name }
         </Text>
-        <Code fz="xs" p={0} bg="transparent">
+        <Text fz="sm" color="gray">
+          { slug }
+        </Text>
+        <Text fz="xs" p={0} color="gray">
           { mediaProperty.objectId }
-        </Code>
+        </Text>
         <Text fz="sm" mt={20} lineClamp={3}>
           { fullMediaPropertyMetadata?.info?.description || mediaProperty.description || "" }
         </Text>
