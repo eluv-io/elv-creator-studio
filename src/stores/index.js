@@ -42,7 +42,9 @@ class RootStore {
 
   tenantId;
   tenantInfo;
+  tenantInfoObjectId;
   typeInfo;
+  searchIndexes = [];
 
   localizationKey;
 
@@ -123,6 +125,25 @@ class RootStore {
 
     this.tenantId = yield this.client.userProfileClient.TenantContractId();
 
+    try {
+      this.tenantInfoObjectId = yield this.client.ContentObjectMetadata({
+        libraryId: this.tenantId.replace(/^iten/, "ilib"),
+        objectId: this.tenantId.replace(/^iten/, "iq__"),
+        metadataSubtree: "public/ml_config",
+      });
+    } catch(error) {
+      this.DebugLog({
+        error: "Unable to load public/ml_config for tenantInfoObjectId",
+        level: this.logLevels.DEBUG_LEVEL_LOW
+      });
+    }
+
+    if(!this.tenantInfoObjectId) {
+      // eslint-disable-next-line no-console
+      console.warn(`Tenant info object ID (public/ml_config) not set for this tenant (${this.tenantId})`);
+      this.tenantInfoObjectId = this.tenantId.replace(/^iten/, "iq__");
+    }
+
     if(!this.tenantId) {
       this.uiStore.SetLoadingMessage(this.l10n.stores.initialization.errors.tenant_id_missing);
 
@@ -133,6 +154,11 @@ class RootStore {
 
       return;
     }
+
+    this.searchIndexes = (yield this.client.ContentObjectMetadata({
+      versionHash: yield this.client.LatestVersionHash({objectId: this.tenantInfoObjectId}),
+      metadataSubtree: "public/search/indexes_vectorstore"
+    })) || [];
 
     yield this.databaseStore.Initialize();
     yield this.tenantStore.Initialize();

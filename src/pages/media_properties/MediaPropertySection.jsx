@@ -1063,9 +1063,11 @@ const ContentSectionDisplaySettings = observer(() => {
               field="card_size"
               options={
                 [
+                  {label: "Extra Small", value: "extra_small"},
                   {label: "Small", value: "small"},
                   {label: "Normal", value: ""},
                   {label: "Large", value: "large"},
+                  {label: "Extra Large", value: "extra_large"},
                 ]
               }
             />

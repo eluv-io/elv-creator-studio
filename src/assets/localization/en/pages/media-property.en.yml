@@ -54,6 +54,7 @@ form:
     analytics: Analytics
     search: Search Settings
     advanced_search: Advanced Search Settings
+    ai_search: AI Search Settings
     layout: Layout
     header: Header
     pages: Pages
@@ -326,6 +327,12 @@ form:
         tag_display:
           label: Tag Display
           description: Choose whether this option should be displayed as a select component (only one tag selectable) or a list of checkboxes (multiple selectable)
+      ai_search:
+        enable:
+          label: Enable AI Search
+          description: If enabled, users will be able to search for clips using the specified search index
+        index_id:
+          label: Search Index
     social_links:
       label: Social Links
       description: Specify links to your social media pages to display in the footer

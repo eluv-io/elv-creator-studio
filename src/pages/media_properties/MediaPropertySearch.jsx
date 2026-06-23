@@ -8,6 +8,102 @@ import {
   MediaPropertySearchFilterSpec, MediaPropertySearchSecondaryFilterSpec
 } from "@/specs/MediaPropertySpecs.js";
 import {Title} from "@mantine/core";
+import UrlJoin from "url-join";
+
+const AdvancedSearchOptions = observer(({inputProps, enabled}) => {
+  const { mediaPropertyId } = useParams();
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+
+  const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
+  const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId});
+
+  return (
+    <>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.search.enable_advanced_search}
+        subcategory={l10n.categories.advanced_search}
+        field="enable_advanced_search"
+        defaultValue={false}
+      />
+      {
+        !enabled ? null :
+          <Inputs.List
+            {...inputProps}
+            {...l10n.general.search.advanced_search_options}
+            subcategory={l10n.categories.advanced_search}
+            field="advanced_search_options"
+            newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
+            renderItem={(props) =>
+              <>
+                <Inputs.Select
+                  {...props}
+                  {...l10n.general.search.advanced.type}
+                  subcategory={l10n.categories.advanced_search}
+                  options={[
+                    {label: "Tags", value: "tags"},
+                    {label: "Attribute", value: "attribute"},
+                    {label: "Media Type", value: "media_type"},
+                    {label: "Date", value: "date"}
+                  ]}
+                  field="type"
+                />
+                <Inputs.Text
+                  {...props}
+                  {...l10n.general.search.advanced.title}
+                  localizable
+                  subcategory={l10n.categories.advanced_search}
+                  field="title"
+                />
+                {
+                  props.item.type !== "attribute" ? null :
+                    <Inputs.Select
+                      {...props}
+                      {...l10n.general.search.advanced.attribute}
+                      subcategory={l10n.categories.advanced_search}
+                      searchable
+                      defaultValue={Object.keys(attributes)[0]}
+                      options={[
+                        ...(Object.keys(attributes).map(attributeId => ({
+                          label: attributes[attributeId].title || "Attribute",
+                          value: attributeId
+                        })))
+                      ]}
+                      field="attribute"
+                    />
+                }
+                {
+                  props.item.type !== "tags" ? null :
+                    <>
+                      <Inputs.MultiSelect
+                        {...props}
+                        {...l10n.general.search.advanced.tags}
+                        subcategory={l10n.categories.advanced_search}
+                        searchable
+                        options={tags}
+                        field="tags"
+                      />
+                      <Inputs.Select
+                        {...props}
+                        {...l10n.general.search.advanced.tag_display}
+                        subcategory={l10n.categories.advanced_search}
+                        defaultValue="select"
+                        options={[
+                          {label: "Select", value: "select"},
+                          {label: "Checkboxes", value: "checkboxes"}
+                        ]}
+                        field="tag_display"
+                      />
+                    </>
+                }
+              </>
+            }
+          />
+      }
+    </>
+  );
+});
 
 const MediaPropertySearch = observer(() => {
   const { mediaPropertyId } = useParams();
@@ -27,7 +123,6 @@ const MediaPropertySearch = observer(() => {
   };
 
   const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
-  const tags = mediaPropertyStore.GetMediaPropertyTags({mediaPropertyId});
 
   return (
     <PageContent
@@ -232,86 +327,45 @@ const MediaPropertySearch = observer(() => {
             }
 
             <Title order={3} mt={50}  mb="md">{l10n.categories.advanced_search}</Title>
+            <AdvancedSearchOptions
+              inputProps={inputProps}
+              enabled={info.search?.enable_advanced_search}
+            />
+
+            <Title order={3} mt={50}  mb="md">{l10n.categories.ai_search}</Title>
             <Inputs.Checkbox
               {...inputProps}
-              {...l10n.general.search.enable_advanced_search}
+              {...l10n.general.search.ai_search.enable}
+              path={UrlJoin(inputProps.path, "ai_options")}
               subcategory={l10n.categories.advanced_search}
-              field="enable_advanced_search"
+              field="enable_ai_search"
               defaultValue={false}
             />
+
             {
-              !info.search?.enable_advanced_search ? null :
-                <Inputs.List
-                  {...inputProps}
-                  {...l10n.general.search.advanced_search_options}
-                  subcategory={l10n.categories.advanced_search}
-                  field="advanced_search_options"
-                  newItemSpec={MediaPropertyAdvancedSearchOptionSpec}
-                  renderItem={(props) =>
-                    <>
-                      <Inputs.Select
-                        {...props}
-                        {...l10n.general.search.advanced.type}
-                        subcategory={l10n.categories.advanced_search}
-                        options={[
-                          {label: "Tags", value: "tags"},
-                          {label: "Attribute", value: "attribute"},
-                          {label: "Media Type", value: "media_type"},
-                          {label: "Date", value: "date"}
-                        ]}
-                        field="type"
-                      />
-                      <Inputs.Text
-                        {...props}
-                        {...l10n.general.search.advanced.title}
-                        localizable
-                        subcategory={l10n.categories.advanced_search}
-                        field="title"
-                      />
-                      {
-                        props.item.type !== "attribute" ? null :
-                          <Inputs.Select
-                            {...props}
-                            {...l10n.general.search.advanced.attribute}
-                            subcategory={l10n.categories.advanced_search}
-                            searchable
-                            defaultValue={Object.keys(attributes)[0]}
-                            options={[
-                              ...(Object.keys(attributes).map(attributeId => ({
-                                label: attributes[attributeId].title || "Attribute",
-                                value: attributeId
-                              })))
-                            ]}
-                            field="attribute"
-                          />
-                      }
-                      {
-                        props.item.type !== "tags" ? null :
-                          <>
-                            <Inputs.MultiSelect
-                              {...props}
-                              {...l10n.general.search.advanced.tags}
-                              subcategory={l10n.categories.advanced_search}
-                              searchable
-                              options={tags}
-                              field="tags"
-                            />
-                            <Inputs.Select
-                              {...props}
-                              {...l10n.general.search.advanced.tag_display}
-                              subcategory={l10n.categories.advanced_search}
-                              defaultValue="select"
-                              options={[
-                                {label: "Select", value: "select"},
-                                {label: "Checkboxes", value: "checkboxes"}
-                              ]}
-                              field="tag_display"
-                            />
-                          </>
-                      }
-                    </>
-                  }
-                />
+              !info.search?.ai_options?.enable_ai_search ? null :
+                <>
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.general.search.ai_search.index_id}
+                    path={UrlJoin(inputProps.path, "ai_options")}
+                    subcategory={l10n.categories.advanced_search}
+                    field="index_id"
+                    options={[
+                      { label: "Select Search Index", value: "" },
+                      ...(rootStore?.searchIndexes || [])
+                        .filter(item => item.id && item.name)
+                        .map(({id, name}) => ({label: name, value: id}))
+                    ]}
+                  />
+                  <AdvancedSearchOptions
+                    inputProps={{
+                      ...inputProps,
+                      path: UrlJoin(inputProps.path, "ai_options")
+                    }}
+                    enabled={info.search?.ai_options?.enable_advanced_search}
+                  />
+                </>
             }
           </>
       }

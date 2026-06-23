@@ -390,7 +390,12 @@ export const MediaPropertySpec = {
     filter_options: [],
     group_by: "",
     enable_advanced_search: false,
-    advanced_options: []
+    advanced_options: [],
+    ai_options: {
+      enable_ai_search: false,
+      index_id: "",
+      advanced_options: []
+    }
   },
   domain: {
     custom_domain: "",
