@@ -332,39 +332,44 @@ const MediaPropertySearch = observer(() => {
               enabled={info.search?.enable_advanced_search}
             />
 
-            <Title order={3} mt={50}  mb="md">{l10n.categories.ai_search}</Title>
-            <Inputs.Checkbox
-              {...inputProps}
-              {...l10n.general.search.ai_search.enable}
-              path={UrlJoin(inputProps.path, "ai_options")}
-              subcategory={l10n.categories.advanced_search}
-              field="enable_ai_search"
-              defaultValue={false}
-            />
-
             {
-              !info.search?.ai_options?.enable_ai_search ? null :
+              (rootStore.searchIndexes || []).length === 0 ? null :
                 <>
-                  <Inputs.Select
+                  <Title order={3} mt={50}  mb="md">{l10n.categories.ai_search}</Title>
+                  <Inputs.Checkbox
                     {...inputProps}
-                    {...l10n.general.search.ai_search.index_id}
+                    {...l10n.general.search.ai_search.enable}
                     path={UrlJoin(inputProps.path, "ai_options")}
                     subcategory={l10n.categories.advanced_search}
-                    field="index_id"
-                    options={[
-                      { label: "Select Search Index", value: "" },
-                      ...(rootStore?.searchIndexes || [])
-                        .filter(item => item.id && item.name)
-                        .map(({id, name}) => ({label: name, value: id}))
-                    ]}
+                    field="enable_ai_search"
+                    defaultValue={false}
                   />
-                  <AdvancedSearchOptions
-                    inputProps={{
-                      ...inputProps,
-                      path: UrlJoin(inputProps.path, "ai_options")
-                    }}
-                    enabled={info.search?.ai_options?.enable_advanced_search}
-                  />
+
+                  {
+                    !info.search?.ai_options?.enable_ai_search ? null :
+                      <>
+                        <Inputs.Select
+                          {...inputProps}
+                          {...l10n.general.search.ai_search.index_id}
+                          path={UrlJoin(inputProps.path, "ai_options")}
+                          subcategory={l10n.categories.advanced_search}
+                          field="index_id"
+                          options={[
+                            { label: "Select Search Index", value: "" },
+                            ...(rootStore?.searchIndexes || [])
+                              .filter(item => item.id && item.name)
+                              .map(({id, name}) => ({label: name, value: id}))
+                          ]}
+                        />
+                        <AdvancedSearchOptions
+                          inputProps={{
+                            ...inputProps,
+                            path: UrlJoin(inputProps.path, "ai_options")
+                          }}
+                          enabled={info.search?.ai_options?.enable_advanced_search}
+                        />
+                      </>
+                  }
                 </>
             }
           </>
