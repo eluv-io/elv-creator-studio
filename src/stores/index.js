@@ -44,7 +44,7 @@ class RootStore {
   tenantInfo;
   tenantInfoObjectId;
   typeInfo;
-  searchIndexes = [];
+  searchIndexes;
 
   localizationKey;
 
@@ -139,8 +139,12 @@ class RootStore {
     }
 
     if(!this.tenantInfoObjectId) {
-      // eslint-disable-next-line no-console
-      console.warn(`Tenant info object ID (public/ml_config) not set for this tenant (${this.tenantId})`);
+       
+      this.DebugLog({
+        error: `Tenant info object ID (public/ml_config) not set for this tenant (${this.tenantId})`,
+        level: this.logLevels.DEBUG_LEVEL_LOW
+      });
+
       this.tenantInfoObjectId = this.tenantId.replace(/^iten/, "iq__");
     }
 
@@ -154,11 +158,6 @@ class RootStore {
 
       return;
     }
-
-    this.searchIndexes = (yield this.client.ContentObjectMetadata({
-      versionHash: yield this.client.LatestVersionHash({objectId: this.tenantInfoObjectId}),
-      metadataSubtree: "public/search/indexes_vectorstore"
-    })) || [];
 
     yield this.databaseStore.Initialize();
     yield this.tenantStore.Initialize();
@@ -187,6 +186,99 @@ class RootStore {
         }
       });
     }, 500);
+  });
+
+  LoadSearchIndexes = flow(function * () {
+    if(this.searchIndexes) { return; }
+
+    let searchIndexes = ((yield this.client.ContentObjectMetadata({
+      versionHash: yield this.client.LatestVersionHash({objectId: this.tenantInfoObjectId}),
+      metadataSubtree: "public/search/indexes_vectorstore"
+    })) || [])
+      .filter(({id, name}) => id && name);
+
+    this.searchIndexes = yield Promise.all(
+      searchIndexes.map(async searchIndex => {
+        let tracks = [];
+        try {
+          tracks = (await this.QueryAIAPI({
+            server: "ai-04",
+            objectId: searchIndex.id,
+            path: UrlJoin("vector_search", searchIndex.id, "tracks"),
+          })).tracks;
+        } catch(error) {
+          this.DebugLog({
+            message: `Failed to load search index tracks for ${searchIndex.name} (${searchIndex.id})`,
+            error,
+            level: this.logLevels.DEBUG_LEVEL_ERROR
+          });
+        }
+
+        return {
+          ...searchIndex,
+          tracks: tracks || []
+        };
+      })
+    );
+  });
+
+  QueryAIAPI = flow(function * ({
+    server="ai",
+    method="GET",
+    path,
+    objectId,
+    queryParams={},
+    body,
+    stringifyBody=true,
+    authTokenInBody=false,
+    headers={},
+    format="json",
+    allowStatus=[],
+  }) {
+    const url = new URL(`https://${server}.contentfabric.io/`);
+    url.pathname = path;
+
+    Object.keys(queryParams).forEach(key =>
+      queryParams[key] && url.searchParams.set(key, queryParams[key])
+    );
+
+    const authToken =
+      new URL(yield this.client.FabricUrl({
+        versionHash: yield this.client.LatestVersionHash({objectId}),
+        channelAuth: true
+      })).searchParams.get("authorization");
+
+    url.searchParams.set("authorization", authToken);
+
+    if(authTokenInBody) {
+      body.append ?
+        body.append("authorization", authToken) :
+        body.authorization = authToken;
+    }
+
+    if(body && stringifyBody) {
+      body = JSON.stringify(body);
+    }
+
+    const response = yield fetch(
+      url,
+      {
+        method,
+        headers,
+        body
+      }
+    );
+
+    if(response.status >= 400 && !allowStatus.includes(response.status)) {
+      throw response;
+    }
+
+    if(response.status === 204) {
+      return;
+    }
+
+    return !format ? response :
+      yield this.client.utils.ResponseToFormat(format, response);
   });
 
   LibraryId = flow(function * ({objectId, versionHash}) {

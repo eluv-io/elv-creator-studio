@@ -333,6 +333,17 @@ form:
           description: If enabled, users will be able to search for clips using the specified search index
         index_id:
           label: Search Index
+        advanced_search_options:
+          label: Advanced Search Options
+          description: Configure which options are available in advanced AI search
+        field:
+          label: Field
+          description: Select which tag category this field corresponds to.
+        title:
+          label: Title
+        max_options:
+          label: Maximum Number of Options
+          description: The available options for this field will be automatically populated based your content. Select the maximum number of options to show in the select dropdown for this field.
     social_links:
       label: Social Links
       description: Specify links to your social media pages to display in the footer

@@ -4,11 +4,13 @@ import {rootStore, mediaPropertyStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {
+  MediaPropertyAdvancedAISearchOptionSpec,
   MediaPropertyAdvancedSearchOptionSpec,
   MediaPropertySearchFilterSpec, MediaPropertySearchSecondaryFilterSpec
 } from "@/specs/MediaPropertySpecs.js";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
+import {useEffect} from "react";
 
 const AdvancedSearchOptions = observer(({inputProps, enabled}) => {
   const { mediaPropertyId } = useParams();
@@ -110,6 +112,10 @@ const MediaPropertySearch = observer(() => {
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
+  useEffect(() => {
+    rootStore.LoadSearchIndexes();
+  }, []);
+
   if(!mediaProperty) { return null; }
 
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
@@ -123,6 +129,9 @@ const MediaPropertySearch = observer(() => {
   };
 
   const attributes = mediaPropertyStore.GetMediaPropertyAttributes({mediaPropertyId});
+  const selectedSearchIndex = rootStore.searchIndexes?.find(index =>
+    index.id === info.search?.ai_options?.index_id
+  );
 
   return (
     <PageContent
@@ -340,7 +349,7 @@ const MediaPropertySearch = observer(() => {
                     {...inputProps}
                     {...l10n.general.search.ai_search.enable}
                     path={UrlJoin(inputProps.path, "ai_options")}
-                    subcategory={l10n.categories.advanced_search}
+                    subcategory={l10n.categories.ai_search}
                     field="enable_ai_search"
                     defaultValue={false}
                   />
@@ -352,22 +361,57 @@ const MediaPropertySearch = observer(() => {
                           {...inputProps}
                           {...l10n.general.search.ai_search.index_id}
                           path={UrlJoin(inputProps.path, "ai_options")}
-                          subcategory={l10n.categories.advanced_search}
+                          subcategory={l10n.categories.ai_search}
+                          defaultValue=""
                           field="index_id"
                           options={[
                             { label: "Select Search Index", value: "" },
-                            ...(rootStore?.searchIndexes || [])
-                              .filter(item => item.id && item.name)
+                            ...rootStore.searchIndexes
                               .map(({id, name}) => ({label: name, value: id}))
                           ]}
                         />
-                        <AdvancedSearchOptions
-                          inputProps={{
-                            ...inputProps,
-                            path: UrlJoin(inputProps.path, "ai_options")
-                          }}
-                          enabled={info.search?.ai_options?.enable_advanced_search}
-                        />
+                        {
+                          !selectedSearchIndex ? null :
+                             <Inputs.List
+                              {...inputProps}
+                              {...l10n.general.search.ai_search.advanced_search_options}
+                              subcategory={l10n.categories.ai_search}
+                              path={UrlJoin(inputProps.path, "ai_options")}
+                              field="advanced_search_options"
+                              newItemSpec={MediaPropertyAdvancedAISearchOptionSpec}
+                              renderItem={(props) =>
+                                <>
+                                  <Inputs.Select
+                                    {...props}
+                                    {...l10n.general.search.ai_search.field}
+                                    searchable
+                                    subcategory={l10n.categories.ai_search}
+                                    options={
+                                      selectedSearchIndex.tracks.map(track => ({
+                                        label: track.label,
+                                        value: track.name
+                                      }))
+                                    }
+                                    field="track"
+                                  />
+                                  <Inputs.Text
+                                    {...props}
+                                    {...l10n.general.search.ai_search.title}
+                                    localizable
+                                    subcategory={l10n.categories.ai_search}
+                                    field="title"
+                                  />
+                                  <Inputs.Number
+                                    min={0}
+                                    {...props}
+                                    {...l10n.general.search.ai_search.max_options}
+                                    subcategory={l10n.categories.ai_search}
+                                    field="max_options"
+                                  />
+                                </>
+                              }
+                             />
+                        }
                       </>
                   }
                 </>

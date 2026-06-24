@@ -43,6 +43,12 @@ export const MediaPropertyAdvancedSearchOptionSpec = {
   tag_display: "select"
 };
 
+export const MediaPropertyAdvancedAISearchOptionSpec = {
+  title: "",
+  track: "",
+  max_results: 10
+};
+
 export const MediaPropertySearchFilterSpec = {
   primary_filter_value: "",
   primary_filter_image: undefined,
