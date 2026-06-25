@@ -306,6 +306,13 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="require_login"
         defaultValue={false}
       />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.general.require_login_for_media}
+        subcategory={l10n.categories.permissions}
+        field="require_login_for_media"
+        defaultValue={false}
+      />
       <Inputs.MultiSelect
         {...inputProps}
         {...l10n.general.permission_sets}

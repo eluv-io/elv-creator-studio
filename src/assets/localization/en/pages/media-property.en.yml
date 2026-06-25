@@ -205,6 +205,9 @@ form:
     require_login:
       label: Require Login
       description: If specified, users will be automatically prompted to log in when accessing this property
+    require_login_for_media:
+      label: Require Login to View Media
+      description: If specified, users will be automatically prompted to log in when trying to view any media in this property
     permission_sets:
       label: Permission Sets
       description: Select permission sets to associate with this property
