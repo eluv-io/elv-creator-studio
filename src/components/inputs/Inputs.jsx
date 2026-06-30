@@ -1985,7 +1985,6 @@ const List = observer(({
         maw={simpleList || narrow ? uiStore.inputWidth : uiStore.inputWidthWide}
         w="min-content"
         miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
-        wrapperProps={{style: disabled ? { opacity: 0.5 } : {}}}
         {...componentProps}
       >
         <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">

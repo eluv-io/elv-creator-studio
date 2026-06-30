@@ -601,6 +601,7 @@ export const MediaPropertySidebarSettings = observer(() => {
       <Inputs.List
         {...inputProps}
         {...l10n.sidebar.banners}
+        localizable
         subcategory={l10n.categories.sidebar_banners}
         field="banners"
         renderItem={props =>
