@@ -234,14 +234,6 @@ const MediaConfiguration = observer(({mediaItem}) => {
             }}
           />
           {
-            mediaItem.live_video ? null :
-              <Inputs.Checkbox
-                {...inputProps}
-                {...l10n.media.allow_download}
-                field="allow_download"
-              />
-          }
-          {
             (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
               <>
                 {
@@ -253,19 +245,38 @@ const MediaConfiguration = observer(({mediaItem}) => {
                       field="offerings"
                     />
                 }
-                <Inputs.Checkbox
-                  {...inputProps}
-                  {...l10n.media.live_video}
-                  field="live_video"
-                />
                 <Inputs.Date
                   {...inputProps}
                   {...l10n.media.date}
                   subcategory={l10n.categories.media}
                   field="date"
                 />
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.media.live_video}
+                  field="live_video"
+                />
                 {
-                  !mediaItem.live_video ? null :
+                  !mediaItem.live_video ?
+                    <>
+                      <Inputs.Select
+                        {...inputProps}
+                        {...l10n.media.show_vertical_video}
+                        defaultValue=""
+                        options={[
+                          { label: "Never", value: "" },
+                          { label: "Toggleable", value: "toggle" },
+                          { label: "Mobile Only", value: "mobile" },
+                          { label: "Always", value: "always" },
+                        ]}
+                        field="show_vertical_video"
+                      />
+                      <Inputs.Checkbox
+                        {...inputProps}
+                        {...l10n.media.allow_download}
+                        field="allow_download"
+                      />
+                    </> :
                     <>
                       <Inputs.DateTime
                         {...inputProps}

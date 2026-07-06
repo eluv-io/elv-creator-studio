@@ -596,8 +596,8 @@ export const MediaPropertySidebarSettings = observer(() => {
           }
         ]}
       />
-            <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_banners}</Title>
 
+      <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_banners}</Title>
       <Inputs.List
         {...inputProps}
         {...l10n.sidebar.banners}

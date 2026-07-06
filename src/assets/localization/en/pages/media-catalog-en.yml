@@ -234,9 +234,13 @@ form:
       fieldLabel: Offering
     date:
       label: Release Date
+      description: The canonical date this item was released. Used for grouping and sorting.
     allow_download:
       label: Allow Download
       description: "If specified, users will be able to download this content. Note: Content must have a clear DRM offering available for download"
+    show_vertical_video:
+      label: Show Vertical Video
+      description: "(If supported by this content)"
     start_time:
       label: Start Time
       description: Scheduled start time of this live video
