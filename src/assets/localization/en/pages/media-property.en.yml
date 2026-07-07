@@ -1059,6 +1059,9 @@ form:
       description: Select the property page this banner will link to
     link:
       label: Link URL
+    multiview_content:
+      label: Multiview Content
+      description: Specify which types of content are available for multiview
   sidebar_tabs:
     label: Sidebar Tabs
     description: Define tabbed content lists to display in the side bar

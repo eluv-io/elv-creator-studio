@@ -303,7 +303,7 @@ form:
   sidebar:
     multiview_content:
       label: Multiview Content
-      description: Specify what content is available for multiview
+      description: Specify which types of content are available for multiview
     hide_sidebar:
       label: Hide Sidebar
       description: If specified, the sidebar will be hidden and only the active content will be visible.

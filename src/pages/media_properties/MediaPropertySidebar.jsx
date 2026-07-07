@@ -578,6 +578,18 @@ export const MediaPropertySidebarSettings = observer(() => {
       section="mediaProperty"
       useHistory
     >
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sidebar.multiview_content}
+        defaultValue=""
+        field="multiview_content"
+        options={[
+          {label: "Live, Upcoming and VOD", value: ""},
+          {label: "Live and VOD", value: "live_and_vod"},
+          {label: "Live Only", value: "live"},
+          {label: "None", value: "none"}
+        ]}
+      />
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.sidebar_tabs}
