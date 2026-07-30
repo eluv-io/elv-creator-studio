@@ -18,7 +18,10 @@ import {
   ScrollArea,
   Table,
   HoverCard,
-  ColorInput, Code, Tooltip
+  ColorInput,
+  Code,
+  Tooltip,
+  Slider
 } from "@mantine/core";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -364,6 +367,10 @@ const Input = observer(({
       clearable = true;
       value = ParseDate(value) || null;
       break;
+    case "slider":
+      Component = Slider;
+      label = v => v;
+      break;
   }
 
   componentProps.maw = componentProps.maw || uiStore.inputWidth;
@@ -401,7 +408,7 @@ const Input = observer(({
       {...componentProps}
       placeholder={placeholder}
       error={error}
-      label={label || hint ? <InputLabel label={label} hint={hint} /> : ""}
+      label={typeof label === "function" ? label : label || hint ? <InputLabel label={label} hint={hint} /> : ""}
       description={description}
       value={value}
       required={required}
@@ -2577,6 +2584,10 @@ export default {
     <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
   Number: ({min, max, step, precision, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
+  Slider: ({min, max, step, precision, componentProps, ...props}) =>
+    <InputWrapper {...props} py={0} px={0} withBorder={false} mb={0}>
+      <Input {...props} type="slider" componentProps={{min, max, step, precision, label: v => v, ...(componentProps || {})}} />
+    </InputWrapper>,
   Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
   Date: props => <Input {...props} type="date" />,
   DateTime: props => <Input {...props} type="datetime" />,

@@ -27,7 +27,7 @@ const PageContent = observer(({
       }
       {
         !title ? null :
-          <Title order={2} mb={subtitle ? 0 : "xl"} maw={uiStore.inputWidthWide}>
+          <Title order={2} mb={subtitle ? 0 : "xl"} maw={uiStore.inputWidthExtraWide}>
             <Group position="apart" align="center">
               <Group align="center" noWrap>
                 {

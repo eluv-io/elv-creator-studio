@@ -18,7 +18,8 @@ import {
   MediaPropertySectionItemVisualSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpacerSectionSpec,
-  MediaPropertySpec
+  MediaPropertySpec,
+  MediaPropertyCardThemeSpec
 } from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
 import {CompareSemVer, GenerateUUID} from "@/helpers/Misc.js";
@@ -40,7 +41,8 @@ class MediaPropertyStore {
     "section_hero_item": "pshi",
     "section_container": "pscc",
     "section_spacer": "pssp",
-    "section_item": "psci"
+    "section_item": "psci",
+    "card_theme": "cthm"
   };
 
   SECTION_CONTENT_TYPES = {
@@ -648,6 +650,30 @@ class MediaPropertyStore {
       }),
       fieldName: label,
       label: this.GetSectionItemLabel({sectionItem: spec})
+    });
+
+    return id;
+  }
+
+  CreateCardTheme({mediaPropertyId, copyId}) {
+    let id = `${this.ID_PREFIXES.card_theme}${GenerateUUID()}`;
+
+    let spec = Clone(MediaPropertyCardThemeSpec);
+    if(copyId) {
+      spec = Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.styling.card_themes[copyId]));
+    }
+
+    spec.id = id;
+    spec.label = (copyId ? `${spec.label} (Copy)` : spec.label);
+
+    this.AddField({
+      objectId: mediaPropertyId,
+      page: location.pathname,
+      path: "/public/asset_metadata/info/styling/card_themes",
+      field: id,
+      value: spec,
+      category: this.MediaPropertyCategory({category: "card_theme_label", mediaPropertyId, type: "styling/card_themes", id, label: spec.label}),
+      label: spec.label
     });
 
     return id;

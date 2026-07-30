@@ -4,6 +4,7 @@ nav:
   general: General
   sidebar: Sidebar Settings
   theme: Theme and Styling
+  card_theme: Card Theme
   domain: Customization Settings
   search: Search
   pages: Pages
@@ -22,6 +23,8 @@ form:
     info: Media Property Info
     theme_settings: Theme and Styling Settings
     theme: Theme
+    card_themes: Card Themes
+    card_theme_label: Card Theme '{label}'
     main_page_display: Discover Page Display Settings
     domain_settings: Customization Settings
     social_links: Social Links
@@ -491,6 +494,34 @@ form:
     filter_style:
       label: Filter Button Style
       description: Specify the border style of filter buttons for the 'box' filter variant
+  card_themes:
+    label: Card Themes
+    description: Create visual themes for item cards in your property
+    fieldLabel: Card Theme
+  card_theme:
+    border_color:
+      label: Border Color
+    background_type:
+      label: Image Background Type
+      description: The background color may be a solid color or a gradient
+    background_color:
+      label: Image Background Color
+      description: Select a color for the background
+    background_color_2:
+      label: Image Background Color 2
+      description: Select a second color for the background gradient
+    background_gradient_angle:
+      label: Background Gradient Angle
+    border_radius:
+      label: Border Radius
+    border_width:
+      label: Border Width
+    circularize:
+      label: Circularize Square Cards
+      description: If checked, cards with a square aspect ratio will be rendered as circles
+    effect:
+      label: Transition Effect
+
   purchase_settings:
     purchase_background_tv:
       label: Purchase Page Background (TV)

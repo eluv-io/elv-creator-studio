@@ -1,5 +1,28 @@
 import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+const StateVisuals = {
+  border_color: "#FFFFFF",
+  background_color: "#000000",
+  background_color_2: "#000000",
+  background_type: "solid", // gradient
+  background_gradient_angle: 0,
+};
+
+export const MediaPropertyCardThemeSpec = {
+  id: undefined,
+  label: "<New Card Theme>",
+  description: "",
+  inactive: StateVisuals,
+  active: StateVisuals,
+  border_width: 0,
+  border_radius: "subtle", // none, rounded
+  circularize: false,
+  effects: {
+    desaturate: false,
+    image_only: false
+  }
+};
+
 export const MediaPropertyFooterItemSpec = {
   id: undefined,
   type: "link",
@@ -403,6 +426,7 @@ export const MediaPropertySpec = {
       advanced_options: []
     }
   },
+  styling: {},
   domain: {
     custom_domain: "",
     disable_registration: false,
