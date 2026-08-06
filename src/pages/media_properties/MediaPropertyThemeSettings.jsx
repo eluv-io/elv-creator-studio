@@ -15,7 +15,7 @@ import EluvioLogo from "@/assets/images/E Logo Dark Transparent.svg";
 
 const S = (...classes) => classes.map(c => CardStyle[c] || "").join(" ");
 
-const ThemeProperties = theme => {
+const ThemeProperties = ({theme, mobile=false}) => {
   let css = {};
   let variants = [];
 
@@ -86,22 +86,27 @@ const ThemeProperties = theme => {
   css["--background-gradient-angle--active"] = `${theme.active.background_gradient_angle || 0}deg`;
   css["--background-gradient-angle--inactive"] = `${theme.inactive.background_gradient_angle || 0}deg`;
 
-  if(theme.effect) {
+  if(theme.effect && theme.effect !== "none") {
     variants.push(`effect-${theme.effect}`);
+  }
+
+  if(mobile) {
+    if(theme.mobile_state === "no-transition") {
+      variants = [];
+    } else if(theme.mobile_state === "active") {
+      variants = ["active"];
+    }
+
+    variants.push("mobile");
   }
 
   return {
     css,
-    variants,
-    mobileState: theme.mobile_state
+    variants
   };
 };
 
-const Card = observer(({image, aspectRatio, mobile=false, variants=[], mobileState}) => {
-  if(mobileState === "no-transition") {
-    variants = [];
-  }
-
+const Card = observer(({image, aspectRatio, mobile=false, variants=[]}) => {
   return (
     <div
       role="button"
@@ -111,7 +116,6 @@ const Card = observer(({image, aspectRatio, mobile=false, variants=[], mobileSta
           "card",
           `card--${aspectRatio}`,
           mobile ? "card--mobile" : "",
-          mobile && mobileState === "active" ? "card--active" : "",
           ...variants.map(variant => `card--${variant}`)
         )
       }
@@ -128,7 +132,8 @@ const Card = observer(({image, aspectRatio, mobile=false, variants=[], mobileSta
 });
 
 const CardExamples = observer(({theme}) => {
-  const {css, variants, mobileState} = ThemeProperties(theme);
+  const {css, variants} = ThemeProperties({theme});
+  const mobileVariants = (ThemeProperties({theme, mobile: true})).variants;
 
   const [input, setInput] = useState(undefined);
   const [exampleImage, setExampleImage] = useState(EluvioLogo);
@@ -153,9 +158,9 @@ const CardExamples = observer(({theme}) => {
         <Card image={exampleImage} aspectRatio="portrait" variants={variants}/>
       </div>
       <div style={{...css}} className={S("cards", "cards--mobile")}>
-        <Card mobile image={exampleImage} aspectRatio="landscape" variants={variants} mobileState={mobileState}/>
-        <Card mobile image={exampleImage} aspectRatio="square" variants={variants} mobileState={mobileState}/>
-        <Card mobile image={exampleImage} aspectRatio="portrait" variants={variants} mobileState={mobileState}/>
+        <Card mobile image={exampleImage} aspectRatio="landscape" variants={mobileVariants} />
+        <Card mobile image={exampleImage} aspectRatio="square" variants={mobileVariants} />
+        <Card mobile image={exampleImage} aspectRatio="portrait" variants={mobileVariants} />
       </div>
     </Stack>
   );
