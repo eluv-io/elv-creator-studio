@@ -295,9 +295,9 @@ export const MediaPropertyCardTheme = observer(() => {
               {...inputProps}
               {...l10n.card_theme.effect}
               field="effect"
-              defaultValue=""
+              defaultValue="none"
               options={[
-                { label: "None", value: "" },
+                { label: "None", value: "none" },
                 { label: "Desaturate", value: "desaturate" },
                 { label: "Desaturate Image", value: "desaturate-image" },
                 { label: "Desaturate Background", value: "desaturate-background" }
@@ -307,9 +307,9 @@ export const MediaPropertyCardTheme = observer(() => {
               {...inputProps}
               {...l10n.card_theme.mobile_state}
               field="mobile_state"
-              defaultValue=""
+              defaultValue="inactive"
               options={[
-                { label: "Inactive", value: "" },
+                { label: "Inactive", value: "inactive" },
                 { label: "Inactive with Transition Effect Disabled", value: "no-transition" },
                 { label: "Active", value: "active" }
               ]}

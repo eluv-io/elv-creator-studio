@@ -6,7 +6,7 @@ const StateVisuals = {
   background_color_2: "#000000",
   background_color_opacity: 0,
   background_gradient_angle: 0,
-  background_type: "solid",
+  background_type: "solid", // solid, gradient / default solid
   border_color: "#FFFFFF"
 };
 
@@ -16,11 +16,11 @@ export const MediaPropertyCardThemeSpec = {
   description: "",
   inactive: StateVisuals,
   active: StateVisuals,
-  border_radius: "subtle",
+  border_radius: "subtle", // none, subtle, curved / default none
   border_width: 0,
   circularize: false,
-  effect: "",
-  mobile_state: ""
+  effect: "", // none, desaturate, desaturate-image, desaturate-background / default none
+  mobile_state: "" // inactive, no-transition, active / default inactive
 };
 
 export const MediaPropertyFooterItemSpec = {
