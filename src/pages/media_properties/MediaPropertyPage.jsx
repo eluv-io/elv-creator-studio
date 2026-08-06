@@ -80,6 +80,21 @@ const MediaPropertyPage = observer(() => {
         field="background_color"
       />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.pages.card_theme}
+        field="card_theme_id"
+        defaultValue=""
+        options={[
+          { label: "Default", value: ""},
+          ...(Object.keys(info?.styling?.card_themes || {}))
+            .map(cardThemeId => ({
+              label: info.styling.card_themes[cardThemeId].label || "Theme",
+              value: cardThemeId
+            }))
+        ]}
+      />
+
       <Group>
         {
           info.page_ids.main === pageId ? null :

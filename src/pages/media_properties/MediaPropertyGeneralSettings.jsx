@@ -264,6 +264,23 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="preview_password_digest"
       />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.card_theme}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info"
+        field="card_theme_id"
+        defaultValue=""
+        options={[
+          { label: "Default", value: ""},
+          ...(Object.keys(info?.styling?.card_themes || {}))
+            .map(cardThemeId => ({
+              label: info.styling.card_themes[cardThemeId].label || "Theme",
+              value: cardThemeId
+            }))
+        ]}
+      />
+
       <Inputs.SingleImageInput
         {...inputProps}
         {...l10n.general.image}

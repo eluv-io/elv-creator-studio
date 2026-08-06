@@ -369,7 +369,6 @@ const Input = observer(({
       break;
     case "slider":
       Component = Slider;
-      label = v => v;
       break;
   }
 
@@ -408,7 +407,10 @@ const Input = observer(({
       {...componentProps}
       placeholder={placeholder}
       error={error}
-      label={typeof label === "function" ? label : label || hint ? <InputLabel label={label} hint={hint} /> : ""}
+      label={
+        type === "slider" ? undefined :
+          label || hint ? <InputLabel label={label} hint={hint} /> : ""
+      }
       description={description}
       value={value}
       required={required}
@@ -2579,14 +2581,33 @@ export default {
   Code: props => <CodeInput {...props} />,
   UUID: props => <Input {...props} type="uuid" />,
   JSON: props => <Input {...props} type="json" />,
-  Color: props => <Input {...props} type="color" />,
+  Color: props =>
+    <>
+      <Input {...props} type="color" componentProps={!props.withOpacity ? props.componentProps : {...(props.componentProps || {}), mb: 5}}/>
+      {
+        !props.withOpacity ? null :
+          <InputWrapper label={`${props.label} Opacity`} py={0} px={0} withBorder={false} mb={0}>
+            <Input
+              {...props}
+              defaultValue={100}
+              field={`${props.field}_opacity`}
+              label={`${props.label} Opacity`}
+              min={0}
+              max={100}
+              step={1}
+              type="slider"
+              componentProps={{color: "gray.5"}}
+            />
+          </InputWrapper>
+      }
+    </>,
   Integer: ({min, max, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step: 1, ...(componentProps || {})}} />,
   Number: ({min, max, step, precision, componentProps, ...props}) =>
     <Input {...props} type="number" componentProps={{min, max, step, precision, ...(componentProps || {})}} />,
   Slider: ({min, max, step, precision, componentProps, ...props}) =>
     <InputWrapper {...props} py={0} px={0} withBorder={false} mb={0}>
-      <Input {...props} type="slider" componentProps={{min, max, step, precision, label: v => v, ...(componentProps || {})}} />
+      <Input {...props} type="slider" componentProps={{min, max, step, precision, ...(componentProps || {})}} />
     </InputWrapper>,
   Price: ({componentProps, ...props}) => <Input {...props} type="number" componentProps={{...componentProps, min: 0, step: 0.01, precision: 2}} />,
   Date: props => <Input {...props} type="date" />,

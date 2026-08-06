@@ -1043,7 +1043,25 @@ const ContentSectionDisplaySettings = observer(() => {
               ]}
             />
             {
-              !["button_vertical", "button_vertical"].includes(section.display?.card_style) ? null :
+              !["button_vertical", "button_vertical"].includes(section.display?.card_style) ?
+                // Card theme
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.sections.display.card_theme}
+                  subcategory={l10n.categories.section_presentation}
+                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                  defaultValue=""
+                  field="card_theme_id"
+                  options={[
+                    { label: "Default", value: ""},
+                    ...(Object.keys(info?.styling?.card_themes || {}))
+                      .map(cardThemeId => ({
+                        label: info.styling.card_themes[cardThemeId].label || "Theme",
+                        value: cardThemeId
+                      }))
+                  ]}
+                /> :
+                // Button text
                 <Inputs.Text
                   {...inputProps}
                   {...l10n.sections.display.card_default_button_text}

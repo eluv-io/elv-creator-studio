@@ -9,6 +9,7 @@ import Inputs from "@/components/inputs/Inputs";
 import {Button, Group, Paper, Stack, Title} from "@mantine/core";
 import ColorOptions from "@/components/inputs/media_property/Components.jsx";
 import UrlJoin from "url-join";
+import {ConvertColor} from "@/helpers/Misc.js";
 
 import EluvioLogo from "@/assets/images/E Logo Dark Transparent.svg";
 
@@ -17,6 +18,12 @@ const S = (...classes) => classes.map(c => CardStyle[c] || "").join(" ");
 const ThemeProperties = theme => {
   let css = {};
   let variants = [];
+
+  const FormatColor = (hex, alpha) => {
+    const {r, g, b, a} = ConvertColor({hex, alpha: typeof alpha === "number" ? alpha/100 : 1});
+
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  };
 
   switch(theme.border_radius) {
     case "subtle":
@@ -47,16 +54,34 @@ const ThemeProperties = theme => {
     css["--border-color--inactive"] = "transparent";
   }
 
-  css["--background-color--active"] = theme.active.background_color || "#000000";
-  css["--background-color--inactive"] = theme.inactive.background_color || "#000000";
+  const activeBackground1 = FormatColor(
+    theme.active.background_color || "#000000",
+    theme.active.background_color_opacity
+  );
+
+  const activeBackground2 = FormatColor(
+    theme.active.background_color_2 || "#000000",
+    theme.active.background_color_2_opacity
+  );
+
+  const inactiveBackground1 = FormatColor(
+    theme.inactive.background_color || "#000000",
+    theme.inactive.background_color_opacity
+  );
+
+  const inactiveBackground2 = FormatColor(
+    theme.inactive.background_color_2 || "#000000",
+    theme.inactive.background_color_2_opacity
+  );
+
+  css["--background-color--active"] = activeBackground1;
+  css["--background-color--inactive"] = inactiveBackground1;
 
   css["--background-color-2--active"] = theme.active.background_type === "gradient" ?
-    (theme.active.background_color_2 || "#000000") :
-    (theme.active.background_color || "#000000");
+    activeBackground2 : activeBackground1;
 
   css["--background-color-2--inactive"] = theme.inactive.background_type === "gradient" ?
-    (theme.inactive.background_color_2 || "#000000") :
-    (theme.inactive.background_color || "#000000");
+    inactiveBackground2 : inactiveBackground1;
 
   css["--background-gradient-angle--active"] = `${theme.active.background_gradient_angle || 0}deg`;
   css["--background-gradient-angle--inactive"] = `${theme.inactive.background_gradient_angle || 0}deg`;
@@ -67,11 +92,16 @@ const ThemeProperties = theme => {
 
   return {
     css,
-    variants
+    variants,
+    mobileState: theme.mobile_state
   };
 };
 
-const Card = observer(({image, aspectRatio, variants=[]}) => {
+const Card = observer(({image, aspectRatio, mobile=false, variants=[], mobileState}) => {
+  if(mobileState === "no-transition") {
+    variants = [];
+  }
+
   return (
     <div
       role="button"
@@ -80,6 +110,8 @@ const Card = observer(({image, aspectRatio, variants=[]}) => {
         S(
           "card",
           `card--${aspectRatio}`,
+          mobile ? "card--mobile" : "",
+          mobile && mobileState === "active" ? "card--active" : "",
           ...variants.map(variant => `card--${variant}`)
         )
       }
@@ -96,7 +128,7 @@ const Card = observer(({image, aspectRatio, variants=[]}) => {
 });
 
 const CardExamples = observer(({theme}) => {
-  const {css, variants} = ThemeProperties(theme);
+  const {css, variants, mobileState} = ThemeProperties(theme);
 
   const [input, setInput] = useState(undefined);
   const [exampleImage, setExampleImage] = useState(EluvioLogo);
@@ -105,12 +137,7 @@ const CardExamples = observer(({theme}) => {
     <Stack spacing={0}>
       <Title order={3}>Preview</Title>
       <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different on your site</Title>
-      <div style={{...css}} className={S("cards")}>
-        <Card image={exampleImage} aspectRatio="landscape" variants={variants} />
-        <Card image={exampleImage} aspectRatio="square" variants={variants} />
-        <Card image={exampleImage} aspectRatio="portrait" variants={variants} />
-      </div>
-      <Button onClick={() => input?.click()} w={300} color="gray" mx="auto" mt={10}>
+      <Button onClick={() => input?.click()} w={300} color="gray" mx="auto" mb={10}>
         Choose Example Image
       </Button>
       <input
@@ -120,16 +147,28 @@ const CardExamples = observer(({theme}) => {
         accept="image/png, image/jpeg, image/svg+xml, image/webp, image/gif, image/png"
         onChange={event => setExampleImage(URL.createObjectURL(event.target.files[0]))}
       />
+      <div style={{...css}} className={S("cards")}>
+        <Card image={exampleImage} aspectRatio="landscape" variants={variants}/>
+        <Card image={exampleImage} aspectRatio="square" variants={variants}/>
+        <Card image={exampleImage} aspectRatio="portrait" variants={variants}/>
+      </div>
+      <div style={{...css}} className={S("cards", "cards--mobile")}>
+        <Card mobile image={exampleImage} aspectRatio="landscape" variants={variants} mobileState={mobileState}/>
+        <Card mobile image={exampleImage} aspectRatio="square" variants={variants} mobileState={mobileState}/>
+        <Card mobile image={exampleImage} aspectRatio="portrait" variants={variants} mobileState={mobileState}/>
+      </div>
     </Stack>
   );
 });
 
 export const MediaPropertyCardTheme = observer(() => {
-  const { mediaPropertyId, cardThemeId } = useParams();
+  const {mediaPropertyId, cardThemeId} = useParams();
 
   const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
 
-  if(!mediaProperty) { return null; }
+  if(!mediaProperty) {
+    return null;
+  }
 
   const info = mediaProperty?.metadata?.public?.asset_metadata?.info;
   const cardTheme = info?.styling?.card_themes?.[cardThemeId];
@@ -177,6 +216,7 @@ export const MediaPropertyCardTheme = observer(() => {
           path={UrlJoin(inputProps.path, state)}
           defaultValue="#000000"
           field="background_color"
+          withOpacity
         />
         {
           cardTheme[state]?.background_type !== "gradient" ? null :
@@ -187,6 +227,7 @@ export const MediaPropertyCardTheme = observer(() => {
                 path={UrlJoin(inputProps.path, state)}
                 defaultValue="#000000"
                 field="background_color_2"
+                withOpacity
               />
               <Inputs.Slider
                 {...inputProps}
@@ -260,6 +301,17 @@ export const MediaPropertyCardTheme = observer(() => {
                 { label: "Desaturate", value: "desaturate" },
                 { label: "Desaturate Image", value: "desaturate-image" },
                 { label: "Desaturate Background", value: "desaturate-background" }
+              ]}
+            />
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.card_theme.mobile_state}
+              field="mobile_state"
+              defaultValue=""
+              options={[
+                { label: "Inactive", value: "" },
+                { label: "Inactive with Transition Effect Disabled", value: "no-transition" },
+                { label: "Active", value: "active" }
               ]}
             />
           </Stack>

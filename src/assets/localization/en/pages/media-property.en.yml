@@ -121,7 +121,7 @@ form:
     images:
       label: Images
     image:
-      label: Image
+      label: Property Image
       description: Portrait (2:3)
     image_tv:
       label: Image (TV)
@@ -169,6 +169,9 @@ form:
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
+    card_theme:
+      label: Card Theme
+      description: Specify the card theme for this property. This setting can be overridden in pages and sections.
     subproperties:
       subproperties:
         label: Subproperties
@@ -280,6 +283,9 @@ form:
       primary_filter_style:
         label: Primary Filter Style
         description: Select how the primary filter is displayed
+      primary_filter_card_theme:
+        label: Card Theme
+        description: Specify the card theme for the primary filter
       filter_options:
         label: Filter Options
         description: Customize values shown for the primary filter and specify secondary filters. If no options are set, the default values for the primary filter attribute will be used.
@@ -521,6 +527,9 @@ form:
       description: If checked, cards with a square aspect ratio will be rendered as circles
     effect:
       label: Transition Effect
+    mobile_state:
+      label: Default Mobile State
+      hint: Because there is no hover state on mobile devices, users will likely never see the transition to the active state. You can elect to always show the active state on mobile devices, or deactivate the transition effect property.
 
   purchase_settings:
     purchase_background_tv:
@@ -650,6 +659,9 @@ form:
     background_color:
       label: Background Color
       description: Set a custom background color for this page.
+    card_theme:
+      label: Card Theme
+      description: Specify the card theme for this page. This can be overridden within individual sections.
     header:
       position:
         label: Content Position
@@ -819,6 +831,9 @@ form:
       card_style:
         label: Card Style
         description: Select the card style that items in this section should use
+      card_theme:
+        label: Card Theme
+        description: Specify the card theme for this section.
       card_default_button_text:
         label: Card Default Button Text
         description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.

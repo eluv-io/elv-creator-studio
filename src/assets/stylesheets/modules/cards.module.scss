@@ -3,15 +3,48 @@
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  padding: 65px 20px;
+  padding: 20px;
   justify-content: center;
   border-radius: 5px;
   align-items: flex-end;
+
+  &--mobile {
+    width: 350px;
+    margin-inline: auto;
+    margin: 20px auto;
+    border-radius: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-top: 30px;
+
+    scrollbar-color: #343434 #141414;
+    scrollbar-width: thin;
+
+    ::-webkit-scrollbar {
+      opacity: 1;
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #333;
+      opacity: 1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #555;
+      border-radius: 100px;
+      opacity: 1;
+    }
+  }
 }
 
 .card {
   --base-card-width: 300px;
   --transition-duration: 0.5s;
+  --brightness--inactive: 85%;
+  --brightness--active: 105%;
+  --scale: 1.05;
+
   color: white;
   width: var(--card-width);
   max-width: var(--card-width);
@@ -22,6 +55,13 @@
   * {
     transition: all var(--transition-duration) ease;
     background-clip: padding-box;
+  }
+
+  // Disable default transitions on mobile
+  &--mobile {
+    --brightness--inactive: 100%;
+    --brightness--active: 100%;
+    --scale: 1;
   }
 
   /* Aspect Ratios */
@@ -72,26 +112,28 @@
 
   &.card--effect-desaturate {
     .card__image-container {
-      filter: saturate(0%);
+      filter: brightness(var(--brightness--inactive)) saturate(0%);
     }
 
     &:hover,
-    &:focus-visible {
+    &:focus-visible,
+    &.card--active {
       .card__image-container {
-        filter: saturate(100%);
+        filter: brightness(var(--brightness--active)) saturate(100%);
       }
     }
   }
 
   &.card--effect-desaturate-image {
     .card__image {
-      filter: saturate(0%);
+      filter: brightness(var(--brightness--inactive)) saturate(0%);
     }
 
     &:hover,
-    &:focus-visible {
+    &:focus-visible,
+    &.card--active {
       .card__image {
-        filter: saturate(100%);
+        filter: brightness(var(--brightness--active)) saturate(100%);
       }
     }
   }
@@ -109,12 +151,18 @@
   /* Hover/Active State */
 
   &:hover,
-  &:focus-visible {
-    transform: scale3d(1.05, 1.05, 1);
+  &:focus-visible,
+  &--active {
+    transform: scale3d(var(--scale), var(--scale), 1);
     --background-gradient-angle: var(--background-gradient-angle--active);
 
     .card__image-container {
-      background-color: var(--border-color--active);
+      border: var(--border-width) solid var(--border-color--active);
+      filter: brightness(var(--brightness--active));
+
+      &::before {
+        opacity: 0;
+      }
 
       &::after {
         opacity: 1;
@@ -122,27 +170,25 @@
     }
   }
 
-
   &__image-container,
   &__image {
     width: 100%;
-    border-radius: var(--border-radius);
   }
 
   &__image-container {
     position: relative;
-    background-color: var(--border-color--inactive);
-    padding: var(--border-width);
     overflow: hidden;
     z-index: 0;
     display: flex;
+    border-radius: var(--border-radius);
+    filter: brightness(var(--brightness--inactive));
+    border: var(--border-width) solid var(--border-color--inactive);
 
     &::after,
     &::before {
       z-index: -1;
       position: absolute;
-      inset: var(--border-width);
-      border-radius: var(--border-radius);
+      inset: 0;
       background: yellow;
       content: "";
       transition: opacity var(--transition-duration) ease;

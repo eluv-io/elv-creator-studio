@@ -204,6 +204,24 @@ const MediaPropertySearch = observer(() => {
                   ]}
                 />
             }
+            {
+              info.search?.primary_filter_style !== "image" ? null :
+                <Inputs.Select
+                  {...inputProps}
+                  {...l10n.general.search.primary_filter_card_theme}
+                  subcategory={l10n.categories.search}
+                  field="primary_filter_card_theme_id"
+                  defaultValue=""
+                  options={[
+                    { label: "Default", value: ""},
+                    ...(Object.keys(info?.styling?.card_themes || {}))
+                      .map(cardThemeId => ({
+                        label: info.styling.card_themes[cardThemeId].label || "Theme",
+                        value: cardThemeId
+                      }))
+                  ]}
+                />
+            }
 
             {
               !info.search?.primary_filter ? null :
