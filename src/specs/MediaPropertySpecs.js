@@ -1,11 +1,13 @@
 import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+
 const StateVisuals = {
-  border_color: "#FFFFFF",
   background_color: "#000000",
   background_color_2: "#000000",
-  background_type: "solid", // gradient
+  background_color_opacity: 0,
   background_gradient_angle: 0,
+  background_type: "solid",
+  border_color: "#FFFFFF"
 };
 
 export const MediaPropertyCardThemeSpec = {
@@ -14,13 +16,11 @@ export const MediaPropertyCardThemeSpec = {
   description: "",
   inactive: StateVisuals,
   active: StateVisuals,
+  border_radius: "subtle",
   border_width: 0,
-  border_radius: "subtle", // none, rounded
   circularize: false,
-  effects: {
-    desaturate: false,
-    image_only: false
-  }
+  effect: "",
+  mobile_state: ""
 };
 
 export const MediaPropertyFooterItemSpec = {
