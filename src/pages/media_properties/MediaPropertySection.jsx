@@ -1053,7 +1053,7 @@ const ContentSectionDisplaySettings = observer(() => {
                   defaultValue=""
                   field="card_theme_id"
                   options={[
-                    { label: "Default", value: ""},
+                    { label: "Use Page Setting", value: ""},
                     ...(Object.keys(info?.styling?.card_themes || {}))
                       .map(cardThemeId => ({
                         label: info.styling.card_themes[cardThemeId].label || "Theme",

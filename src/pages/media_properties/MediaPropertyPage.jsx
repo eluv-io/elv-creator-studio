@@ -86,7 +86,7 @@ const MediaPropertyPage = observer(() => {
         field="card_theme_id"
         defaultValue=""
         options={[
-          { label: "Default", value: ""},
+          { label: "Use Property Setting", value: ""},
           ...(Object.keys(info?.styling?.card_themes || {}))
             .map(cardThemeId => ({
               label: info.styling.card_themes[cardThemeId].label || "Theme",

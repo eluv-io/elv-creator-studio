@@ -120,19 +120,37 @@ form:
       description: The title of the page in the browser
     images:
       label: Images
+    featured_images:
+      label: Featured Card Images
     image:
       label: Property Image
       description: Portrait (2:3)
+    featured_image:
+      label: Featured Card Image
+      description: Portrait (2:3)
     image_tv:
-      label: Image (TV)
+      label: Background Image (TV)
       description: Landscape (16/9)
     video:
       label: Video
       description: Silent, looping animation replacing the image on the main page
+    logo:
+      label: Logo
+    logo_tv:
+      label: Logo (TV)
     header_logo:
       label: Header Logo
     tv_header_logo:
       label: Header Logo (TV)
+    main_page_title:
+      label: Title
+      description: Maximum 30 characters
+    main_page_description:
+      label: Description
+      description: Maximum 150 characters
+    main_page_logo_scale:
+      label: Logo Scale
+      description: Adjust the scale of your logo
     start_screen:
       label: TV Start Screen
     start_screen_background:
@@ -145,6 +163,13 @@ form:
       label: Profile Background (Desktop)
     profile_background_mobile:
       label: Profile Background (Mobile)
+    splash_screen:
+      label: Splash Screen
+      description: Displayed on initial load of app
+    splash_screen_background:
+      label: Splash Screen Background (Desktop)
+    splash_screen_background_mobile:
+      label: Splash Screen Background (Mobile)
     countdown_background:
       label: Countdown Page Background Images
       description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
@@ -318,6 +343,9 @@ form:
           label: Secondary Filter Image
         secondary_filter_image_tv:
           label: Secondary Filter Image (TV)
+        secondary_filter_card_theme:
+          label: Card Theme
+          description: Specify the card theme for the secondary filter
 
       group_by:
         label: Group Results By

@@ -1,4 +1,4 @@
-import CardStyle from "@/assets/stylesheets/modules/cards.module.scss";
+import CardStyles from "@/assets/stylesheets/modules/cards.module.scss";
 
 import {useState} from "react";
 import {observer} from "mobx-react-lite";
@@ -13,7 +13,7 @@ import {ConvertColor} from "@/helpers/Misc.js";
 
 import EluvioLogo from "@/assets/images/E Logo Dark Transparent.svg";
 
-const S = (...classes) => classes.map(c => CardStyle[c] || "").join(" ");
+const S = (...classes) => classes.map(c => CardStyles[c] || "").join(" ");
 
 const ThemeProperties = ({theme, mobile=false}) => {
   let css = {};
@@ -466,6 +466,17 @@ const MediaPropertyThemeSettings = observer(() => {
           { label: "Rounded", value: "rounded" },
           { label: "Squared", value: "squared" },
           { label: "Alternating", value: "alternating" }
+        ]}
+      />
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.splash_screen}
+        subcategory={l10n.categories.theme}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        path="/public/asset_metadata/info/styling"
+        fields={[
+          { field: "splash_screen_background", aspectRatio: 16/9, ...l10n.general.splash_screen_background },
+          { field: "splash_screen_background_mobile", aspectRatio: 1/2, ...l10n.general.splash_screen_background_mobile },
         ]}
       />
       <Inputs.ImageInput

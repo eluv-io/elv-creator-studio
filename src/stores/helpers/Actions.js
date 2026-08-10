@@ -401,7 +401,7 @@ const SetLink = flow(function * ({
       };
     }
 
-    if(linkType === "file") {
+    if(linkType === "files") {
       // File links should contain regular fabric link content, in addition to URL to file
       link.url = FabricUrl({objectId, path: link["/"]});
     }

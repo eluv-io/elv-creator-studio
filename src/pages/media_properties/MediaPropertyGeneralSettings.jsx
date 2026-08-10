@@ -1,3 +1,5 @@
+import CardStyles from "@/assets/stylesheets/modules/cards.module.scss";
+
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, mediaCatalogStore, permissionSetStore, uiStore} from "@/stores";
@@ -12,12 +14,90 @@ import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec, MediaProperty
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
 import LanguageCodes from "@/assets/localization/LanguageCodes.js";
+import {useState} from "react";
+import Video from "@/components/common/Video.jsx";
+
+const S = (...classes) => classes.map(c => CardStyles[c] || "").join(" ");
 
 const currencies = CountryCodesList.customList("currencyCode", "{currencyNameEn}");
 Object.keys(currencies).forEach(currencyCode => {
   if(!currencyCode || !currencies[currencyCode]) {
     delete currencies[currencyCode];
   }
+});
+
+
+const DiscoverCard = observer(({featured}) => {
+  const [hovering, setHovering] = useState(false);
+
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const metadata = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  return (
+    <div
+      onMouseEnter={() => setHovering(true)}
+      onFocus={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onBlur={() => setHovering(false)}
+      className={S("discover-card", featured ? "discover-card--featured" : "discover-card--standard")}
+    >
+      <div className={S("discover-card__image-container")}>
+        <img
+          alt={metadata.main_page_title || metadata.title}
+          src={
+            (featured && metadata.featured_image?.url) ||
+            metadata.image?.url
+          }
+          width={800}
+          className={S("discover-card__image")}
+        />
+        {
+          !metadata.video || !hovering ? null :
+            <Video
+              videoLink={metadata.video}
+              className={S("discover-card__video")}
+              animation
+              playerOptions={{
+                capLevelToPlayerSize: true
+              }}
+            />
+        }
+      </div>
+      {
+        !featured ? null :
+          <div className={S("discover-card__content")}>
+            {
+              !metadata.main_page_logo ? null :
+                <div className={S("discover-card__logo-container")}>
+                  <img
+                    style={{
+                      width: `${metadata.main_page_logo_scale || 100}%`
+                    }}
+                    src={metadata.main_page_logo?.url}
+                    className={S("discover-card__logo")}
+                  />
+                </div>
+            }
+            <div className={S("discover-card__title")}>
+              {metadata.main_page_title || ""}
+            </div>
+            <div className={S("discover-card__description")}>
+              {metadata.main_page_description || ""}
+            </div>
+            <div className={S("discover-card__button-container")}>
+              <div className={S("discover-card__button")}>
+                Launch
+              </div>
+            </div>
+          </div>
+      }
+    </div>
+  );
 });
 
 const FAQForm = observer(({index}) => {
@@ -646,17 +726,6 @@ const MediaPropertyGeneralSettings = observer(() => {
             { l10n.categories.main_page_display }
           </Accordion.Control>
           <Accordion.Panel>
-            <Inputs.ImageInput
-              {...inputProps}
-              localizable
-              componentProps={{maw: uiStore.inputWidthWide}}
-              subcategory={l10n.categories.main_page_display}
-              fields={[
-                { field: "image", aspectRatio: 2/3, ...l10n.general.image },
-                { field: "image_tv", aspectRatio: 16/9, ...l10n.general.image_tv },
-              ]}
-            />
-
             <Inputs.Checkbox
               {...inputProps}
               {...l10n.general.show_on_main_page}
@@ -674,7 +743,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             />
 
             {
-              !info.show_on_main_page ? null :
+              !info.show_on_main_page && !info.show_on_main_page_tv ? null :
                 <>
                   <Inputs.Select
                     {...inputProps}
@@ -703,6 +772,71 @@ const MediaPropertyGeneralSettings = observer(() => {
                 </>
             }
 
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.main_page_title}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_title"
+              componentProps={{
+                maxLength: 30
+              }}
+              localizable
+            />
+
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.general.main_page_description}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_description"
+              componentProps={{
+                maxLength: 150
+              }}
+              localizable
+            />
+
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.images}
+              localizable
+              componentProps={{maw: uiStore.inputWidthWide}}
+              subcategory={l10n.categories.main_page_display}
+              fields={[
+                { field: "image", aspectRatio: 2/3, ...l10n.general.image },
+                { field: "image_tv", aspectRatio: 16/9, ...l10n.general.image_tv },
+              ]}
+            />
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.featured_images}
+              localizable
+              componentProps={{maw: uiStore.inputWidthWide}}
+              subcategory={l10n.categories.main_page_display}
+              fields={[
+                { field: "featured_image", aspectRatio: 2/3, ...l10n.general.featured_image },
+                { field: "main_page_logo", aspectRatio: 3, baseSize: 90, ...l10n.general.logo },
+              ]}
+            />
+            {
+              !info.main_page_logo ? null :
+                <Inputs.Slider
+                  {...inputProps}
+                  {...l10n.general.main_page_logo_scale}
+                  subcategory={l10n.categories.main_page_display}
+                  field="main_page_logo_scale"
+                  defaultValue={100}
+                  localizable
+                  min={1}
+                  max={100}
+                />
+            }
+
+            <Title order={4} mt={50} fw={500}>Preview</Title>
+            <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different on the site</Title>
+
+            <div className={S("cards", "discover-cards")}>
+              <DiscoverCard />
+              <DiscoverCard featured />
+            </div>
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="footer">
