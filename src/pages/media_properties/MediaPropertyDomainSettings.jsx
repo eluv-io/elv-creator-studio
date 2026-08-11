@@ -348,15 +348,18 @@ const MediaPropertyDomainSettings = observer(() => {
                   { l10n.categories.advanced_login_settings }
                 </Accordion.Control>
                 <Accordion.Panel>
-                  <Inputs.Checkbox
-                    {...inputProps}
-                    {...l10n.login.advanced.use_auth0}
-                    category={l10n.categories.login_settings}
-                    subcategory={l10n.categories.advanced_login_settings}
-                    path="/public/asset_metadata/info/login/settings"
-                    defaultValue={false}
-                    field="use_auth0"
-                  />
+                  {
+                    info.login?.settings?.use_openid ? null :
+                      <Inputs.Checkbox
+                        {...inputProps}
+                        {...l10n.login.advanced.use_auth0}
+                        category={l10n.categories.login_settings}
+                        subcategory={l10n.categories.advanced_login_settings}
+                        path="/public/asset_metadata/info/login/settings"
+                        defaultValue={false}
+                        field="use_auth0"
+                      />
+                  }
                   {
                     !info.login?.settings?.use_auth0 ? null :
                       <>
@@ -383,6 +386,47 @@ const MediaPropertyDomainSettings = observer(() => {
                           subcategory={l10n.categories.advanced_login_settings}
                           path="/public/asset_metadata/info/login/settings"
                           field="auth0_native_client_id"
+                        />
+                      </>
+                  }
+                  {
+                    info.login?.settings?.use_auth0 ? null :
+                      <Inputs.Checkbox
+                        {...inputProps}
+                        {...l10n.login.advanced.use_openid}
+                        category={l10n.categories.login_settings}
+                        subcategory={l10n.categories.advanced_login_settings}
+                        path="/public/asset_metadata/info/login/settings"
+                        defaultValue={false}
+                        field="use_openid"
+                      />
+                  }
+                  {
+                    !info.login?.settings?.use_openid ? null :
+                      <>
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.openid_endpoint}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="openid_endpoint"
+                        />
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.openid_client_id}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="openid_client_id"
+                        />
+                        <Inputs.Text
+                          {...inputProps}
+                          {...l10n.login.advanced.openid_logout_url}
+                          category={l10n.categories.login_settings}
+                          subcategory={l10n.categories.advanced_login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          field="openid_logout_url"
                         />
                       </>
                   }

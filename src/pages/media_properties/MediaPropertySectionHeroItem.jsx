@@ -227,6 +227,16 @@ export const MediaPropertySectionHeroItemAction = observer(() => {
       />
 
       <Title order={3} mt={50} mb="md">{l10n.actions.sections.button}</Title>
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.actions.button_style}
+        defaultValue=""
+        field="button_style"
+        options={[
+          {label: "Default", value: ""},
+          {label: "Clipped Corner", value: "clipped"}
+        ]}
+      />
       <ColorOptions
         field="button"
         includeTextField

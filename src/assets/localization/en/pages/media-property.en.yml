@@ -518,6 +518,15 @@ form:
         label: Auth0 Client ID
       auth0_native_client_id:
         label: Auth0 Native Client ID
+      use_openid:
+        label: Use OpenID
+        description: If checked, users of your property will log in via a your provided OpenID login server
+      openid_endpoint:
+        label: OpenID Issuer Identifier Endpoint
+      openid_client_id:
+        label: OpenID Client ID
+      openid_logout_url:
+        label: OpenID Logout Url
     styling:
       logos:
         label: Logos
@@ -687,6 +696,8 @@ form:
     description:
       label: Description
       description: For internal reference, not displayed
+    button_style:
+      label: Button Style
     button:
       label: Button Settings
     visibility:
