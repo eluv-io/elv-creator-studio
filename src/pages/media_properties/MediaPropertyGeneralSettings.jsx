@@ -10,12 +10,18 @@ import {Slugify} from "@/components/common/Validation.jsx";
 import {Accordion, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaPropertyFooterItemSpec, MediaPropertySubpropertySpec, MediaPropertyFAQSpec} from "@/specs/MediaPropertySpecs.js";
+import {
+  MediaPropertyFooterItemSpec,
+  MediaPropertySubpropertySpec,
+  MediaPropertyFAQSpec,
+  MediaPropertyHeaderLinkSpec
+} from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
 import LanguageCodes from "@/assets/localization/LanguageCodes.js";
 import {useState} from "react";
 import Video from "@/components/common/Video.jsx";
+import {ActionConfiguration} from "@/pages/media_properties/MediaPropertyActionConfiguration.jsx";
 
 const S = (...classes) => classes.map(c => CardStyles[c] || "").join(" ");
 
@@ -85,9 +91,6 @@ const DiscoverCard = observer(({featured}) => {
                   />
                 </div>
             }
-            <div className={S("discover-card__title")}>
-              {metadata.main_page_title || ""}
-            </div>
             <div className={S("discover-card__description")}>
               {metadata.main_page_description || ""}
             </div>
@@ -346,58 +349,6 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="preview_password_digest"
       />
 
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.general.card_theme}
-        subcategory={l10n.categories.info}
-        path="/public/asset_metadata/info"
-        field="card_theme_id"
-        defaultValue=""
-        options={[
-          { label: "Default", value: ""},
-          ...(Object.keys(info?.styling?.card_themes || {}))
-            .map(cardThemeId => ({
-              label: info.styling.card_themes[cardThemeId].label || "Theme",
-              value: cardThemeId
-            }))
-        ]}
-      />
-
-      <Inputs.SingleImageInput
-        {...inputProps}
-        {...l10n.general.image}
-        componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.info}
-        aspectRatio={2/3}
-        localizable
-        field="image"
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        label="Header Logo"
-        localizable
-        componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.info}
-        fields={[
-          { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
-          { field: "mobile_header_logo", aspectRatio: 1, ...l10n.general.mobile_header_logo },
-          { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
-        ]}
-      />
-
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.start_screen}
-        componentProps={{maw: uiStore.inputWidthWide}}
-        subcategory={l10n.categories.info}
-        localizable
-        fields={[
-          { field: "start_screen_background", aspectRatio: 16/9, ...l10n.general.start_screen_background },
-          { field: "start_screen_logo", aspectRatio: 1, ...l10n.general.start_screen_logo },
-        ]}
-      />
-
       <Title order={3} mt={50}  mb="md">{l10n.categories.permissions}</Title>
       <Inputs.Checkbox
         {...inputProps}
@@ -469,24 +420,6 @@ const MediaPropertyGeneralSettings = observer(() => {
                   ]}
                 />
             }
-            {
-              info.permissions?.property_permissions_behavior !== "show_purchase" ? null :
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
-                  subcategory={l10n.categories.permissions}
-                  path={UrlJoin(inputProps.path, "permissions")}
-                  field="property_permissions_secondary_market_purchase_option"
-                  defaultValue=""
-                  disabled={!secondaryEnabled}
-                  options={[
-                    { label: "None", value: "" },
-                    { label: "Show", value: "show" },
-                    { label: "Show if Out of Stock", value: "out_of_stock" },
-                    { label: "Secondary Only", value: "only" }
-                  ]}
-                />
-            }
           </>
       }
 
@@ -524,24 +457,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             ]}
           />
       }
-      {
-        info.permissions?.search_permissions_behavior !== "show_purchase" ? null :
-          <Inputs.Select
-            {...inputProps}
-            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
-            subcategory={l10n.categories.permissions}
-            path={UrlJoin(inputProps.path, "permissions")}
-            field="search_permissions_secondary_market_purchase_option"
-            defaultValue=""
-            disabled={!secondaryEnabled}
-            options={[
-              { label: "None", value: "" },
-              { label: "Show", value: "show" },
-              { label: "Show if Out of Stock", value: "out_of_stock" },
-              { label: "Secondary Only", value: "only" }
-            ]}
-          />
-      }
+
 
       <Inputs.Select
         {...inputProps}
@@ -577,24 +493,6 @@ const MediaPropertyGeneralSettings = observer(() => {
             ]}
           />
       }
-      {
-        info.permissions?.behavior !== "show_purchase" ? null :
-          <Inputs.Select
-            {...inputProps}
-            {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
-            subcategory={l10n.categories.permissions}
-            path={UrlJoin(inputProps.path, "permissions")}
-            field="secondary_market_purchase_option"
-            defaultValue=""
-            disabled={!secondaryEnabled}
-            options={[
-              { label: "None", value: "" },
-              { label: "Show", value: "show" },
-              { label: "Show if Out of Stock", value: "out_of_stock" },
-              { label: "Secondary Only", value: "only" }
-            ]}
-          />
-      }
 
       <Inputs.Select
         {...inputProps}
@@ -604,7 +502,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         field="permission_items_unauthorized_permissions_behavior"
         defaultValue=""
         options={[
-          { label: "Default (Use Content Permission Behavior)", value: "", },
+          { label: "Default (Use Content Permission Behavior or Hide)", value: "", },
           ...Object.keys(mediaPropertyStore.PERMISSION_BEHAVIORS)
             .filter(key => key !== "show_purchase")
             .map(key => ({
@@ -854,6 +752,65 @@ const MediaPropertyGeneralSettings = observer(() => {
               <DiscoverCard />
               <DiscoverCard featured />
             </div>
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="header">
+          <Accordion.Control>
+            { l10n.categories.header }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.ImageInput
+              {...inputProps}
+              label="Header Logo"
+              localizable
+              componentProps={{maw: uiStore.inputWidthWide}}
+              subcategory={l10n.categories.info}
+              fields={[
+                { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
+                { field: "mobile_header_logo", aspectRatio: 1, ...l10n.general.mobile_header_logo },
+                { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
+              ]}
+            />
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.header_links.header_links}
+              subcategory={l10n.categories.header_links}
+              field="header_links"
+              newItemSpec={MediaPropertyHeaderLinkSpec}
+              renderItem={({item, ...props}) =>
+                <>
+                  <Inputs.UUID
+                    {...props}
+                    {...l10n.general.header_links.id}
+                    hidden
+                    field="id"
+                  />
+                  <Inputs.SingleImageInput
+                    {...props}
+                    {...l10n.general.header_links.icon}
+                    mt="md"
+                    aspectRatio={1}
+                    baseSize={100}
+                    field="icon"
+                  />
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.general.header_links.text}
+                    field="text"
+                  />
+                  <Inputs.Color
+                    {...props}
+                    {...l10n.general.header_links.text_color}
+                    field="text_color"
+                  />
+
+                  <ActionConfiguration
+                    inputProps={props}
+                    action={item}
+                  />
+                </>
+              }
+            />
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="footer">
@@ -1173,6 +1130,28 @@ const MediaPropertyGeneralSettings = observer(() => {
             />
           </Accordion.Panel>
          </Accordion.Item>
+        <Accordion.Item value="misc">
+          <Accordion.Control>
+            { l10n.categories.misc }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.section_items.purchasable_item.secondary_market_purchase_option}
+              subcategory={l10n.categories.permissions}
+              path={UrlJoin(inputProps.path, "permissions")}
+              field="search_permissions_secondary_market_purchase_option"
+              defaultValue=""
+              disabled={!secondaryEnabled}
+              options={[
+                { label: "None", value: "" },
+                { label: "Show", value: "show" },
+                { label: "Show if Out of Stock", value: "out_of_stock" },
+                { label: "Secondary Only", value: "only" }
+              ]}
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
       </Accordion>
     </PageContent>
   );

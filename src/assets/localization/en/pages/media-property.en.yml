@@ -55,11 +55,13 @@ form:
     sidebar_tab_group_label: Sidebar Content Group '{label}'
     meta_tags: Search and Social Preview
     analytics: Analytics
+    misc: Miscellaneous
     search: Search Settings
     advanced_search: Advanced Search Settings
     ai_search: AI Search Settings
     layout: Layout
-    header: Header
+    header: Header Settings
+    header_links: Header Links
     pages: Pages
     page: Page
     page_label: Page '{label}'
@@ -203,7 +205,7 @@ form:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
     card_theme:
-      label: Card Theme
+      label: Default Card Theme
       description: Specify the card theme for this property. This setting can be overridden in pages and sections.
     subproperties:
       subproperties:
@@ -289,6 +291,18 @@ form:
         description: The type of content to show in the sidebar for media accessed outside of a section, e.g. via search
       sidebar_content_section_id:
         label: Sidebar Content Section
+    header_links:
+      header_links:
+        label: Header Links
+        fieldLabel: Header Link
+      id:
+        label: ID
+      icon:
+        label: Icon
+      text:
+        label: Text
+      text_color:
+        label: Text Color
     meta_tags:
       meta_tags_description: "This information will be used to populate search results and social media link previews for your site."
       meta_tags_deploy_note: "Note: Changes to these values may take up to one minute after deploying your property before they are available."
@@ -804,6 +818,13 @@ form:
     url:
       label: URL
       description: The URL for this action to link to
+    property_id:
+      label: Media Property
+      description: Select the media property to link to
+    subproperty_id:
+      label: Subproperty
+      description: Select the subproperty to link to
+
 
   sections:
     create:

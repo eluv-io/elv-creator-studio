@@ -7,7 +7,6 @@ import {
   MediaPropertyPageSpec,
   MediaPropertySectionAutomaticSpec,
   MediaPropertySectionItemExternalLinkSpec,
-  MediaPropertySectionItemFilterSpec,
   MediaPropertySectionItemMarketplaceLinkSpec,
   MediaPropertySectionItemMediaSpec,
   MediaPropertySectionItemPageLinkSpec,
@@ -48,7 +47,6 @@ class MediaPropertyStore {
   SECTION_CONTENT_TYPES = {
     "media": "Media",
     "item_purchase": "Item Purchase",
-    "filter": "Filtered View",
     "page_link": "Page Link",
     "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
@@ -568,9 +566,6 @@ class MediaPropertyStore {
         break;
       case "item_purchase":
         spec = Clone(MediaPropertySectionItemPurchaseSpec);
-        break;
-      case "filter":
-        spec = Clone(MediaPropertySectionItemFilterSpec);
         break;
       case "page_link":
         spec = Clone(MediaPropertySectionItemPageLinkSpec);

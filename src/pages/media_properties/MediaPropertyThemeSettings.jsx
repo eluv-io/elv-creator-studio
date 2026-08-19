@@ -367,6 +367,23 @@ const MediaPropertyThemeSettings = observer(() => {
     >
       <Title order={3} mb="md">{l10n.categories.card_themes}</Title>
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.general.card_theme}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info"
+        field="card_theme_id"
+        defaultValue=""
+        options={[
+          { label: "Default", value: ""},
+          ...(Object.keys(info?.styling?.card_themes || {}))
+            .map(cardThemeId => ({
+              label: info.styling.card_themes[cardThemeId].label || "Theme",
+              value: cardThemeId
+            }))
+        ]}
+      />
+
       <Inputs.ReferenceTable
         {...inputProps}
         {...l10n.card_themes}
@@ -479,6 +496,20 @@ const MediaPropertyThemeSettings = observer(() => {
           { field: "splash_screen_background_mobile", aspectRatio: 1/2, ...l10n.general.splash_screen_background_mobile },
         ]}
       />
+
+      <Inputs.ImageInput
+        {...inputProps}
+        {...l10n.general.start_screen}
+        componentProps={{maw: uiStore.inputWidthWide}}
+        subcategory={l10n.categories.info}
+        path="/public/asset_metadata/info"
+        localizable
+        fields={[
+          { field: "start_screen_background", aspectRatio: 16/9, ...l10n.general.start_screen_background },
+          { field: "start_screen_logo", aspectRatio: 1, ...l10n.general.start_screen_logo },
+        ]}
+      />
+
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.general.countdown_background}

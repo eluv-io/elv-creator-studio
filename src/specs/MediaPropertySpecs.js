@@ -10,6 +10,22 @@ const StateVisuals = {
   border_color: "#FFFFFF"
 };
 
+export const MediaPropertyHeaderLinkSpec = {
+  id: undefined,
+  text: "",
+  text_color: "#FFFFFF",
+  icon: undefined,
+  behavior: "sign_in",
+  visibility: "unauthenticated",
+  permissions: [],
+  page_id: "",
+  video: undefined,
+  media_id: "",
+  property_id: "",
+  subproperty_id: "",
+  url: ""
+};
+
 export const MediaPropertyCardThemeSpec = {
   id: undefined,
   label: "<New Card Theme>",
@@ -119,12 +135,6 @@ export const MediaPropertySectionItemMediaSpec = {
   media_type: "",
   expand: false,
   use_media_settings: true
-};
-
-export const MediaPropertySectionItemFilterSpec = {
-  ...MediaPropertySectionItemBaseSpec,
-  type: "filter_link",
-  select: MediaPropertyFilterSpec
 };
 
 export const MediaPropertySectionItemPageLinkSpec = {
