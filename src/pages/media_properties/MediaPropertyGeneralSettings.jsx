@@ -57,13 +57,15 @@ const DiscoverCard = observer(({featured}) => {
           className={S("discover-card__image")}
         />
         {
-          !metadata.video || !hovering ? null :
+          !metadata.main_page_card_video || !hovering ? null :
             <Video
-              videoLink={metadata.video}
+              videoLink={metadata.main_page_card_video}
               className={S("discover-card__video")}
               animation
               playerOptions={{
-                capLevelToPlayerSize: true
+                capLevelToPlayerSize: true,
+                showLoader: false,
+                backgroundColor: "transparent"
               }}
             />
         }
@@ -379,6 +381,7 @@ const MediaPropertyGeneralSettings = observer(() => {
         subcategory={l10n.categories.info}
         fields={[
           { field: "header_logo", aspectRatio: 1, ...l10n.general.header_logo },
+          { field: "mobile_header_logo", aspectRatio: 1, ...l10n.general.mobile_header_logo },
           { field: "tv_header_logo", aspectRatio: 1, ...l10n.general.tv_header_logo },
         ]}
       />
@@ -829,6 +832,20 @@ const MediaPropertyGeneralSettings = observer(() => {
                   max={100}
                 />
             }
+
+            <Inputs.FabricBrowser
+              {...inputProps}
+              {...l10n.general.main_page_card_video}
+              field="main_page_card_video"
+              previewable
+            />
+
+            <Inputs.FabricBrowser
+              {...inputProps}
+              {...l10n.general.main_page_background_video_tv}
+              field="main_page_background_video_tv"
+              previewable
+            />
 
             <Title order={4} mt={50} fw={500}>Preview</Title>
             <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different on the site</Title>

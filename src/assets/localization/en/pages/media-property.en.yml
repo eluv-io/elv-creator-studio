@@ -140,6 +140,8 @@ form:
       label: Logo (TV)
     header_logo:
       label: Header Logo
+    mobile_header_logo:
+      label: Header Logo (Mobile)
     tv_header_logo:
       label: Header Logo (TV)
     main_page_title:
@@ -151,6 +153,12 @@ form:
     main_page_logo_scale:
       label: Logo Scale
       description: Adjust the scale of your logo
+    main_page_card_video:
+      label: Card Video
+      description: If specified, this video will be displayed in place of the image when the user hovers on the card
+    main_page_background_video_tv:
+      label: Background Video (TV)
+      description: If specified, this video will be displayed in place of the background image when the user hovers on the card
     start_screen:
       label: TV Start Screen
     start_screen_background:

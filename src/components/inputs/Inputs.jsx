@@ -910,7 +910,7 @@ const HashImage = async url => {
       image.crossOrigin = "anonymous";
       image.src = url;
     }),
-    new Promise(resolve => setTimeout(() => resolve, 2000))
+    new Promise(resolve => setTimeout(() => resolve, 5000))
   ]);
 
   const canvas = document.createElement("canvas");

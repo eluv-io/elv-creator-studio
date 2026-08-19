@@ -196,7 +196,7 @@ export const ConvertColor = ({hex, rgb, alpha}) => {
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16),
       a: typeof alpha === "number" ? alpha : 1
-    } : null;
+    } : {};
   } else {
     return `#${rgb.r.toString(16).padStart(2, "0")}${rgb.g.toString(16).padStart(2, "0")}${rgb.b.toString(16).padStart(2, "0")}`;
   }

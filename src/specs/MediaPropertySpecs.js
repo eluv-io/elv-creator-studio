@@ -321,11 +321,6 @@ export const MediaPropertyPageSpec = {
   layout: {
     title: "",
     description: "",
-    logo: undefined,
-    logo_alt: "",
-    header_logo: undefined,
-    background_image: undefined,
-    background_image_mobile: undefined,
     sections: [],
   },
   permissions: {
@@ -388,6 +383,8 @@ export const MediaPropertySpec = {
   main_page_logo: undefined,
   main_page_logo_scale: 100,
   header_logo: undefined,
+  header_logo_mobile: undefined,
+  header_logo_tv: undefined,
   subproperties: [],
   media_catalogs: [],
   associated_marketplaces: [],
