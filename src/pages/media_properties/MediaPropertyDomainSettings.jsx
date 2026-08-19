@@ -279,6 +279,20 @@ const MediaPropertyDomainSettings = observer(() => {
         path="/public/asset_metadata/info/domain"
         field="secondary_custom_domains"
       />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.domain.hide_home_button}
+        subcategory={l10n.categories.domain_settings}
+        path="/public/asset_metadata/info/domain"
+        field="hide_home_button"
+      />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.domain.hide_eluvio_terms}
+        subcategory={l10n.categories.domain_settings}
+        path="/public/asset_metadata/info/domain"
+        field="hide_eluvio_terms"
+      />
       <Title order={3} mt={50} mb="md">
         { l10n.categories.purchase_settings }
       </Title>

@@ -453,6 +453,10 @@ form:
       label: Secondary Custom Domains
       description: Specify any additional custom domains that will be used for this property, such as for staging environments
       fieldLabel: Secondary Custom Domain
+    hide_home_button:
+      label: Hide Home Button in Header
+    hide_eluvio_terms:
+      label: Hide Eluvio terms links in Footer
     features:
       features:
         label: Features
