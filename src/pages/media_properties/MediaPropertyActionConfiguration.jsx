@@ -46,6 +46,7 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
         <Inputs.Select
           {...inputProps}
           {...l10n.actions.page_link}
+          searchable
           options={[
             ...Object.keys(info.pages || {})
               .map(pageId => ({
@@ -119,6 +120,7 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
         <Inputs.Select
           {...inputProps}
           {...l10n.actions.property_id}
+          searchable
           key="property"
           field="property_id"
           options={
@@ -135,6 +137,7 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
         <Inputs.Select
           {...inputProps}
           {...l10n.actions.subproperty_id}
+          searchable
           key="subproperty"
           field="subproperty_id"
           options={

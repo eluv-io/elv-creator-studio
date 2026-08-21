@@ -4,7 +4,8 @@ import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 const StateVisuals = {
   background_color: "#000000",
   background_color_2: "#000000",
-  background_color_opacity: 0,
+  background_color_opacity: 100,
+  background_color_2_opacity: 100,
   background_gradient_angle: 0,
   background_type: "solid", // solid, gradient / default solid
   border_color: "#FFFFFF"
@@ -16,7 +17,7 @@ export const MediaPropertyHeaderLinkSpec = {
   text_color: "#FFFFFF",
   icon: undefined,
   behavior: "sign_in",
-  visibility: "unauthenticated",
+  visibility: "always",
   permissions: [],
   page_id: "",
   video: undefined,
@@ -35,8 +36,8 @@ export const MediaPropertyCardThemeSpec = {
   border_radius: "subtle", // none, subtle, curved / default none
   border_width: 0,
   circularize: false,
-  effect: "", // none, desaturate, desaturate-image, desaturate-background / default none
-  mobile_state: "" // inactive, no-transition, active / default inactive
+  effect: "none", // none, desaturate, desaturate-image, desaturate-background / default none
+  mobile_state: "inactive" // inactive, no-transition, active / default inactive
 };
 
 export const MediaPropertyFooterItemSpec = {
