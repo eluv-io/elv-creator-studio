@@ -1045,22 +1045,37 @@ const ContentSectionDisplaySettings = observer(() => {
             {
               !["button_vertical", "button_vertical"].includes(section.display?.card_style) ?
                 // Card theme
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.sections.display.card_theme}
-                  subcategory={l10n.categories.section_presentation}
-                  path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-                  defaultValue=""
-                  field="card_theme_id"
-                  options={[
-                    { label: "Use Page Setting", value: ""},
-                    ...(Object.keys(info?.styling?.card_themes || {}))
-                      .map(cardThemeId => ({
-                        label: info.styling.card_themes[cardThemeId].label || "Theme",
-                        value: cardThemeId
-                      }))
-                  ]}
-                /> :
+                <>
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.hover_card_display}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    field="hover_card_display"
+                    defaultValue=""
+                    options={[
+                      { label: "Use Page Setting", value: ""},
+                      { label: "None", value: "none"},
+                      { label: "Media Only", value: "media"},
+                      { label: "All", value: "all"}
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.card_theme}
+                    subcategory={l10n.categories.section_presentation}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    defaultValue=""
+                    field="card_theme_id"
+                    options={[
+                      { label: "Use Page Setting", value: ""},
+                      ...(Object.keys(info?.styling?.card_themes || {}))
+                        .map(cardThemeId => ({
+                          label: info.styling.card_themes[cardThemeId].label || "Theme",
+                          value: cardThemeId
+                        }))
+                    ]}
+                  />
+                </> :
                 // Button text
                 <Inputs.Text
                   {...inputProps}

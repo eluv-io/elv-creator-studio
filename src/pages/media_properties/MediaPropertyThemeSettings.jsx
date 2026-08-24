@@ -369,8 +369,22 @@ const MediaPropertyThemeSettings = observer(() => {
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.general.hover_card_display}
+        subcategory={l10n.categories.card_themes}
+        path="/public/asset_metadata/info"
+        field="hover_card_display"
+        defaultValue="none"
+        options={[
+          { label: "None", value: "none"},
+          { label: "Media Only", value: "media"},
+          { label: "All", value: "all"}
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
         {...l10n.general.card_theme}
-        subcategory={l10n.categories.info}
+        subcategory={l10n.categories.card_themes}
         path="/public/asset_metadata/info"
         field="card_theme_id"
         defaultValue=""

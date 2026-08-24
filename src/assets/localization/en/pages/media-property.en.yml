@@ -207,6 +207,9 @@ form:
     card_theme:
       label: Default Card Theme
       description: Specify the card theme for this property. This setting can be overridden in pages and sections.
+    hover_card_display:
+      label: Default Hover Card Display
+      description: Specify when the detailed hover cards should be shown for this property (desktop only). This setting can be overridden in pages and sections.
     subproperties:
       subproperties:
         label: Subproperties
@@ -712,6 +715,9 @@ form:
     card_theme:
       label: Card Theme
       description: Specify the card theme for this page. This can be overridden within individual sections.
+    hover_card_display:
+      label: Hover Card Display
+      description: Specify when the detailed hover cards should be shown for this page (desktop only). This setting can be overridden in sections.
     header:
       position:
         label: Content Position
@@ -891,6 +897,9 @@ form:
       card_theme:
         label: Card Theme
         description: Specify the card theme for this section.
+      hover_card_display:
+        label: Hover Card Display
+        description: Specify when the detailed hover cards should be shown for this section (desktop only).
       card_default_button_text:
         label: Card Default Button Text
         description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.
