@@ -60,6 +60,7 @@ form:
     advanced_search: Advanced Search Settings
     ai_search: AI Search Settings
     layout: Layout
+    splash: Splash Screen Settings
     header: Header Settings
     header_links: Header Links
     pages: Pages
@@ -180,6 +181,16 @@ form:
       label: Splash Screen Background (Desktop)
     splash_screen_background_mobile:
       label: Splash Screen Background (Mobile)
+    splash_screen_background_color:
+      label: Splash Screen Background Color
+    splash_screen_logo:
+      label: Splash Screen Logo
+    splash_screen_logo_scale:
+      label: Logo Scale
+      description: Adjust the scale of your logo
+    splash_show_progress:
+      label: Show Loading Progress
+      description: If checked, a progress bar with loading status will be shown on the splash screen instead of a loading spinner
     countdown_background:
       label: Countdown Page Background Images
       description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
@@ -824,12 +835,18 @@ form:
     url:
       label: URL
       description: The URL for this action to link to
-    property_id:
+    property:
       label: Media Property
       description: Select the media property to link to
-    subproperty_id:
+    property_page:
+      label: Media Property Page
+      description: Select the media property page to link to
+    subproperty:
       label: Subproperty
       description: Select the subproperty to link to
+    subproperty_page:
+      label: Subproperty Page
+      description: Select the subproperty page to link to
 
 
   sections:

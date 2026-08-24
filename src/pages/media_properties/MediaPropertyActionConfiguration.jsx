@@ -1,6 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {mediaPropertyStore, rootStore} from "@/stores/index.js";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {MediaPropertySectionItemPurchaseItems} from "@/pages/media_properties/MediaPropertySectionItem.jsx";
 import Inputs from "@/components/inputs/Inputs.jsx";
 import {Button} from "@mantine/core";
@@ -38,6 +38,17 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
 
   const selectedMediaItem = mediaPropertyStore.GetMediaItem({mediaItemId: action.media_id});
 
+  useEffect(() => {
+    if(action.property_id) {
+      mediaPropertyStore.LoadMediaProperty({mediaPropertyId: action.property_id});
+    }
+
+    if(action.subproperty_id) {
+      mediaPropertyStore.LoadMediaProperty({mediaPropertyId: action.subproperty_id});
+    }
+  }, [action.property_id, action.subproperty_id]);
+
+  let otherPropertyId;
   switch(action.behavior) {
     case "show_purchase":
       return <MediaPropertySectionItemPurchaseItems {...inputProps} />;
@@ -116,39 +127,96 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
         />
       );
     case "property_link":
+      otherPropertyId = mediaPropertyStore.allMediaProperties
+        .find(p =>
+          p.mediaPropertySlug === action.property ||
+          p.objectId === action.property
+        )?.objectId;
+
       return (
-        <Inputs.Select
-          {...inputProps}
-          {...l10n.actions.property_id}
-          searchable
-          key="property"
-          field="property_id"
-          options={
-            mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
-              label: mediaProperty.name,
-              value: mediaProperty.objectId
-            }))
-              .filter(({value}) => value !== mediaPropertyId)
+        <>
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.actions.property}
+            searchable
+            key="property"
+            field="property"
+            options={
+              mediaPropertyStore.allMediaProperties.map(mediaProperty => ({
+                label: mediaProperty.name,
+                value: mediaProperty.mediaPropertySlug || mediaProperty.objectId
+              }))
+                .filter(({value}) => value !== mediaPropertyId)
+            }
+          />
+          {
+            !otherPropertyId ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.actions.property_page}
+                searchable
+                key="property-page"
+                field="property_page"
+                defaultValue=""
+                options={[
+                  {label: "<Property Main Page>", value: ""},
+                  ...Object.values(mediaPropertyStore.mediaProperties[otherPropertyId]?.metadata?.public?.asset_metadata?.info?.pages || {})
+                    .filter(page => page.id !== "main")
+                    .map(page => ({
+                      label: page.label || page.slug || page.id || "",
+                      value: page.slug || page.id
+                    }))
+                ]}
+              />
           }
-        />
+        </>
       );
     case "subproperty_link":
+      otherPropertyId = mediaPropertyStore.allMediaProperties
+        .find(p =>
+          p.mediaPropertySlug === action.subproperty ||
+          p.objectId === action.subproperty
+        )?.objectId;
+
       return (
-        <Inputs.Select
-          {...inputProps}
-          {...l10n.actions.subproperty_id}
-          searchable
-          key="subproperty"
-          field="subproperty_id"
-          options={
-            (info.subproperties || []).map(mediaPropertyId => ({
-              label: mediaPropertyStore.allMediaProperties
-                .find(p => p.objectId === mediaPropertyId)?.name || mediaPropertyId,
-              value: mediaPropertyId
-            }))
-              .filter(({value}) => value !== mediaPropertyId)
+        <>
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.actions.subproperty}
+            searchable
+            key="subproperty"
+            field="subproperty"
+            options={
+              (info.subproperties || []).map(mediaPropertyId => ({
+                label: mediaPropertyStore.allMediaProperties
+                  .find(p => p.objectId === mediaPropertyId)?.name || mediaPropertyId,
+                value: mediaPropertyStore.allMediaProperties
+                  .find(p => p.objectId === mediaPropertyId)?.slug || mediaPropertyId
+              }))
+                .filter(({value}) => value !== mediaPropertyId)
+            }
+          />
+          {
+            !otherPropertyId ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.actions.subproperty_page}
+                searchable
+                key="subproperty-page"
+                field="subproperty_page"
+                defaultValue="main"
+                options={[
+                  {label: "<Property Main Page>", value: ""},
+                  ...Object.values(mediaPropertyStore.mediaProperties[otherPropertyId]?.metadata?.public?.asset_metadata?.info?.pages || {})
+                    .filter(page => page.id !== "main")
+                    .map(page => ({
+                      label: page.label || page.slug || page.id || "",
+                      value: page.slug || page.id
+                    }))
+                ]}
+              />
           }
-        />
+        </>
       );
     default:
       return null;

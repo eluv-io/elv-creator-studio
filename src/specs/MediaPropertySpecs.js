@@ -22,8 +22,10 @@ export const MediaPropertyHeaderLinkSpec = {
   page_id: "",
   video: undefined,
   media_id: "",
-  property_id: "",
-  subproperty_id: "",
+  property: "",
+  property_page: "",
+  subproperty: "",
+  subproperty_page: "",
   url: ""
 };
 

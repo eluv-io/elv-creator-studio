@@ -7,7 +7,7 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {MarketplaceMultiselect} from "@/components/inputs/ResourceSelection.jsx";
 import {Slugify} from "@/components/common/Validation.jsx";
-import {Accordion, Title} from "@mantine/core";
+import {Accordion, Loader, Progress, Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {
@@ -30,6 +30,50 @@ Object.keys(currencies).forEach(currencyCode => {
   if(!currencyCode || !currencies[currencyCode]) {
     delete currencies[currencyCode];
   }
+});
+
+const SplashExample = observer(({metadata={}, mobile=false}) => {
+  const imageUrl = metadata?.[`splash_screen_background${mobile ? "_mobile" : ""}`]?.url;
+
+  return (
+    <div className={S("splash-container")}>
+      <div
+        style={{backgroundColor: metadata.splash_screen_background_color || "#000000"}}
+        className={S("splash", mobile ? "splash--mobile" : "splash--desktop")}
+      >
+        {
+          !imageUrl ? null :
+            <img
+              alt="Splash Background"
+              src={imageUrl}
+              className={S("splash__image")}
+            />
+        }
+        <div className={S("splash__content-container")}>
+          <div
+            style={{
+              width: `${metadata.splash_screen_logo_scale || 100}%`
+            }}
+            className={S("splash__content")}
+          >
+            {
+              !metadata?.splash_screen_logo ? null :
+                <img
+                  alt="Splash Logo"
+                  src={metadata.splash_screen_logo.url}
+                  className={S("splash__logo")}
+                />
+            }
+            {
+              metadata.splash_show_progress ?
+                <Progress color="white" value={50} max={100} className={S("splash__progress")}/> :
+                <Loader color="White" className={S("splash__loader")}/>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 });
 
 
@@ -754,6 +798,73 @@ const MediaPropertyGeneralSettings = observer(() => {
             </div>
           </Accordion.Panel>
         </Accordion.Item>
+        <Accordion.Item value="splash">
+          <Accordion.Control>
+            { l10n.categories.splash }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.general.splash_screen_background_color}
+              subcategory={l10n.categories.splash}
+              path="/public/asset_metadata/info/styling"
+              field="splash_screen_background_color"
+              defaultValue="#000000"
+            />
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.splash_show_progress}
+              subcategory={l10n.categories.splash}
+              path="/public/asset_metadata/info/styling"
+              field="splash_show_progress"
+              defaultValue={false}
+            />
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.splash_screen_logo}
+              subcategory={l10n.categories.splash}
+              componentProps={{maw: uiStore.inputWidthWide}}
+              path="/public/asset_metadata/info/styling"
+              fields={[
+                { field: "splash_screen_logo", aspectRatio: 16/9, ...l10n.general.splash_screen_logo },
+              ]}
+            />
+            <Inputs.ImageInput
+              {...inputProps}
+              {...l10n.general.splash_screen}
+              subcategory={l10n.categories.splash}
+              componentProps={{maw: uiStore.inputWidthWide}}
+              path="/public/asset_metadata/info/styling"
+              fields={[
+                { field: "splash_screen_background", aspectRatio: 16/9, ...l10n.general.splash_screen_background },
+                { field: "splash_screen_background_mobile", aspectRatio: 1/2, ...l10n.general.splash_screen_background_mobile },
+              ]}
+            />
+            {
+              !info.styling?.splash_screen_logo ? null :
+                <Inputs.Slider
+                  {...inputProps}
+                  {...l10n.general.main_page_logo_scale}
+                  maw={uiStore.inputWidthNarrow}
+                  subcategory={l10n.categories.splash}
+                  path="/public/asset_metadata/info/styling"
+                  field="splash_screen_logo_scale"
+                  defaultValue={100}
+                  localizable
+                  min={1}
+                  max={100}
+                />
+            }
+
+            <Title order={4} mt={50} fw={500}>Preview</Title>
+            <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different on the site</Title>
+
+            <div className={S("splash-examples")}>
+              <SplashExample metadata={info?.styling || {}} />
+              <SplashExample metadata={info?.styling || {}} mobile />
+            </div>
+          </Accordion.Panel>
+        </Accordion.Item>
         <Accordion.Item value="header">
           <Accordion.Control>
             { l10n.categories.header }
@@ -811,6 +922,7 @@ const MediaPropertyGeneralSettings = observer(() => {
                 </>
               }
             />
+
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="footer">

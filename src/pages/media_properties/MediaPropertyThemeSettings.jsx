@@ -499,17 +499,6 @@ const MediaPropertyThemeSettings = observer(() => {
           { label: "Alternating", value: "alternating" }
         ]}
       />
-      <Inputs.ImageInput
-        {...inputProps}
-        {...l10n.general.splash_screen}
-        subcategory={l10n.categories.theme}
-        componentProps={{maw: uiStore.inputWidthWide}}
-        path="/public/asset_metadata/info/styling"
-        fields={[
-          { field: "splash_screen_background", aspectRatio: 16/9, ...l10n.general.splash_screen_background },
-          { field: "splash_screen_background_mobile", aspectRatio: 1/2, ...l10n.general.splash_screen_background_mobile },
-        ]}
-      />
 
       <Inputs.ImageInput
         {...inputProps}
