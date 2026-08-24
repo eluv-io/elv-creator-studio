@@ -424,6 +424,14 @@ export const MediaPropertyContentTabGroup = observer(() => {
 
       <Inputs.Checkbox
         {...inputProps}
+        {...l10n.sidebar_tab_group.sequential}
+        value={tab.sequential}
+        disabled={tab.sequential}
+        field="sequential"
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
         {...l10n.sidebar_tab_group.hide_on_tv}
         field="hide_on_tv"
       />
@@ -525,6 +533,14 @@ export const MediaPropertySidebarContentTab = observer(() => {
         {...inputProps}
         {...l10n.sidebar_tab.title}
         field="title"
+      />
+
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.sidebar_tab_group.sequential}
+        value={tab.sequential}
+        disabled={tab.sequential}
+        field="sequential"
       />
 
       <Inputs.Checkbox
