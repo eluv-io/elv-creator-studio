@@ -105,6 +105,10 @@ form:
     issuer_url:
       label: Issuer URL
       description: The exact issuer URL.  This URL may change as long as the issuer unique ID remains unchanged.
+    terms:
+      label: Term and Conditions Document
+    privacy_policy:
+      label: Privacy Policy Document
   email_templates:
     from:
       label: Email 'From' Field
