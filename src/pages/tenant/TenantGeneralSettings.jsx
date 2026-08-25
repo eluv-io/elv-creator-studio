@@ -61,6 +61,20 @@ const TenantGeneralSettings = observer(() => {
 
       <Title order={3} mt={50} mb="md">{ l10n.categories.sales }</Title>
 
+      <Inputs.File
+        {...inputProps}
+        {...l10n.general.terms}
+        extensions={["pdf", "html"]}
+        field="terms"
+      />
+
+      <Inputs.File
+        {...inputProps}
+        {...l10n.general.privacy_policy}
+        extensions={["pdf", "html"]}
+        field="privacy_policy"
+      />
+
       <Inputs.Text
         {...inputProps}
         {...l10n.general.revenue_address}
