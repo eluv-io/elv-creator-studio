@@ -1171,6 +1171,20 @@ const ContentSectionDisplaySettings = observer(() => {
           </>
       }
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.sections.display.padding}
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="padding"
+        defaultValue="md"
+        options={[
+          { label: "None", value: "none" },
+          { label: "Small", value: "sm" },
+          { label: "Medium", value: "md" },
+          { label: "Large", value: "lg" },
+        ]}
+      />
       {
         section.display?.display_format !== "banner" ? null :
           <>
