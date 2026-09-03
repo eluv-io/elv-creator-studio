@@ -1061,6 +1061,19 @@ const ContentSectionDisplaySettings = observer(() => {
                   />
                   <Inputs.Select
                     {...inputProps}
+                    {...l10n.sections.display.hover_card_aspect_ratio}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    field="hover_card_aspect_ratio"
+                    defaultValue=""
+                    options={[
+                      { label: "Default (Use card aspect ratio)", value: ""},
+                      { label: "Portrait", value: "portrait"},
+                      { label: "Square", value: "square"},
+                      { label: "Landscape", value: "landscape"}
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...inputProps}
                     {...l10n.sections.display.card_theme}
                     subcategory={l10n.categories.section_presentation}
                     path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
