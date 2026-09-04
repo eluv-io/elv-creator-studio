@@ -919,7 +919,7 @@ form:
         description: Specify when the detailed hover cards should be shown for this section (desktop only).
       hover_card_aspect_ratio:
         label: Hover Card Aspect Ratio
-        description: Specify the aspect ratio to use for hover cards for this section
+        description: Specify the aspect ratio to use for hover cards and detail modals for this section
       card_default_button_text:
         label: Card Default Button Text
         description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.
@@ -1120,6 +1120,10 @@ form:
       label: Banner Animation (Mobile)
     page:
       label: Page
+    primary_filter:
+      label: Primary Filter
+    secondary_filter:
+      label: Secondary Filter
     property:
       label: Property
     property_page:

@@ -146,6 +146,13 @@ export const MediaPropertySectionItemPageLinkSpec = {
   page_id: "",
 };
 
+export const MediaPropertySectionItemSearchPageLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "search_page_link",
+  primary_filter: "",
+  secondary_filter: ""
+};
+
 export const MediaPropertySectionItemPropertyLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
   type: "property_link",

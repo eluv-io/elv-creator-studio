@@ -11,7 +11,8 @@ import {
   Text,
   TextInput,
   Checkbox,
-  Paper, Accordion
+  Paper,
+  Accordion
 } from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
@@ -58,6 +59,8 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
       mediaItemIds: [],
       expand: false,
       pageId: pages[0],
+      primaryFilter: "",
+      secondaryFilter: "",
       subpropertyId: subProperties[0]?.objectId,
       propertyId: mediaProperties[0]?.objectId,
       propertyPageId: "main",
@@ -108,7 +111,21 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
     form.getInputProps("propertyPageId").onChange("main");
   }, [form.values.type, form.values.propertyId, form.values.subpropertyId]);
 
-  let formContent, property;
+  useEffect(() => {
+    const searchOptions = mediaPropertyStore.GetSearchFilterOptions({
+      mediaPropertyId: mediaProperty.id,
+      selectedPrimaryFilter: form.values.primaryFilter
+    });
+
+    if(!searchOptions.secondary?.values?.includes(form.values.secondaryFilter)) {
+      // Reset secondary filter on primary change if secondary is invalid
+      form.getInputProps("secondaryFilter").onChange(
+        searchOptions.secondary?.values?.[0] || ""
+      );
+    }
+  }, [form.values.primaryFilter]);
+
+  let formContent, property, searchOptions;
   switch(form.values.type) {
     case "media":
       formContent = (
@@ -167,6 +184,40 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
           ]}
           {...form.getInputProps("pageId")}
         />
+      );
+
+      break;
+
+    case "search_page_link":
+      searchOptions = mediaPropertyStore.GetSearchFilterOptions({
+        mediaPropertyId: mediaProperty.id,
+        selectedPrimaryFilter: form.values.primaryFilter
+      });
+
+      formContent = (
+        <>
+          <Select
+            withinPortal
+            {...l10n.section_items.primary_filter}
+            data={searchOptions.primary.values.map(option => ({
+              label: searchOptions.primary.label ? `${searchOptions.primary.label} - ${option || "All"}` : option || "All",
+              value: option
+            }))}
+            {...form.getInputProps("primaryFilter")}
+          />
+          {
+            !searchOptions.secondary ? null :
+              <Select
+                withinPortal
+                {...l10n.section_items.secondary_filter}
+                data={searchOptions.secondary.values.map(option => ({
+                  label: searchOptions.secondary.label ? `${searchOptions.secondary.label} - ${option || "All"}` : option || "All",
+                  value: option
+                }))}
+                {...form.getInputProps("secondaryFilter")}
+              />
+          }
+        </>
       );
 
       break;
@@ -812,7 +863,7 @@ const FilterOptions = observer(() => {
             renderItem={(props) => {
               const attributeValues =
                 section.filters.primary_filter === "__media-type" ?
-                  ["Video", "Gallery", "Image", "Ebook"] :
+                  ["", "Video", "Gallery", "Image", "Ebook"] :
                   attributes[section.filters.primary_filter]?.tags || [];
 
               return (
@@ -883,7 +934,7 @@ const FilterOptions = observer(() => {
                           renderItem={(secondaryFilterProps) => {
                             const secondaryAttributeValues =
                               props.item.secondary_filter_attribute === "__media-type" ?
-                                ["Video", "Gallery", "Image", "Ebook"] :
+                                ["", "Video", "Gallery", "Image", "Ebook"] :
                                 attributes[props.item.secondary_filter_attribute]?.tags || [];
 
                             return (
