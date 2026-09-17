@@ -114,7 +114,7 @@ const DiscoverCard = observer(({featured}) => {
           className={S("discover-card__image")}
         />
         {
-          !metadata.main_page_card_video || !hovering || inaccessible ? null :
+          !metadata.main_page_card_video || !hovering ? null :
             <Video
               videoLink={metadata.main_page_card_video}
               className={S("discover-card__video")}
@@ -822,7 +822,7 @@ const MediaPropertyGeneralSettings = observer(() => {
 
             {
               !info.main_page_inaccessible ? null :
-                <Inputs.Text
+                <Inputs.TextArea
                   {...inputProps}
                   {...l10n.general.main_page_inaccessible_message}
                   subcategory={l10n.categories.main_page_display}

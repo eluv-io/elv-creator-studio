@@ -289,6 +289,7 @@
 
     .discover-card__inaccessible-message {
       font-size: 32px;
+      padding-bottom: 75px;
     }
   }
 
@@ -298,27 +299,25 @@
 
   &--inaccessible {
     cursor: default;
-
-    .discover-card__image-container,
-    .discover-card__logo,
-    .discover-card__content {
-      filter: brightness(75%);
-    }
   }
 
   &__inaccessible-message {
-    display: flex;
     align-items: center;
-    justify-content: center;
+    background: rgb(0 0 0 / 50%);
+    border-radius: 12px;
     color: white;
-    padding-bottom: 50px;
-    font-size: 18px;
+    display: flex;
+    font-size: 20px;
     font-weight: 700;
-    position: absolute;
-    inset: 0 0 0 0;
-    z-index: 10;
-    text-align: center;
+    inset: 0;
+    justify-content: center;
+    opacity: 0;
     padding-inline: 20px;
+    position: absolute;
+    text-align: center;
+    text-shadow: 2px 2px 2px rgb(0 0 0 / 50%);
+    white-space: pre-wrap;
+    z-index: 10;
   }
 
   * {
@@ -434,29 +433,36 @@
 
   @media screen and (width > 850px) {
     // Only transition on non-mobile
-    &:not(.discover-card--inaccessible) {
-      &:hover,
-      &:focus-visible {
-        transform: scale3d(var(--scale), var(--scale), 1);
+    &:hover,
+    &:focus-visible {
+      transform: scale3d(var(--scale), var(--scale), 1);
 
-        &.discover-card--featured {
+      &.discover-card--featured {
+        transition-delay: 0.25s;
+
+        * {
           transition-delay: 0.25s;
-
-          * {
-            transition-delay: 0.25s;
-          }
         }
+      }
 
-        &.discover-card--standard {
-          filter: brightness(var(--brightness--active));
-        }
+      &.discover-card--standard {
+        filter: brightness(var(--brightness--active));
+      }
 
+      &:not(.discover-card--inaccessible) {
         .discover-card__button-container {
           height: 100px;
           padding: 15px 0 20px;
         }
       }
+
+      &.discover-card--inaccessible {
+        .discover-card__inaccessible-message {
+          opacity: 1;
+        }
+      }
     }
+
   }
 
   @media screen and (width <= 850px) {
@@ -467,6 +473,10 @@
 
     &--featured {
       height: 450px;
+    }
+
+    .discover-card__inaccessible-message {
+      opacity: 1;
     }
 
     &__title {

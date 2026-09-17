@@ -283,6 +283,9 @@ form:
     always_show_poster:
       label: Always Show Poster
       description: If specified, the poster will be permanently visible even when the poster is playing. This is useful in cases where the content is audio only.
+    preview_video:
+      label: Preview Video
+      description: Specify a video to be used in previews, such as on hover cards
     additional_views:
       label: Additional Views
       fieldLabel: Additional View

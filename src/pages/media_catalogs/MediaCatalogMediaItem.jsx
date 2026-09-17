@@ -331,6 +331,19 @@ const MediaConfiguration = observer(({mediaItem}) => {
               </>
           }
 
+          <Inputs.FabricBrowser
+            {...inputProps}
+            {...l10n.media.preview_video}
+            fabricBrowserProps={{
+              video: true,
+              allowCompositions: true,
+              allowClips: true
+            }}
+            autoUpdate={false}
+            field="preview_video"
+            previewable
+          />
+
           <Inputs.List
             {...inputProps}
             {...l10n.media.additional_views}
