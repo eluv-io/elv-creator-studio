@@ -153,6 +153,9 @@ form:
     main_page_description:
       label: Description
       description: Maximum 150 characters
+    main_page_button_text:
+      label: Button Text
+      placeholder: Launch
     main_page_logo_scale:
       label: Logo Scale
       description: Adjust the scale of your logo
@@ -162,6 +165,12 @@ form:
     main_page_background_video_tv:
       label: Background Video (TV)
       description: If specified, this video will be displayed in place of the background image when the user hovers on the card
+    main_page_inaccessible:
+      label: Inaccessible
+      description: Check this field to disable the link. Useful for showing 'coming soon' previews
+    main_page_inaccessible_message:
+      label: Message
+      description: This message will be displayed on mouseover when inaccessible
     start_screen:
       label: TV Start Screen
     start_screen_background:

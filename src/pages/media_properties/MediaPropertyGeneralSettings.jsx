@@ -87,6 +87,7 @@ const DiscoverCard = observer(({featured}) => {
   if(!mediaProperty) { return null; }
 
   const metadata = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+  const inaccessible = metadata.main_page_inaccessible;
 
   return (
     <div
@@ -94,7 +95,13 @@ const DiscoverCard = observer(({featured}) => {
       onFocus={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
       onBlur={() => setHovering(false)}
-      className={S("discover-card", featured ? "discover-card--featured" : "discover-card--standard")}
+      className={
+        S(
+          "discover-card",
+           inaccessible ? "discover-card--inaccessible" : "",
+          featured ? "discover-card--featured" : "discover-card--standard"
+        )
+      }
     >
       <div className={S("discover-card__image-container")}>
         <img
@@ -107,7 +114,7 @@ const DiscoverCard = observer(({featured}) => {
           className={S("discover-card__image")}
         />
         {
-          !metadata.main_page_card_video || !hovering ? null :
+          !metadata.main_page_card_video || !hovering || inaccessible ? null :
             <Video
               videoLink={metadata.main_page_card_video}
               className={S("discover-card__video")}
@@ -120,6 +127,12 @@ const DiscoverCard = observer(({featured}) => {
             />
         }
       </div>
+      {
+        !inaccessible || !metadata.main_page_inaccessible_message ? null :
+          <div className={S("discover-card__inaccessible-message")}>
+            {metadata.main_page_inaccessible_message}
+          </div>
+      }
       {
         !featured ? null :
           <div className={S("discover-card__content")}>
@@ -140,7 +153,7 @@ const DiscoverCard = observer(({featured}) => {
             </div>
             <div className={S("discover-card__button-container")}>
               <div className={S("discover-card__button")}>
-                Launch
+                {metadata.main_page_button_text || "Launch"}
               </div>
             </div>
           </div>
@@ -739,6 +752,14 @@ const MediaPropertyGeneralSettings = observer(() => {
               localizable
             />
 
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.general.main_page_button_text}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_button_text"
+              localizable
+            />
+
             <Inputs.ImageInput
               {...inputProps}
               {...l10n.general.images}
@@ -778,6 +799,7 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.FabricBrowser
               {...inputProps}
               {...l10n.general.main_page_card_video}
+              subcategory={l10n.categories.main_page_display}
               field="main_page_card_video"
               previewable
             />
@@ -785,9 +807,29 @@ const MediaPropertyGeneralSettings = observer(() => {
             <Inputs.FabricBrowser
               {...inputProps}
               {...l10n.general.main_page_background_video_tv}
+              subcategory={l10n.categories.main_page_display}
               field="main_page_background_video_tv"
               previewable
             />
+
+            <Inputs.Checkbox
+              {...inputProps}
+              {...l10n.general.main_page_inaccessible}
+              subcategory={l10n.categories.main_page_display}
+              field="main_page_inaccessible"
+              defaultValue={false}
+            />
+
+            {
+              !info.main_page_inaccessible ? null :
+                <Inputs.Text
+                  {...inputProps}
+                  {...l10n.general.main_page_inaccessible_message}
+                  subcategory={l10n.categories.main_page_display}
+                  field="main_page_inaccessible_message"
+                  defaultValue={false}
+                />
+            }
 
             <Title order={4} mt={50} fw={500}>Preview</Title>
             <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different on the site</Title>
