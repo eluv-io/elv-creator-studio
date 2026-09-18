@@ -113,6 +113,15 @@ export const MediaItemSubList = observer(({type, mediaId}) => {
 
   return (
     <>
+      {
+        type !== "media_collections" ? null :
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.media.media_lists_label}
+            placeholder="Lists"
+            field="media_lists_label"
+          />
+      }
       <Inputs.CollectionTable
         {...inputProps}
         {...l10n.media[subType]}
@@ -348,19 +357,6 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         ]}
         altTextField="thumbnail_alt_text"
       />
-
-      {
-        type === "media" ? null :
-          <Inputs.ImageInput
-            {...inputProps}
-            {...l10n.media.background_image}
-            localizable
-            fields={[
-              { field: "background_image", ...l10n.media.background_image_desktop, aspectRatio: 16 / 9, baseSize: 135},
-              { field: "background_image_mobile", ...l10n.media.background_image_mobile, aspectRatio: 1/2, baseSize: 135 },
-            ]}
-          />
-      }
 
       {
         type !== "media" ? null :

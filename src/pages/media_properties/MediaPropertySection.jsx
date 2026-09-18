@@ -11,7 +11,8 @@ import {
   Text,
   TextInput,
   Checkbox,
-  Paper, Accordion
+  Paper,
+  Accordion
 } from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
@@ -58,6 +59,8 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
       mediaItemIds: [],
       expand: false,
       pageId: pages[0],
+      primaryFilter: "",
+      secondaryFilter: "",
       subpropertyId: subProperties[0]?.objectId,
       propertyId: mediaProperties[0]?.objectId,
       propertyPageId: "main",
@@ -108,7 +111,21 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
     form.getInputProps("propertyPageId").onChange("main");
   }, [form.values.type, form.values.propertyId, form.values.subpropertyId]);
 
-  let formContent, property;
+  useEffect(() => {
+    const searchOptions = mediaPropertyStore.GetSearchFilterOptions({
+      mediaPropertyId: mediaProperty.id,
+      selectedPrimaryFilter: form.values.primaryFilter
+    });
+
+    if(!searchOptions.secondary?.values?.includes(form.values.secondaryFilter)) {
+      // Reset secondary filter on primary change if secondary is invalid
+      form.getInputProps("secondaryFilter").onChange(
+        searchOptions.secondary?.values?.[0] || ""
+      );
+    }
+  }, [form.values.primaryFilter]);
+
+  let formContent, property, searchOptions;
   switch(form.values.type) {
     case "media":
       formContent = (
@@ -167,6 +184,40 @@ const CreateSectionItemForm = observer(({mediaProperty, Create}) => {
           ]}
           {...form.getInputProps("pageId")}
         />
+      );
+
+      break;
+
+    case "search_page_link":
+      searchOptions = mediaPropertyStore.GetSearchFilterOptions({
+        mediaPropertyId: mediaProperty.id,
+        selectedPrimaryFilter: form.values.primaryFilter
+      });
+
+      formContent = (
+        <>
+          <Select
+            withinPortal
+            {...l10n.section_items.primary_filter}
+            data={searchOptions.primary.values.map(option => ({
+              label: searchOptions.primary.label ? `${searchOptions.primary.label} - ${option || "All"}` : option || "All",
+              value: option
+            }))}
+            {...form.getInputProps("primaryFilter")}
+          />
+          {
+            !searchOptions.secondary ? null :
+              <Select
+                withinPortal
+                {...l10n.section_items.secondary_filter}
+                data={searchOptions.secondary.values.map(option => ({
+                  label: searchOptions.secondary.label ? `${searchOptions.secondary.label} - ${option || "All"}` : option || "All",
+                  value: option
+                }))}
+                {...form.getInputProps("secondaryFilter")}
+              />
+          }
+        </>
       );
 
       break;
@@ -812,7 +863,7 @@ const FilterOptions = observer(() => {
             renderItem={(props) => {
               const attributeValues =
                 section.filters.primary_filter === "__media-type" ?
-                  ["Video", "Gallery", "Image", "Ebook"] :
+                  ["", "Video", "Gallery", "Image", "Ebook"] :
                   attributes[section.filters.primary_filter]?.tags || [];
 
               return (
@@ -883,7 +934,7 @@ const FilterOptions = observer(() => {
                           renderItem={(secondaryFilterProps) => {
                             const secondaryAttributeValues =
                               props.item.secondary_filter_attribute === "__media-type" ?
-                                ["Video", "Gallery", "Image", "Ebook"] :
+                                ["", "Video", "Gallery", "Image", "Ebook"] :
                                 attributes[props.item.secondary_filter_attribute]?.tags || [];
 
                             return (
@@ -1043,7 +1094,53 @@ const ContentSectionDisplaySettings = observer(() => {
               ]}
             />
             {
-              !["button_vertical", "button_vertical"].includes(section.display?.card_style) ? null :
+              !["button_vertical", "button_vertical"].includes(section.display?.card_style) ?
+                // Card theme
+                <>
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.hover_card_display}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    field="hover_card_display"
+                    defaultValue=""
+                    options={[
+                      { label: "Use Page Setting", value: ""},
+                      { label: "None", value: "none"},
+                      { label: "Media Only", value: "media"},
+                      { label: "All", value: "all"}
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.hover_card_aspect_ratio}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    field="hover_card_aspect_ratio"
+                    defaultValue=""
+                    options={[
+                      { label: "Default (Use card aspect ratio)", value: ""},
+                      { label: "Portrait", value: "portrait"},
+                      { label: "Square", value: "square"},
+                      { label: "Landscape", value: "landscape"}
+                    ]}
+                  />
+                  <Inputs.Select
+                    {...inputProps}
+                    {...l10n.sections.display.card_theme}
+                    subcategory={l10n.categories.section_presentation}
+                    path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+                    defaultValue=""
+                    field="card_theme_id"
+                    options={[
+                      { label: "Use Page Setting", value: ""},
+                      ...(Object.keys(info?.styling?.card_themes || {}))
+                        .map(cardThemeId => ({
+                          label: info.styling.card_themes[cardThemeId].label || "Theme",
+                          value: cardThemeId
+                        }))
+                    ]}
+                  />
+                </> :
+                // Button text
                 <Inputs.Text
                   {...inputProps}
                   {...l10n.sections.display.card_default_button_text}

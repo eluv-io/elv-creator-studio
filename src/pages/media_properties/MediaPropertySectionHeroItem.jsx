@@ -1,127 +1,16 @@
 import {observer} from "mobx-react-lite";
 import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore} from "@/stores";
-import {Button, Text} from "@mantine/core";
+import {Text} from "@mantine/core";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
-import {useState} from "react";
 import {MediaPropertyActionSpec} from "@/specs/MediaPropertySpecs.js";
 import ColorOptions from "@/components/inputs/media_property/Components";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
-import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
-import {Input as MantineInput} from "@mantine/core";
-import {MediaCatalogItemSelectionModal} from "@/components/inputs/media_catalog/MediaCatalogItemTable.jsx";
 import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib";
-import {MediaPropertySectionItemPurchaseItems} from "@/pages/media_properties/MediaPropertySectionItem";
-
-
-const ActionConditions = {
-  "always": "Always Visible",
-  "authorized": "User has permissions",
-  "unauthorized": "User is signed in but lacks permissions",
-  "authenticated": "User is signed in",
-  "unauthenticated": "User is not signed in",
-  "unauthenticated_or_unauthorized": "User is not signed in or lacks permissions",
-};
-
-const ActionBehaviors = {
-  "sign_in": "Sign In",
-  "page_link": "Go to Page",
-  "media_link": "Go to Media",
-  "show_purchase": "Show Purchase Options",
-  "video": "Show Video",
-  "link": "Link to URL"
-};
-
-
-const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
-  const l10n = rootStore.l10n.pages.media_property.form;
-  const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
-
-  const selectedMediaItem = mediaPropertyStore.GetMediaItem({mediaItemId: action.media_id});
-
-  switch(action.behavior) {
-    case "show_purchase":
-      return <MediaPropertySectionItemPurchaseItems {...inputProps} />;
-    case "page_link":
-      return (
-        <Inputs.Select
-          {...inputProps}
-          {...l10n.actions.page_link}
-          options={[
-            ...Object.keys(info.pages || {})
-              .map(pageId => ({
-                label: info.pages[pageId].label,
-                value: pageId
-              }))
-          ]}
-          field="page_id"
-        />
-      );
-    case "video":
-      return (
-        <Inputs.FabricBrowser
-          {...inputProps}
-          {...l10n.actions.video}
-          autoUpdate={false}
-          field="video"
-          previewable
-        />
-      );
-    case "media_link":
-      return (
-        <>
-          <MantineInput.Wrapper
-            disabled
-            {...l10n.actions.media_item}
-          >
-            <Button my="xs" variant="outline" onClick={() => setShowMediaSelectionModal(true)}>
-              { l10n.section_items.select_media.label }
-            </Button>
-            {
-              !selectedMediaItem ? null :
-                <MediaItemCard
-                  key={`media-item-${selectedMediaItem.id}`}
-                  mediaItem={selectedMediaItem}
-                  imageSize={50}
-                  withLink
-                />
-            }
-          </MantineInput.Wrapper>
-          {
-            !showMediaSelectionModal ? null :
-              <MediaCatalogItemSelectionModal
-                multiple={false}
-                allowTypeSelection
-                mediaCatalogIds={info.media_catalogs || []}
-                Close={() => setShowMediaSelectionModal(false)}
-                Submit={(mediaItemIds) => {
-                  mediaPropertyStore.SetMetadata({
-                    ...inputProps,
-                    ...l10n.actions.media_item,
-                    page: location.pathname,
-                    field: "media_id",
-                    value: mediaItemIds?.[0] || "",
-                  });
-                }}
-              />
-          }
-        </>
-      );
-    case "link":
-      return (
-        <Inputs.URL
-          {...inputProps}
-          {...l10n.actions.url}
-          field="url"
-        />
-      );
-    default:
-      return null;
-  }
-});
+import {ActionConditions, ActionConfiguration} from "@/pages/media_properties/MediaPropertyActionConfiguration.jsx";
 
 export const MediaPropertySectionHeroItemAction = observer(() => {
   const { mediaPropertyId, sectionId, heroItemId, actionId } = useParams();
@@ -188,42 +77,9 @@ export const MediaPropertySectionHeroItemAction = observer(() => {
         field="description"
       />
 
-      <Title order={3} mt={50} mb="md">{l10n.actions.sections.visibility}</Title>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.actions.visibility}
-        defaultValue="always"
-        field="visibility"
-        options={
-          Object.keys(ActionConditions).map(key => ({label: ActionConditions[key], value: key}))
-        }
-      />
-      {
-        !["authorized", "unauthorized", "unauthenticated_or_unauthorized"].includes(action.visibility) ? null :
-          <PermissionItemSelect
-            multiple
-            {...inputProps}
-            {...l10n.actions.permissions}
-            permissionSetIds={info.permission_sets}
-            subcategory={l10n.categories.permissions}
-            field="permissions"
-          />
-      }
-
-      <Title order={3} mt={50} mb="md">{l10n.actions.sections.behavior}</Title>
-      <Inputs.Select
-        {...inputProps}
-        {...l10n.actions.behavior}
-        defaultValue="sign_in"
-        field="behavior"
-        options={
-          Object.keys(ActionBehaviors).map(key => ({label: ActionBehaviors[key], value: key}))
-        }
-      />
-      <ActionBehaviorConfiguration
+      <ActionConfiguration
         inputProps={inputProps}
         action={action}
-        info={info}
       />
 
       <Title order={3} mt={50} mb="md">{l10n.actions.sections.button}</Title>

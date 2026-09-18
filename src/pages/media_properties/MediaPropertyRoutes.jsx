@@ -15,7 +15,9 @@ import MediaPropertyDomainSettings from "@/pages/media_properties/MediaPropertyD
 import MediaPropertySectionHeroItem, {
   MediaPropertySectionHeroItemAction
 } from "@/pages/media_properties/MediaPropertySectionHeroItem.jsx";
-import MediaPropertyThemeSettings from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
+import MediaPropertyThemeSettings, {
+  MediaPropertyCardTheme
+} from "@/pages/media_properties/MediaPropertyThemeSettings.jsx";
 import MediaPropertySidebarSettings, {
   MediaPropertyContentTabGroup,
   MediaPropertySidebarContentTab
@@ -38,6 +40,7 @@ const MediaPropertyRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/media-properties/:mediaPropertyId/sidebar/:tabId/:groupId", Component: <MediaPropertyContentTabGroup /> },
     { label: rootStore.l10n.pages.pocket.nav.sidebar, path: "/media-properties/:mediaPropertyId/sidebar/:tabId", Component: <MediaPropertySidebarContentTab /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.theme, path: "/media-properties/:mediaPropertyId/theme", Component: <MediaPropertyThemeSettings /> },
+    { label: rootStore.l10n.pages.media_property.nav.card_theme, path: "/media-properties/:mediaPropertyId/theme/card_themes/:cardThemeId", Component: <MediaPropertyCardTheme /> },
     { navRoute: true, label: rootStore.l10n.pages.media_property.nav.domain, path: "/media-properties/:mediaPropertyId/domain", Component: <MediaPropertyDomainSettings /> },
   ]
     .map(route => ({

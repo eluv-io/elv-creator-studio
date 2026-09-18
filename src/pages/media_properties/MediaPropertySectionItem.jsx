@@ -179,7 +179,7 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
     marketplaceStore.LoadMarketplace({marketplaceId: sectionItem.marketplace.marketplace_id});
   }, []);
 
-  let property;
+  let property, searchOptions;
   switch(sectionItem.type) {
     case "media":
       return (
@@ -209,6 +209,39 @@ const SectionItemOptions = observer(({mediaProperty, sectionItem, mediaItem, inp
           field="page_id"
         />
       );
+
+    case "search_page_link":
+      searchOptions = mediaPropertyStore.GetSearchFilterOptions({
+        mediaPropertyId: mediaProperty.id,
+        selectedPrimaryFilter: sectionItem.primary_filter
+      });
+
+      return (
+        <>
+          <Inputs.Select
+            {...inputProps}
+            {...l10n.section_items.primary_filter}
+            field="primary_filter"
+            options={searchOptions.primary.values.map(option => ({
+              label: searchOptions.primary.label ? `${searchOptions.primary.label} - ${option || "All"}` : option || "All",
+              value: option
+            }))}
+          />
+          {
+            !searchOptions.secondary ? null :
+              <Inputs.Select
+                {...inputProps}
+                {...l10n.section_items.secondary_filter}
+                field="secondary_filter"
+                options={searchOptions.secondary.values.map(option => ({
+                  label: searchOptions.secondary.label ? `${searchOptions.secondary.label} - ${option || "All"}` : option || "All",
+                  value: option
+                }))}
+              />
+          }
+        </>
+      );
+
     case "property_link":
       property = mediaPropertyStore.mediaProperties[sectionItem.property_id]?.metadata.public.asset_metadata.info;
       return (

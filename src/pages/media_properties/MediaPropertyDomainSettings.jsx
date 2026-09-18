@@ -264,7 +264,7 @@ const MediaPropertyDomainSettings = observer(() => {
       section="mediaProperty"
       useHistory
     >
-      <Inputs.Text
+      <Inputs.URL
         {...inputProps}
         {...l10n.domain.custom_domain}
         subcategory={l10n.categories.domain_settings}
@@ -278,6 +278,14 @@ const MediaPropertyDomainSettings = observer(() => {
         subcategory={l10n.categories.domain_settings}
         path="/public/asset_metadata/info/domain"
         field="secondary_custom_domains"
+      />
+      <Inputs.URL
+        {...inputProps}
+        {...l10n.domain.tv_login_custom_domain}
+        subcategory={l10n.categories.domain_settings}
+        path="/public/asset_metadata/info/domain"
+        field="tv_login_custom_domain"
+        defaultValue=""
       />
       <Inputs.Checkbox
         {...inputProps}

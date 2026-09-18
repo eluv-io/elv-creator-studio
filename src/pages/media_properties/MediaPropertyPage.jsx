@@ -80,6 +80,34 @@ const MediaPropertyPage = observer(() => {
         field="background_color"
       />
 
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.pages.hover_card_display}
+        field="hover_card_display"
+        defaultValue=""
+        options={[
+          { label: "Use Property Setting", value: ""},
+          { label: "None", value: "none"},
+          { label: "Media Only", value: "media"},
+          { label: "All", value: "all"}
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.pages.card_theme}
+        field="card_theme_id"
+        defaultValue=""
+        options={[
+          { label: "Use Property Setting", value: ""},
+          ...(Object.keys(info?.styling?.card_themes || {}))
+            .map(cardThemeId => ({
+              label: info.styling.card_themes[cardThemeId].label || "Theme",
+              value: cardThemeId
+            }))
+        ]}
+      />
+
       <Group>
         {
           info.page_ids.main === pageId ? null :

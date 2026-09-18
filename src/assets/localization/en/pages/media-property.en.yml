@@ -4,6 +4,7 @@ nav:
   general: General
   sidebar: Sidebar Settings
   theme: Theme and Styling
+  card_theme: Card Theme
   domain: Customization Settings
   search: Search
   pages: Pages
@@ -22,6 +23,8 @@ form:
     info: Media Property Info
     theme_settings: Theme and Styling Settings
     theme: Theme
+    card_themes: Card Themes
+    card_theme_label: Card Theme '{label}'
     main_page_display: Discover Page Display Settings
     domain_settings: Customization Settings
     social_links: Social Links
@@ -52,11 +55,14 @@ form:
     sidebar_tab_group_label: Sidebar Content Group '{label}'
     meta_tags: Search and Social Preview
     analytics: Analytics
+    misc: Miscellaneous
     search: Search Settings
     advanced_search: Advanced Search Settings
     ai_search: AI Search Settings
     layout: Layout
-    header: Header
+    splash: Splash Screen Settings
+    header: Header Settings
+    header_links: Header Links
     pages: Pages
     page: Page
     page_label: Page '{label}'
@@ -117,19 +123,54 @@ form:
       description: The title of the page in the browser
     images:
       label: Images
+    featured_images:
+      label: Featured Card Images
     image:
-      label: Image
+      label: Property Image
+      description: Portrait (2:3)
+    featured_image:
+      label: Featured Card Image
       description: Portrait (2:3)
     image_tv:
-      label: Image (TV)
+      label: Background Image (TV)
       description: Landscape (16/9)
     video:
       label: Video
       description: Silent, looping animation replacing the image on the main page
+    logo:
+      label: Logo
+    logo_tv:
+      label: Logo (TV)
     header_logo:
       label: Header Logo
+    mobile_header_logo:
+      label: Header Logo (Mobile)
     tv_header_logo:
       label: Header Logo (TV)
+    main_page_title:
+      label: Title
+      description: Maximum 30 characters
+    main_page_description:
+      label: Description
+      description: Maximum 150 characters
+    main_page_button_text:
+      label: Button Text
+      placeholder: Launch
+    main_page_logo_scale:
+      label: Logo Scale
+      description: Adjust the scale of your logo
+    main_page_card_video:
+      label: Card Video
+      description: If specified, this video will be displayed in place of the image when the user hovers on the card
+    main_page_background_video_tv:
+      label: Background Video (TV)
+      description: If specified, this video will be displayed in place of the background image when the user hovers on the card
+    main_page_inaccessible:
+      label: Inaccessible
+      description: Check this field to disable the link. Useful for showing 'coming soon' previews
+    main_page_inaccessible_message:
+      label: Message
+      description: This message will be displayed on mouseover when inaccessible
     start_screen:
       label: TV Start Screen
     start_screen_background:
@@ -142,6 +183,23 @@ form:
       label: Profile Background (Desktop)
     profile_background_mobile:
       label: Profile Background (Mobile)
+    splash_screen:
+      label: Splash Screen
+      description: Displayed on initial load of app
+    splash_screen_background:
+      label: Splash Screen Background (Desktop)
+    splash_screen_background_mobile:
+      label: Splash Screen Background (Mobile)
+    splash_screen_background_color:
+      label: Splash Screen Background Color
+    splash_screen_logo:
+      label: Splash Screen Logo
+    splash_screen_logo_scale:
+      label: Logo Scale
+      description: Adjust the scale of your logo
+    splash_show_progress:
+      label: Show Loading Progress
+      description: If checked, a progress bar with loading status will be shown on the splash screen instead of a loading spinner
     countdown_background:
       label: Countdown Page Background Images
       description: Default background image to use when live media is accessed before it goes live. Can be overridden within individual media items.
@@ -166,6 +224,12 @@ form:
     preview_password:
       label: Preview Password
       description: Specify a password to protect access to your property in the staging environment
+    card_theme:
+      label: Default Card Theme
+      description: Specify the card theme for this property. This setting can be overridden in pages and sections.
+    hover_card_display:
+      label: Default Hover Card Display
+      description: Specify when the detailed hover cards should be shown for this property (desktop only). This setting can be overridden in pages and sections.
     subproperties:
       subproperties:
         label: Subproperties
@@ -250,6 +314,18 @@ form:
         description: The type of content to show in the sidebar for media accessed outside of a section, e.g. via search
       sidebar_content_section_id:
         label: Sidebar Content Section
+    header_links:
+      header_links:
+        label: Header Links
+        fieldLabel: Header Link
+      id:
+        label: ID
+      icon:
+        label: Icon
+      text:
+        label: Text
+      text_color:
+        label: Text Color
     meta_tags:
       meta_tags_description: "This information will be used to populate search results and social media link previews for your site."
       meta_tags_deploy_note: "Note: Changes to these values may take up to one minute after deploying your property before they are available."
@@ -277,6 +353,9 @@ form:
       primary_filter_style:
         label: Primary Filter Style
         description: Select how the primary filter is displayed
+      primary_filter_card_theme:
+        label: Card Theme
+        description: Specify the card theme for the primary filter
       filter_options:
         label: Filter Options
         description: Customize values shown for the primary filter and specify secondary filters. If no options are set, the default values for the primary filter attribute will be used.
@@ -309,6 +388,9 @@ form:
           label: Secondary Filter Image
         secondary_filter_image_tv:
           label: Secondary Filter Image (TV)
+        secondary_filter_card_theme:
+          label: Card Theme
+          description: Specify the card theme for the secondary filter
 
       group_by:
         label: Group Results By
@@ -453,6 +535,9 @@ form:
       label: Secondary Custom Domains
       description: Specify any additional custom domains that will be used for this property, such as for staging environments
       fieldLabel: Secondary Custom Domain
+    tv_login_custom_domain:
+      label: Custom TV Login Domain
+      description: Specify the domain for the TV login flow.
     hide_home_button:
       label: Hide Home Button in Header
     hide_eluvio_terms:
@@ -491,6 +576,37 @@ form:
     filter_style:
       label: Filter Button Style
       description: Specify the border style of filter buttons for the 'box' filter variant
+  card_themes:
+    label: Card Themes
+    description: Create visual themes for item cards in your property
+    fieldLabel: Card Theme
+  card_theme:
+    border_color:
+      label: Border Color
+    background_type:
+      label: Image Background Type
+      description: The background color may be a solid color or a gradient
+    background_color:
+      label: Image Background Color
+      description: Select a color for the background
+    background_color_2:
+      label: Image Background Color 2
+      description: Select a second color for the background gradient
+    background_gradient_angle:
+      label: Background Gradient Angle
+    border_radius:
+      label: Border Radius
+    border_width:
+      label: Border Width
+    circularize:
+      label: Circularize Square Cards
+      description: If checked, cards with a square aspect ratio will be rendered as circles
+    effect:
+      label: Transition Effect
+    mobile_state:
+      label: Default Mobile State
+      hint: Because there is no hover state on mobile devices, users will likely never see the transition to the active state. You can elect to always show the active state on mobile devices, or deactivate the transition effect property.
+
   purchase_settings:
     purchase_background_tv:
       label: Purchase Page Background (TV)
@@ -619,6 +735,12 @@ form:
     background_color:
       label: Background Color
       description: Set a custom background color for this page.
+    card_theme:
+      label: Card Theme
+      description: Specify the card theme for this page. This can be overridden within individual sections.
+    hover_card_display:
+      label: Hover Card Display
+      description: Specify when the detailed hover cards should be shown for this page (desktop only). This setting can be overridden in sections.
     header:
       position:
         label: Content Position
@@ -725,6 +847,19 @@ form:
     url:
       label: URL
       description: The URL for this action to link to
+    property:
+      label: Media Property
+      description: Select the media property to link to
+    property_page:
+      label: Media Property Page
+      description: Select the media property page to link to
+    subproperty:
+      label: Subproperty
+      description: Select the subproperty to link to
+    subproperty_page:
+      label: Subproperty Page
+      description: Select the subproperty page to link to
+
 
   sections:
     create:
@@ -788,6 +923,15 @@ form:
       card_style:
         label: Card Style
         description: Select the card style that items in this section should use
+      card_theme:
+        label: Card Theme
+        description: Specify the card theme for this section.
+      hover_card_display:
+        label: Hover Card Display
+        description: Specify when the detailed hover cards should be shown for this section (desktop only).
+      hover_card_aspect_ratio:
+        label: Hover Card Aspect Ratio
+        description: Specify the aspect ratio to use for hover cards and detail modals for this section
       card_default_button_text:
         label: Card Default Button Text
         description: Specify the button text to be used on cards with buttons in this section. This text can also be specified when configuring individual items.
@@ -988,6 +1132,10 @@ form:
       label: Banner Animation (Mobile)
     page:
       label: Page
+    primary_filter:
+      label: Primary Filter
+    secondary_filter:
+      label: Secondary Filter
     property:
       label: Property
     property_page:

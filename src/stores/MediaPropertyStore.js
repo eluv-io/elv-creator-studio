@@ -7,7 +7,6 @@ import {
   MediaPropertyPageSpec,
   MediaPropertySectionAutomaticSpec,
   MediaPropertySectionItemExternalLinkSpec,
-  MediaPropertySectionItemFilterSpec,
   MediaPropertySectionItemMarketplaceLinkSpec,
   MediaPropertySectionItemMediaSpec,
   MediaPropertySectionItemPageLinkSpec,
@@ -18,7 +17,9 @@ import {
   MediaPropertySectionItemVisualSpec,
   MediaPropertySectionManualSpec,
   MediaPropertySpacerSectionSpec,
-  MediaPropertySpec
+  MediaPropertySpec,
+  MediaPropertyCardThemeSpec,
+  MediaPropertySectionItemSearchPageLinkSpec
 } from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
 import {CompareSemVer, GenerateUUID} from "@/helpers/Misc.js";
@@ -40,14 +41,15 @@ class MediaPropertyStore {
     "section_hero_item": "pshi",
     "section_container": "pscc",
     "section_spacer": "pssp",
-    "section_item": "psci"
+    "section_item": "psci",
+    "card_theme": "cthm"
   };
 
   SECTION_CONTENT_TYPES = {
     "media": "Media",
     "item_purchase": "Item Purchase",
-    "filter": "Filtered View",
     "page_link": "Page Link",
+    "search_page_link": "Search Page Link",
     "property_link": "Property Link",
     "subproperty_link": "Subproperty Link",
     "redeemable_offer": "Redeemable Offer",
@@ -165,6 +167,47 @@ class MediaPropertyStore {
 
     return attributes;
   }
+
+GetSearchFilterOptions({mediaPropertyId, selectedPrimaryFilter}) {
+  const searchSettings = this.mediaProperties[mediaPropertyId]?.metadata?.public?.asset_metadata?.info?.search;
+
+  if(!searchSettings) { return {}; }
+
+  const attributes = this.GetMediaPropertyAttributes({mediaPropertyId}) || {};
+
+  let options = {
+    primary: {
+      key: searchSettings.primary_filter,
+      label: searchSettings.primary_filter === "__media-type" ? "Media Type" :
+        attributes[searchSettings.primary_filter]?.title || "",
+      values: (searchSettings.filter_options || []).length > 0 ?
+        searchSettings.filter_options.map(option => option.primary_filter_value) :
+        searchSettings.primary_filter === "__media-type" ?
+          ["", "Video", "Gallery", "Image", "Ebook"] :
+          ["", ...(attributes[searchSettings.primary_filter]?.tags || [])]
+    }
+  };
+
+  const filterOptions = searchSettings.filter_options?.find(option =>
+    option.primary_filter_value === selectedPrimaryFilter ||
+    (!option.primary_filter_value && !selectedPrimaryFilter)
+  );
+
+  if(filterOptions) {
+    options.secondary = {
+      key: filterOptions.secondary_filter_attribute || "",
+      label: filterOptions.secondary_filter_attribute === "__media-type" ? "Media Type" :
+        attributes[filterOptions.secondary_filter_attribute]?.title || "",
+      values: (filterOptions.secondary_filter_options || []).length > 0 ?
+        filterOptions.secondary_filter_options.map(option => option.secondary_filter_attribute) :
+        filterOptions.secondary_filter_attribute === "__media-type" ?
+          ["", "Video", "Gallery", "Image", "Ebook"] :
+          ["", ...(attributes[filterOptions.secondary_filter_attribute]?.tags || [])]
+    };
+  }
+
+  return options;
+}
 
   GetResolvedSectionItem({mediaPropertyId, sectionId, sectionItemId, sectionItem}) {
     if(!sectionItem) {
@@ -544,6 +587,8 @@ class MediaPropertyStore {
     mediaItemId,
     expand,
     pageId,
+    primaryFilter="",
+    secondaryFilter="",
     propertyId,
     subpropertyId,
     propertyPageId,
@@ -567,12 +612,14 @@ class MediaPropertyStore {
       case "item_purchase":
         spec = Clone(MediaPropertySectionItemPurchaseSpec);
         break;
-      case "filter":
-        spec = Clone(MediaPropertySectionItemFilterSpec);
-        break;
       case "page_link":
         spec = Clone(MediaPropertySectionItemPageLinkSpec);
         spec.page_id = pageId;
+        break;
+      case "search_page_link":
+        spec = Clone(MediaPropertySectionItemSearchPageLinkSpec);
+        spec.primary_filter = primaryFilter;
+        spec.secondary_filter = secondaryFilter;
         break;
       case "property_link":
         spec = Clone(MediaPropertySectionItemPropertyLinkSpec);
@@ -653,6 +700,30 @@ class MediaPropertyStore {
     return id;
   }
 
+  CreateCardTheme({mediaPropertyId, copyId}) {
+    let id = `${this.ID_PREFIXES.card_theme}${GenerateUUID()}`;
+
+    let spec = Clone(MediaPropertyCardThemeSpec);
+    if(copyId) {
+      spec = Clone(toJS(this.mediaProperties[mediaPropertyId].metadata.public.asset_metadata.info.styling.card_themes[copyId]));
+    }
+
+    spec.id = id;
+    spec.label = (copyId ? `${spec.label} (Copy)` : spec.label);
+
+    this.AddField({
+      objectId: mediaPropertyId,
+      page: location.pathname,
+      path: "/public/asset_metadata/info/styling/card_themes",
+      field: id,
+      value: spec,
+      category: this.MediaPropertyCategory({category: "card_theme_label", mediaPropertyId, type: "styling/card_themes", id, label: spec.label}),
+      label: spec.label
+    });
+
+    return id;
+  }
+
   MediaPropertyCategory({category, type="sections", mediaPropertyId, path, id, sectionItemId, label}) {
     return () => {
       if(type === "sectionItem") {
@@ -694,7 +765,7 @@ class MediaPropertyStore {
     if(mediaProperty.search?.filter_options) {
       const primaryFilterValues =
         mediaProperty.search.primary_filter === "__media-type" ?
-          ["Video", "Gallery", "Image", "Ebook"] :
+          ["", "Video", "Gallery", "Image", "Ebook"] :
           this.GetMediaPropertyAttributes({mediaPropertyId: objectId})?.[mediaProperty.search.primary_filter]?.tags || [];
       const validatedSecondaryFilters = (mediaProperty.search.filter_options || [])
         .filter(filterOption =>

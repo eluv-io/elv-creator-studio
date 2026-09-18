@@ -1,5 +1,47 @@
 import {MediaCatalogBaseSpec} from "@/specs/MediaCatalogSpecs.js";
 
+
+const StateVisuals = {
+  background_color: "#000000",
+  background_color_2: "#000000",
+  background_color_opacity: 100,
+  background_color_2_opacity: 100,
+  background_gradient_angle: 0,
+  background_type: "solid", // solid, gradient / default solid
+  border_color: "#FFFFFF"
+};
+
+export const MediaPropertyHeaderLinkSpec = {
+  id: undefined,
+  text: "",
+  text_color: "#FFFFFF",
+  icon: undefined,
+  behavior: "sign_in",
+  visibility: "always",
+  permissions: [],
+  page_id: "",
+  video: undefined,
+  media_id: "",
+  property: "",
+  property_page: "",
+  subproperty: "",
+  subproperty_page: "",
+  url: ""
+};
+
+export const MediaPropertyCardThemeSpec = {
+  id: undefined,
+  label: "<New Card Theme>",
+  description: "",
+  inactive: StateVisuals,
+  active: StateVisuals,
+  border_radius: "subtle", // none, subtle, curved / default none
+  border_width: 0,
+  circularize: false,
+  effect: "none", // none, desaturate, desaturate-image, desaturate-background / default none
+  mobile_state: "inactive" // inactive, no-transition, active / default inactive
+};
+
 export const MediaPropertyFooterItemSpec = {
   id: undefined,
   type: "link",
@@ -98,16 +140,17 @@ export const MediaPropertySectionItemMediaSpec = {
   use_media_settings: true
 };
 
-export const MediaPropertySectionItemFilterSpec = {
-  ...MediaPropertySectionItemBaseSpec,
-  type: "filter_link",
-  select: MediaPropertyFilterSpec
-};
-
 export const MediaPropertySectionItemPageLinkSpec = {
   ...MediaPropertySectionItemBaseSpec,
   type: "page_link",
   page_id: "",
+};
+
+export const MediaPropertySectionItemSearchPageLinkSpec = {
+  ...MediaPropertySectionItemBaseSpec,
+  type: "search_page_link",
+  primary_filter: "",
+  secondary_filter: ""
 };
 
 export const MediaPropertySectionItemPropertyLinkSpec = {
@@ -187,6 +230,8 @@ export const MediaPropertySectionBaseSpec = {
     display_limit: undefined,
     justification: "left",
     aspect_ratio: "Landscape",
+    hover_card_display: "",
+    card_theme_id: "",
     content_display_text: "titles",
     inline_background_gradient: "",
     inline_background_color: "",
@@ -293,16 +338,13 @@ export const MediaPropertyPageSpec = {
   id: undefined,
   url_slug: "",
   label: "<New Page>",
+  hover_card_display: "",
+  card_theme_id: "",
   description: "",
   actions: [],
   layout: {
     title: "",
     description: "",
-    logo: undefined,
-    logo_alt: "",
-    header_logo: undefined,
-    background_image: undefined,
-    background_image_mobile: undefined,
     sections: [],
   },
   permissions: {
@@ -358,7 +400,17 @@ export const MediaPropertySpec = {
   name: "",
   description: "",
   image: undefined,
+  show_on_main_page: false,
+  show_on_main_page_tv: false,
+  main_page_title: "",
+  main_page_description: "",
+  main_page_logo: undefined,
+  main_page_logo_scale: 100,
   header_logo: undefined,
+  header_logo_mobile: undefined,
+  header_logo_tv: undefined,
+  hover_card_display: "",
+  card_theme_id: "",
   subproperties: [],
   media_catalogs: [],
   associated_marketplaces: [],
@@ -403,8 +455,10 @@ export const MediaPropertySpec = {
       advanced_options: []
     }
   },
+  styling: {},
   domain: {
     custom_domain: "",
+    tv_login_custom_domain: "",
     disable_registration: false,
     features: {
       discover: true,
