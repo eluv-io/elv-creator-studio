@@ -535,6 +535,9 @@ form:
       label: Secondary Custom Domains
       description: Specify any additional custom domains that will be used for this property, such as for staging environments
       fieldLabel: Secondary Custom Domain
+    tv_login_custom_domain:
+      label: Custom TV Login Domain
+      description: Specify the domain for the TV login flow.
     hide_home_button:
       label: Hide Home Button in Header
     hide_eluvio_terms:

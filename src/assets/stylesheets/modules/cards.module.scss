@@ -299,6 +299,11 @@
 
   &--inaccessible {
     cursor: default;
+
+    .discover-card__button {
+      background-color: #5f5f5f!important;
+      color: #b2b2b2;
+    }
   }
 
   &__inaccessible-message {
@@ -417,11 +422,12 @@
     color: black;
     display: flex;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
     height: 45px;
     justify-content: center;
+    min-width: 100px;
+    padding-inline: 10px;
     transition-delay: 0s!important;
-    width: 100px;
 
     &:hover,
     &:focus-visible {
@@ -449,11 +455,9 @@
         filter: brightness(var(--brightness--active));
       }
 
-      &:not(.discover-card--inaccessible) {
-        .discover-card__button-container {
-          height: 100px;
-          padding: 15px 0 20px;
-        }
+      .discover-card__button-container {
+        height: 100px;
+        padding: 15px 0 20px;
       }
 
       &.discover-card--inaccessible {

@@ -128,7 +128,7 @@ const DiscoverCard = observer(({featured}) => {
         }
       </div>
       {
-        !inaccessible || !metadata.main_page_inaccessible_message ? null :
+        featured || !inaccessible || !metadata.main_page_inaccessible_message ? null :
           <div className={S("discover-card__inaccessible-message")}>
             {metadata.main_page_inaccessible_message}
           </div>
@@ -153,7 +153,11 @@ const DiscoverCard = observer(({featured}) => {
             </div>
             <div className={S("discover-card__button-container")}>
               <div className={S("discover-card__button")}>
-                {metadata.main_page_button_text || "Launch"}
+                {
+                  inaccessible ?
+                    metadata.main_page_inaccessible_message || "Coming Soon" :
+                    metadata.button_text || "Launch"
+                }
               </div>
             </div>
           </div>

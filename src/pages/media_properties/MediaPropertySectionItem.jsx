@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {rootStore, mediaPropertyStore, uiStore, mediaCatalogStore, marketplaceStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
-import {Select, Title} from "@mantine/core";
+import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import {MediaItemCard} from "@/components/common/MediaCatalog";
 import {

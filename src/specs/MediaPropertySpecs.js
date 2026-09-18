@@ -458,6 +458,7 @@ export const MediaPropertySpec = {
   styling: {},
   domain: {
     custom_domain: "",
+    tv_login_custom_domain: "",
     disable_registration: false,
     features: {
       discover: true,
