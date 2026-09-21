@@ -93,6 +93,8 @@ form:
         label: Subtitle
       description:
         label: Description
+      description_rich_text:
+        label: Rich Text Description
       disclaimer:
         label: Disclaimer
       access_title:

@@ -1,7 +1,8 @@
 const PermissionItemDisplaySpec = {
   title: "",
   subtitle: "",
-  description: ""
+  description: "",
+  description_rich_text: ""
 };
 
 const PermissionItemBaseSpec = {

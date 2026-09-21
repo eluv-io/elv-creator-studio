@@ -37,6 +37,13 @@ const PermissionItemDisplay = observer(({inputProps, permissionItem, marketplace
         subcategory={l10n.categories.permission_item_display}
         field="description"
       />
+      <Inputs.RichText
+        {...inputProps}
+        {...l10n.permission_item.display.description_rich_text}
+        localizable
+        subcategory={l10n.categories.permission_item_display}
+        field="description_rich_text"
+      />
       <Inputs.Text
         {...inputProps}
         {...l10n.permission_item.display.disclaimer}
