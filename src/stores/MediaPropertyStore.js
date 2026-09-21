@@ -763,17 +763,31 @@ GetSearchFilterOptions({mediaPropertyId, selectedPrimaryFilter}) {
 
     // Save login configuration as a simple key string to make it easy to differentiate different configurations between properties
     const loginSettings = mediaProperty?.login?.settings || {};
+    let provider, domain;
+    if(loginSettings.use_auth0 && loginSettings.auth0_domain) {
+      provider = "auth0";
+      domain = loginSettings.auth0_domain;
+    } else if(loginSettings.use_openid && loginSettings.openid_endpoint) {
+      provider = "openid";
+      domain = loginSettings.openid_endpoint;
+    } else {
+      provider = "ory";
+    }
+
     yield this.client.ReplaceMetadata({
       libraryId,
       objectId,
       writeToken,
       metadataSubtree: "/public/asset_metadata/info/login/settings/provider_id",
-      metadata:
-        loginSettings.use_auth0 && loginSettings.auth0_domain ?
-          `auth0-${loginSettings.auth0_domain}` :
-          loginSettings.use_openid && loginSettings.openid_endpoint ?
-            `openid-${loginSettings.openid_endpoint}` :
-            "ory"
+      metadata: !domain ? provider : `${provider}_${domain}`
+    });
+
+    yield this.client.ReplaceMetadata({
+      libraryId,
+      objectId,
+      writeToken,
+      metadataSubtree: "/public/asset_metadata/info/login/settings/provider",
+      metadata: provider
     });
 
     // Ensure validity of dependent search filters
