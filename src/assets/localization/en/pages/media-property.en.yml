@@ -835,6 +835,9 @@ form:
     behavior:
       label: Action Behavior
       description: Specify what this action does
+    hide_on_tv:
+      label: Hide on TV
+      description: If checked, this action will not be shown on TV apps
     video:
       label: Video
       description: Specify a video to show when this action is clicked

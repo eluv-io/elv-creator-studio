@@ -265,6 +265,12 @@ export const ActionConfiguration = observer(({inputProps, action}) => {
           Object.keys(ActionBehaviors).map(key => ({label: ActionBehaviors[key], value: key}))
         }
       />
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.actions.hide_on_tv}
+        defaultValue={false}
+        field="hide_on_tv"
+      />
       <ActionBehaviorConfiguration
         inputProps={inputProps}
         action={action}
