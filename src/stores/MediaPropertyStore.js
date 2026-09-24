@@ -184,7 +184,9 @@ GetSearchFilterOptions({mediaPropertyId, selectedPrimaryFilter}) {
         searchSettings.filter_options.map(option => option.primary_filter_value) :
         searchSettings.primary_filter === "__media-type" ?
           ["", "Video", "Gallery", "Image", "Ebook"] :
-          ["", ...(attributes[searchSettings.primary_filter]?.tags || [])]
+          searchSettings.primary_filter === "__schedule" ?
+            ["", "Live", "Upcoming", "VOD"] :
+            ["", ...(attributes[searchSettings.primary_filter]?.tags || [])]
     }
   };
 
@@ -197,12 +199,15 @@ GetSearchFilterOptions({mediaPropertyId, selectedPrimaryFilter}) {
     options.secondary = {
       key: filterOptions.secondary_filter_attribute || "",
       label: filterOptions.secondary_filter_attribute === "__media-type" ? "Media Type" :
-        attributes[filterOptions.secondary_filter_attribute]?.title || "",
+        filterOptions.secondary_filter_attribute === "__schedule" ? "Schedule Status" :
+          attributes[filterOptions.secondary_filter_attribute]?.title || "",
       values: (filterOptions.secondary_filter_options || []).length > 0 ?
         filterOptions.secondary_filter_options.map(option => option.secondary_filter_attribute) :
         filterOptions.secondary_filter_attribute === "__media-type" ?
           ["", "Video", "Gallery", "Image", "Ebook"] :
-          ["", ...(attributes[filterOptions.secondary_filter_attribute]?.tags || [])]
+          filterOptions.secondary_filter_attribute === "__schedule" ?
+            ["Live", "Upcoming", "VOD"] :
+            ["", ...(attributes[filterOptions.secondary_filter_attribute]?.tags || [])]
     };
   }
 
@@ -795,7 +800,9 @@ GetSearchFilterOptions({mediaPropertyId, selectedPrimaryFilter}) {
       const primaryFilterValues =
         mediaProperty.search.primary_filter === "__media-type" ?
           ["", "Video", "Gallery", "Image", "Ebook"] :
-          this.GetMediaPropertyAttributes({mediaPropertyId: objectId})?.[mediaProperty.search.primary_filter]?.tags || [];
+          mediaProperty.search.primary_filter === "__schedule" ?
+            ["", "Live", "Upcoming", "VOD"] :
+            this.GetMediaPropertyAttributes({mediaPropertyId: objectId})?.[mediaProperty.search.primary_filter]?.tags || [];
       const validatedSecondaryFilters = (mediaProperty.search.filter_options || [])
         .filter(filterOption =>
           !filterOption.secondary_filter_attribute ||

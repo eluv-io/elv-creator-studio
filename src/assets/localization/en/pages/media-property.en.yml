@@ -74,13 +74,13 @@ form:
     section: Page Section
     section_label: Page Section '{label}'
     section_presentation: Section Presentation
-    section_content: Section Content
     section_filters: Section Filters
+    section_content: Section Content
+    section_content_specification: Section Content Specification
     section_item: Section Item
     section_item_label: Section Item `{label}`
     section_item_content: Section Item Content
     section_item_presentation: Section Item Presentation
-    section_full_content_page: "'View All' Page Filters"
     section_hero_item: Hero Item
     section_hero_item_presentation: Hero Item Presentation
     section_hero_item_label: Hero Item '{label}'
@@ -393,7 +393,7 @@ form:
           description: Specify the card theme for the secondary filter
 
       group_by:
-        label: Group Results By
+        label: Group By
         description: If specified, search results will be grouped by this attribute
       enable_advanced_search:
         label: Enable Advanced Search
@@ -1015,11 +1015,14 @@ form:
         label: Secondary Filter
         description: If specified, this filter will be available for selection at the top of the section content page
       group_by:
-        label: Group By
+        label: Group By (On 'View All' Page)
         description: If specified, section content will be grouped by this attribute
       show_primary_filter_in_page_view:
         label: Show Primary Filter in Page View
         description: If specified, the primary filter options will be shown for this section when displayed on a page.
+      show_secondary_filter_in_page_view:
+        label: Show Secondary Filter in Page View
+        description: If specified, the secondary filter options will be shown for this section when displayed on a page.
       spacer_color:
         label: Spacer Line Color
       spacer_thickness:

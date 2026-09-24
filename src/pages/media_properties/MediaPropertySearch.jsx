@@ -5,9 +5,9 @@ import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import {
   MediaPropertyAdvancedAISearchOptionSpec,
-  MediaPropertyAdvancedSearchOptionSpec,
-  MediaPropertySearchFilterSpec, MediaPropertySearchSecondaryFilterSpec
+  MediaPropertyAdvancedSearchOptionSpec
 } from "@/specs/MediaPropertySpecs.js";
+import MediaPropertyFilterConfiguration from "@/pages/media_properties/MediaPropertyFilterConfiguration.jsx";
 import {Title} from "@mantine/core";
 import UrlJoin from "url-join";
 import {useEffect} from "react";
@@ -173,203 +173,11 @@ const MediaPropertySearch = observer(() => {
                 })))
               ]}
             />
-            <Inputs.Select
-              {...inputProps}
-              {...l10n.general.search.primary_filter}
-              subcategory={l10n.categories.search}
-              field="primary_filter"
-              searchable
-              defaultValue=""
-              options={[
-                {label: "None", value: ""},
-                {label: "Media Type", value: "__media-type"},
-                ...(Object.keys(attributes).map(attributeId => ({
-                  label: attributes[attributeId].title || "Attribute",
-                  value: attributeId
-                })))
-              ]}
+
+            <MediaPropertyFilterConfiguration
+              inputProps={inputProps}
+              metadata={info.search}
             />
-            {
-              !info.search?.primary_filter ? null :
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.general.search.primary_filter_style}
-                  subcategory={l10n.categories.search}
-                  field="primary_filter_style"
-                  defaultValue="box"
-                  options={[
-                    {label: "Box", value: "box"},
-                    {label: "Text", value: "text"},
-                    {label: "Image", value: "image"},
-                  ]}
-                />
-            }
-            {
-              info.search?.primary_filter_style !== "image" ? null :
-                <Inputs.Select
-                  {...inputProps}
-                  {...l10n.general.search.primary_filter_card_theme}
-                  subcategory={l10n.categories.search}
-                  field="primary_filter_card_theme_id"
-                  defaultValue=""
-                  options={[
-                    { label: "Default", value: ""},
-                    ...(Object.keys(info?.styling?.card_themes || {}))
-                      .map(cardThemeId => ({
-                        label: info.styling.card_themes[cardThemeId].label || "Theme",
-                        value: cardThemeId
-                      }))
-                  ]}
-                />
-            }
-
-            {
-              !info.search?.primary_filter ? null :
-                <Inputs.List
-                  {...inputProps}
-                  {...l10n.general.search.filter_options}
-                  subcategory={l10n.categories.search}
-                  field="filter_options"
-                  newItemSpec={MediaPropertySearchFilterSpec}
-                  renderItem={(props) => {
-                    const attributeValues =
-                      info.search.primary_filter === "__media-type" ?
-                        ["Video", "Gallery", "Image", "Ebook"] :
-                        attributes[info.search.primary_filter]?.tags || [];
-
-                    return (
-                      <>
-                        <Inputs.Select
-                          {...props}
-                          {...l10n.general.search.filter_option.primary_filter_value}
-                          subcategory={l10n.categories.search}
-                          field="primary_filter_value"
-                          searchable
-                          defaultValue=""
-                          options={[
-                            {label: "All", value: ""},
-                            ...attributeValues.map(tag => ({
-                              label: tag || "",
-                              value: tag
-                            }))
-                          ]}
-                        />
-                        {
-                          info.search?.primary_filter_style !== "image" ? null :
-                            <Inputs.ImageInput
-                              {...props}
-                              {...l10n.general.search.filter_option.images}
-                              subcategory={l10n.categories.search}
-                              fields={[
-                                { ...l10n.general.search.filter_option.primary_filter_image, field: "primary_filter_image", baseSize: 125 },
-                                { ...l10n.general.search.filter_option.primary_filter_image_tv, field: "primary_filter_image_tv", baseSize: 125 }
-                              ]}
-                            />
-                        }
-                        <Inputs.Select
-                          {...props}
-                          {...l10n.general.search.filter_option.secondary_filter_attribute}
-                          subcategory={l10n.categories.search}
-                          field="secondary_filter_attribute"
-                          searchable
-                          defaultValue=""
-                          options={
-                            [
-                              {label: "None", value: ""},
-                              {label: "Media Type", value: "__media-type"},
-                              ...(Object.keys(attributes).map(attributeId => ({
-                                label: attributes[attributeId].title || "Attribute",
-                                value: attributeId
-                              })))
-                            ].filter(({value}) => info.search.primary_filter !== value)
-                          }
-                        />
-
-                        {
-                          !props.item.secondary_filter_attribute ? null :
-                            <>
-                              <Inputs.Select
-                                {...props}
-                                {...l10n.general.search.filter_option.secondary_filter_style}
-                                subcategory={l10n.categories.search}
-                                field="secondary_filter_style"
-                                defaultValue="box"
-                                options={[
-                                  {label: "Box", value: "box"},
-                                  {label: "Text", value: "text"},
-                                  {label: "Image", value: "image", disabled: props.item.secondary_filter_options.length === 0},
-                                ]}
-                              />
-                              {
-                                props.item?.secondary_filter_style !== "image" ? null :
-                                  <Inputs.Select
-                                    {...props}
-                                    {...l10n.general.search.filter_option.secondary_filter_card_theme}
-                                    subcategory={l10n.categories.search}
-                                    field="secondary_filter_card_theme_id"
-                                    defaultValue=""
-                                    options={[
-                                      { label: "Default", value: ""},
-                                      ...(Object.keys(info?.styling?.card_themes || {}))
-                                        .map(cardThemeId => ({
-                                          label: info.styling.card_themes[cardThemeId].label || "Theme",
-                                          value: cardThemeId
-                                        }))
-                                    ]}
-                                  />
-                              }
-                              <Inputs.List
-                                {...props}
-                                {...l10n.general.search.filter_option.secondary_filter_options}
-                                subcategory={l10n.categories.search}
-                                field="secondary_filter_options"
-                                newItemSpec={MediaPropertySearchSecondaryFilterSpec}
-                                renderItem={(secondaryFilterProps) => {
-                                  const secondaryAttributeValues =
-                                    props.item.secondary_filter_attribute === "__media-type" ?
-                                      ["Video", "Gallery", "Image", "Ebook"] :
-                                      attributes[props.item.secondary_filter_attribute]?.tags || [];
-
-                                  return (
-                                    <>
-                                      <Inputs.Select
-                                        {...secondaryFilterProps}
-                                        {...l10n.general.search.filter_option.secondary_filter_value}
-                                        subcategory={l10n.categories.search}
-                                        field="secondary_filter_value"
-                                        searchable
-                                        defaultValue=""
-                                        options={[
-                                          {label: "All", value: ""},
-                                          ...secondaryAttributeValues.map(tag => ({
-                                            label: tag || "",
-                                            value: tag
-                                          }))
-                                        ]}
-                                      />
-                                      {
-                                        props.item.secondary_filter_style !== "image" ? null :
-                                          <Inputs.ImageInput
-                                            {...secondaryFilterProps}
-                                            {...l10n.general.search.filter_option.images}
-                                            subcategory={l10n.categories.search}
-                                            fields={[
-                                              { ...l10n.general.search.filter_option.secondary_filter_image, field: "secondary_filter_image", baseSize: 125 },
-                                              { ...l10n.general.search.filter_option.secondary_filter_image_tv, field: "secondary_filter_image_tv", baseSize: 125 }
-                                            ]}
-                                          />
-                                      }
-                                    </>
-                                  );
-                                }}
-                              />
-                            </>
-                        }
-                      </>
-                    );
-                  }}
-                />
-            }
 
             <Title order={3} mt={50}  mb="md">{l10n.categories.advanced_search}</Title>
             <AdvancedSearchOptions
