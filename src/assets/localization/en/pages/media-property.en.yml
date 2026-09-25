@@ -570,6 +570,9 @@ form:
     button_style:
       label: Button Style
       description: Customize the look of buttons in your property
+    header_link_outline_color:
+      label: Header Link Outline Color
+      description: Specify the color of the outline around header links (shown when hovering or active). Leave blank for none
     filter_color:
       label: Filter Button Color
       description: Specify the color of filter buttons for the 'box' filter variant

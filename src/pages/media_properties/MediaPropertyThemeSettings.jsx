@@ -480,6 +480,13 @@ const MediaPropertyThemeSettings = observer(() => {
       />
       <Inputs.Color
         {...inputProps}
+        {...l10n.theme.header_link_outline_color}
+        subcategory={l10n.categories.theme}
+        path="/public/asset_metadata/info/styling"
+        field="header_link_outline_color"
+      />
+      <Inputs.Color
+        {...inputProps}
         {...l10n.theme.filter_color}
         subcategory={l10n.categories.theme}
         path="/public/asset_metadata/info/styling"
