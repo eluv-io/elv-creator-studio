@@ -805,6 +805,7 @@ const FilterOptions = observer(() => {
         options={[
           {label: "None", value: ""},
           {label: "Media Type", value: "__media-type"},
+          {label: "Schedule Status", value: "__schedule"},
           {label: "Date", value: "__date"},
           ...(Object.keys(attributes).map(attributeId => ({
             label: attributes[attributeId].title || "Attribute",
@@ -812,6 +813,16 @@ const FilterOptions = observer(() => {
           })))
         ]}
       />
+
+      {
+        !section.filters.group_by || !["grid", "carousel"].includes(section.display.display_format) ? null :
+          <Inputs.Checkbox
+            {...inputProps}
+            {...l10n.sections.display.show_group_by_in_page_view}
+            field="show_group_by_in_page_view"
+            defaultValue={false}
+          />
+      }
 
       {
         !section.filters?.primary_filter ? null :

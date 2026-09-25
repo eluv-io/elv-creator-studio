@@ -1023,6 +1023,9 @@ form:
       show_secondary_filter_in_page_view:
         label: Show Secondary Filter in Page View
         description: If specified, the secondary filter options will be shown for this section when displayed on a page.
+      show_group_by_in_page_view:
+        label: Show Grouping in Page View
+        description: If specified, the content groups will be shown for this section when displayed on a page.
       spacer_color:
         label: Spacer Line Color
       spacer_thickness:

@@ -2430,7 +2430,15 @@ const ReferenceTable = observer(({
   if(filterable) {
     filteredValues = Filter ?
       values.filter(value => Filter({filter: debouncedFilter, value})) :
-      values.filter(value => !!filterFields.find(field => (value[field]?.toLowerCase() || "").includes(debouncedFilter.toLowerCase())));
+      values.filter(value => !!filterFields.find(field => {
+        let string = value[field];
+        if(field?.includes(".")) {
+          const [k1, k2] = field.split(".");
+          string = value?.[k1]?.[k2];
+        }
+
+        return (string?.toLowerCase() || "").includes(debouncedFilter.toLowerCase());
+      }));
   }
 
   filteredValues = filteredValues.sort(

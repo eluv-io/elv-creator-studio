@@ -106,7 +106,7 @@ export const MediaPropertySectionsTable = observer(({
       fieldLabel={l10n.categories.section}
       nameField="label"
       filterable
-      filterFields={["label", "description"]}
+      filterFields={["label", "description", "display.title"]}
       selectedRecords={selectedRecords}
       setSelectedRecords={setSelectedRecords}
       excludedKeys={excludedSectionIds}
