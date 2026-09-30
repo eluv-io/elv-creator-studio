@@ -1,3 +1,41 @@
+export const MediaCatalogBumperOfferSpec = {
+  label: "<New Offer>",
+  display: {
+    title: "",
+    subtitle: "",
+    description: "",
+    price: "",
+    button_text: "",
+    button_variant: "filled"
+  },
+  action: {
+    behavior: "purchase", // continue, link
+    permission_item_id: "",
+    url: ""
+  }
+};
+
+export const MediaCatalogBumperSpec = {
+  id: undefined,
+  label: "<New Bumper>",
+  description: "",
+  category: "bumper",
+  tags: [],
+  image: undefined,
+  video: undefined,
+  duration: 8,
+  blur: false,
+  url: "",
+  offers: {
+    title: "",
+    subtitle: "",
+    position: "bottom_right",
+    position_mobile: "center",
+    format: "button", // detailed
+    items: []
+  }
+};
+
 export const MediaCatalogAdditionalViewSpec = {
   media_link: undefined,
   label: ""

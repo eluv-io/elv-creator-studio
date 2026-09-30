@@ -6,6 +6,7 @@ nav:
   media_lists: Media Lists
   media_collections: Media Collections
   tags: Tags and Attributes
+  bumpers: Ads, Bumpers, and Offers
 form:
   categories:
     media_catalogs: Media Catalogs
@@ -36,6 +37,12 @@ form:
     gallery_item_label: Gallery Item '{label}'
     player_settings: Video Player Settings
     migrate_media_from_template_label: Migrate Media from '{label}'
+    bumpers: Ads, Bumpers and Offers
+    bumper: Bumper
+    bumper_label: Bumper '{label}'
+    bumper_offers: Offers
+    bumper_offer: Offer
+    bumper_offer_action: Action
   type:
     label: Content Type
   type_descriptions:
@@ -361,5 +368,82 @@ form:
       poster_image:
         label: Video Poster Image
         description: Displayed in the video player before playback is started
+
+  bumpers:
+    bumpers:
+      label: Ads, Bumpers, and Offers
+      fieldLabel: Bumper
+    category:
+      label: Category
+    tags:
+      label: Tags
+    images:
+      label: Images
+    image:
+      label: Image (16:9)
+    image_mobile:
+      label: Image (Mobile) (9:16)
+    video:
+      label: Video (16:9)
+    video_mobile:
+      label: Video (Mobile) (9:16)
+    duration:
+      label: Display Duration (Seconds)
+      description: (For image bumpers only) - Specify how long this bumper should be displayed before moving on
+    blur:
+      label: Blur Image/Video
+    url:
+      label: Link URL
+      description: If specified, clicking anywhere on the bumper (except offers) will open this page
+
+    offers:
+      items:
+        label: Offers
+        fieldLabel: Offer
+      title:
+        label: Title
+      subtitle:
+        label: Subtitle
+      bottom_text:
+        label: Bottom Text
+      position:
+        label: Position
+      position_mobile:
+        label: Position (Mobile)
+      format:
+        label: Format
+    offer:
+      offer:
+        label: Offer
+      display:
+        title:
+          label: Title
+        subtitle:
+          label: Subtitle
+        description:
+          label: Description
+        price:
+          label: Price
+        button_text:
+          label: Button Text
+        button_variant:
+          label: Button Variant
+      action:
+        action:
+          label: Action
+        type:
+          label: Type
+          description: Specify whether this action is for purchasing an item, continuing playback, or linking to an external URL
+        permission_item_id:
+          label: Permission Item
+          description: Specify which permission item to make purchasable
+        url:
+          label: Link URL
+
+
+
+
+
+
 
 
