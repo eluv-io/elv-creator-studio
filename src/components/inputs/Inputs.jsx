@@ -402,7 +402,7 @@ const Input = observer(({
     <Component
       // Ensure uncontrolled -> controlled transition doesn't print a warning when default value isn't set
       key={typeof defaultValue === "undefined" ? undefined : `component-${field}-${typeof value === "undefined" ? "uncontrolled" : "controlled"}`}
-      mb="md"
+      mb="xs"
       disabled={disabled}
       {...componentProps}
       placeholder={placeholder}
@@ -2432,6 +2432,11 @@ const ReferenceTable = observer(({
       values.filter(value => Filter({filter: debouncedFilter, value})) :
       values.filter(value => !!filterFields.find(field => {
         let string = value[field];
+
+        if(typeof string === "object") {
+          string = JSON.stringify(string);
+        }
+
         if(field?.includes(".")) {
           const [k1, k2] = field.split(".");
           string = value?.[k1]?.[k2];
