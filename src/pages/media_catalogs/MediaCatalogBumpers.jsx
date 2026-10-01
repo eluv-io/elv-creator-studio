@@ -6,9 +6,14 @@ import {rootStore, mediaCatalogStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
-import {Title} from "@mantine/core";
+import {Group, Title} from "@mantine/core";
 import PermissionItemSelect from "@/components/inputs/permission_set/PermissionItemSelect.jsx";
 import {MediaCatalogBumperOfferSpec} from "@/specs/MediaCatalogSpecs.js";
+import Video from "@/components/common/Video.jsx";
+import {EluvioPlayerParameters} from "@eluvio/elv-player-js/lib";
+import {useState, useEffect} from "react";
+import {IconPlayerPauseFilled, IconPlayerPlayFilled} from "@tabler/icons-react";
+import {IconButton} from "@/components/common/Misc.jsx";
 
 const S = (...classes) => classes.map(c => BumperStyles[c] || "").join(" ");
 
@@ -93,20 +98,68 @@ const BumperOfferPreview = observer(({offer, format, compact}) => {
   );
 });
 
-const BumperPreview = observer(({bumper, mobile}) => {
+const BumperPreview = observer(({bumper, mobile, playVideo}) => {
+  const [player, setPlayer] = useState(undefined);
+
   const showCompactOffers = bumper.offers.format === "details" && bumper.offers.items.length > 2;
 
   const imageUrl = mobile ? bumper.image_mobile?.url : bumper.image?.url;
+  const position = mobile ? bumper.offers?.position_mobile || "center" : bumper.offers?.position || "bottom_right";
+  const showOfferTextBackground = mobile && bumper.offers.format === "button" && (bumper.offers.title || bumper.offers.subtitle);
+
+  const videoLink = mobile ? bumper.video_mobile : bumper.video;
+  const videoLinkInfo = mobile ? bumper.video_mobile && bumper.video_mobile_info : bumper.video && bumper.video_info;
+
+  useEffect(() => {
+    if(!player) { return; }
+
+    playVideo ?
+      player.controls.Play() :
+      player.controls.Pause();
+  }, [playVideo]);
+
+  console.log("Render", mobile, player);
 
   return (
     <div className={S("bumper", mobile ? "bumper--mobile" : "", bumper.blur ? "bumper--blur" : "")}>
       {
-        !bumper.image?.url ? null :
+        !imageUrl ? null :
           <div className={S("bumper__image-container")}>
-            <img src={bumper.image.url} className={S("bumper__image")}/>
+            <img alt={bumper.image_alt} src={imageUrl} className={S("bumper__image")}/>
           </div>
       }
-      <div className={S("bumper__content", `bumper__content--${bumper.offers.position || "bottom_right"}`)}>
+      {
+        !videoLink ? null :
+          <div className={S("bumper__video-container")}>
+            <Video
+              aspectRatio={mobile ? 9/16 : 16/9}
+              videoLink={videoLink}
+              videoLinkInfo={videoLinkInfo}
+              className={S("bumper__video")}
+              controls={{
+                muted: EluvioPlayerParameters.muted.ON,
+                autoplay: EluvioPlayerParameters.autoplay.OFF,
+                controls: EluvioPlayerParameters.controls.OFF,
+                loop: bumper.loop
+              }}
+              playerOptions={{
+                capLevelToPlayerSize: true,
+                showLoader: false,
+                backgroundColor: "transparent",
+              }}
+              SetPlayer={setPlayer}
+            />
+          </div>
+      }
+      <div
+        className={
+          S(
+            "bumper__content",
+            `bumper__content--${position}`,
+            showOfferTextBackground ? "bumper__content--with-offer-text" : ""
+          )
+        }
+      >
         {
           (bumper.offers?.items || []).length === 0 ? null :
             <div
@@ -149,68 +202,41 @@ const BumperPreview = observer(({bumper, mobile}) => {
   );
 });
 
-const BumperPreviewMobile = observer(({bumper}) => {
-  const showCompactOffers = bumper.offers.format === "details" && bumper.offers.items.length > 2;
-
-  return (
-    <div className={S("bumper-mobile", bumper.blur ? "bumper-mobile--blur" : "")}>
-      {
-        !bumper.image_mobile?.url ? null :
-          <div className={S("bumper-mobile__image-container")}>
-            <img src={bumper.image_mobile.url} className={S("bumper-mobile__image")} />
-          </div>
-      }
-      <div className={S("bumper-mobile__content", `bumper-mobile__content--${bumper.offers.position_mobile || "center"}`)}>
-        {
-          (bumper.offers?.items || []).length === 0 ? null :
-            <div
-              className={
-                S(
-                  "bumper-mobile__offers",
-                  `bumper-mobile__offers--${bumper.offers.format}`,
-                  bumper.offers.format === "button" && (bumper.offers.title || bumper.offers.subtitle) ? "bumper-mobile__offers--with-text" : "",
-                  showCompactOffers ? "bumper-mobile__offers--compact" : ""
-                )
-              }
-            >
-              {
-                !bumper.offers.title ? null :
-                  <div className={S("bumper-mobile__offers-title")}>{bumper.offers.title}</div>
-              }
-              {
-                !bumper.offers.subtitle ? null :
-                  <div className={S("bumper-mobile__offers-subtitle")}>{bumper.offers.subtitle}</div>
-              }
-              <div className={S("bumper-mobile__offer-items")}>
-                {
-                  bumper.offers.items.map((offer, index) =>
-                    <BumperOfferPreview
-                      key={`offer-${index}`}
-                      format={bumper.offers.format}
-                      compact={showCompactOffers}
-                      offer={offer}
-                    />
-                  )
-                }
-              </div>
-              {
-                !bumper.offers.bottom_text ? null :
-                  <div className={S("bumper-mobile__offers-bottom-text")}>{bumper.offers.bottom_text}</div>
-              }
-            </div>
-        }
-      </div>
-    </div>
-  );
-});
-
 const BumperPreviews = observer(({bumper}) => {
+  const [playVideo, setPlayVideo] = useState(false);
+
+  useEffect(() => {
+    setPlayVideo(false);
+  }, [JSON.stringify(bumper)]);
+
   if(!bumper) { return; }
 
   return (
-    <div className={S("bumper-preview")}>
-      <BumperPreview bumper={bumper} />
-      <BumperPreview bumper={bumper} mobile />
+    <div>
+      <Group mt={50} mb={20} align="center" position="apart" w={1310}>
+        <div>
+          <Title order={4} fw={500}>Preview</Title>
+          <Title order={6} color="gray">Approximations for illustration, may appear different in use</Title>
+        </div>
+        <IconButton
+          label={`${playVideo ? "Pause" : "Play"} Video`}
+          Icon={playVideo ? IconPlayerPauseFilled : IconPlayerPlayFilled}
+          color="purple.7"
+          onClick={() => setPlayVideo(!playVideo)}
+        />
+      </Group>
+
+      <div className={S("bumper-preview")}>
+        <BumperPreview
+          bumper={bumper}
+          playVideo={playVideo}
+        />
+        <BumperPreview
+          mobile
+          bumper={bumper}
+          playVideo={playVideo}
+        />
+      </div>
     </div>
   );
 });
@@ -450,39 +476,44 @@ export const MediaCatalogBumper = observer(() => {
           autoplay: true
         }}
       />
+      {
+        !bumper.video && !bumper.video_mobile ? null :
+          <Inputs.Checkbox
+            {...l10n.bumpers.loop}
+            {...inputProps}
+            subcategory={l10n.categories.display}
+            defaultValue={false}
+            field="loop"
+          />
+      }
+
       <Inputs.ImageInput
         {...inputProps}
         {...l10n.bumpers.images}
         subcategory={l10n.categories.display}
         componentProps={{w: uiStore.inputWidthWide}}
-        altTextField="background_alt"
+        altTextField="image_alt"
         fields={[
           { field: "image", aspectRatio: 16/9, baseSize: 140, ...l10n.bumpers.image },
           { field: "image_mobile", aspectRatio: 9/16, baseSize: 150, ...l10n.bumpers.image_mobile },
         ]}
       />
-      {
-        bumper.video || bumper.video_mobile ? null :
-          <Inputs.Checkbox
-            {...l10n.bumpers.blur}
-            {...inputProps}
-            defaultValue={false}
-            subcategory={l10n.categories.display}
-            field="blur"
-          />
-      }
-      {
-        bumper.video || bumper.video_mobile ? null :
-          <Inputs.Integer
-            {...l10n.bumpers.duration}
-            {...inputProps}
-            subcategory={l10n.categories.display}
-            defaultValue={8}
-            min={0}
-            max={60}
-            field="duration"
-          />
-      }
+      <Inputs.Checkbox
+        {...l10n.bumpers.blur}
+        {...inputProps}
+        defaultValue={false}
+        subcategory={l10n.categories.display}
+        field="blur"
+      />
+      <Inputs.Integer
+        {...l10n.bumpers.duration}
+        {...inputProps}
+        subcategory={l10n.categories.display}
+        defaultValue={8}
+        min={0}
+        max={60}
+        field="duration"
+      />
 
       <Title order={5} mt={35} mb="xs">
         { l10n.categories.bumper_offers }
@@ -507,6 +538,17 @@ export const MediaCatalogBumper = observer(() => {
         subcategory={l10n.categories.bumper_offers}
         path={UrlJoin(inputProps.path, "offers")}
         field="bottom_text"
+      />
+      <Inputs.Select
+        {...l10n.bumpers.offers.format}
+        {...inputProps}
+        path={UrlJoin(inputProps.path, "offers")}
+        field="format"
+        defaultValue="button"
+        options={[
+          {label: "Button", value: "button"},
+          {label: "Details", value: "details"}
+        ]}
       />
       <Inputs.Select
         {...l10n.bumpers.offers.position}
@@ -538,17 +580,6 @@ export const MediaCatalogBumper = observer(() => {
           { label: "Bottom", value: "bottom" }
         ]}
       />
-      <Inputs.Select
-        {...l10n.bumpers.offers.format}
-        {...inputProps}
-        path={UrlJoin(inputProps.path, "offers")}
-        field="format"
-        defaultValue="button"
-        options={[
-          {label: "Button", value: "button"},
-          {label: "Details", value: "details"}
-        ]}
-      />
       <Inputs.List
         {...l10n.bumpers.offers.items}
         {...inputProps}
@@ -560,10 +591,6 @@ export const MediaCatalogBumper = observer(() => {
           <BumperOffer index={index} />
         }
       />
-
-      <Title order={4} mt={50} fw={500}>Preview</Title>
-      <Title order={6} mb={20} color="gray">Approximations for illustration, may appear different in use</Title>
-
       <BumperPreviews key={JSON.stringify(bumper)} bumper={bumper} />
     </PageContent>
   );

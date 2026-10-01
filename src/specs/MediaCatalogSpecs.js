@@ -25,10 +25,12 @@ export const MediaCatalogBumperSpec = {
   video: undefined,
   duration: 8,
   blur: false,
+  loop: false,
   url: "",
   offers: {
     title: "",
     subtitle: "",
+    bottom_text: "",
     position: "bottom_right",
     position_mobile: "center",
     format: "button", // detailed

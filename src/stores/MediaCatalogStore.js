@@ -11,7 +11,6 @@ import {
   MediaCatalogMediaOtherSpec,
   MediaCatalogMediaVideoSpec,
   MediaCatalogBumperSpec,
-  MediaCatalogBumperOfferSpec,
   MediaCatalogSpec
 } from "@/specs/MediaCatalogSpecs.js";
 import UrlJoin from "url-join";
