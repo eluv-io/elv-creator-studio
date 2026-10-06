@@ -98,7 +98,7 @@ const BumperOfferPreview = observer(({offer, format, compact}) => {
   );
 });
 
-const BumperPreview = observer(({bumper, mobile, playVideo}) => {
+export const BumperPreview = observer(({bumper, mobile, playVideo, unmute, className=""}) => {
   const [player, setPlayer] = useState(undefined);
 
   const showCompactOffers = bumper.offers.format === "details" && bumper.offers.items.length > 2;
@@ -118,10 +118,8 @@ const BumperPreview = observer(({bumper, mobile, playVideo}) => {
       player.controls.Pause();
   }, [playVideo]);
 
-  console.log("Render", mobile, player);
-
   return (
-    <div className={S("bumper", mobile ? "bumper--mobile" : "", bumper.blur ? "bumper--blur" : "")}>
+    <div className={[S("bumper", mobile ? "bumper--mobile" : "", bumper.blur ? "bumper--blur" : ""), className].join(" ")}>
       {
         !imageUrl ? null :
           <div className={S("bumper__image-container")}>
@@ -137,8 +135,8 @@ const BumperPreview = observer(({bumper, mobile, playVideo}) => {
               videoLinkInfo={videoLinkInfo}
               className={S("bumper__video")}
               controls={{
-                muted: EluvioPlayerParameters.muted.ON,
-                autoplay: EluvioPlayerParameters.autoplay.OFF,
+                muted: EluvioPlayerParameters.muted[unmute ? "OFF" : "ON"],
+                autoplay: EluvioPlayerParameters.autoplay[playVideo ? "ON" : "OFF"],
                 controls: EluvioPlayerParameters.controls.OFF,
                 loop: bumper.loop
               }}
@@ -218,31 +216,40 @@ const BumperPreviews = observer(({bumper}) => {
           <Title order={4} fw={500}>Preview</Title>
           <Title order={6} color="gray">Approximations for illustration, may appear different in use</Title>
         </div>
-        <IconButton
-          label={`${playVideo ? "Pause" : "Play"} Video`}
-          Icon={playVideo ? IconPlayerPauseFilled : IconPlayerPlayFilled}
-          color="purple.7"
-          onClick={() => setPlayVideo(!playVideo)}
-        />
+        {
+          !bumper.video && !bumper.video_mobile ? null :
+            <IconButton
+              label={`${playVideo ? "Pause" : "Play"} Video`}
+              Icon={playVideo ? IconPlayerPauseFilled : IconPlayerPlayFilled}
+              color="purple.7"
+              onClick={() => setPlayVideo(!playVideo)}
+            />
+        }
       </Group>
 
       <div className={S("bumper-preview")}>
-        <BumperPreview
-          bumper={bumper}
-          playVideo={playVideo}
-        />
-        <BumperPreview
-          mobile
-          bumper={bumper}
-          playVideo={playVideo}
-        />
+        <div className={S("bumper-container", "bumper-container--desktop")}>
+          <BumperPreview
+            bumper={bumper}
+            playVideo={playVideo}
+            className={S("bumper-preview__preview-desktop")}
+          />
+        </div>
+        <div className={S("bumper-container", "bumper-container--mobile")}>
+          <BumperPreview
+            mobile
+            bumper={bumper}
+            playVideo={playVideo}
+            className={S("bumper-preview__preview-mobile")}
+          />
+        </div>
       </div>
     </div>
   );
 });
 
-export const BumperOffer = observer(({index}) => {
-  const { mediaCatalogId, bumperId } = useParams();
+const BumperOffer = observer(({index}) => {
+  const {mediaCatalogId, bumperId } = useParams();
 
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
 
@@ -399,7 +406,7 @@ export const MediaCatalogBumper = observer(() => {
 
   return (
     <PageContent
-      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.bumpers}`}
+      title={`${info.name || mediaCatalog.name || "MediaCatalog"} - ${l10n.categories.bumpers} - ${bumper.label}`}
       section="mediaCatalog"
       backLink={UrlJoin("/media-catalogs", mediaCatalogId, "bumpers")}
       useHistory

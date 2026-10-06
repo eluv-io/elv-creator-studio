@@ -11,7 +11,8 @@ import {
   MediaCatalogMediaOtherSpec,
   MediaCatalogMediaVideoSpec,
   MediaCatalogBumperSpec,
-  MediaCatalogSpec
+  MediaCatalogSpec,
+  MediaCatalogSerialSpec
 } from "@/specs/MediaCatalogSpecs.js";
 import UrlJoin from "url-join";
 import {LocalizeString} from "@/components/common/Misc.jsx";
@@ -39,7 +40,8 @@ class MediaCatalogStore {
     "media_lists": "mlst",
     "media_collections": "mcol",
     "attribute": "attr",
-    "bumper": "bmpr"
+    "bumper": "bmpr",
+    "serial": "msrl"
   };
 
   IMAGE_ASPECT_RATIOS = {
@@ -366,6 +368,39 @@ class MediaCatalogStore {
     return id;
   }
 
+  CreateSerial({page, mediaCatalogId, copySerialId}) {
+    let id = `${this.ID_PREFIXES.serial}${GenerateUUID()}`;
+    let spec = Clone(MediaCatalogSerialSpec);
+
+    if(copySerialId) {
+      const copyItem = this.mediaCatalogs[mediaCatalogId].metadata.public.asset_metadata.info.serials?.[copySerialId];
+
+      spec = Clone(toJS(copyItem));
+      spec.label = `${spec.label} (Copy)`;
+    }
+
+    spec.id = id;
+
+    this.AddField({
+      objectId: mediaCatalogId,
+      page,
+      path: "/public/asset_metadata/info/serials",
+      field: id,
+      value: spec,
+      category: this.MediaItemCategory({
+        type: "serials",
+        category: "serial_label",
+        mediaCatalogId,
+        id,
+        title: spec.label,
+        titleField: "label"
+      }),
+      label: spec.label
+    });
+
+    return id;
+  }
+
   MediaItemCategory({type="media", mediaCatalogId, category, id, title, titleField="title"}) {
     return () => {
       title = this.GetMetadata({objectId: mediaCatalogId, path: UrlJoin("/public/asset_metadata/info", type, id), field: titleField}) || title;
@@ -472,7 +507,7 @@ class MediaCatalogStore {
     });
 
     let slugMap = {};
-    ["media", "media_lists", "media_collections"].forEach(type => {
+    ["media", "media_lists", "media_collections", "serials"].forEach(type => {
       Object.keys(mediaCatalog?.[type] || {}).forEach(itemId => {
         const item = mediaCatalog[type][itemId];
 

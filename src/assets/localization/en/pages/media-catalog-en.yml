@@ -7,6 +7,7 @@ nav:
   media_collections: Media Collections
   tags: Tags and Attributes
   bumpers: Ads, Bumpers, and Offers
+  serials: Serials
 form:
   categories:
     media_catalogs: Media Catalogs
@@ -43,6 +44,11 @@ form:
     bumper_offers: Offers
     bumper_offer: Offer
     bumper_offer_action: Action
+    serials: Serials
+    serial: Serial
+    serial_label: Serial '{label}'
+    serial_items: Serial Items
+    serial_item: Serial Item
   type:
     label: Content Type
   type_descriptions:
@@ -442,6 +448,45 @@ form:
           description: Specify which permission item to make purchasable
         url:
           label: Link URL
+  serials:
+    serials:
+      label: Serials
+      fieldLabel: Serial
+    serial:
+      label: Serial
+    slug:
+      label: URL Slug
+      description: "If specified, this value will be used in the URL instead of the item's ID. URL slugs MUST be unique across this catalog and all other catalogs that may be used in conjunction with this catalog.\n NOTE: Once set, a URL slug should not be changed"
+    tags:
+      label: Tags
+    title:
+      label: Title
+    subtitle:
+      label: Subtitle
+    title_icon:
+      label: Title Icon
+    badges:
+      label: Badges
+      fieldLabel: Badge
+    poster_image_mobile:
+      label: Poster Image
+    items:
+      label: Items
+      fieldLabel: Item
+    item:
+      type:
+        label: Type
+        description: Specify whether this item is a media item, or an ad/bumper/offer
+      permissions:
+        label: Permissions
+      permission_behavior:
+        label: Permission Behavior
+        description: Specify if having permissions grants access to this item, or if having permissions omits this item
+      media_item_id:
+        label: Media Item
+        description: " "
+      bumper_id:
+        label: Bumper
 
 
 

@@ -38,6 +38,32 @@ export const MediaCatalogBumperSpec = {
   }
 };
 
+export const MediaCatalogSerialItemSpec = {
+  id: undefined,
+  label: "<New Serial Item>",
+  type: "media",
+  permissions: [],
+  permission_behavior: "hide",
+  media_item_id: undefined,
+  bumper_id: undefined
+};
+
+export const MediaCatalogSerialSpec = {
+  id: undefined,
+  type: "serial",
+  label: "<New Serial>",
+  description: "",
+  tags: [],
+  display: {
+    poster_image_mobile: undefined,
+    title: "<New Serial>",
+    title_icon: undefined,
+    subtitle: "",
+    badges: []
+  },
+  items: []
+};
+
 export const MediaCatalogAdditionalViewSpec = {
   media_link: undefined,
   label: ""
@@ -173,5 +199,7 @@ export const MediaCatalogSpec = {
   tags: [],
   media: {},
   media_lists: {},
-  media_collections: {}
+  media_collections: {},
+  bumpers: {},
+  serials: {}
 };

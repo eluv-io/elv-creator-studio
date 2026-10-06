@@ -1,5 +1,11 @@
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .bumper-preview {
   background-color: #333;
+  border-radius: 10px;
   display: flex;
   gap: 20px;
   padding: 20px;
@@ -7,18 +13,38 @@
 
   --text-primary: white;
   --text-secondary: #ccc;
+
+  &__preview-desktop {
+    width: 950px;
+  }
+
+  &__preview-mobile {
+    width: 300px;
+  }
+}
+
+.bumper-container {
+  &--desktop {
+    aspect-ratio: 16/9;
+    width: 950px;
+  }
+
+  &--mobile {
+    aspect-ratio: 9/16;
+    width: 300px;
+  }
 }
 
 .bumper {
   align-items: center;
-  aspect-ratio: 16/9;
   background: black;
   color: var(--text-primary);
   display: flex;
+  height: 100%;
   justify-content: center;
   overflow: hidden;
   position: relative;
-  width: 950px;
+  width: 100%;
 
   &--blur {
     .bumper__image,
@@ -29,14 +55,15 @@
 
   &__image-container,
   &__video-container {
+    height: 100%;
     inset: 0;
     overflow: hidden;
     position: absolute;
+    width: 100%;
   }
 
   &__image,
   &__video {
-    aspect-ratio: 16/9;
     height: 100%;
     object-fit: cover;
     width: 100%;
@@ -170,13 +197,8 @@
 
   &--mobile {
     font-size: 12px;
-    width: 300px;
 
     .bumper {
-      &__image {
-        aspect-ratio: 9/16;
-      }
-
       &__content {
         padding: 0;
       }
@@ -204,10 +226,6 @@
       }
     }
 
-    .offer__button {
-      width: 100%;
-    }
-
     .offer {
       font-size: 9px;
       padding: 15px 10px;
@@ -217,6 +235,7 @@
       &__button {
         margin-top: 10px;
         padding: 8px 0;
+        width: 100%;
       }
     }
 
@@ -238,6 +257,7 @@
   justify-content: center;
   margin-inline: auto;
   max-width: 300px;
+  min-width: 200px;
   padding: 10px 20px;
   transition: border 0.35s ease;
   width: 100%;
