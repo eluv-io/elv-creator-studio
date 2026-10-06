@@ -8,7 +8,7 @@ import {MediaItemCard} from "@/components/common/MediaCatalog.jsx";
 import {PocketSidebarTabSpec} from "@/specs/PocketSpecs.js";
 import {forwardRef} from "react";
 
-const PocketSidebarSettings = observer(() => {
+const SidebarSettings = observer(() => {
   const { pocketId } = useParams();
 
   const pocket = pocketStore.pockets[pocketId];
@@ -44,11 +44,7 @@ const PocketSidebarSettings = observer(() => {
   });
 
   return (
-    <PageContent
-      title={`${info.name || pocket.name || "Pocket TV Property"} - Sidebar Settings`}
-      section="pocket"
-      useHistory
-    >
+    <>
       <Title order={3} fw={500} mt={50} maw={uiStore.inputWidth} mb="md">{l10n.categories.sidebar_content}</Title>
 
       <Inputs.Select
@@ -154,8 +150,102 @@ const PocketSidebarSettings = observer(() => {
           </>
         }
       />
+    </>
+  );
+});
+
+const SerialSettings = observer(() => {
+  const { pocketId } = useParams();
+
+  const pocket = pocketStore.pockets[pocketId];
+
+  if(!pocket) { return null; }
+
+  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.pocket.form;
+  const inputProps = {
+    store: pocketStore,
+    objectId: pocketId,
+    category: l10n.categories.content,
+    subcategory: l10n.categories.serial,
+    path: "/public/asset_metadata/info/serial_config"
+  };
+
+  const serials = info.media_catalogs
+    .map(mediaCatalogId => {
+      const catalogSerials = mediaCatalogStore.mediaCatalogs[mediaCatalogId]?.metadata?.public?.asset_metadata?.info?.serials || {};
+
+      return Object.keys(catalogSerials)
+        .map(serialId => ({
+          label: catalogSerials[serialId].label || catalogSerials[serialId].title || serialId,
+          value: serialId
+        }));
+    })
+    .flat();
+
+  return (
+    <>
+      <Inputs.List
+        {...inputProps}
+        {...l10n.serials.serials}
+        field="serials"
+        renderItem={props =>
+          <Inputs.Select
+            {...props}
+            {...l10n.serials.serial}
+            field="serial_id"
+            options={serials}
+          />
+        }
+      />
+    </>
+  );
+});
+
+const PocketContentSettings = observer(() => {
+  const { pocketId } = useParams();
+
+  const pocket = pocketStore.pockets[pocketId];
+
+  if(!pocket) { return null; }
+
+  const info = pocket?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.pocket.form;
+  const inputProps = {
+    store: pocketStore,
+    objectId: pocketId,
+    category: l10n.categories.content,
+    path: "/public/asset_metadata/info"
+  };
+
+  return (
+    <PageContent
+      title={`${info.name || pocket.name || "Pocket TV Property"} - ${l10n.categories.content}`}
+      section="pocket"
+      useHistory
+    >
+      <Inputs.Select
+        {...inputProps}
+        {...l10n.content.content_type}
+        category={l10n.categories.content}
+        defaultValue="sidebar"
+        field="content_type"
+        options={[
+          {label: "Media with Sidebar", value: "media"},
+          {label: "Serials", value: "serial"}
+        ]}
+      />
+
+      {
+        info.content_type === "sidebar" ?
+          <SidebarSettings /> :
+          <SerialSettings />
+      }
+
     </PageContent>
   );
 });
 
-export default PocketSidebarSettings;
+export default PocketContentSettings;

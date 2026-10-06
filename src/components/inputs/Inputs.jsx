@@ -983,7 +983,7 @@ const SingleImageInput = observer(({
         shadow="sm"
         withBorder
         w="max-content"
-        p={componentProps?.p || 30}
+        p={componentProps?.p || 20}
         mb="md"
         style={{position: "relative", display: "flex", opacity: disabled ? 0.5 : 1}}
         {...componentProps}

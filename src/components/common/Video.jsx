@@ -60,7 +60,7 @@ const Video = observer(({
             playerCallback: params => {
               playerOptions?.playerCallback?.(params);
               SetPlayer?.(params.player);
-            }
+            },
           },
         }
       );

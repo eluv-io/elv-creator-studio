@@ -4,6 +4,7 @@ nav:
   general: General Settings
   theme: Theme and Styling
   media: Media
+  content: Content Settings
   sidebar: Sidebar Settings
 form:
   categories:
@@ -22,6 +23,8 @@ form:
     media_item_label: Media Item `{label}`
     display: Display Settings
     tags: Tags
+    content: Content Settings
+    serial: Serial Settings
     sidebar: Sidebar Settings
     sidebar_banners: Sidebar Banners
     sidebar_content: Sidebar Content
@@ -300,6 +303,16 @@ form:
       end_time:
         label: End Time
         description: Live content starting before the specified time
+  content:
+    content_type:
+      label: Content Type
+      description: Specify whether this property should be for media with a sidebar, or serials
+  serials:
+    serials:
+      label: Serials
+      fieldLabel: Serial
+    serial:
+      label: Serial
   sidebar:
     multiview_content:
       label: Multiview Content
