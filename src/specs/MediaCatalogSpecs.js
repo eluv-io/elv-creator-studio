@@ -23,7 +23,7 @@ export const MediaCatalogBumperSpec = {
   tags: [],
   image: undefined,
   video: undefined,
-  duration: 8,
+  duration: 0,
   blur: false,
   loop: false,
   url: "",

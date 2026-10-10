@@ -27,7 +27,10 @@ components:
   forms:
     advanced_settings: Advanced Settings
   inputs:
+    prepend: Add {item} to Beginning
+    append: Add {item} to End
     add: Add {item}
+    reorder: Reorder
     select_file: Select File
     select_file_label: Select file for {item}
     edit: Edit {item}

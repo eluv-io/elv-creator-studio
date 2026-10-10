@@ -196,7 +196,7 @@ const SerialPreview = observer(() => {
   );
 });
 
-const SerialItem = observer(({index}) => {
+const SerialItem = observer(({index, reordering}) => {
   const {mediaCatalogId, serialId} = useParams();
   const [showMediaSelectionModal, setShowMediaSelectionModal] = useState(false);
 
@@ -230,6 +230,19 @@ const SerialItem = observer(({index}) => {
   };
 
   const selectedMediaItem = item.type === "media" && info.media[item.media_item_id];
+
+  if(reordering) {
+    return (
+      <Inputs.Text
+        {...inputProps}
+        componentProps={{
+          mb: 0,
+          variant: "filled"
+        }}
+        field="label"
+      />
+    );
+  }
 
   return (
     <>
@@ -431,11 +444,12 @@ export const MediaCatalogSerial = observer(() => {
       <Inputs.List
         {...l10n.serials.items}
         {...inputProps}
+        reorderable
         subcategory={l10n.categories.serial_items}
         newItemSpec={MediaCatalogSerialItemSpec}
         field="items"
-        renderItem={({index}) =>
-          <SerialItem index={index} />
+        renderItem={({index, reordering}) =>
+          <SerialItem index={index} reordering={reordering} />
         }
       />
 

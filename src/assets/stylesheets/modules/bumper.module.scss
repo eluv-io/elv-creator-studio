@@ -19,7 +19,7 @@
   }
 
   &__preview-mobile {
-    width: 300px;
+    width: 350px;
   }
 }
 
@@ -31,7 +31,7 @@
 
   &--mobile {
     aspect-ratio: 9/16;
-    width: 300px;
+    width: 350px;
   }
 }
 
@@ -200,7 +200,11 @@
 
     .bumper {
       &__content {
-        padding: 0;
+        padding: 65px 0 0;
+
+        &--center {
+          padding: 65px 0;
+        }
       }
 
       &__offers-subtitle {
@@ -341,7 +345,7 @@
 }
 
 .compact-offer {
-  background: linear-gradient(29deg, #0A0A0A 7.99%, #383838 88.36%);
+    background: linear-gradient(29deg, #0A0A0A 7.99%, #383838 88.36%);
   display: flex;
   gap: 5px;
   margin-inline: auto;
@@ -357,22 +361,22 @@
   }
 
   &__title {
-    font-size: 1.2em;
+    font-size: 1.4em;
     font-weight: 700;
   }
 
   &__price {
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: bold;
   }
 
   &__subtitle {
-    font-size: 0.7em;
+    font-size: 0.8em;
     font-weight: 700;
   }
 
   &__description {
-    font-size: 0.8em;
+    font-size: 0.9em;
     white-space: pre-wrap;
   }
 
@@ -395,7 +399,7 @@
   &__button {
     border-radius: 30px;
     color: black;
-    font-size: 0.8em;
+    font-size: 1em;
     font-weight: 600;
     padding: 8px 0;
     transition: all 0.35s ease;
