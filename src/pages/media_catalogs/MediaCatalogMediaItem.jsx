@@ -237,7 +237,12 @@ const MediaConfiguration = observer(({mediaItem}) => {
             (mediaItem.media_link_info && mediaItem.media_link_info?.type !== "main") ? null :
               <>
                 {
-                  !offerings || offerings.length <= 1 ? null :
+                  !offerings || offerings.length === 0 ?
+                    <Inputs.List
+                      {...inputProps}
+                      {...l10n.media.offerings}
+                      field="offerings"
+                    /> :
                     <Inputs.MultiSelect
                       {...inputProps}
                       {...l10n.media.offerings}
