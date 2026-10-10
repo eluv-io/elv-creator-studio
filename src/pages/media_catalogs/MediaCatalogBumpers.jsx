@@ -158,25 +158,25 @@ export const BumperPreview = observer(({bumper, mobile, playVideo, unmute, class
           )
         }
       >
-        {
-          (bumper.offers?.items || []).length === 0 ? null :
-            <div
-              className={
-                S(
-                  "bumper__offers",
-                  `bumper__offers--${bumper.offers.format}`,
-                  showCompactOffers ? "bumper__offers--compact" : ""
-                )
-              }
-            >
-              {
-                !bumper.offers.title ? null :
-                  <div className={S("bumper__offers-title")}>{bumper.offers.title}</div>
-              }
-              {
-                !bumper.offers.subtitle ? null :
-                  <div className={S("bumper__offers-subtitle")}>{bumper.offers.subtitle}</div>
-              }
+        <div
+          className={
+            S(
+              "bumper__offers",
+              `bumper__offers--${bumper.offers.format}`,
+              showCompactOffers ? "bumper__offers--compact" : ""
+            )
+          }
+        >
+          {
+            !bumper.offers.title ? null :
+              <div className={S("bumper__offers-title")}>{bumper.offers.title}</div>
+          }
+          {
+            !bumper.offers.subtitle ? null :
+              <div className={S("bumper__offers-subtitle")}>{bumper.offers.subtitle}</div>
+          }
+          {
+            (bumper.offers?.items || []).length === 0 ? null :
               <div className={S("bumper__offer-items")}>
                 {
                   bumper.offers.items.map((offer, index) =>
@@ -189,12 +189,12 @@ export const BumperPreview = observer(({bumper, mobile, playVideo, unmute, class
                   )
                 }
               </div>
-              {
-                !bumper.offers.bottom_text ? null :
-                  <div className={S("bumper__offers-bottom-text")}>{bumper.offers.bottom_text}</div>
-              }
-            </div>
-        }
+          }
+          {
+            !bumper.offers.bottom_text ? null :
+              <div className={S("bumper__offers-bottom-text")}>{bumper.offers.bottom_text}</div>
+          }
+        </div>
       </div>
     </div>
   );
@@ -516,7 +516,6 @@ export const MediaCatalogBumper = observer(() => {
         {...l10n.bumpers.duration}
         {...inputProps}
         subcategory={l10n.categories.display}
-        defaultValue={8}
         min={0}
         max={60}
         field="duration"

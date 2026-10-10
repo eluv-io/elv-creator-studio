@@ -51,6 +51,8 @@ import {DataTable} from "mantine-datatable";
 import {
   IconX,
   IconPlus,
+  IconRowInsertTop,
+  IconRowInsertBottom,
   IconGripVertical,
   IconPhotoX,
   IconEdit,
@@ -65,7 +67,7 @@ import {
   IconUnlink,
   IconCopy,
   IconCaretDownFilled,
-  IconCaretUpFilled
+  IconCaretUpFilled, IconMenuOrder
 } from "@tabler/icons-react";
 
 import VideoIcon from "@/assets/icons/video.svg";
@@ -1698,6 +1700,8 @@ const ListInputs = observer(({
   index,
   renderItem,
   localizable,
+  reordering,
+  reorderField,
   inputProps={}
 }) => {
   if(renderItem) {
@@ -1713,7 +1717,8 @@ const ListInputs = observer(({
       category,
       subcategory,
       actionLabel,
-      fieldLabel
+      fieldLabel,
+      reordering
     });
   }
 
@@ -1747,6 +1752,10 @@ const ListInputs = observer(({
         fields.map(({InputComponent, render, ...props}) => {
           const fieldPath = UrlJoin(path, field, index.toString());
           const key = `input-${props.field}`;
+
+          if(reordering && props.field !== reorderField) {
+            return null;
+          }
 
           if(render) {
             return render({
@@ -1801,6 +1810,8 @@ const List = observer(({
   fieldLabel,
   fields=[],
   newItemSpec={},
+  reorderable,
+  reorderField,
   sortable=true,
   renderItem,
   showBottomAddButton,
@@ -1818,6 +1829,7 @@ const List = observer(({
   const [filter, setFilter] = useState("");
   const [debouncedFilter] = useDebouncedValue(filter, 200);
   const [hidden, setHidden] = useState(false);
+  const [reordering, setReordering] = useState(false);
 
   const disabled = rootStore.localizing;
 
@@ -1907,6 +1919,8 @@ const List = observer(({
                   renderItem={renderItem}
                   inputProps={inputProps}
                   localizable={localizable}
+                  reordering={reordering}
+                  reorderField={reorderField}
                 />
               </Container>
 
@@ -1940,37 +1954,110 @@ const List = observer(({
     );
   });
 
-  let addButton = (
-    <IconButton
-      disabled={disabled}
-      label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
-      Icon={IconPlus}
-      onClick={async () => {
-        let value = simpleList ? "" : newItemSpec;
-        if(AddItem) {
-          value = await AddItem();
-        }
+  let reorderButton;
+  if(reorderable) {
+    reorderButton = (
+      <IconButton
+        color={reordering ? "purple.6" : undefined}
+        disabled={disabled}
+        label={rootStore.l10n.components.inputs.reorder}
+        Icon={IconMenuOrder}
+        onClick={() => setReordering(!reordering)}
+      />
+    );
+  }
 
-        store.InsertListElement({
-          objectId,
-          page: location.pathname,
-          path,
-          field,
-          value,
-          category,
-          subcategory,
-          fieldName: label,
-          label: actionLabel || fieldLabel
-        });
-      }}
-    />
-  );
+  let addButton;
+  if(items.length === 0) {
+    addButton = (
+      <IconButton
+        disabled={disabled}
+        label={LocalizeString(rootStore.l10n.components.inputs.add, {item: fieldLabel})}
+        Icon={IconPlus}
+        onClick={async () => {
+          let value = simpleList ? "" : newItemSpec;
+          if(AddItem) {
+            value = await AddItem();
+          }
+
+          store.InsertListElement({
+            objectId,
+            page: location.pathname,
+            path,
+            field,
+            value,
+            category,
+            subcategory,
+            fieldName: label,
+            label: actionLabel || fieldLabel
+          });
+        }}
+      />
+    );
+  } else {
+    addButton = (
+      <>
+        <IconButton
+          disabled={disabled}
+          label={LocalizeString(rootStore.l10n.components.inputs.prepend, {item: fieldLabel})}
+          Icon={IconRowInsertTop}
+          onClick={async () => {
+            let value = simpleList ? "" : newItemSpec;
+            if(AddItem) {
+              value = await AddItem();
+            }
+
+            store.InsertListElement({
+              objectId,
+              page: location.pathname,
+              path,
+              field,
+              value,
+              category,
+              subcategory,
+              index: 0,
+              fieldName: label,
+              label: actionLabel || fieldLabel
+            });
+          }}
+        />
+        <IconButton
+          disabled={disabled}
+          label={LocalizeString(rootStore.l10n.components.inputs.append, {item: fieldLabel})}
+          Icon={IconRowInsertBottom}
+          onClick={async () => {
+            let value = simpleList ? "" : newItemSpec;
+            if(AddItem) {
+              value = await AddItem();
+            }
+
+            store.InsertListElement({
+              objectId,
+              page: location.pathname,
+              path,
+              field,
+              value,
+              category,
+              subcategory,
+              fieldName: label,
+              label: actionLabel || fieldLabel
+            });
+          }}
+        />
+      </>
+    );
+  }
 
   showBottomAddButton = showBottomAddButton || items.length >= 1;
 
   let numberOfItems = items.length;
   if(hidden) {
     items = [];
+    addButton = null;
+    reorderButton = null;
+  }
+
+  if(reordering) {
     addButton = null;
   }
 
@@ -1996,7 +2083,7 @@ const List = observer(({
         miw={`min(100%, ${shrink ? uiStore.inputWidthNarrow : uiStore.inputWidth}px)`}
         {...componentProps}
       >
-        <Container p={0} pb={showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
+        <Container p={0} pb={!hidden && showBottomAddButton ? 50 : 0} m={0} mt={items.length > 0 ? "md" : 0} maw="unset">
           { children }
           <DragDropContext
             onDragEnd={({source, destination}) =>
@@ -2025,7 +2112,7 @@ const List = observer(({
           </DragDropContext>
           <Group position="right" style={{position: "absolute", top: 0, right: 0}}>
             {
-              numberOfItems === 0 ? null :
+              numberOfItems === 0 || reordering ? null :
                 <IconButton
                   color={hidden ? "purple.6" : "gray.6"}
                   disabled={disabled}
@@ -2034,6 +2121,7 @@ const List = observer(({
                   onClick={() => setHidden(!hidden)}
                 />
             }
+            {reorderButton}
             {addButton}
           </Group>
           {
@@ -2044,7 +2132,7 @@ const List = observer(({
           }
           {
             !hidden || numberOfItems === 0 ? null :
-            <Text fz={12} mt={20} color="gray.6">{numberOfItems} hidden</Text>
+            <Text fz={14} color="gray.6">{numberOfItems} hidden</Text>
           }
         </Container>
       </InputWrapper>
