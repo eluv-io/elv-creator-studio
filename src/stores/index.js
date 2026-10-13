@@ -139,7 +139,7 @@ class RootStore {
     }
 
     if(!this.tenantInfoObjectId) {
-       
+
       this.DebugLog({
         error: `Tenant info object ID (public/ml_config) not set for this tenant (${this.tenantId})`,
         level: this.logLevels.DEBUG_LEVEL_LOW
@@ -182,7 +182,7 @@ class RootStore {
       this.client?.SendMessage({
         options: {
           operation: "SetFramePath",
-          path: UrlJoin("#", window.location.pathname)
+          path: `#${window.location.pathname}`
         }
       });
     }, 500);
