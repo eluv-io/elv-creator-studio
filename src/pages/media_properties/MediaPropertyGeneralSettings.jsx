@@ -14,7 +14,9 @@ import {
   MediaPropertyFooterItemSpec,
   MediaPropertySubpropertySpec,
   MediaPropertyFAQSpec,
-  MediaPropertyHeaderLinkSpec
+  MediaPropertyHeaderLinkSpec,
+  MediaPropertyFAQQuestionSpec,
+  MediaPropertyFAQQuestionImageSpec
 } from "@/specs/MediaPropertySpecs.js";
 import {LocalizeString} from "@/components/common/Misc.jsx";
 import CountryCodesList from "country-codes-list";
@@ -237,6 +239,9 @@ const FAQForm = observer(({index}) => {
         localizable
         maw="100%"
         w="100%"
+        newItemSpec={MediaPropertyFAQQuestionSpec}
+        reorderable
+        reorderField="question"
         field="questions"
         fields={[
           { field: "question", InputComponent: Inputs.Text, ...l10n.general.faq.question },
@@ -245,11 +250,13 @@ const FAQForm = observer(({index}) => {
             field: "video",
             InputComponent: Inputs.FabricBrowser,
             previewable: true,
+            localizable: true,
             ...l10n.general.faq.video
           },
           {
             field: "images",
             InputComponent: Inputs.List,
+            newItemSpec: MediaPropertyFAQQuestionImageSpec,
             ...l10n.general.faq.images,
             fields: [
               {

@@ -54,6 +54,20 @@ export const MediaPropertyFooterItemSpec = {
   content_html: undefined
 };
 
+export const MediaPropertyFAQQuestionImageSpec = {
+  position: "inside",
+  link: "",
+  image: undefined,
+  image_mobile: undefined
+};
+
+export const MediaPropertyFAQQuestionSpec = {
+  question: "",
+  answer: "",
+  video: undefined,
+  images: []
+};
+
 export const MediaPropertyFAQSpec = {
   slug: undefined,
   title: "",

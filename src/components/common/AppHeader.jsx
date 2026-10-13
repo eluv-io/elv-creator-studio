@@ -32,7 +32,6 @@ const LocalizationModal = observer(({opened, Close}) => {
         withinPortal={true}
         searchable
         defaultValue=""
-        clearable
         placeholder="Select Language"
         onChange={value => {
           setLocalization(value);

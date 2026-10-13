@@ -233,7 +233,7 @@ class EditStore {
 
     // Empty object
     if(!Object.values(updatedMetadata).find(item => item)) {
-      return undefined;
+      return {};
     }
 
     return updatedMetadata;
