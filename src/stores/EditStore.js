@@ -210,23 +210,57 @@ class EditStore {
       return metadata;
     }
 
+    // Object with all keys as integers - this should be an array
+    if(
+      Object.keys(metadata).length > 0 &&
+      !Object.keys(metadata).find(key => parseInt(key).toString() !== key.toString())
+    ) {
+      let newMetadata = [];
+      Object.keys(metadata).forEach(key =>
+        newMetadata[parseInt(key)] = metadata[key]
+      );
+
+      metadata = newMetadata;
+    }
+
     if(Array.isArray(metadata)) {
-      let updatedArray = metadata.map(item => this.FormatLocalization(item));
+      let arrayContentType;
+      metadata.forEach(item => {
+        if(!item || arrayContentType) { return; }
+
+        if(typeof item === "object") {
+          arrayContentType = Array.isArray(item) ? "array" : "object";
+        } else {
+          arrayContentType = (typeof item);
+        }
+      });
+
+      let updatedArray = metadata.map(item => {
+        let value = this.FormatLocalization(item);
+
+        if(value) { return value; }
+
+        switch(arrayContentType) {
+          case "object":
+            return {};
+          case "array":
+            return [];
+          case "string":
+            return "";
+          default:
+            return null;
+        }
+      });
 
       // Empty array
       if(!updatedArray.find(item => item)) {
-        return undefined;
+        return [];
       }
 
       return updatedArray;
     }
 
     let updatedMetadata = {};
-    // All keys are integers, this should be an array
-    if(!Object.keys(metadata).find(key => key.toString() !== parseInt(key).toString())) {
-      updatedMetadata = [];
-    }
-
     Object.keys(metadata).forEach(key =>
       updatedMetadata[key] = this.FormatLocalization(metadata[key])
     );

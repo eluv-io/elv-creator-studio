@@ -154,7 +154,7 @@ const SaveModalContent = observer(() => {
                 commitMessages
               });
 
-              if(Object.keys(errors).length === 0) {
+              if(Object.keys(errors || {}).length === 0) {
                 // Saved successfully
                 editStore.ToggleSaveModal(false);
               } else {

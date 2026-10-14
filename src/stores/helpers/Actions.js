@@ -824,12 +824,113 @@ const RedoAction = flow(function * ({objectId, page, localizationKey}) {
   this.actionStack[objectId].push(action);
 });
 
+const InitializeLocalizationPathItem = ({original, localized, path, leafType}) => {
+  let nextKey = path.split("/").filter(token => token)[0];
+  const nextPath = path.split("/").filter(token => token).slice(1).join("/");
+
+  let formatted = localized;
+  if(Array.isArray(original)) {
+    // original is array, originalValue is item in array, nextKey is index
+    nextKey = parseInt(nextKey);
+    const firstItem = original.find(item => item);
+    leafType = Array.isArray(firstItem) ? "array" : typeof firstItem;
+
+    formatted = Array.isArray(formatted) ? formatted : [];
+
+    original.forEach((item, index) => {
+      if(!formatted[index]) {
+        if(leafType === "array") {
+          formatted[index] = [];
+        } else if(leafType === "object") {
+          formatted[index] = {};
+        } else if(leafType === "string") {
+          formatted[index] = "";
+        }
+      }
+    });
+
+    formatted[nextKey] = InitializeLocalizationPathItem({
+      original: original[nextKey],
+      formatted: formatted[nextKey],
+      path: nextPath,
+      leafType
+    });
+  } else if(typeof original === "object") {
+    formatted = {
+      ...(formatted || {}),
+      [nextKey]: InitializeLocalizationPathItem({
+        original: original[nextKey],
+        localized: localized?.[nextKey],
+        path: nextPath
+      })
+    };
+  } else if(!localized && leafType) {
+    switch(leafType) {
+      case "array":
+        formatted = [];
+        break;
+
+      case "object":
+        formatted = {};
+        break;
+
+      case "string":
+        formatted = "";
+        break;
+    }
+  }
+
+  return formatted;
+};
+
+const InitializeLocalizationPath = flow(function * ({libraryId, objectId, writeToken, localizationKey, path}) {
+  path = path.replace(UrlJoin("/public/asset_metadata/localizations", localizationKey, "info"), "");
+
+  const originalMetadata = yield this.client.ContentObjectMetadata({
+    libraryId,
+    objectId,
+    writeToken,
+    metadataSubtree: "public/asset_metadata/info"
+  });
+
+  const localizationMetadata = (yield this.client.ContentObjectMetadata({
+    libraryId,
+    objectId,
+    writeToken,
+    metadataSubtree: UrlJoin("/public/asset_metadata/localizations", localizationKey, "info")
+  }) || {});
+
+  const formatted = InitializeLocalizationPathItem({
+    original: originalMetadata,
+    localized: localizationMetadata,
+    path
+  });
+
+  yield this.client.MergeMetadata({
+    libraryId,
+    objectId,
+    writeToken,
+    metadataSubtree: UrlJoin("/public/asset_metadata/localizations", localizationKey, "info"),
+    metadata: formatted
+  });
+});
+
 const Save = flow(function * ({libraryId, objectId, writeToken}) {
   if(this.Preprocess) {
     yield this.Preprocess({libraryId, objectId, writeToken});
   }
 
   for(const action of (this.actionStack[objectId] || [])) {
+    if(action.localizationKey) {
+      yield this.InitializeLocalizationPath({
+        libraryId,
+        objectId,
+        writeToken,
+        localizationKey: action.localizationKey,
+        path: action.path
+      });
+    }
+
     yield action.Write({libraryId, objectId, writeToken});
   }
 
@@ -914,6 +1015,7 @@ export const AddActions = (storeClass, objectsMapKey) => {
   storeClass.prototype.UndoQueue = UndoQueue;
   storeClass.prototype.RedoQueue = RedoQueue;
 
+  storeClass.prototype.InitializeLocalizationPath = InitializeLocalizationPath;
   storeClass.prototype.Save = Save;
   storeClass.prototype.ClearActions = ClearActions;
 
