@@ -40,6 +40,7 @@ export const MediaCatalogBumperSpec = {
 
 export const MediaCatalogSerialItemSpec = {
   id: undefined,
+  slug: "",
   label: "<New Serial Item>",
   type: "media",
   permissions: [],

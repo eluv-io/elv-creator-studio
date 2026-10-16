@@ -239,7 +239,7 @@ const PocketContentSettings = observer(() => {
       />
 
       {
-        info.content_type === "sidebar" ?
+        info.content_type === "media" ?
           <SidebarSettings /> :
           <SerialSettings />
       }
