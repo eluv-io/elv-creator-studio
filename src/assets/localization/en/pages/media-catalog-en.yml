@@ -474,6 +474,9 @@ form:
       label: Items
       fieldLabel: Item
     item:
+      slug:
+        label: URL Slug
+        description: "Note: This slug should be unique across all items in the serial"
       type:
         label: Type
         description: Specify whether this item is a media item, or an ad/bumper/offer

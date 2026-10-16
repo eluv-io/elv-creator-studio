@@ -20,6 +20,23 @@ import PermissionItemSelect from "@/components/inputs/permission_set/PermissionI
 
 const S = (...classes) => classes.map(c => BumperStyles[c] || "").join(" ");
 
+const IsBumperPassable = item => {
+  if(item.duration) {
+    // Has an explicit duration
+    return true;
+  }
+
+  if((item.video || item.video_mobile) && !item.loop) {
+    // Has a non-looping video
+    return true;
+  }
+
+  if(item?.offers?.items?.find(offer => offer.action.behavior === "continue")) {
+    // Has an explicit continue button
+    return true;
+  }
+};
+
 const SerialPreviewItem = observer(({serial, item}) => {
   const {mediaCatalogId} = useParams();
 
@@ -93,7 +110,6 @@ const SerialPreview = observer(() => {
   const [permissionItemId, setPermissionItemId] = useState("");
   const [index, setIndex] = useState(0);
 
-
   const mediaCatalog = mediaCatalogStore.mediaCatalogs[mediaCatalogId];
 
   const info = mediaCatalog?.metadata?.public?.asset_metadata?.info || {};
@@ -106,20 +122,32 @@ const SerialPreview = observer(() => {
 
   if(!serial) { return null; }
 
-  const items = (serial.items || [])
-    .filter(item => {
-      if(item.permissions.length === 0) {
-        return true;
-      }
-
+  let items = [];
+  for(let itemIndex = 0; itemIndex < serial.items.length; itemIndex++) {
+    let add = false;
+    const item = serial.items[itemIndex];
+    if(item.permissions.length === 0) {
+      add = true;
+    } else {
       const permissioned = item.permissions.find(p => p === permissionItemId);
 
-      return permissioned ?
+      add = permissioned ?
         // Behavior is show and permissioned
         item.permission_behavior === "show" :
         // Behavior is hide and not permissioned
         item.permission_behavior === "hide";
-    });
+    }
+
+    if(add) {
+      items.push(item);
+
+      if(item.type === "bumper") {
+        if(!IsBumperPassable(info.bumpers?.[item.bumper_id])) {
+          break;
+        }
+      }
+    }
+  }
 
   return (
     <>
@@ -128,7 +156,7 @@ const SerialPreview = observer(() => {
         <Title order={6} mb={10} color="gray">Approximation for flow validation</Title>
       </div>
 
-      <Group position="center" w={500}>
+      <Group w={500}>
         <PermissionItemSelect
           permissionSetIds={info?.permission_sets}
           connectedInput={false}
@@ -250,6 +278,11 @@ const SerialItem = observer(({index, reordering}) => {
         {...l10n.common.id}
         {...inputProps}
         field="id"
+      />
+      <Inputs.Text
+        {...l10n.serials.item.slug}
+        {...inputProps}
+        field="slug"
       />
       <Inputs.Text
         {...l10n.common.label}
