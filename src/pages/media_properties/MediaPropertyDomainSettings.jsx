@@ -7,6 +7,113 @@ import {Accordion, Group, Stack, Title} from "@mantine/core";
 import {MediaPropertyLoginConsentSpec} from "@/specs/MediaPropertySpecs.js";
 import ColorOptions from "@/components/inputs/media_property/Components.jsx";
 
+const UserQuestionnaire = observer(() => {
+  const { mediaPropertyId } = useParams();
+
+  const mediaProperty = mediaPropertyStore.mediaProperties[mediaPropertyId];
+
+  if(!mediaProperty) { return null; }
+
+  const info = mediaProperty?.metadata?.public?.asset_metadata?.info || {};
+
+  const l10n = rootStore.l10n.pages.media_property.form;
+  const inputProps = {
+    store: mediaPropertyStore,
+    objectId: mediaPropertyId,
+    category: l10n.categories.login_settings,
+    subcategory: l10n.categories.user_questionnaire,
+    path: "/public/asset_metadata/info/login/user_questionnaire"
+  };
+
+  return (
+    <>
+      <Title order={5} mt={35} mb="md">
+        { l10n.categories.user_questionnaire }
+      </Title>
+      <Inputs.Checkbox
+        {...inputProps}
+        {...l10n.login.user_questionnaire.enable}
+        defaultValue={false}
+        field="enable"
+      />
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.login.user_questionnaire.version_key}
+        defaultValue="default"
+        field="version_key"
+      />
+      {
+        !info.login?.user_questionnaire?.enable ? null :
+          <>
+            <Inputs.List
+              {...inputProps}
+              {...l10n.login.user_questionnaire.questions}
+              defaultValue={false}
+              field="questions"
+              renderItem={props =>
+                <>
+                  <Inputs.UUID
+                    {...props}
+                    {...l10n.common.id}
+                    hidden
+                    field="id"
+                  />
+                  <Inputs.Text
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.title}
+                    field="title"
+                  />
+                  <Inputs.TextArea
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.description}
+                    field="description"
+                  />
+                  <Inputs.Text
+                    required
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.key}
+                    field="key"
+                  />
+                   <Inputs.Select
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.type}
+                    field="type"
+                    defaultValue="select"
+                    options={[
+                      { label: "Single", value: "select" },
+                      { label: "Multiple", value: "multiselect" }
+                    ]}
+                  />
+                  <Inputs.Checkbox
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.required}
+                    defaultValue={false}
+                    field="required"
+                  />
+                  <Inputs.List
+                    {...props}
+                    {...l10n.login.user_questionnaire.question.options}
+                    field="options"
+                  />
+                </>
+              }
+            />
+          </>
+      }
+      <Inputs.Text
+        {...inputProps}
+        {...l10n.login.user_questionnaire.confirmation.title}
+        field="confirmation_title"
+      />
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.login.user_questionnaire.confirmation.description}
+        field="confirmation_description"
+      />
+    </>
+  );
+});
+
 const LoginStyling = observer(() => {
   const { mediaPropertyId } = useParams();
 
@@ -494,6 +601,7 @@ const MediaPropertyDomainSettings = observer(() => {
             <LoginStyling />
             <LoginTerms />
             <LoginConsentOptions />
+            <UserQuestionnaire />
           </>
       }
 

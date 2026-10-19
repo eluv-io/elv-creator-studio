@@ -39,6 +39,7 @@ form:
     login_theme: Login Theme
     login_consent_options: Data Consent Options
     login_terms: Terms and Conditions
+    user_questionnaire: User Questionnaire
     additional_settings: Additional Settings
     subproperties: Subproperties
     purchase_page: Purchase Page Settings
@@ -724,6 +725,37 @@ form:
       required:
         label: Required
         description: If selected, login will not be allowed unless this consent option is checked
+
+    user_questionnaire:
+      enable:
+        label: Enable User Questionnaire
+        description: Specify questions for users to answer after logging in
+      version_key:
+        label: Version Key
+        description: This value indicates the version of the question form. When this is changed, users will be re-prompted to fill out the form when logging in.
+      questions:
+        label: Questions
+        fieldLabel: Question
+      question:
+        key:
+          label: Question Key
+          description: Specify the key under which this answer will be saved
+        title:
+          label: Question Title
+        description:
+          label: Question Description
+        required:
+          label: Required
+        type:
+          label: Type
+        options:
+          label: Options
+          fieldLabel: Option
+      confirmation:
+        title:
+          label: Confirmation Title
+        description:
+          label: Confirmation Description
 
   pages:
     create:
