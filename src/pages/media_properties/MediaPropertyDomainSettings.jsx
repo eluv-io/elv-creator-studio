@@ -36,15 +36,15 @@ const UserQuestionnaire = observer(() => {
         defaultValue={false}
         field="enable"
       />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.login.user_questionnaire.version_key}
-        defaultValue="default"
-        field="version_key"
-      />
       {
         !info.login?.user_questionnaire?.enable ? null :
           <>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.login.user_questionnaire.version_key}
+              defaultValue="default"
+              field="version_key"
+            />
             <Inputs.List
               {...inputProps}
               {...l10n.login.user_questionnaire.questions}
@@ -98,18 +98,18 @@ const UserQuestionnaire = observer(() => {
                 </>
               }
             />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.login.user_questionnaire.confirmation.title}
+              field="confirmation_title"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.login.user_questionnaire.confirmation.description}
+              field="confirmation_description"
+            />
           </>
       }
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.login.user_questionnaire.confirmation.title}
-        field="confirmation_title"
-      />
-      <Inputs.TextArea
-        {...inputProps}
-        {...l10n.login.user_questionnaire.confirmation.description}
-        field="confirmation_description"
-      />
     </>
   );
 });
