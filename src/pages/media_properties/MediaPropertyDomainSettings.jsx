@@ -354,14 +354,48 @@ const MediaPropertyDomainSettings = observer(() => {
             />
             {
               info.login?.settings?.disable_registration ? null :
-                <Inputs.Checkbox
-                  {...inputProps}
-                  {...l10n.login.disable_third_party_login}
-                  category={l10n.categories.login_settings}
-                  path="/public/asset_metadata/info/login/settings"
-                  defaultValue={false}
-                  field="disable_third_party_login"
-                />
+                <>
+                  <Inputs.Checkbox
+                    {...inputProps}
+                    {...l10n.login.disable_third_party_login}
+                    category={l10n.categories.login_settings}
+                    path="/public/asset_metadata/info/login/settings"
+                    defaultValue={false}
+                    field="disable_third_party_login"
+                  />
+                  {
+                    info.login?.settings?.disable_third_party_login ? null :
+                      <Stack ml="xl" spacing={0}>
+                        <Inputs.Checkbox
+                          {...inputProps}
+                          {...l10n.login.disable_google_login}
+                          category={l10n.categories.login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          defaultValue={false}
+                          field="disable_google_login"
+                          componentProps={{maw: uiStore.inputWidthNarrow}}
+                        />
+                        <Inputs.Checkbox
+                          {...inputProps}
+                          {...l10n.login.disable_apple_login}
+                          category={l10n.categories.login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          defaultValue={false}
+                          field="disable_apple_login"
+                          componentProps={{maw: uiStore.inputWidthNarrow}}
+                        />
+                        <Inputs.Checkbox
+                          {...inputProps}
+                          {...l10n.login.disable_facebook_login}
+                          category={l10n.categories.login_settings}
+                          path="/public/asset_metadata/info/login/settings"
+                          defaultValue={true}
+                          field="disable_facebook_login"
+                          componentProps={{maw: uiStore.inputWidthNarrow}}
+                        />
+                      </Stack>
+                  }
+                </>
             }
 
             <Accordion maw={uiStore.inputWidth} variant="contained">

@@ -628,6 +628,12 @@ form:
     disable_third_party_login:
       label: Disable Third Party Login
       description: If checked, users will not be allowed to log in with their Google or Apple accounts
+    disable_google_login:
+      label: Disable Google Login
+    disable_apple_login:
+      label: Disable Apple Login
+    disable_facebook_login:
+      label: Disable Facebook Login
     enable_metamask:
       label: Enable Login via MetaMask
       description: If checked, users will be able to log in with their MetaMask accounts
