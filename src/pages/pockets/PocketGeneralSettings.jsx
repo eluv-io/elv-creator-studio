@@ -294,6 +294,31 @@ const PocketGeneralSettings = observer(() => {
               subcategory={l10n.categories.branding}
               field="payment_message"
             />
+            <Inputs.List
+              {...inputProps}
+              {...l10n.general.nav_menu_links}
+              subcategory={l10n.categories.branding}
+              field="nav_menu_links"
+              fields={[
+                {
+                  ...l10n.common.icon,
+                  InputComponent: Inputs.SingleImageInput,
+                  field: "icon",
+                  baseSize: 80,
+                  p: "xs"
+                },
+                {
+                  ...l10n.common.text,
+                  InputComponent: Inputs.Text,
+                  field: "text"
+                },
+                {
+                  ...l10n.common.link,
+                  InputComponent: Inputs.URL,
+                  field: "link"
+                },
+              ]}
+            />
           </Accordion.Panel>
         </Accordion.Item>
         <Accordion.Item value="bumpers">
