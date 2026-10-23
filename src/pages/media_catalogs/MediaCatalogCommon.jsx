@@ -328,6 +328,13 @@ export const MediaCatalogCommonFields = observer(({type, live, mediaId}) => {
         localizable
       />
 
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.media.short_description}
+        field="short_description"
+        localizable
+      />
+
       {
         type === "media" ? null :
           <Inputs.Select

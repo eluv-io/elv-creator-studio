@@ -943,6 +943,15 @@ const ContentSectionDisplaySettings = observer(() => {
         field="description_rich_text"
       />
 
+      <Inputs.TextArea
+        {...inputProps}
+        {...l10n.sections.display.short_description}
+        localizable
+        subcategory={l10n.categories.section_presentation}
+        path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
+        field="short_description"
+      />
+
       <Inputs.Checkbox
         {...inputProps}
         {...l10n.sections.display.hide_title}
