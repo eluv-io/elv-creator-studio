@@ -945,11 +945,11 @@ const ContentSectionDisplaySettings = observer(() => {
 
       <Inputs.TextArea
         {...inputProps}
-        {...l10n.sections.display.short_description}
+        {...l10n.sections.display.synopsis}
         localizable
         subcategory={l10n.categories.section_presentation}
         path={UrlJoin("/public/asset_metadata/info/sections", sectionId, "display")}
-        field="short_description"
+        field="synopsis"
       />
 
       <Inputs.Checkbox

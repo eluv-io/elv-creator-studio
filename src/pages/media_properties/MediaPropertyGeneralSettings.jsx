@@ -1035,7 +1035,15 @@ const MediaPropertyGeneralSettings = observer(() => {
                 path="/public/asset_metadata/info/footer/social_links"
                 field="bluesky"
               />
-
+              <Inputs.URL
+                componentProps={{mt:10}}
+                {...inputProps}
+                {...l10n.general.social_links.options.reddit}
+                subcategory={l10n.categories.social_links}
+                localizable
+                path="/public/asset_metadata/info/footer/social_links"
+                field="reddit"
+              />
             </Inputs.InputWrapper>
 
             <Inputs.List

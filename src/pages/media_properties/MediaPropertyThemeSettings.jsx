@@ -383,6 +383,20 @@ const MediaPropertyThemeSettings = observer(() => {
 
       <Inputs.Select
         {...inputProps}
+        {...l10n.general.show_details_modal}
+        subcategory={l10n.categories.card_themes}
+        path="/public/asset_metadata/info"
+        field="show_details_modal"
+        defaultValue=""
+        options={[
+          { label: "Skip", value: ""},
+          { label: "Mobile Only", value: "mobile"},
+          { label: "Show", value: "show"},
+        ]}
+      />
+
+      <Inputs.Select
+        {...inputProps}
         {...l10n.general.card_theme}
         subcategory={l10n.categories.card_themes}
         path="/public/asset_metadata/info"

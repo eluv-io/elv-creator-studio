@@ -231,6 +231,9 @@ form:
     hover_card_display:
       label: Default Hover Card Display
       description: Specify when the detailed hover cards should be shown for this property (desktop only). This setting can be overridden in pages and sections.
+    show_details_modal:
+      label: Show Details Modal
+      description: Select whether clicking a media item card navigates straight to the content, or if the details modal is shown.
     subproperties:
       subproperties:
         label: Subproperties
@@ -446,6 +449,8 @@ form:
           label: LinkedIn
         bluesky:
           label: Bluesky
+        reddit:
+          label: Reddit
     support_url:
       label: Support URL
     footer_items:
@@ -962,8 +967,8 @@ form:
         label: Description
       description_rich_text:
         label: Description Rich Text
-      short_description:
-        label: Short Description
+      synopsis:
+        label: Synopsis
         description: You may specify an abbreviated description for display in areas with limited space, such as hover detail cards.
       display_format:
         label: Display Format

@@ -209,8 +209,8 @@ form:
       label: Description
     description_rich_text:
       label: Description (Rich Text)
-    short_description:
-      label: Short Description
+    synopsis:
+      label: Synopsis
       description: You may specify an abbreviated description for display in areas with limited space, such as hover detail cards.
     preferred_aspect_ratio:
       label: Preferred Aspect Ratio
