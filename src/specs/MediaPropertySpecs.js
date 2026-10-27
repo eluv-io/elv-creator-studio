@@ -26,7 +26,8 @@ export const MediaPropertyHeaderLinkSpec = {
   property_page: "",
   subproperty: "",
   subproperty_page: "",
-  url: ""
+  url: "",
+  path: ""
 };
 
 export const MediaPropertyCardThemeSpec = {

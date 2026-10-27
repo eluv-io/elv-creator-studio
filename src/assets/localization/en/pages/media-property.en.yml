@@ -896,6 +896,9 @@ form:
     url:
       label: URL
       description: The URL for this action to link to
+    path:
+      label: URL Path
+      description: The URL path for this action to link to
     property:
       label: Media Property
       description: Select the media property to link to

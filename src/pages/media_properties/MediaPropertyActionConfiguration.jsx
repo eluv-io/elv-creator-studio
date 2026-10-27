@@ -25,6 +25,7 @@ export const ActionBehaviors = {
   "show_purchase": "Show Purchase Options",
   "video": "Show Video",
   "link": "Link to URL",
+  "path": "Link to Path",
   "property_link": "Link to Property",
   "subproperty_link": "Link to Subproperty"
 };
@@ -117,6 +118,14 @@ const ActionBehaviorConfiguration = observer(({inputProps, info, action}) => {
               />
           }
         </>
+      );
+    case "path":
+      return (
+        <Inputs.Text
+          {...inputProps}
+          {...l10n.actions.path}
+          field="path"
+        />
       );
     case "link":
       return (
@@ -262,7 +271,10 @@ export const ActionConfiguration = observer(({inputProps, action}) => {
         defaultValue="sign_in"
         field="behavior"
         options={
-          Object.keys(ActionBehaviors).map(key => ({label: ActionBehaviors[key], value: key}))
+          Object.keys(ActionBehaviors).map(key => ({
+            label: ActionBehaviors[key],
+            value: key
+          }))
         }
       />
       <Inputs.Checkbox
