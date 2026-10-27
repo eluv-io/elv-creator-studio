@@ -98,6 +98,18 @@ const PermissionItemDisplay = observer(({inputProps, permissionItem, marketplace
               subcategory={l10n.categories.permission_item_display}
               field="access_title_text_color"
             />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.permission_item.display.toast_message_title}
+              subcategory={l10n.categories.permission_item_display}
+              field="toast_message_title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.permission_item.display.toast_message_subtitle}
+              subcategory={l10n.categories.permission_item_display}
+              field="toast_message_subtitle"
+            />
           </>
       }
     </>

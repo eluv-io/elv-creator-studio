@@ -104,6 +104,11 @@ form:
         label: Access Title Badge Background Color
       access_title_text_color:
         label: Access Title Badge Text Color
+      toast_message_title:
+        label: Toast Message Title
+        description: After purchase, a short notification may appear. You can customize the test for that notification.
+      toast_message_subtitle:
+        label: Toast Message Subtitle
     alternate_displays:
       label: Alternate Displays
       description: Change how this item is displayed based on what item the user already owns.

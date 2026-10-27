@@ -1,3 +1,70 @@
+export const MediaCatalogBumperOfferSpec = {
+  label: "<New Offer>",
+  display: {
+    title: "",
+    subtitle: "",
+    description: "",
+    price: "",
+    button_text: "",
+    button_variant: "filled"
+  },
+  action: {
+    behavior: "purchase", // continue, link
+    permission_item_id: "",
+    url: ""
+  }
+};
+
+export const MediaCatalogBumperSpec = {
+  id: undefined,
+  label: "<New Bumper>",
+  description: "",
+  category: "bumper",
+  tags: [],
+  image: undefined,
+  video: undefined,
+  duration: 0,
+  blur: false,
+  loop: false,
+  url: "",
+  offers: {
+    title: "",
+    subtitle: "",
+    bottom_text: "",
+    position: "bottom_right",
+    position_mobile: "center",
+    format: "button", // detailed
+    items: []
+  }
+};
+
+export const MediaCatalogSerialItemSpec = {
+  id: undefined,
+  slug: "",
+  label: "<New Serial Item>",
+  type: "media",
+  permissions: [],
+  permission_behavior: "hide",
+  media_item_id: undefined,
+  bumper_id: undefined
+};
+
+export const MediaCatalogSerialSpec = {
+  id: undefined,
+  type: "serial",
+  label: "<New Serial>",
+  description: "",
+  tags: [],
+  display: {
+    poster_image_mobile: undefined,
+    title: "<New Serial>",
+    title_icon: undefined,
+    subtitle: "",
+    badges: []
+  },
+  items: []
+};
+
 export const MediaCatalogAdditionalViewSpec = {
   media_link: undefined,
   label: ""
@@ -133,5 +200,7 @@ export const MediaCatalogSpec = {
   tags: [],
   media: {},
   media_lists: {},
-  media_collections: {}
+  media_collections: {},
+  bumpers: {},
+  serials: {}
 };

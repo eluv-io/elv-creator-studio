@@ -11,6 +11,8 @@ import MediaCatalogMediaItem from "@/pages/media_catalogs/MediaCatalogMediaItem.
 import MediaCatalogTags, {MediaCatalogAttribute} from "@/pages/media_catalogs/MediaCatalogTags.jsx";
 import MediaCatalogMediaList from "@/pages/media_catalogs/MediaCatalogMediaList.jsx";
 import MediaCatalogMediaCollection from "@/pages/media_catalogs/MediaCatalogMediaCollection.jsx";
+import MediaCatalogBumpers, {MediaCatalogBumper} from "@/pages/media_catalogs/MediaCatalogBumpers.jsx";
+import MediaCatalogSerials, {MediaCatalogSerial} from "@/pages/media_catalogs/MediaCatalogSerials.jsx";
 
 const MediaCatalogRoutes = observer(({rootPath}) => {
   const routes = [
@@ -25,6 +27,10 @@ const MediaCatalogRoutes = observer(({rootPath}) => {
     { label: rootStore.l10n.pages.media_catalog.nav.media_list, path: "/media-catalogs/:mediaCatalogId/media-lists/:mediaListId", Component: <MediaCatalogMediaList /> },
     { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.media_collections, path: "/media-catalogs/:mediaCatalogId/media-collections", Component: <MediaCatalogItems type="media_collections" /> },
     { label: rootStore.l10n.pages.media_catalog.nav.media_collection, path: "/media-catalogs/:mediaCatalogId/media-collections/:mediaCollectionId", Component: <MediaCatalogMediaCollection /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.bumpers, path: "/media-catalogs/:mediaCatalogId/bumpers", Component: <MediaCatalogBumpers /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.bumpers, path: "/media-catalogs/:mediaCatalogId/bumpers/:bumperId", Component: <MediaCatalogBumper /> },
+    { navRoute: true, label: rootStore.l10n.pages.media_catalog.nav.serials, path: "/media-catalogs/:mediaCatalogId/serials", Component: <MediaCatalogSerials /> },
+    { label: rootStore.l10n.pages.media_catalog.nav.serials, path: "/media-catalogs/:mediaCatalogId/serials/:serialId", Component: <MediaCatalogSerial /> }
   ]
     .map(route => ({
       ...route,

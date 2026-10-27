@@ -4,7 +4,17 @@ import {rootStore} from "@/stores";
 import {observer} from "mobx-react-lite";
 import {ExtractHashFromLink} from "@/helpers/Fabric.js";
 
-const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerOptions={}, aspectRatio=16/9, className=""}) => {
+const Video = observer(({
+  videoLink,
+  videoLinkInfo,
+  videoHash,
+  animation,
+  playerOptions={},
+  controls,
+  aspectRatio=16/9,
+  SetPlayer,
+  className=""
+}) => {
   const targetRef = useRef();
 
   useEffect(() => {
@@ -12,7 +22,6 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
 
     let playerPromise;
     const timeout = setTimeout(() => {
-      let controls;
       if(animation) {
         controls = {
           muted: EluvioPlayerParameters.muted.ON,
@@ -20,7 +29,7 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
           controls: EluvioPlayerParameters.controls.OFF,
           loop: EluvioPlayerParameters.loop.ON
         };
-      } else {
+      } else if(!controls) {
         controls = {
           muted: EluvioPlayerParameters.muted.OFF,
           autoplay: EluvioPlayerParameters.autoplay.OFF,
@@ -47,7 +56,11 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
             backgroundColor: "black",
             watermark: EluvioPlayerParameters.watermark.OFF,
             ...controls,
-            ...playerOptions
+            ...playerOptions,
+            playerCallback: params => {
+              playerOptions?.playerCallback?.(params);
+              SetPlayer?.(params.player);
+            },
           },
         }
       );
@@ -56,12 +69,14 @@ const Video = observer(({videoLink, videoLinkInfo, videoHash, animation, playerO
     return async () => {
       clearTimeout(timeout);
 
+      SetPlayer?.(undefined);
+
       if(!playerPromise) { return; }
 
       const player = await playerPromise;
       player.Destroy();
     };
-  }, [targetRef, videoLink, videoHash, playerOptions, animation]);
+  }, [targetRef, videoLink, videoHash, animation]);
 
   return <div style={{aspectRatio}} className={className} ref={targetRef} />;
 });
