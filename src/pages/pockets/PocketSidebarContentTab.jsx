@@ -234,10 +234,10 @@ export const MediaItemTitle = observer(({mediaItemId, aspectRatio}) => {
       />
       <Stack spacing={2}>
         <Text fw={600}>
-          { mediaItem.label || mediaItem.title || mediaItemId }
+          { mediaItem?.label || mediaItem?.title || mediaItemId }
         </Text>
         <Text italic fz={10}>
-          { mediaItem.slug || mediaItemId }
+          { mediaItem?.slug || mediaItemId }
         </Text>
       </Stack>
     </Group>
