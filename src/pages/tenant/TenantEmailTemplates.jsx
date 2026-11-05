@@ -2,7 +2,7 @@ import {observer} from "mobx-react-lite";
 import {useState} from "react";
 import {rootStore, tenantStore, uiStore} from "@/stores";
 import PageContent from "@/components/common/PageContent.jsx";
-import {Accordion, Select, Title} from "@mantine/core";
+import {Accordion, Group, Select, Title} from "@mantine/core";
 import Inputs from "@/components/inputs/Inputs";
 import UrlJoin from "url-join";
 
@@ -10,6 +10,8 @@ import CodeTemplate from "@/assets/email_templates/CodeTemplate.html?raw";
 import LinkTemplate from "@/assets/email_templates/LinkTemplate.html?raw";
 import ShareTemplate from "@/assets/email_templates/ShareTemplate.html?raw";
 import PurchaseReceiptTemplate from "@/assets/email_templates/PurchaseReceiptTemplate.html?raw";
+
+import DefaultEluvioBanner from "@/assets/images/email-banner2.jpg";
 
 const defaultButtonColor = "#393939";
 
@@ -19,7 +21,8 @@ const EmailPreview = observer(() => {
 
   const l10n = rootStore.l10n.pages.tenant.form;
   const info = tenant?.metadata?.public?.asset_metadata?.info || {};
-  const commonSettings = info?.email_template_settings?.common || {};
+  let commonSettings = info?.email_template_settings?.common || {};
+  const tenantCommonSettings = info?.email_template_settings?.tenant_common || {};
 
   let html, defaults, settings;
   switch(preview) {
@@ -57,10 +60,27 @@ const EmailPreview = observer(() => {
       defaults.download_button_color = commonSettings.button_color || defaultButtonColor;
 
       break;
+    case "tenant_invite":
+      settings = info.email_template_settings?.tenant_invite || {};
+      defaults = l10n.email_templates.defaults.tenant_invite;
+      html = LinkTemplate;
+      commonSettings = tenantCommonSettings;
+      break;
+    case "tenant_invite_confirmation":
+      settings = info.email_template_settings?.tenant_invite_confirmation || {};
+      defaults = l10n.email_templates.defaults.tenant_invite_confirmation;
+      html = LinkTemplate;
+      commonSettings = tenantCommonSettings;
+      break;
   }
 
   if(html) {
-    html = html.replaceAll("{{banner_image_url}}", settings.share_banner_image || commonSettings.banner_image || defaults.banner_image);
+    html = html.replaceAll(
+      "{{banner_image_url}}",
+      settings.share_banner_image ||
+      commonSettings.banner_image ||
+      (preview.includes("tenant") ? DefaultEluvioBanner : undefined)
+    );
     html = html.replaceAll("{{title_color}}", commonSettings.title_color || "#000000");
     html = html.replaceAll("{{button_color}}", commonSettings.button_color || defaultButtonColor);
     html = html.replaceAll("{{copyright}}", commonSettings.copyright || l10n.email_templates.defaults.common.copyright);
@@ -85,7 +105,8 @@ const EmailPreview = observer(() => {
           { label: "Password Reset", value: "password_reset"},
           { label: "Invite", value: "invite"},
           { label: "Share", value: "share"},
-          { label: "Purchase Receipt", value: "purchase_receipt"}
+          { label: "Tenant Invitation", value: "tenant_invite"},
+          { label: "Tenant Invite Confirmation", value: "tenant_invite_confirmation"}
         ]}
       />
       {
@@ -135,67 +156,126 @@ const TenantGeneralSettings = observer(() => {
       section="tenant"
       useHistory
     >
-      <Title order={3} my="md">{ l10n.categories.email_templates_common }</Title>
+      <Group>
+        <div>
+          <Title order={3} my="md">{l10n.categories.email_templates_common}</Title>
 
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.email_templates.from}
-        componentProps={{maw: uiStore.inputWidthNarrow}}
-        path={UrlJoin(inputProps.path, "common")}
-        subcategory={l10n.categories.email_templates_common}
-        placeholder={l10n.email_templates.defaults.common.from}
-        field="from"
-      />
-      <Inputs.Text
-        {...inputProps}
-        {...l10n.email_templates.copyright}
-        componentProps={{maw: uiStore.inputWidthNarrow}}
-        path={UrlJoin(inputProps.path, "common")}
-        subcategory={l10n.categories.email_templates_common}
-        placeholder={l10n.email_templates.defaults.common.copyright}
-        field="copyright"
-      />
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.email_templates.from}
+            componentProps={{maw: uiStore.inputWidthNarrow}}
+            path={UrlJoin(inputProps.path, "common")}
+            subcategory={l10n.categories.email_templates_common}
+            placeholder={l10n.email_templates.defaults.common.from}
+            field="from"
+          />
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.email_templates.copyright}
+            componentProps={{maw: uiStore.inputWidthNarrow}}
+            path={UrlJoin(inputProps.path, "common")}
+            subcategory={l10n.categories.email_templates_common}
+            placeholder={l10n.email_templates.defaults.common.copyright}
+            field="copyright"
+          />
 
-      <Inputs.InputWrapper {...l10n.email_templates.colors} maw={uiStore.inputWidthNarrow}>
-        <Inputs.Color
-          {...inputProps}
-          {...l10n.email_templates.title_color}
-          path={UrlJoin(inputProps.path, "common")}
-          subcategory={l10n.categories.email_templates_common}
-          defaultValue="#000000"
-          defaultOnBlankString
-          field="title_color"
-        />
-        <Inputs.Color
-          {...inputProps}
-          {...l10n.email_templates.button_color}
-          path={UrlJoin(inputProps.path, "common")}
-          subcategory={l10n.categories.email_templates_common}
-          defaultValue={defaultButtonColor}
-          defaultOnBlankString
-          field="button_color"
-        />
-      </Inputs.InputWrapper>
+          <Inputs.InputWrapper {...l10n.email_templates.colors} maw={uiStore.inputWidthNarrow}>
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.title_color}
+              path={UrlJoin(inputProps.path, "common")}
+              subcategory={l10n.categories.email_templates_common}
+              defaultValue="#000000"
+              defaultOnBlankString
+              field="title_color"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.button_color}
+              path={UrlJoin(inputProps.path, "common")}
+              subcategory={l10n.categories.email_templates_common}
+              defaultValue={defaultButtonColor}
+              defaultOnBlankString
+              field="button_color"
+            />
+          </Inputs.InputWrapper>
 
-      <Inputs.SingleImageInput
-        {...inputProps}
-        {...l10n.email_templates.banner_image}
-        url
-        aspectRatio={3}
-        maw={400}
-        baseSize={115}
-        path={UrlJoin(inputProps.path, "common")}
-        subcategory={l10n.categories.email_templates_common}
-        field="banner_image"
-      />
+          <Inputs.SingleImageInput
+            {...inputProps}
+            {...l10n.email_templates.banner_image}
+            url
+            aspectRatio={3}
+            maw={400}
+            baseSize={115}
+            path={UrlJoin(inputProps.path, "common")}
+            subcategory={l10n.categories.email_templates_common}
+            field="banner_image"
+          />
+        </div>
+        <div>
+          <Title order={3} my="md">{l10n.categories.email_templates_tenant_common}</Title>
+
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.email_templates.from}
+            componentProps={{maw: uiStore.inputWidthNarrow}}
+            path={UrlJoin(inputProps.path, "tenant_common")}
+            subcategory={l10n.categories.email_templates_common}
+            placeholder={l10n.email_templates.defaults.common.from}
+            field="from"
+          />
+          <Inputs.Text
+            {...inputProps}
+            {...l10n.email_templates.copyright}
+            componentProps={{maw: uiStore.inputWidthNarrow}}
+            path={UrlJoin(inputProps.path, "tenant_common")}
+            subcategory={l10n.categories.email_templates_common}
+            placeholder={l10n.email_templates.defaults.common.copyright}
+            field="copyright"
+          />
+
+          <Inputs.InputWrapper {...l10n.email_templates.colors} maw={uiStore.inputWidthNarrow}>
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.title_color}
+              path={UrlJoin(inputProps.path, "tenant_common")}
+              subcategory={l10n.categories.email_templates_common}
+              defaultValue="#000000"
+              defaultOnBlankString
+              field="title_color"
+            />
+            <Inputs.Color
+              {...inputProps}
+              {...l10n.email_templates.button_color}
+              path={UrlJoin(inputProps.path, "tenant_common")}
+              subcategory={l10n.categories.email_templates_common}
+              defaultValue={defaultButtonColor}
+              defaultOnBlankString
+              field="button_color"
+            />
+          </Inputs.InputWrapper>
+
+          <Inputs.SingleImageInput
+            {...inputProps}
+            {...l10n.email_templates.banner_image}
+            url
+            aspectRatio={3}
+            maw={400}
+            baseSize={115}
+            path={UrlJoin(inputProps.path, "tenant_common")}
+            subcategory={l10n.categories.email_templates_common}
+            field="banner_image"
+          />
+        </div>
+      </Group>
 
 
-      <Title order={3} mt={50} mb="md">{ l10n.categories.email_template_settings }</Title>
+      <Title order={3} mt={50} mb="md">{l10n.categories.email_template_settings}</Title>
 
       <Accordion maw={uiStore.inputWidth} variant="contained">
         <Accordion.Item value="welcome_email_template">
           <Accordion.Control>
-            { l10n.categories.welcome_email_template }
+            {l10n.categories.welcome_email_template}
           </Accordion.Control>
           <Accordion.Panel>
             <Inputs.Text
@@ -599,6 +679,132 @@ const TenantGeneralSettings = observer(() => {
               path={UrlJoin(inputProps.path, "purchase_receipt")}
               subcategory={l10n.categories.purchase_receipt_template}
               placeholder={l10n.email_templates.defaults.purchase_receipt.preheader || ""}
+              field="preheader"
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="tenant_invite">
+          <Accordion.Control>
+            {l10n.categories.tenant_invite_template}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.subject || ""}
+              field="subject"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.title}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.title || ""}
+              field="title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subtitle}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.subtitle || ""}
+              field="subtitle"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.text}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.text || ""}
+              field="text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.button_text}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.button_text || ""}
+              field="button_text"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.secondary_text || ""}
+              field="secondary_text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.preheader}
+              path={UrlJoin(inputProps.path, "tenant_invite")}
+              subcategory={l10n.categories.tenant_invite_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite.preheader || ""}
+              field="preheader"
+            />
+          </Accordion.Panel>
+        </Accordion.Item>
+        <Accordion.Item value="tenant_invite_confirmation">
+          <Accordion.Control>
+            {l10n.categories.tenant_invite_confirmation_template}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subject}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.subject || ""}
+              field="subject"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.title}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.title || ""}
+              field="title"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.subtitle}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.subtitle || ""}
+              field="subtitle"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.text}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.text || ""}
+              field="text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.button_text}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.button_text || ""}
+              field="button_text"
+            />
+            <Inputs.TextArea
+              {...inputProps}
+              {...l10n.email_templates.secondary_text}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.secondary_text || ""}
+              field="secondary_text"
+            />
+            <Inputs.Text
+              {...inputProps}
+              {...l10n.email_templates.preheader}
+              path={UrlJoin(inputProps.path, "tenant_invite_confirmation")}
+              subcategory={l10n.categories.tenant_invite_confirmation_template}
+              placeholder={l10n.email_templates.defaults.tenant_invite_confirmation.preheader || ""}
               field="preheader"
             />
           </Accordion.Panel>
