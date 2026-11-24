@@ -4,6 +4,73 @@ import {toJS} from "mobx";
 import {MediaPropertyHeroItemSpec, MediaPropertyHeroSectionSpec} from "@/specs/MediaPropertySpecs.js";
 import Clone from "lodash/clone";
 
+// Convert attribute filters from strings to list of strings
+export const V1_0_5 = ({mediaPropertyId, mediaProperty, store}) => {
+  const version = "1.0.5";
+  const sections = toJS(mediaProperty.metadata.public.asset_metadata.info.sections || {});
+  const sidebarTabs = toJS(mediaProperty.metadata.public.asset_metadata.info.sidebar_config?.tabs || []);
+
+  store.ApplyMigration({
+    version,
+    objectId: mediaPropertyId,
+    label: "Convert attribute filters to lists",
+    Apply: ({Set}) => {
+      Object.keys(sections).forEach(sectionId => {
+        Object.keys(sections[sectionId]?.select?.attribute_values || {}).forEach(attribute => {
+          Set(
+            UrlJoin("/public/asset_metadata/info/sections", sectionId, "select", "attribute_values", attribute),
+            [sections[sectionId].select.attribute_values[attribute]]
+          );
+        });
+      });
+
+      sidebarTabs.forEach((tab, tabIndex) => {
+        tab?.groups?.forEach((group, groupIndex) => {
+          Object.keys(group?.select?.attribute_values || {}).forEach(attribute => {
+            Set(
+              UrlJoin("/public/asset_metadata/info/sidebar_config/tabs", tabIndex.toString(), "groups", groupIndex.toString(), "select", "attribute_values", attribute),
+              [group.select.attribute_values[attribute]]
+            );
+          });
+        });
+      });
+    },
+    Write: async (objectParams) => {
+      await Promise.all(
+        Object.keys(sections).map(async sectionId => {
+          await Promise.all(
+            Object.keys(sections[sectionId]?.select?.attribute_values || {}).map(async attribute => {
+              await store.client.ReplaceMetadata({
+                ...objectParams,
+                metadataSubtree: UrlJoin("/public/asset_metadata/info/sections", sectionId, "select", "attribute_values", attribute),
+                metadata: [sections[sectionId].select.attribute_values[attribute]]
+              });
+            })
+          );
+        })
+      );
+
+      await Promise.all(
+        sidebarTabs.map(async (tab, tabIndex) => {
+          await Promise.all(
+            tab?.groups?.map(async (group, groupIndex) => {
+              await Promise.all(
+                Object.keys(group?.select?.attribute_values || {}).map(async attribute => {
+                  await store.client.ReplaceMetadata({
+                    ...objectParams,
+                    metadataSubtree: UrlJoin("/public/asset_metadata/info/sidebar_config/tabs", tabIndex.toString(), "groups", groupIndex.toString(), "select", "attribute_values", attribute),
+                    metadata: [group.select.attribute_values[attribute]]
+                  });
+                })
+              );
+            })
+          );
+        })
+      );
+    }
+  });
+};
+
 // Fix bad permission metadata
 export const V1_0_4 = ({mediaPropertyId, mediaProperty, store}) => {
   const version = "1.0.4";
@@ -228,7 +295,8 @@ export const Migrations = {
   "1.0.1": V1_0_1,
   "1.0.2": V1_0_2,
   "1.0.3": V1_0_3,
-  "1.0.4": V1_0_4
+  "1.0.4": V1_0_4,
+  "1.0.5": V1_0_5,
 };
 
 export const latestVersion = Object.keys(Migrations).sort(CompareSemVer).reverse()[0];

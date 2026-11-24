@@ -31,6 +31,7 @@ form:
     footer: Footer Settings
     footer_item: Footer Item
     footer_item_label: Footer Item '{label}'
+    user_feedback: User Feedback Settings
     faq: FAQ Settings
     feature_settings: Features
     purchase_settings: Purchase Settings
@@ -488,6 +489,12 @@ form:
     footer_text:
       label: Footer Text
       description: Displayed below the footer items
+    user_feedback:
+      type:
+        label: Type
+      allow_comments:
+        label: Allow Comments
+        description: If specified, users will be able to provide feedback in the form of text comments in addition to their rating.
     faq:
       faq_description: Set up an FAQ page for your users. This page will be available at <your property url>/faq
       slug:

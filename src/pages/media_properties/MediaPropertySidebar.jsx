@@ -147,7 +147,7 @@ const AutomaticSectionFilters = observer(() => {
             if(!attribute) { return; }
 
             return (
-              <Inputs.Select
+              <Inputs.MultiSelect
                 componentProps={{mt: "md"}}
                 key={`attribute-${attributeId}`}
                 {...inputProps}
@@ -202,7 +202,11 @@ const AutomaticSectionFilters = observer(() => {
           variant="outline"
           onClick={() => setShowContentPreview(!showContentPreview)}
         >
-          { showContentPreview ? "Hide Content Preview" : "Show Content Preview" }
+          {
+            showContentPreview ?
+              "Hide Content Preview" :
+              "Show Content Preview"
+          }
         </Button>
       </Container>
       {

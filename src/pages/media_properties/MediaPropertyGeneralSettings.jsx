@@ -1181,6 +1181,38 @@ const MediaPropertyGeneralSettings = observer(() => {
             />
           </Accordion.Panel>
         </Accordion.Item>
+        <Accordion.Item value="user_feedback">
+          <Accordion.Control>
+            { l10n.categories.user_feedback }
+          </Accordion.Control>
+          <Accordion.Panel>
+            <Inputs.Select
+              {...inputProps}
+              {...l10n.general.user_feedback.type}
+              path={UrlJoin(inputProps.path, "user_feedback")}
+              subcategory={l10n.categories.user_feedback}
+              field="type"
+              defaultValue=""
+              options={[
+                { label: "None", value: ""},
+                { label: "Thumbs Up / Thumbs Down", value: "thumbs"},
+                { label: "5 Stars", value: "stars"},
+                { label: "Video Frame Notes", value: "video_frame_notes"},
+              ]}
+            />
+            {
+              !["thumbs", "stars"].includes(info?.user_feedback?.type) ? null :
+                <Inputs.Checkbox
+                  {...inputProps}
+                  {...l10n.general.user_feedback.allow_comments}
+                  path={UrlJoin(inputProps.path, "user_feedback")}
+                  subcategory={l10n.categories.user_feedback}
+                  field="allow_comments"
+                  defaultValue={false}
+                />
+            }
+          </Accordion.Panel>
+        </Accordion.Item>
         <Accordion.Item value="faq">
           <Accordion.Control>
             { l10n.categories.faq }

@@ -133,7 +133,11 @@ class MediaCatalogStore {
 
       select.attributes?.forEach(attributeId => {
         content = content.filter(mediaItem =>
-          mediaItem.attributes?.[attributeId]?.includes(select.attribute_values[attributeId])
+          mediaItem.attributes?.[attributeId]?.find(value =>
+            typeof select.attribute_values[attributeId] === "string" ?
+              select.attribute_values[attributeId] === value :
+              select.attribute_values[attributeId].includes(value)
+          )
         );
       });
 
